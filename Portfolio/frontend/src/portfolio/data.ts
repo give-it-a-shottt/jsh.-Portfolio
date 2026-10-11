@@ -43,6 +43,8 @@ export interface PortfolioCase {
   image?: string
   /** 눌렀을 때 갈 곳. 없으면 링크 없이 보여준다 */
   href?: string
+  /** href 말고 따로 열어볼 곳(예: 이전 버전). 새 탭으로 연다 */
+  links?: { label: string; href: string }[]
   /** type 이 'Design' 인 사례의 시안 비교 */
   design?: DesignCase
 }
@@ -91,6 +93,8 @@ export const CASES: PortfolioCase[] = [
     keywords: 'accio 아씨오 쇼핑몰 이커머스 ai 검색 리액트 디자인 시스템',
     image: accioHome,
     href: '#/accio',
+    // v1: 실제 서비스했던 원본. 서버가 닫혀 목데이터로 도는 정적 빌드(public/accio-v1)다
+    links: [{ label: 'v1 원본 보기', href: '/accio-v1/' }],
   },
   {
     slug: 'maestro',

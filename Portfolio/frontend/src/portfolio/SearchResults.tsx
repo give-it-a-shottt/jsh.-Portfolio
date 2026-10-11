@@ -56,6 +56,22 @@ function ResultRow({ item }: { item: PortfolioCase }) {
             <span key={tag}>#{tag}</span>
           ))}
         </p>
+        {/* 행 전체를 덮는 제목 링크(after:inset-0) 위로 올려야 눌린다 */}
+        {item.links && (
+          <p className="relative z-10 mt-3 flex flex-wrap gap-3 text-13">
+            {item.links.map(({ label, href }) => (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener"
+                className="font-semibold text-sub underline-offset-4 hover:text-portfolio hover:underline"
+              >
+                {label} ↗
+              </a>
+            ))}
+          </p>
+        )}
       </div>
 
       {/* 화면이 있는 사례(Front·Design)만 썸네일을 둔다 */}
