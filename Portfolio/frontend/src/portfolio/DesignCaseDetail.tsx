@@ -1,4 +1,6 @@
-import { CASES } from './data'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useReducedMotion } from 'motion/react'
+import { CASES, type DesignVariant } from './data'
 import { ChevronRightIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
 import { DESIGN_DEMOS } from './demos'
@@ -17,11 +19,149 @@ function BackLink() {
   )
 }
 
+/** 카드 사이 간격(gap-6) — 화살표로 카드 한 장씩 넘길 때 쓴다 */
+const CARD_GAP = 24
+
+interface ScreenSectionProps {
+  id: string
+  title: string
+  description: string
+  items: DesignVariant[]
+  device?: 'mobile' | 'desktop'
+  /** 최종 배지를 달 위치. 시안 비교에만 쓴다 */
+  finalIndex?: number
+}
+
+/**
+ * 제목 + 화면 여러 장의 가로 목록. 넘치는 만큼만 가로로 넘긴다.
+ * 휴대폰 화면은 통째로, 세로로 긴 데스크톱 화면은 윗부분만 보여주고 누르면 원본을 새 탭으로 연다.
+ */
+function ScreenSection({ id, title, description, items, device = 'mobile', finalIndex }: ScreenSectionProps) {
+  const isDesktop = device === 'desktop'
+  const trackRef = useRef<HTMLOListElement>(null)
+  const [edges, setEdges] = useState({ atStart: true, atEnd: true })
+  const reduceMotion = useReducedMotion()
+
+  // 지금 맨 앞·맨 끝인지 — 둘 다면 넘칠 게 없어서 화살표를 숨긴다
+  const updateEdges = useCallback(() => {
+    const track = trackRef.current
+    if (!track) return
+    setEdges({
+      atStart: track.scrollLeft <= 1,
+      atEnd: track.scrollLeft + track.clientWidth >= track.scrollWidth - 1,
+    })
+  }, [])
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+    updateEdges()
+    const observer = new ResizeObserver(updateEdges)
+    observer.observe(track)
+    return () => observer.disconnect()
+  }, [updateEdges])
+
+  // 마우스로는 옆으로 밀 수 없어서 화살표로 카드 한 장씩 넘긴다
+  const move = (direction: 1 | -1) => {
+    const track = trackRef.current
+    const card = track?.firstElementChild as HTMLElement | null
+    if (!track || !card) return
+    track.scrollBy({ left: direction * (card.offsetWidth + CARD_GAP), behavior: reduceMotion ? 'auto' : 'smooth' })
+  }
+
+  const overflows = !(edges.atStart && edges.atEnd)
+
+  return (
+    <section aria-labelledby={id} className="mt-16">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h2 id={id} className="text-20 font-semibold text-main">
+            {title}
+          </h2>
+          <p className="mt-1 text-14 break-keep text-sub">{description}</p>
+        </div>
+        {/* 화살표는 마우스를 쓰는 화면에만 — 휴대폰은 손가락으로 민다 */}
+        {overflows && (
+          <div className="hidden shrink-0 gap-2 pointer-fine:flex">
+            <ScrollArrow direction="prev" label={title} disabled={edges.atStart} onClick={() => move(-1)} />
+            <ScrollArrow direction="next" label={title} disabled={edges.atEnd} onClick={() => move(1)} />
+          </div>
+        )}
+      </div>
+      <ol
+        ref={trackRef}
+        onScroll={updateEdges}
+        className="scrollbar-none -mx-5 mt-6 flex snap-x scroll-px-5 gap-6 overflow-x-auto px-5 pb-2 sm:mx-0 sm:scroll-px-0 sm:px-0"
+      >
+        {items.map((item, index) => {
+          const isFinal = index === finalIndex
+          const image = (
+            <img
+              src={item.image}
+              alt={`${item.label} 화면`}
+              width={item.width ?? 400}
+              height={item.height ?? 860}
+              loading="lazy"
+              className={`w-full rounded-thumb border ${isFinal ? 'border-black' : 'border-regular'} ${
+                isDesktop ? 'aspect-4/3 object-cover object-top' : 'h-auto'
+              }`}
+            />
+          )
+          return (
+            <li key={item.label} className={`shrink-0 snap-start ${isDesktop ? 'w-[min(80vw,480px)]' : 'w-60 sm:w-70'}`}>
+              <figure className="flex flex-col gap-3">
+                {isDesktop ? (
+                  <a href={item.image} target="_blank" rel="noopener" aria-label={`${item.label} 화면 원본 크기로 보기`}>
+                    {image}
+                  </a>
+                ) : (
+                  image
+                )}
+                <figcaption className="flex flex-col gap-1">
+                  <span className="flex items-center gap-2 text-15 font-semibold text-main">
+                    {item.label}
+                    {isFinal && (
+                      <span className="rounded-badge bg-main px-2 py-0.5 text-12 font-semibold text-white">최종</span>
+                    )}
+                  </span>
+                  <span className="text-14 break-keep text-sub">{item.note}</span>
+                </figcaption>
+              </figure>
+            </li>
+          )
+        })}
+      </ol>
+    </section>
+  )
+}
+
+interface ScrollArrowProps {
+  direction: 'prev' | 'next'
+  /** 어느 목록의 화살표인지 — 화면 읽기 프로그램에 함께 읽어 준다 */
+  label: string
+  disabled: boolean
+  onClick: () => void
+}
+
+function ScrollArrow({ direction, label, disabled, onClick }: ScrollArrowProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={`${label} ${direction === 'prev' ? '이전' : '다음'} 화면`}
+      className="flex size-10 items-center justify-center rounded-full border border-regular text-main hover:bg-light disabled:cursor-default disabled:text-sub-weak disabled:hover:bg-transparent"
+    >
+      <ChevronRightIcon size={18} className={direction === 'prev' ? 'rotate-180' : undefined} />
+    </button>
+  )
+}
+
 interface DesignCaseDetailProps {
   slug: string
 }
 
-// Design 사례 상세 — 문제 정의 → 시안 비교(가로 나열) → 최종안 실제 동작 화면.
+// Design 사례 상세 — 문제 정의 → 시안 비교 또는 화면 구성(가로 나열) → 디자인 시스템 → 대표 화면 실제 동작.
 export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
   const item = CASES.find((candidate) => candidate.slug === slug && candidate.design)
 
@@ -37,7 +177,8 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
     )
   }
 
-  const { app, problem, variants, finalIndex } = item.design
+  const { app, device, problem, variants, finalIndex, screens, system, demo } = item.design
+  const openHint = device === 'desktop' ? ' 누르면 원본 크기로 열려요.' : ''
   const Demo = DESIGN_DEMOS[item.slug]
 
   return (
@@ -64,55 +205,62 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
             <span key={tag}>#{tag}</span>
           ))}
         </p>
+        {item.links && (
+          <p className="mt-4 flex flex-wrap gap-3">
+            {item.links.map(({ label, href }) => (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener"
+                className="flex w-fit items-center gap-1 rounded-full border border-regular px-4 py-2 text-14 font-medium text-main hover:bg-light"
+              >
+                {label} ↗
+              </a>
+            ))}
+          </p>
+        )}
       </header>
 
-      <section aria-labelledby="variants-title" className="mt-16">
-        <h2 id="variants-title" className="text-20 font-semibold text-main">
-          시안 비교
-        </h2>
-        <p className="mt-1 text-14 text-sub">왼쪽부터 순서대로 고쳐 나간 과정이에요.</p>
-        {/* 화면이 좁으면 시안 목록만 가로로 넘긴다 */}
-        <ol className="scrollbar-none -mx-5 mt-6 flex snap-x scroll-px-5 gap-6 overflow-x-auto px-5 pb-2 sm:mx-0 sm:scroll-px-0 sm:px-0">
-          {variants.map((variant, index) => {
-            const isFinal = index === finalIndex
-            return (
-              <li key={variant.label} className="w-60 shrink-0 snap-start sm:w-70">
-                <figure className="flex flex-col gap-3">
-                  <img
-                    src={variant.image}
-                    alt={`${variant.label} 화면`}
-                    width={400}
-                    height={860}
-                    loading="lazy"
-                    className={`h-auto w-full rounded-thumb border ${isFinal ? 'border-black' : 'border-regular'}`}
-                  />
-                  <figcaption className="flex flex-col gap-1">
-                    <span className="flex items-center gap-2 text-15 font-semibold text-main">
-                      {variant.label}
-                      {isFinal && (
-                        <span className="rounded-badge bg-main px-2 py-0.5 text-12 font-semibold text-white">최종</span>
-                      )}
-                    </span>
-                    <span className="text-14 break-keep text-sub">{variant.note}</span>
-                  </figcaption>
-                </figure>
-              </li>
-            )
-          })}
-        </ol>
-      </section>
+      {variants && (
+        <ScreenSection
+          id="variants-title"
+          title="시안 비교"
+          description="왼쪽부터 순서대로 고쳐 나간 과정이에요."
+          items={variants}
+          device={device}
+          finalIndex={finalIndex}
+        />
+      )}
 
-      {Demo && (
+      {screens && (
+        <ScreenSection
+          id="screens-title"
+          title="화면 구성"
+          description={`영역마다 대표 화면을 하나씩 모았어요.${openHint}`}
+          items={screens}
+          device={device}
+        />
+      )}
+
+      {system && (
+        <ScreenSection
+          id="system-title"
+          title="디자인 시스템"
+          description={`화면 전체에 쓴 색·글꼴·간격·컴포넌트 규칙이에요.${openHint}`}
+          items={system}
+          device={device}
+        />
+      )}
+
+      {Demo && demo && (
         <section aria-labelledby="demo-title" className="mt-16 flex flex-wrap items-start gap-x-16 gap-y-8">
           <div className="flex min-w-60 flex-[1_1_280px] flex-col gap-2 lg:pt-10">
             <h2 id="demo-title" className="text-20 font-semibold text-main">
-              최종안 실제 화면
+              {demo.title}
             </h2>
-            <p className="text-14 break-keep text-sub">
-              {variants[finalIndex].label}을 실제로 동작하는 화면으로 만들었어요. 직접 입력해 보세요. 비밀번호 보기, 아이디 저장이
-              동작하고, 로그인 버튼을 누르면 안내가 떠요.
-            </p>
-            <p className="text-13 break-keep text-sub-weak">실제 인증은 연결하지 않은 데모예요.</p>
+            <p className="text-14 break-keep text-sub">{demo.note}</p>
+            {demo.caveat && <p className="text-13 break-keep text-sub-weak">{demo.caveat}</p>}
           </div>
           {/* 휴대폰 틀 — 400px 시안 폭을 넘지 않고, 좁은 화면에서는 줄어든다 */}
           <div className="w-full max-w-100 overflow-hidden rounded-[32px] border-[6px] border-black">

@@ -3,29 +3,61 @@ import maestroLive from './assets/maestro.jpg'
 import stayLoginV1 from './assets/design/stay-login/v1.png'
 import stayLoginV2 from './assets/design/stay-login/v2.png'
 import stayLoginV3 from './assets/design/stay-login/v3.png'
+import gpHome from './assets/design/gameprobe/screen-01-home.webp'
+import gpProfile from './assets/design/gameprobe/screen-02-profile.webp'
+import gpMatch from './assets/design/gameprobe/screen-03-match.webp'
+import gpRanking from './assets/design/gameprobe/screen-04-ranking.webp'
+import gpMeta from './assets/design/gameprobe/screen-05-meta.webp'
+import gpAgent from './assets/design/gameprobe/screen-06-agent.webp'
+import gpMy from './assets/design/gameprobe/screen-07-my.webp'
+import gpLineup from './assets/design/gameprobe/screen-08-lineup.webp'
+import gpSmoke from './assets/design/gameprobe/screen-09-smoke.webp'
+import gpAdmin from './assets/design/gameprobe/screen-10-admin.webp'
+import gpCover from './assets/design/gameprobe/system-00-cover.webp'
+import gpColor from './assets/design/gameprobe/system-01-color.webp'
+import gpTypography from './assets/design/gameprobe/system-02-typography.webp'
+import gpTextHierarchy from './assets/design/gameprobe/system-03-text-hierarchy.webp'
+import gpLayout from './assets/design/gameprobe/system-04-layout.webp'
+import gpRadius from './assets/design/gameprobe/system-05-radius.webp'
+import gpComponents from './assets/design/gameprobe/system-06-components.webp'
 
 // 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
 // Accio 를 뺀 사례·지표는 시안의 예시 값이다. 실제 사례를 정리하면 여기서 바꾼다.
 
 export type CaseType = 'Front' | 'Back' | 'Design'
 
-/** Design 사례의 시안 한 장 */
+/** Design 사례의 화면 한 장(시안·화면 구성·디자인 시스템 가이드) */
 export interface DesignVariant {
   label: string
   image: string
-  /** 이 안에서 바꾼 점·이유 한 줄 */
+  /** 이 안에서 바꾼 점·이유, 또는 이 화면이 하는 일 한 줄 */
   note: string
+  /** 이미지 원본 크기. 없으면 400×860 휴대폰 시안으로 본다 */
+  width?: number
+  height?: number
 }
 
-/** Design 사례 — 같은 화면을 여러 안으로 고친 과정. 최종안은 실제 동작하는 데모로 함께 보여준다 */
+/**
+ * Design 사례 — 같은 화면을 여러 안으로 고친 과정(variants), 또는 앱 전체 화면 구성(screens)과
+ * 디자인 시스템(system). 대표 화면은 실제 동작하는 데모로 함께 보여준다(demos/index.ts).
+ */
 export interface DesignCase {
   /** 어떤 서비스의 화면인지 */
   app: string
-  /** 처음 시안에서 느낀 문제 */
+  /** 시안 화면 종류. 없으면 휴대폰 화면으로 본다 */
+  device?: 'mobile' | 'desktop'
+  /** 처음 시안에서 느낀 문제, 또는 설계하며 풀려던 문제 */
   problem: string
-  variants: DesignVariant[]
+  /** 같은 화면을 고쳐 나간 시안 */
+  variants?: DesignVariant[]
   /** variants 중 최종안의 위치 */
-  finalIndex: number
+  finalIndex?: number
+  /** 앱의 주요 화면 */
+  screens?: DesignVariant[]
+  /** 디자인 시스템 가이드(컬러·타이포·컴포넌트). device 와 같은 크기의 화면으로 본다 */
+  system?: DesignVariant[]
+  /** 실제 동작 화면 칸의 제목·설명. 데모가 등록된 사례에만 쓴다 */
+  demo?: { title: string; note: string; caveat?: string }
 }
 
 export interface PortfolioCase {
@@ -75,6 +107,57 @@ export const CASES: PortfolioCase[] = [
         { label: '3안', image: stayLoginV3, note: '로그인 버튼이 어두운 배경에 묻혀 파란색으로 강조하고, 로고를 원형 심볼로 정리' },
       ],
       finalIndex: 2,
+      demo: {
+        title: '최종안 실제 화면',
+        note: '3안을 실제로 동작하는 화면으로 만들었어요. 직접 입력해 보세요. 비밀번호 보기, 아이디 저장이 동작하고, 로그인 버튼을 누르면 안내가 떠요.',
+        caveat: '실제 인증은 연결하지 않은 데모예요.',
+      },
+    },
+  },
+  {
+    slug: 'gameprobe',
+    type: 'Design',
+    code: 'DESIGN 02',
+    date: '2026.10',
+    title: 'GAMEPROBE — 발로란트 전적·공략 웹 서비스 설계',
+    description:
+      '전적 검색부터 매치 분석, 메타 통계, 라인업·스모크 공략, 관리자 편집까지 10개 영역의 화면과 디자인 시스템을 피그마로 설계.',
+    metrics: [
+      { label: '영역', value: '10개' },
+      { label: '디자인 시스템', value: '7장' },
+    ],
+    tags: ['Figma', '디자인 시스템', 'Web UI'],
+    keywords:
+      'gameprobe 게임프로브 발로란트 valorant 게임 전적 검색 매치 분석 메타 티어 라인업 스모크 공략 관리자 디자인 시스템 피그마 웹',
+    image: gpHome,
+    href: '#/case/gameprobe',
+    links: [{ label: '실제 서비스 보기', href: 'https://valorant-platform.vercel.app/' }],
+    design: {
+      app: 'GAMEPROBE — 발로란트 플레이어가 전적을 검색하고 메타·라인업·스모크 공략을 찾아보는 웹 서비스 (팬 프로젝트)',
+      problem:
+        '전적, 메타 통계, 라인업 공략이 서로 다른 사이트에 흩어져 있어 한 경기를 돌아보려면 여러 곳을 오가야 했다. 검색 → 매치 분석 → 공략까지 한 서비스 안에서 이어지도록 화면과 디자인 시스템을 함께 설계했다.',
+      device: 'desktop',
+      screens: [
+        { label: '메인 홈', image: gpHome, note: 'Riot ID 검색을 가장 위에 두고, 즐겨찾기·요원 티어·맵 승률·리더보드를 한 화면에 모음', width: 1440, height: 1863 },
+        { label: '플레이어 프로필', image: gpProfile, note: '현재 티어와 최근 20매치 요약을 왼쪽에, 매치 목록을 승패 색으로 구분해 오른쪽에 배치', width: 1440, height: 1965 },
+        { label: '매치 상세', image: gpMatch, note: '우리 팀·상대 팀 스코어보드를 나누고 내 행을 강조. 라운드·경제·비교는 탭으로 분리', width: 1440, height: 1431 },
+        { label: '랭킹', image: gpRanking, note: '공식 리더보드를 순위·티어·RR 중심의 긴 표로 정리', width: 1440, height: 3218 },
+        { label: '메타 통계', image: gpMeta, note: 'S~C 티어 보드로 한눈에 보고, 아래 표에서 승률·픽률·KDA로 다시 정렬', width: 1440, height: 2660 },
+        { label: '게임 정보', image: gpAgent, note: '요원 상세 — 역할과 스킬 정보를 한 페이지에 정리', width: 1440, height: 2050 },
+        { label: '마이페이지', image: gpMy, note: '로그인 전에는 계정 연동으로 얻는 이점만 짧게 보여주고 로그인 버튼 하나로 이어지게 함', width: 1440, height: 717 },
+        { label: '라인업', image: gpLineup, note: '맵·요원·스킬을 고르면 미니맵에 던지는 위치가 뜨고, 오른쪽에 서는 위치→조준→발사 단계를 보여줌', width: 1440, height: 1117 },
+        { label: '스모크 가이드', image: gpSmoke, note: '맵에서 연막 도착 위치를 고르면 서는 위치·조준·설치 순서가 펼쳐짐', width: 1440, height: 1763 },
+        { label: '관리자', image: gpAdmin, note: '공략 편집 — 입력 폼과 지도 위 위치 지정을 나란히 두어 입력하면서 바로 확인', width: 1440, height: 1594 },
+      ],
+      system: [
+        { label: '표지', image: gpCover, note: '가이드 목차와 디자인 원칙', width: 1440, height: 1673 },
+        { label: '컬러', image: gpColor, note: '배경·표면·텍스트·브랜드·승패 색과 사용 규칙', width: 1440, height: 4648 },
+        { label: '타이포그래피', image: gpTypography, note: 'Pretendard 기반 크기·굵기 스케일', width: 1440, height: 4346 },
+        { label: '텍스트 위계', image: gpTextHierarchy, note: '화면 유형별 제목·본문·보조 텍스트 조합', width: 1440, height: 3937 },
+        { label: '레이아웃·간격', image: gpLayout, note: '간격 스케일과 1440 데스크톱 그리드', width: 1440, height: 3245 },
+        { label: '모서리', image: gpRadius, note: '요소 크기별 모서리 반경 규칙', width: 1440, height: 2423 },
+        { label: '컴포넌트', image: gpComponents, note: '버튼·필터 칩·탭·검색창·통계 카드·매치 행', width: 1440, height: 3436 },
+      ],
     },
   },
   {
@@ -233,6 +316,7 @@ export const KEYWORDS: { label: string; type: CaseType }[] = [
   { label: '성능 개선', type: 'Front' },
   { label: '디자인 시스템', type: 'Front' },
   { label: '로그인 화면', type: 'Design' },
+  { label: '게임 전적', type: 'Design' },
   { label: '해커톤', type: 'Front' },
 ]
 
