@@ -3,7 +3,7 @@ import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import DesignCaseDetail from './DesignCaseDetail'
 import { EASE_OUT } from './motion'
 import PortfolioHeader from './PortfolioHeader'
-import PortfolioHero from './PortfolioHero'
+import IntroMotion from './IntroMotion'
 import { goTo, readTab, searchHref } from './routes'
 import { SEARCH_INPUT_ID } from './SearchBox'
 import SearchHome from './SearchHome'
@@ -66,17 +66,17 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
   }, [introPlaying])
 
   return (
-    // 인트로의 'JSH' 와 헤더 로고가 같은 layoutId 로 이어지도록 한 그룹에 둔다
+    // 인트로 출력의 'jsh.' 와 헤더 로고가 같은 layoutId 로 이어지도록 한 그룹에 둔다
     <LayoutGroup>
       <AnimatePresence>
         {introPlaying && (
           <motion.div
             key="intro"
-            exit={{ opacity: 0, y: -24 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: EASE_OUT }}
             className="fixed inset-0 z-30 overflow-y-auto"
           >
-            <PortfolioHero onDone={finishIntro} />
+            <IntroMotion onDone={finishIntro} />
           </motion.div>
         )}
       </AnimatePresence>

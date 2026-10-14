@@ -1,0 +1,136 @@
+/* 첫 방문 인트로(IntroMotion.tsx). 무대 크기(1112×384)를 기준으로 컨테이너 너비(cqw)에 맞춰 함께 줄어든다.
+   이 화면만의 어두운 에디터 색이라 포트폴리오 토큰 대신 여기서 정의한다. */
+.intro {
+  --i-bg: #0d1117;
+  --i-panel: #161b22;
+  --i-line: #21262d;
+  --i-fg: #e6edf3;
+  --i-muted: #7d8590;
+  --g0: #161b22;
+  --g1: #0e4429;
+  --g2: #006d32;
+  --g3: #26a641;
+  --g4: #39d353;
+  --i-str: #7ee787;
+  --i-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  position: fixed;
+  inset: 0;
+  background: var(--i-bg);
+  display: grid;
+  place-items: center;
+  padding: 0 max(16px, env(safe-area-inset-left, 0px));
+}
+
+.intro__stage {
+  position: relative;
+  width: min(100%, 1112px);
+  aspect-ratio: 1112 / 384;
+  container-type: inline-size;
+}
+
+.intro__grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  gap: calc(100cqw * 8 / 1112);
+  transition: opacity 0.62s ease;
+}
+.intro__grid.covered { opacity: 0; }
+.intro__cell {
+  background: var(--g0);
+  border-radius: calc(100cqw * 6 / 1112);
+  transition: background-color 0.32s ease, transform 0.32s ease, opacity 0.4s ease, box-shadow 0.4s ease;
+}
+.intro__cell.lit {
+  box-shadow: 0 0 calc(100cqw * 14 / 1112) rgba(57, 211, 83, 0.55), inset 0 0 0 1px rgba(180, 255, 190, 0.35);
+}
+.intro__cell.dim { opacity: 0.35; }
+.intro__cell.pop { animation: intro-pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes intro-pop {
+  0% { transform: scale(0.7); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.intro__editor {
+  --i-radius: calc(100cqw * 10 / 1112);
+  position: absolute;
+  inset: 0;
+  background: var(--i-panel);
+  border: 1px solid var(--i-line);
+  border-radius: var(--i-radius);
+  clip-path: inset(0 100% 0 0 round var(--i-radius));
+  transition: clip-path 0.62s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.intro__editor.open { clip-path: inset(0 0 0 0 round var(--i-radius)); }
+
+.intro__dots {
+  position: absolute;
+  top: calc(100cqw * 24 / 1112);
+  left: calc(100cqw * 24 / 1112);
+  display: flex;
+  gap: calc(100cqw * 8 / 1112);
+}
+.intro__dots i {
+  display: block;
+  width: calc(100cqw * 12 / 1112);
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+.intro__dots i:nth-child(1) { background: #ff5f57; }
+.intro__dots i:nth-child(2) { background: #febc2e; }
+.intro__dots i:nth-child(3) { background: #28c840; }
+
+.intro__code,
+.intro__out {
+  position: absolute;
+  left: calc(100cqw * 48 / 1112);
+  font-family: var(--i-mono);
+  white-space: pre;
+  color: var(--i-fg);
+}
+/* 휴대폰처럼 무대가 작아지면 글자가 너무 작아지지 않게 최소 크기를 둔다 */
+.intro__code {
+  top: calc(100cqw * 112 / 1112);
+  font-size: max(14px, calc(100cqw * 34 / 1112));
+  line-height: 1.6;
+}
+.intro__code .s { color: var(--i-str); }
+.intro__caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  vertical-align: -0.15em;
+  margin-left: 2px;
+  background: var(--g4);
+  animation: intro-blink 1s steps(1) infinite;
+}
+@keyframes intro-blink { 50% { opacity: 0; } }
+
+.intro__out {
+  top: calc(100cqw * 244 / 1112);
+  font-size: max(12px, calc(100cqw * 26 / 1112));
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.intro__out::before { content: "> "; color: var(--i-muted); }
+.intro__out.show { opacity: 1; transform: none; }
+
+.intro__skip {
+  position: absolute;
+  right: calc(24px + env(safe-area-inset-right, 0px));
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  font: 600 13px var(--font-sans, system-ui, sans-serif);
+  color: var(--i-muted);
+  background: transparent;
+  border: 1px solid var(--i-line);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.intro__skip:hover { color: var(--i-fg); border-color: var(--g3); }
+.intro__skip:focus-visible { outline: 2px solid var(--g4); outline-offset: 2px; }
