@@ -20,6 +20,27 @@ import gpTextHierarchy from './assets/design/gameprobe/system-03-text-hierarchy.
 import gpLayout from './assets/design/gameprobe/system-04-layout.webp'
 import gpRadius from './assets/design/gameprobe/system-05-radius.webp'
 import gpComponents from './assets/design/gameprobe/system-06-components.webp'
+import rmHome from './assets/design/remind/screen-01-home.webp'
+import rmTrack from './assets/design/remind/screen-02-track.webp'
+import rmTopic from './assets/design/remind/screen-03-topic.webp'
+import rmChoice from './assets/design/remind/screen-04-choice.webp'
+import rmFeedback from './assets/design/remind/screen-05-feedback.webp'
+import rmOx from './assets/design/remind/screen-06-ox.webp'
+import rmSelfGrade from './assets/design/remind/screen-07-self-grade.webp'
+import rmConceptSheet from './assets/design/remind/screen-08-concept-sheet.webp'
+import rmResult from './assets/design/remind/screen-09-result.webp'
+import rmWrongNote from './assets/design/remind/screen-10-wrong-note.webp'
+import rmSettings from './assets/design/remind/screen-11-settings.webp'
+import rmColor from './assets/design/remind/system-01-color.webp'
+import rmTypography from './assets/design/remind/system-02-typography.webp'
+import rmLayout from './assets/design/remind/system-03-layout.webp'
+import rmRadius from './assets/design/remind/system-04-radius.webp'
+import rmBreakpoints from './assets/design/remind/system-05-breakpoints.webp'
+import rmComponents from './assets/design/remind/system-06-components.webp'
+import rmIa from './assets/design/remind/system-07-ia.webp'
+import rmUserFlow from './assets/design/remind/system-08-user-flow.webp'
+import rmLearningModel from './assets/design/remind/system-09-learning-model.webp'
+import rmComponentSheet from './assets/design/remind/system-10-component-sheet.webp'
 
 // 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
 // Accio 를 뺀 사례·지표는 시안의 예시 값이다. 실제 사례를 정리하면 여기서 바꾼다.
@@ -54,7 +75,7 @@ export interface DesignCase {
   finalIndex?: number
   /** 앱의 주요 화면 */
   screens?: DesignVariant[]
-  /** 디자인 시스템 가이드(컬러·타이포·컴포넌트). device 와 같은 크기의 화면으로 본다 */
+  /** 디자인 시스템 가이드(컬러·타이포·컴포넌트). 넓고 긴 문서라 device 와 상관없이 데스크톱 카드로 보여준다 */
   system?: DesignVariant[]
   /** 실제 동작 화면 칸의 제목·설명. 데모가 등록된 사례에만 쓴다 */
   demo?: { title: string; note: string; caveat?: string }
@@ -157,6 +178,55 @@ export const CASES: PortfolioCase[] = [
         { label: '레이아웃·간격', image: gpLayout, note: '간격 스케일과 1440 데스크톱 그리드', width: 1440, height: 3245 },
         { label: '모서리', image: gpRadius, note: '요소 크기별 모서리 반경 규칙', width: 1440, height: 2423 },
         { label: '컴포넌트', image: gpComponents, note: '버튼·필터 칩·탭·검색창·통계 카드·매치 행', width: 1440, height: 3436 },
+      ],
+    },
+  },
+  {
+    slug: 'remind',
+    type: 'Design',
+    code: 'DESIGN 03',
+    date: '2026.10',
+    title: 'remind — 노션 학습노트 복습 퀴즈 앱 설계',
+    description:
+      '노션에 정리한 강의 노트를 객관식·OX·단답형·서술형 퀴즈로 복습하는 모바일 퍼스트 앱. 복습 흐름·오답노트·디자인 시스템을 피그마로 설계.',
+    metrics: [
+      { label: '퀴즈 유형', value: '4종' },
+      { label: '시안', value: '모바일 18 · PC/태블릿 5' },
+    ],
+    tags: ['Figma', '디자인 시스템', 'Mobile UI'],
+    keywords:
+      'remind 리마인드 노션 학습노트 복습 퀴즈 오답노트 객관식 ox 단답형 서술형 라이트너 leitner 학습 앱 모바일 반응형 디자인 시스템 피그마',
+    image: rmHome,
+    href: '#/case/remind',
+    links: [{ label: '실제 서비스 보기', href: 'https://remind-flame-ten.vercel.app/' }],
+    design: {
+      app: 'remind — 노션에 정리한 강의 노트를 퀴즈로 바꿔 매일 복습하는 웹 앱 (개인 프로젝트)',
+      problem:
+        '노션에 강의 노트를 쌓아도 다시 펼쳐 보지 않으면 금방 잊어버렸다. 홈에서 탭 두 번 안에 오늘 복습을 시작하고, 틀린 문제는 연속으로 두 번 맞힐 때까지 오답노트에서 다시 나오도록 흐름을 설계했다.',
+      screens: [
+        { label: '홈', image: rmHome, note: '오늘 복습할 문제 수와 시작 버튼을 맨 위에 두고, 이어 풀기·이번 주 업데이트·트랙을 아래로', width: 390, height: 1424 },
+        { label: '트랙', image: rmTrack, note: '토픽 수·진도·정답률 요약과 상태 필터, 토픽 목록', width: 390, height: 924 },
+        { label: '토픽 · 개념', image: rmTopic, note: '노션 소제목 하나를 개념 카드 하나로. 개념·문제 목록 탭과 하단 고정 버튼', width: 390, height: 1257 },
+        { label: '퀴즈 · 객관식', image: rmChoice, note: '탭바 없는 집중 모드 — 위에는 닫기·진행바·문제 번호만 남김', width: 390, height: 844 },
+        { label: '오답 피드백', image: rmFeedback, note: '채점 직후 정답·오답을 색·아이콘·문장으로 함께 보여주고, 보기마다 맞고 틀린 이유를 설명', width: 390, height: 1044 },
+        { label: '퀴즈 · OX', image: rmOx, note: '누르는 즉시 채점해 정답 쪽과 내가 고른 쪽을 바로 표시', width: 390, height: 844 },
+        { label: '퀴즈 · 서술형', image: rmSelfGrade, note: '모범답안·핵심 키워드와 비교해 몰랐음·애매함·알았음으로 직접 채점', width: 390, height: 844 },
+        { label: '개념 바텀시트', image: rmConceptSheet, note: '퀴즈를 벗어나지 않고 관련 개념을 아래에서 올려 확인', width: 390, height: 844 },
+        { label: '결과', image: rmResult, note: '점수·정답률 변화·연속 복습 일수와 틀린 문제를 한 번에 다시 풀기', width: 390, height: 1066 },
+        { label: '오답노트', image: rmWrongNote, note: '틀린 문제를 모아 두고, 연속 2번 맞히면 자동으로 졸업', width: 390, height: 1087 },
+        { label: '설정', image: rmSettings, note: '퀴즈·학습 기록·정보로 나눈 설정 목록', width: 390, height: 846 },
+      ],
+      system: [
+        { label: '컬러', image: rmColor, note: '쿨그레이 바탕에 오렌지 한 색. 색은 지금 눌러야 할 것과 정답·오답에만', width: 1200, height: 2558 },
+        { label: '타이포그래피', image: rmTypography, note: '크기·굵기 스케일과 화면별 텍스트 위계', width: 1200, height: 3853 },
+        { label: '레이아웃·간격', image: rmLayout, note: '간격 스케일과 컨테이너 규칙', width: 1200, height: 1311 },
+        { label: '모서리·그림자', image: rmRadius, note: '요소별 모서리 반경과 그림자 단계', width: 1200, height: 672 },
+        { label: '브레이크포인트', image: rmBreakpoints, note: '모바일 퍼스트 — 390 · 768 · 1440 시안, 콘텐츠 최대 1200', width: 1200, height: 868 },
+        { label: '컴포넌트 규칙', image: rmComponents, note: '컴포넌트를 고르고 조합하는 기준', width: 1200, height: 1396 },
+        { label: 'IA', image: rmIa, note: '화면 7개와 하단 탭바가 보이는 범위·이동 경로', width: 1200, height: 2108 },
+        { label: '유저 플로우', image: rmUserFlow, note: '가장 자주 쓰는 매일 복습은 홈에서 탭 2번 안에 첫 문제가 나오도록', width: 1200, height: 2235 },
+        { label: '학습 모델', image: rmLearningModel, note: 'Leitner 6단계(BOX 0~5)로 맞힐수록 복습 간격을 당일 → 1일 → 3일 → 7일 → 14일 뒤로 늘림', width: 1200, height: 802 },
+        { label: '컴포넌트 시트', image: rmComponentSheet, note: '버튼·보기·OX·피드백 패널·오답 카드 등 상태별 컴포넌트 전체', width: 1680, height: 11050 },
       ],
     },
   },
@@ -317,6 +387,7 @@ export const KEYWORDS: { label: string; type: CaseType }[] = [
   { label: '디자인 시스템', type: 'Front' },
   { label: '로그인 화면', type: 'Design' },
   { label: '게임 전적', type: 'Design' },
+  { label: '복습 퀴즈', type: 'Design' },
   { label: '해커톤', type: 'Front' },
 ]
 

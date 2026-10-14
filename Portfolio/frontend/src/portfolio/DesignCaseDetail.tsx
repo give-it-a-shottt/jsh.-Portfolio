@@ -22,6 +22,9 @@ function BackLink() {
 /** 카드 사이 간격(gap-6) — 화살표로 카드 한 장씩 넘길 때 쓴다 */
 const CARD_GAP = 24
 
+/** 데스크톱 카드는 윗부분만 보여서 원본을 열 수 있다고 알려 준다 */
+const OPEN_HINT = ' 누르면 원본 크기로 열려요.'
+
 interface ScreenSectionProps {
   id: string
   title: string
@@ -103,7 +106,7 @@ function ScreenSection({ id, title, description, items, device = 'mobile', final
               height={item.height ?? 860}
               loading="lazy"
               className={`w-full rounded-thumb border ${isFinal ? 'border-black' : 'border-regular'} ${
-                isDesktop ? 'aspect-4/3 object-cover object-top' : 'h-auto'
+                isDesktop ? 'aspect-4/3 object-cover object-top-left' : 'h-auto'
               }`}
             />
           )
@@ -178,7 +181,6 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
   }
 
   const { app, device, problem, variants, finalIndex, screens, system, demo } = item.design
-  const openHint = device === 'desktop' ? ' 누르면 원본 크기로 열려요.' : ''
   const Demo = DESIGN_DEMOS[item.slug]
 
   return (
@@ -237,7 +239,7 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
         <ScreenSection
           id="screens-title"
           title="화면 구성"
-          description={`영역마다 대표 화면을 하나씩 모았어요.${openHint}`}
+          description={`주요 화면을 사용 흐름 순서로 모았어요.${device === 'desktop' ? OPEN_HINT : ''}`}
           items={screens}
           device={device}
         />
@@ -247,9 +249,10 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
         <ScreenSection
           id="system-title"
           title="디자인 시스템"
-          description={`화면 전체에 쓴 색·글꼴·간격·컴포넌트 규칙이에요.${openHint}`}
+          description={`화면 전체에 쓴 색·글꼴·간격·컴포넌트 규칙이에요.${OPEN_HINT}`}
           items={system}
-          device={device}
+          // 가이드는 시안 종류와 상관없이 넓고 긴 문서라 데스크톱 카드로 보여준다
+          device="desktop"
         />
       )}
 
