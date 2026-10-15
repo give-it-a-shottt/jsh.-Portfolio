@@ -1,5 +1,6 @@
 import { useId, useRef, useState, type KeyboardEvent } from 'react'
 import { Highlight, themes } from 'prism-react-renderer'
+import screenshotPlaceholder from './assets/screenshot-placeholder.webp'
 import { CASE_DETAILS, type CodeSample } from './caseDetails'
 import { CASES, type PortfolioCase } from './data'
 import { CheckIcon, ChevronRightIcon } from '../shared/icons'
@@ -174,24 +175,25 @@ function CodePanel({ samples, tall }: { samples: CodeSample[]; tall: boolean }) 
 
 /** Front 사례의 대표 화면 — 세로로 긴 캡처라 윗부분만 보여주고, 누르면 원본을 연다 */
 function Screenshot({ item }: { item: PortfolioCase }) {
+  if (!item.image) {
+    // 아직 캡처가 없는 사례 — 결과 목록과 같은 자리표시 이미지로 대신한다
+    return (
+      <figure className="h-80 overflow-hidden rounded-card border border-regular sm:h-110">
+        <img src={screenshotPlaceholder} alt="" className="size-full object-cover" />
+      </figure>
+    )
+  }
   return (
     <figure className="flex h-80 items-start justify-center overflow-hidden rounded-card border border-regular bg-light px-6 pt-6 sm:h-110">
-      {item.image ? (
-        <a
-          href={item.image}
-          target="_blank"
-          rel="noopener"
-          aria-label={`${item.title} 화면 원본 크기로 보기`}
-          className="w-full max-w-90"
-        >
-          <img src={item.image} alt={`${item.title} 화면`} className="w-full rounded-t-thumb border border-b-0 border-regular" />
-        </a>
-      ) : (
-        // 아직 캡처가 없는 사례 — 결과 목록과 같은 사선 자리표시
-        <div className="flex size-full items-center justify-center rounded-t-thumb bg-[repeating-linear-gradient(135deg,#f7f7fb_0_8px,#f1f1f5_8px_16px)] font-mono text-12 tracking-normal text-sub-weak">
-          screenshot
-        </div>
-      )}
+      <a
+        href={item.image}
+        target="_blank"
+        rel="noopener"
+        aria-label={`${item.title} 화면 원본 크기로 보기`}
+        className="w-full max-w-90"
+      >
+        <img src={item.image} alt={`${item.title} 화면`} className="w-full rounded-t-thumb border border-b-0 border-regular" />
+      </a>
     </figure>
   )
 }

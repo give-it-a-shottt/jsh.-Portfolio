@@ -1,3 +1,4 @@
+import screenshotPlaceholder from './assets/screenshot-placeholder.webp'
 import { CASES, KEYWORDS, matchesQuery, type PortfolioCase } from './data'
 import { rankCases } from './rank'
 import { SearchIcon } from '../shared/icons'
@@ -83,10 +84,8 @@ function ResultRow({ item }: { item: PortfolioCase }) {
           {item.image ? (
             <img src={item.image} alt="" className="size-full object-cover object-top" />
           ) : (
-            // 아직 캡처가 없는 프로젝트 — 시안의 사선 자리표시
-            <div className="flex size-full items-center justify-center bg-[repeating-linear-gradient(135deg,#f7f7fb_0_8px,#f1f1f5_8px_16px)] font-mono text-11 tracking-normal text-sub-weak">
-              screenshot
-            </div>
+            // 아직 캡처가 없는 사례 — 자리표시 이미지로 대신한다
+            <img src={screenshotPlaceholder} alt="" className="size-full object-cover" />
           )}
         </div>
       )}

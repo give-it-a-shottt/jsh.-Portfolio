@@ -22,22 +22,30 @@ const TOTAL = CODE_PARTS.reduce((sum, [text]) => sum + text.length, 0)
 /** 각 조각이 시작하는 글자 위치 */
 const PART_STARTS = CODE_PARTS.map((_, i) => CODE_PARTS.slice(0, i).reduce((sum, [text]) => sum + text.length, 0))
 
-// 단계별 시간(ms) — 원본 타이밍. 합쳐서 약 6.6초 뒤 로고로 넘어가고, 아무 입력으로나 건너뛸 수 있다
+// 단계별 시간(ms). 빠르기는 강 → 약 → 강 — 잔디는 빠르게 채우고, JSH·에디터·타이핑에서 점점 늦추다가,
+// 출력은 짧게 튀어나와 로고로 날아간다. 합쳐서 약 4.5초 뒤 로고로 넘어가고, 아무 입력으로나 건너뛸 수 있다
 const TIMING = {
-  start: 250,
+  start: 150,
   /** 칸이 왼쪽부터 채워지는 간격(열마다) + 흩뿌림 */
-  fillStep: 42,
-  fillJitter: 140,
-  fillHold: 1250,
+  fillStep: 24,
+  fillJitter: 80,
+  fillHold: 750,
   /** JSH 로 모일 때 열마다 늦추는 간격 */
-  alignStep: 14,
-  alignHold: 1300,
-  editorOpen: 900,
-  /** 한 글자 치는 시간 = typeMin + 0~typeJitter */
-  typeMin: 38,
-  typeJitter: 55,
-  beforeOutput: 280,
-  outputHold: 900,
+  alignStep: 10,
+  alignHold: 1000,
+  editorOpen: 650,
+  /** 한 글자 치는 시간 — 첫 글자 typeFast 에서 마지막 글자 typeSlow 로 점점 늦춘다(+ 0~typeJitter) */
+  typeFast: 30,
+  typeSlow: 85,
+  typeJitter: 15,
+  beforeOutput: 120,
+  outputHold: 600,
+}
+
+/** n 번째 글자를 친 뒤 쉬는 시간 — 진행률의 제곱으로 늦춰, 앞은 빠르게 치고 끝으로 갈수록 천천히 */
+function typeDelay(n: number) {
+  const progress = n / TOTAL
+  return TIMING.typeFast + (TIMING.typeSlow - TIMING.typeFast) * progress * progress + Math.random() * TIMING.typeJitter
 }
 
 // 5칸 글자 3개 + 간격 = 17칸, 왼쪽 2칸부터 배치
@@ -124,7 +132,7 @@ export default function IntroMotion({ onDone }: IntroMotionProps) {
       for (let n = 1; n <= TOTAL; n++) {
         if (!alive) return
         setTyped(n)
-        await sleep(TIMING.typeMin + Math.random() * TIMING.typeJitter)
+        await sleep(typeDelay(n))
       }
       await sleep(TIMING.beforeOutput)
       if (!alive) return

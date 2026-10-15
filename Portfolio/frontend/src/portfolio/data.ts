@@ -97,7 +97,7 @@ export interface PortfolioCase {
   tags: string[]
   /** 화면에 보이지 않는 추가 검색어 */
   keywords: string
-  /** Front 썸네일. 없으면 자리표시를 보여준다 */
+  /** Front 썸네일. 없으면 자리표시 이미지(assets/screenshot-placeholder.webp)를 보여준다 */
   image?: string
   /** 눌렀을 때 갈 곳 — 보통 사례 상세 `#/case/{slug}`. 없으면 링크 없이 보여준다 */
   href?: string

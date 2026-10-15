@@ -114,8 +114,9 @@
   top: calc(100cqw * 244 / 1112);
   font-size: max(12px, calc(100cqw * 26 / 1112));
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transform: translateY(10px);
+  /* 마지막은 다시 강하게 — 짧고 빠르게 튀어나온다 */
+  transition: opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1), transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .intro__out::before { content: "> "; color: var(--i-muted); }
 .intro__out.show { opacity: 1; transform: none; }
