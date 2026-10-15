@@ -1,13 +1,17 @@
-import { useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
+import { CASES } from './data'
 import DesignCaseDetail from './DesignCaseDetail'
 import { EASE_OUT } from './motion'
 import PortfolioHeader from './PortfolioHeader'
 import IntroMotion from './IntroMotion'
-import { goTo, readTab, searchHref } from './routes'
+import { goTo, readTab, searchHref, type ResultTab } from './routes'
 import { SEARCH_INPUT_ID } from './SearchBox'
 import SearchHome from './SearchHome'
 import SearchResults from './SearchResults'
+
+// Front·Back 상세는 코드 원문과 하이라이터를 함께 받아서, 열 때만 받는다
+const EngineeringCaseDetail = lazy(() => import('./EngineeringCaseDetail'))
 
 const INTRO_SEEN_KEY = 'jsh-intro-seen'
 
@@ -44,6 +48,8 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
   const query = params.get('q') ?? ''
   const tab = readTab(params.get('tab'))
   const isResults = path === '/search'
+  // 상세 화면에서는 그 사례의 분류를 헤더 바로가기에 표시한다
+  const caseItem = path === '/case' ? CASES.find((item) => item.slug === slug) : undefined
 
   const finishIntro = useCallback(() => {
     markIntroSeen()
@@ -85,9 +91,14 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
         <div className="flex min-h-svh flex-col bg-white">
           <PortfolioHeader
             search={isResults ? { query, onSearch: search } : undefined}
-            activeTab={isResults ? tab : path === '/case' ? 'design' : 'all'}
+            activeTab={isResults ? tab : caseItem ? (caseItem.type.toLowerCase() as ResultTab) : 'all'}
           />
-          {path === '/case' ? (
+          {caseItem && !caseItem.design ? (
+            <Suspense fallback={null}>
+              <EngineeringCaseDetail slug={slug} />
+            </Suspense>
+          ) : path === '/case' ? (
+            // Design 사례, 또는 없는 사례의 안내
             <DesignCaseDetail slug={slug} />
           ) : isResults ? (
             <SearchResults query={query} tab={tab} />

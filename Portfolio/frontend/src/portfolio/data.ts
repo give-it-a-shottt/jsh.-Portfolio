@@ -41,9 +41,12 @@ import rmIa from './assets/design/remind/system-07-ia.webp'
 import rmUserFlow from './assets/design/remind/system-08-user-flow.webp'
 import rmLearningModel from './assets/design/remind/system-09-learning-model.webp'
 import rmComponentSheet from './assets/design/remind/system-10-component-sheet.webp'
+import type { Level } from './rank'
 
 // 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
 // 실제로 한 사례만 둔다. 새 사례는 CASES 에, 추천 검색어는 KEYWORDS 에 더한다.
+// 목록 순서는 level(rank.ts) → 날짜로 정해진다. 여기 적는 순서는 그 둘이 같을 때만 쓴다.
+// Front·Back 사례의 상세(문제·해결·코드)는 caseDetails.ts 에 slug 로 적는다.
 
 export type CaseType = 'Front' | 'Back' | 'Design'
 
@@ -86,6 +89,8 @@ export interface PortfolioCase {
   type: CaseType
   code: string
   date: string
+  /** 중요도 1~3 — 높은 것부터 보여준다. 화면에는 보이지 않는다(기준은 rank.ts) */
+  level: Level
   title: string
   description: string
   metrics: { label: string; value: string }[]
@@ -94,52 +99,206 @@ export interface PortfolioCase {
   keywords: string
   /** Front 썸네일. 없으면 자리표시를 보여준다 */
   image?: string
-  /** 눌렀을 때 갈 곳. 없으면 링크 없이 보여준다 */
+  /** 눌렀을 때 갈 곳 — 보통 사례 상세 `#/case/{slug}`. 없으면 링크 없이 보여준다 */
   href?: string
-  /** href 말고 따로 열어볼 곳(예: 이전 버전). 새 탭으로 연다 */
+  /** href 말고 따로 열어볼 곳(실제 화면, 이전 버전 등). 새 탭으로 연다 */
   links?: { label: string; href: string }[]
   /** type 이 'Design' 인 사례의 시안 비교 */
   design?: DesignCase
 }
 
 export const CASES: PortfolioCase[] = [
+  // ── Front ──
   {
-    slug: 'stay-login',
-    type: 'Design',
-    code: 'DESIGN 01',
+    slug: 'maestro',
+    type: 'Front',
+    code: 'PROJECT 02',
     date: '2026.10',
-    title: '숙박 예약 앱 로그인 화면 3안 개선',
-    description: '소셜 로그인이 먼저 보여 아이디 로그인 동선이 길던 첫 시안을 3안까지 다듬고, 최종안을 실제 동작하는 화면으로 구현.',
+    level: 3,
+    title: '마에스트로 — 틀어진 일정의 플랜 B 지휘자',
+    description:
+      '짜둔 서울 일정의 끼니마다 "속이 더부룩해", "비 와" 같은 상황별 대안 식당을 미리 붙여두고, 당일 버튼 하나로 꺼내 쓰는 모바일 웹. YUMITHON 해커톤 출품작.',
     metrics: [
-      { label: '시안', value: '3안' },
-      { label: '최종', value: '3안 구현' },
+      { label: '유미 요청', value: '끼니당 1번' },
+      { label: '상황', value: '6개 × 대안 3곳' },
     ],
-    tags: ['Figma', 'React', 'Tailwind'],
-    keywords: '로그인 숙박 예약 앱 소셜 로그인 UI 개선 피그마 accio 디자인',
-    image: stayLoginV3,
-    href: '#/case/stay-login',
-    design: {
-      app: 'Accio — 저장한 여행지를 모아 보고 숙소를 예약하는 앱 (개인 콘셉트)',
-      problem:
-        '첫 시안은 소셜 로그인이 맨 위에 있어 아이디로 로그인하는 사용자가 한 번 더 내려가야 했고, 둥근 입력창과 버튼이 비슷해 보여 무엇을 눌러야 할지 흐렸다.',
-      variants: [
-        { label: '1안', image: stayLoginV1, note: '소셜 로그인을 맨 위에 두고 입력창·버튼을 모두 둥근 알약 모양으로 맞춘 첫 시안' },
-        { label: '2안', image: stayLoginV2, note: '아이디 로그인을 주 동선으로 보고 위로 올림. 입력창을 각지게 바꿔 버튼과 구분' },
-        { label: '3안', image: stayLoginV3, note: '로그인 버튼이 어두운 배경에 묻혀 파란색으로 강조하고, 로고를 원형 심볼로 정리' },
-      ],
-      finalIndex: 2,
-      demo: {
-        title: '최종안 실제 화면',
-        note: '3안을 실제로 동작하는 화면으로 만들었어요. 직접 입력해 보세요. 비밀번호 보기, 아이디 저장이 동작하고, 로그인 버튼을 누르면 안내가 떠요.',
-        caveat: '실제 인증은 연결하지 않은 데모예요.',
-      },
-    },
+    tags: ['React', 'FastAPI', '헤이유미 API'],
+    keywords: '마에스트로 maestro 해커톤 yumithon 헤이유미 맛집 일정 플랜B 대안 식당 fastapi 백엔드',
+    image: maestroLive,
+    href: '#/case/maestro',
+    links: [{ label: '실제 화면 보기', href: '#/maestro' }],
   },
+  {
+    slug: 'accio',
+    type: 'Front',
+    code: 'PROJECT 01',
+    date: '2025.11',
+    level: 3,
+    title: 'Accio — AI 자연어 검색 쇼핑몰',
+    description:
+      '“USB 여러 개 꽂는 거”처럼 모호한 말도 알아듣는 쇼핑몰. 디자인 시스템을 정의하고 대화형 검색부터 장바구니·주문까지 구현.',
+    metrics: [
+      { label: '기간', value: '2025.10 – 11' },
+      { label: '팀', value: '5명' },
+    ],
+    tags: ['React', 'TypeScript', 'Tailwind'],
+    keywords: 'accio 아씨오 쇼핑몰 이커머스 ai 검색 리액트 디자인 시스템',
+    image: accioHome,
+    href: '#/case/accio',
+    // v1: 실제 서비스했던 원본. 서버가 닫혀 목데이터로 도는 정적 빌드(public/accio-v1)다
+    links: [
+      { label: '실제 화면 보기', href: '#/accio' },
+      { label: 'v1 원본 보기', href: '/accio-v1/' },
+    ],
+  },
+  {
+    slug: 'search-portfolio',
+    type: 'Front',
+    code: 'PROJECT 03',
+    date: '2026.10',
+    level: 2,
+    title: '검색형 포트폴리오 — 모든 작업을 싣고 중요한 것부터',
+    description:
+      '포트폴리오를 검색 결과처럼 탐색하는 이 사이트. 작은 작업까지 전부 싣되 내부 레벨로 중요한 사례를 위에 올리고, 검색어·탭을 주소에 남겨 공유와 뒤로가기가 되게 함.',
+    metrics: [
+      { label: '정렬', value: '레벨 → 최신순' },
+      { label: '단축키', value: '/ 로 검색' },
+    ],
+    tags: ['React', 'TypeScript', 'Tailwind'],
+    keywords: '검색형 포트폴리오 이 사이트 jsh 검색 자동완성 정렬 레벨 랭킹 해시 라우팅 코드 분할 lazy 키보드',
+    href: '#/case/search-portfolio',
+  },
+  {
+    slug: 'maestro-wake',
+    type: 'Front',
+    code: 'PROJECT 04',
+    date: '2026.10',
+    level: 1,
+    title: '잠든 무료 서버가 깨는 1분 동안 안내 띄우기',
+    description:
+      '무료 서버는 쉬다가 첫 요청에 깨어나는 데 1분쯤 걸린다. 들어오자마자 미리 깨우고, 첫 응답이 2.5초 넘게 늦으면 이유를 알려 주는 안내를 띄움.',
+    metrics: [{ label: '안내 시점', value: '첫 응답 2.5초 지연' }],
+    tags: ['React', 'UX'],
+    keywords: '마에스트로 maestro 콜드 스타트 cold start 서버 깨우기 로딩 안내 무료 서버 render 대기',
+    href: '#/case/maestro-wake',
+  },
+  {
+    slug: 'accio-v1',
+    type: 'Front',
+    code: 'PROJECT 05',
+    date: '2026.10',
+    level: 1,
+    title: '서버가 닫힌 팀 프로젝트 원본을 정적 빌드로 살려 두기',
+    description:
+      'Accio 팀 프로젝트(v1)는 서버가 닫혀 들어가 볼 수 없게 됨. 원본에 있던 목 모드로 정적 빌드해 /accio-v1 에 붙이고, 백엔드·.env 가 섞인 소스는 저장소에서 뺌.',
+    metrics: [],
+    tags: ['Vite', '정적 빌드'],
+    keywords: 'accio 아씨오 v1 원본 정적 빌드 목 모드 보존 vite base 배포',
+    href: '#/case/accio-v1',
+    links: [{ label: 'v1 원본 보기', href: '/accio-v1/' }],
+  },
+  // ── Back ──
+  {
+    slug: 'maestro-quota',
+    type: 'Back',
+    code: 'CASE 01',
+    date: '2026.10',
+    level: 3,
+    title: '하루 70요청 한도 안에서 끼니마다 대안 18곳 미리 찾기',
+    description:
+      '상황마다 따로 검색하면 끼니 하나에 요청이 6번 나가는 구조. 끼니마다 추천순으로 한 번만 넓게 받고, 상황별 조건은 그 결과 안에서 골라 요청 수를 상황 수와 무관하게 고정.',
+    metrics: [
+      { label: '유미 요청', value: '끼니당 검색 1번' },
+      { label: '대안', value: '상황 6개 × 3곳' },
+    ],
+    tags: ['FastAPI', 'asyncio', '헤이유미 API'],
+    keywords: '마에스트로 maestro 요청 한도 쿼터 api 호출 줄이기 최적화 검색 추천 유미 fastapi 백엔드 python',
+    href: '#/case/maestro-quota',
+  },
+  {
+    slug: 'maestro-mock-real',
+    type: 'Back',
+    code: 'CASE 02',
+    date: '2026.10',
+    level: 2,
+    title: 'API 키 없이도 도는 mock ↔ real 클라이언트 교체 구조',
+    description:
+      '키를 받기 전에도 개발하고, 발표 중 외부 API가 멈춰도 버틸 수 있게 유미 클라이언트를 인터페이스 하나로 묶고 환경변수 하나로 바꿔 끼우게 설계.',
+    metrics: [
+      { label: '모드 전환', value: '환경변수 1개' },
+      { label: '공개 사이트 유미 호출', value: '0회' },
+    ],
+    tags: ['FastAPI', 'Protocol', '의존성 주입'],
+    keywords: '마에스트로 maestro mock real 목 모드 인터페이스 의존성 주입 depends protocol 테스트 장애 대비 발표 백업 외부 api',
+    href: '#/case/maestro-mock-real',
+  },
+  {
+    slug: 'maestro-owner-sim',
+    type: 'Back',
+    code: 'CASE 03',
+    date: '2026.10',
+    level: 2,
+    title: '실제 사장님께 알림이 가지 않게 문의·예약 흉내 내기',
+    description:
+      '실시간 문의·예약은 실제 가게 사장님 앱으로 푸시가 가는 기능. 개발·발표 중 진짜 가게를 귀찮게 하지 않도록 이 기능만 시뮬레이터로 돌리고 응답에 simulated 표시를 붙임.',
+    metrics: [{ label: '사장님 앱으로 가는 요청', value: '0' }],
+    tags: ['FastAPI', '롱폴링', '시뮬레이터'],
+    keywords: '마에스트로 maestro 사장님 실시간 문의 예약 푸시 알림 시뮬레이터 롱폴링 long polling simulated 운영',
+    href: '#/case/maestro-owner-sim',
+  },
+  {
+    slug: 'maestro-api-resilience',
+    type: 'Back',
+    code: 'CASE 04',
+    date: '2026.10',
+    level: 2,
+    title: '느리고 한도 있는 외부 API를 실측해 맞춘 호출 계층',
+    description:
+      '추천순 검색이 10초를 넘기고, 한도를 넘으면 429가 오는 외부 API. 실제 응답을 재 보고 타임아웃·재시도·캐시·동시 요청 수를 정하고, 실패는 사용자 안내 문구로 바꿈.',
+    metrics: [
+      { label: '타임아웃', value: '20초 · 재시도 1번' },
+      { label: '같은 요청 캐시', value: '10분' },
+      { label: '동시 요청', value: '최대 4개' },
+    ],
+    tags: ['httpx', '캐시', '예외 처리'],
+    keywords: '마에스트로 maestro 외부 api 타임아웃 재시도 429 rate limit 캐시 세마포어 동시성 httpx 예외 처리 오류 응답',
+    href: '#/case/maestro-api-resilience',
+  },
+  {
+    slug: 'maestro-trust-rank',
+    type: 'Back',
+    code: 'CASE 05',
+    date: '2026.10',
+    level: 1,
+    title: '폐업 의심 매장은 빼고, 오래된 정보는 뒤로 보내기',
+    description:
+      '대안으로 고른 식당에 갔는데 문을 닫았으면 서비스가 의미 없다. 폐업 신호가 있는 곳은 빼고, 교차검증·최근성이 낮은 곳은 뒤로 미뤄 믿을 만한 곳부터 보여줌.',
+    metrics: [{ label: '뒤로 미루는 기준', value: '신뢰도 0.6 · 최근성 0.5 미만' }],
+    tags: ['데이터 품질', '정렬'],
+    keywords: '마에스트로 maestro 폐업 신뢰도 confidence freshness 정렬 랭킹 데이터 품질 추천',
+    href: '#/case/maestro-trust-rank',
+  },
+  {
+    slug: 'free-tier-infra',
+    type: 'Back',
+    code: 'CASE 06',
+    date: '2026.10',
+    level: 1,
+    title: '무료 서버·DB 위에서 데모 서비스 유지하기',
+    description:
+      '쉬면 잠드는 Render 무료 서버, 1주일 안 쓰면 멈추는 Supabase 무료 DB. 블루프린트로 배포 설정을 코드로 남기고, GitHub Actions 로 DB를 주기적으로 깨우게 함.',
+    metrics: [{ label: 'DB 깨우기', value: '사흘마다' }],
+    tags: ['Render', 'GitHub Actions', 'Supabase'],
+    keywords: '무료 서버 render supabase 배포 github actions cron 크론 헬스체크 인프라 운영 블루프린트',
+    href: '#/case/free-tier-infra',
+  },
+  // ── Design ──
   {
     slug: 'gameprobe',
     type: 'Design',
     code: 'DESIGN 02',
     date: '2026.10',
+    level: 3,
     title: 'GAMEPROBE — 발로란트 전적·공략 웹 서비스 설계',
     description:
       '전적 검색부터 매치 분석, 메타 통계, 라인업·스모크 공략, 관리자 편집까지 10개 영역의 화면과 디자인 시스템을 피그마로 설계.',
@@ -186,6 +345,7 @@ export const CASES: PortfolioCase[] = [
     type: 'Design',
     code: 'DESIGN 03',
     date: '2026.10',
+    level: 3,
     title: 'remind — 노션 학습노트 복습 퀴즈 앱 설계',
     description:
       '노션에 정리한 강의 노트를 객관식·OX·단답형·서술형 퀴즈로 복습하는 모바일 퍼스트 앱. 복습 흐름·오답노트·디자인 시스템을 피그마로 설계.',
@@ -231,49 +391,49 @@ export const CASES: PortfolioCase[] = [
     },
   },
   {
-    slug: 'accio',
-    type: 'Front',
-    code: 'PROJECT 01',
-    date: '2025.11',
-    title: 'Accio — AI 자연어 검색 쇼핑몰',
-    description:
-      '“USB 여러 개 꽂는 거”처럼 모호한 말도 알아듣는 쇼핑몰. 디자인 시스템을 정의하고 대화형 검색부터 장바구니·주문까지 구현.',
-    metrics: [
-      { label: '기간', value: '2025.10 – 11' },
-      { label: '팀', value: '5명' },
-    ],
-    tags: ['React', 'TypeScript', 'Tailwind'],
-    keywords: 'accio 아씨오 쇼핑몰 이커머스 ai 검색 리액트 디자인 시스템',
-    image: accioHome,
-    href: '#/accio',
-    // v1: 실제 서비스했던 원본. 서버가 닫혀 목데이터로 도는 정적 빌드(public/accio-v1)다
-    links: [{ label: 'v1 원본 보기', href: '/accio-v1/' }],
-  },
-  {
-    slug: 'maestro',
-    type: 'Front',
-    code: 'PROJECT 02',
+    slug: 'stay-login',
+    type: 'Design',
+    code: 'DESIGN 01',
     date: '2026.10',
-    title: '마에스트로 — 틀어진 일정의 플랜 B 지휘자',
-    description:
-      '짜둔 서울 일정의 끼니마다 "속이 더부룩해", "비 와" 같은 상황별 대안 식당을 미리 붙여두고, 당일 버튼 하나로 꺼내 쓰는 모바일 웹. YUMITHON 해커톤 출품작.',
+    level: 2,
+    title: '숙박 예약 앱 로그인 화면 3안 개선',
+    description: '소셜 로그인이 먼저 보여 아이디 로그인 동선이 길던 첫 시안을 3안까지 다듬고, 최종안을 실제 동작하는 화면으로 구현.',
     metrics: [
-      { label: '유미 요청', value: '끼니당 1번' },
-      { label: '상황', value: '6개 × 대안 3곳' },
+      { label: '시안', value: '3안' },
+      { label: '최종', value: '3안 구현' },
     ],
-    tags: ['React', 'FastAPI', '헤이유미 API'],
-    keywords: '마에스트로 maestro 해커톤 yumithon 헤이유미 맛집 일정 플랜B 대안 식당 fastapi 백엔드',
-    image: maestroLive,
-    href: '#/maestro',
+    tags: ['Figma', 'React', 'Tailwind'],
+    keywords: '로그인 숙박 예약 앱 소셜 로그인 UI 개선 피그마 accio 디자인',
+    image: stayLoginV3,
+    href: '#/case/stay-login',
+    design: {
+      app: 'Accio — 저장한 여행지를 모아 보고 숙소를 예약하는 앱 (개인 콘셉트)',
+      problem:
+        '첫 시안은 소셜 로그인이 맨 위에 있어 아이디로 로그인하는 사용자가 한 번 더 내려가야 했고, 둥근 입력창과 버튼이 비슷해 보여 무엇을 눌러야 할지 흐렸다.',
+      variants: [
+        { label: '1안', image: stayLoginV1, note: '소셜 로그인을 맨 위에 두고 입력창·버튼을 모두 둥근 알약 모양으로 맞춘 첫 시안' },
+        { label: '2안', image: stayLoginV2, note: '아이디 로그인을 주 동선으로 보고 위로 올림. 입력창을 각지게 바꿔 버튼과 구분' },
+        { label: '3안', image: stayLoginV3, note: '로그인 버튼이 어두운 배경에 묻혀 파란색으로 강조하고, 로고를 원형 심볼로 정리' },
+      ],
+      finalIndex: 2,
+      demo: {
+        title: '최종안 실제 화면',
+        note: '3안을 실제로 동작하는 화면으로 만들었어요. 직접 입력해 보세요. 비밀번호 보기, 아이디 저장이 동작하고, 로그인 버튼을 누르면 안내가 떠요.',
+        caveat: '실제 인증은 연결하지 않은 데모예요.',
+      },
+    },
   },
 ]
 
 export const KEYWORDS: { label: string; type: CaseType }[] = [
+  { label: '해커톤', type: 'Front' },
+  { label: '요청 한도', type: 'Back' },
+  { label: '외부 API', type: 'Back' },
   { label: '디자인 시스템', type: 'Design' },
-  { label: '로그인 화면', type: 'Design' },
   { label: '게임 전적', type: 'Design' },
   { label: '복습 퀴즈', type: 'Design' },
-  { label: '해커톤', type: 'Front' },
+  { label: '무료 서버', type: 'Back' },
+  { label: '로그인 화면', type: 'Design' },
 ]
 
 // ── 검색 ────────────────────────────────────────────────────────────────

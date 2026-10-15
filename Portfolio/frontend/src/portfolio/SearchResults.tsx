@@ -1,4 +1,5 @@
 import { CASES, KEYWORDS, matchesQuery, type PortfolioCase } from './data'
+import { rankCases } from './rank'
 import { SearchIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
 import { searchHref, type ResultTab } from './routes'
@@ -43,14 +44,16 @@ function ResultRow({ item }: { item: PortfolioCase }) {
           )}
         </h2>
         <p className="mt-2 text-14 break-keep text-sub">{item.description}</p>
-        <ul className="mt-3 flex flex-wrap gap-2">
-          {item.metrics.map(({ label, value }) => (
-            <li key={label} className="flex items-center gap-2 rounded-thumb-sm bg-light px-3 py-1 text-13">
-              <span className="text-sub-weak">{label}</span>
-              <span className="font-semibold tracking-normal text-main">{value}</span>
-            </li>
-          ))}
-        </ul>
+        {item.metrics.length > 0 && (
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {item.metrics.map(({ label, value }) => (
+              <li key={label} className="flex items-center gap-2 rounded-thumb-sm bg-light px-3 py-1 text-13">
+                <span className="text-sub-weak">{label}</span>
+                <span className="font-semibold tracking-normal text-main">{value}</span>
+              </li>
+            ))}
+          </ul>
+        )}
         <p className="mt-3 flex flex-wrap gap-2 text-13 text-sub-weak">
           {item.tags.map((tag) => (
             <span key={tag}>#{tag}</span>
@@ -97,7 +100,8 @@ interface SearchResultsProps {
 }
 
 export default function SearchResults({ query, tab }: SearchResultsProps) {
-  const matched = CASES.filter((item) => !query || matchesQuery(item, query))
+  // 레벨 높은 사례부터 — 기준은 rank.ts
+  const matched = rankCases(CASES.filter((item) => !query || matchesQuery(item, query)))
   const counts: Record<ResultTab, number> = {
     all: matched.length,
     front: matched.filter((item) => item.type === 'Front').length,
