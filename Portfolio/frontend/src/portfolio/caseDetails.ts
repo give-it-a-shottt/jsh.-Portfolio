@@ -23,12 +23,30 @@ import errorHandlers from '../../../backend/maestro/app/core/errors.py?raw'
 import testConftest from '../../../backend/maestro/tests/conftest.py?raw'
 import renderBlueprint from '../../../../render.yaml?raw'
 import keepAwakeWorkflow from '../../../../.github/workflows/keep-supabase-awake.yml?raw'
+// PlanForMe 는 다른 저장소라, 보여줄 파일만 Portfolio/external/planforme 에 원문 그대로 복사해 두었다
+import pfmMain from '../../../external/planforme/api/main.py?raw'
+import pfmPlanner from '../../../external/planforme/api/planner.py?raw'
+import pfmServices from '../../../external/planforme/api/services.py?raw'
+import pfmTimeutil from '../../../external/planforme/api/timeutil.py?raw'
+import pfmTestApi from '../../../external/planforme/api/tests/test_api.py?raw'
+import pfmTestPlanner from '../../../external/planforme/api/tests/test_planner.py?raw'
+import pfmProxyRoute from '../../../external/planforme/web/src/app/api/[...path]/route.ts?raw'
+import pfmCalendar from '../../../external/planforme/web/src/app/(tabs)/calendar/page.tsx?raw'
+import pfmNewPlan from '../../../external/planforme/web/src/app/new/page.tsx?raw'
+import pfmTaskActions from '../../../external/planforme/web/src/components/TaskActions.tsx?raw'
+import pfmApi from '../../../external/planforme/web/src/lib/api.ts?raw'
+import pfmFormat from '../../../external/planforme/web/src/lib/format.ts?raw'
+import pfmUseToday from '../../../external/planforme/web/src/lib/useToday.ts?raw'
+
+const PLANFORME_REPO = 'https://github.com/give-it-a-shottt/PlanForMe'
 
 export interface CodeSample {
   /** 탭 이름 — 보통 파일 이름 */
   label: string
   /** 저장소 루트 기준 경로. 코드 위 경로 표시와 GitHub 링크에 쓴다 */
   path: string
+  /** 코드가 다른 GitHub 저장소에 있을 때 그 주소. 없으면 이 저장소(jsh.-Portfolio) */
+  repo?: string
   /** 파일 원문 */
   source: string
   /** 보여줄 줄 범위(1부터, 양 끝 포함). 없으면 파일 전체 */
@@ -235,6 +253,86 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
         source: frontendReadme,
         lines: [3, 18],
         note: 'git 이 원본 소스를 보지 않으니, 빌드 결과가 바뀌어야 커밋할 게 생긴다는 점까지 순서로 적어 두었다.',
+      },
+    ],
+  },
+  'planforme-activity-state': {
+    problem:
+      'PlanForMe 는 플랜을 3단계(유형 → 조건 → 계산 결과)로 만든다. 플랜을 등록해 홈으로 간 뒤 다시 +를 누르면 1단계가 아니라 방금 등록한 플랜의 3단계 화면이 그대로 나왔고, 등록 버튼은 회색으로 막혀 있었다. 오류 메시지도 없어 원인이 보이지 않았다.',
+    points: [
+      {
+        title: '원인은 화면 보관',
+        body: 'Next.js 16 은 Cache Components 가 켜져 있으면 떠난 화면을 지우지 않고 React <Activity> 로 숨겨 둔다(최대 3개). step = 3, saving = true 같은 상태가 그대로 남아 있다가 다시 보였다.',
+      },
+      {
+        title: '상태마다 유지·초기화 정하기',
+        body: '‘화면을 떠나면 상태가 사라진다’는 가정을 버렸다. 쓰던 폼은 남기고, 끝난 폼과 열린 시트는 비우는 것으로 상태마다 정했다.',
+      },
+      {
+        title: '끝났을 때는 이벤트에서 직접',
+        body: '등록 성공과 X 닫기 핸들러에서 reset() 으로 단계와 폼을 비운다. 뒤로가기로 잠깐 나갔다 오면 쓰던 내용은 그대로 남는다. Next.js 공식 가이드(Preserving UI state)가 권하는 방식이다.',
+      },
+      {
+        title: '바텀시트는 숨겨질 때 닫기',
+        body: '진행량 입력·재계산 시트는 useLayoutEffect 정리 함수에서 닫는다. 화면이 숨겨질 때 정리 함수가 실행돼, 돌아왔을 때 시트가 열린 채로 남지 않는다.',
+      },
+    ],
+    result: '등록하거나 닫은 뒤에는 항상 1단계부터 시작하고, 작성 중 잠깐 나갔다 온 내용은 그대로 남는다.',
+    stack: ['Next.js 16', 'React 19', 'TypeScript'],
+    code: [
+      {
+        label: 'page.tsx',
+        path: 'web/src/app/new/page.tsx',
+        repo: PLANFORME_REPO,
+        source: pfmNewPlan,
+        lines: [96, 107],
+        note: '초기화는 렌더나 effect 가 아니라 ‘끝났다’는 이벤트(등록 성공·닫기)에서만 한다. 그래서 뒤로가기로 나갔다 온 경우에는 폼이 남는다.',
+      },
+      {
+        label: 'TaskActions.tsx',
+        path: 'web/src/components/TaskActions.tsx',
+        repo: PLANFORME_REPO,
+        source: pfmTaskActions,
+        lines: [17, 30],
+        note: '화면이 Activity 로 숨겨질 때도 정리 함수는 실행된다. 열려 있던 시트 상태를 여기서 비운다.',
+      },
+    ],
+  },
+  'planforme-stale-response': {
+    problem:
+      '캘린더에서 다른 날짜를 누르면 새 데이터가 오기 전까지 이전 날짜의 할 일이 그대로 보였다. 잠깐이지만 17일 제목 아래에 16일의 할 일이 떠, 틀린 정보를 보여주는 셈이었다.',
+    points: [
+      {
+        title: '무엇에 대한 결과인지 함께 저장',
+        body: '공통 데이터 훅 useApi 가 마지막 응답만 기억하던 것을, 요청 key(예: tasks-2026-10-17)와 함께 저장하도록 바꿨다.',
+      },
+      {
+        title: 'key 가 다르면 없는 데이터로',
+        body: '지금 key 와 저장된 key 가 다르면 data 를 null 로 보고 로딩 스켈레톤을 보여준다. 늦게 도착한 이전 요청의 응답은 취소 플래그로 버린다.',
+      },
+      {
+        title: '새로고침은 데이터를 유지',
+        body: '같은 key 로 다시 불러오는 reload() 는 기존 목록을 보여 준 채 새로 고친다. 할 일을 체크할 때마다 목록이 깜빡이지 않는다.',
+      },
+    ],
+    result: '날짜를 바꾸면 바로 스켈레톤이 뜨고, 그 날짜의 할 일만 보인다.',
+    stack: ['Next.js 16', 'React 19', 'TypeScript'],
+    code: [
+      {
+        label: 'api.ts',
+        path: 'web/src/lib/api.ts',
+        repo: PLANFORME_REPO,
+        source: pfmApi,
+        lines: [81, 118],
+        note: 'fresh = result.key === key 한 줄이 핵심이다. 저장된 결과가 지금 요청의 것이 아니면 data 를 보여주지 않는다.',
+      },
+      {
+        label: 'calendar/page.tsx',
+        path: 'web/src/app/(tabs)/calendar/page.tsx',
+        repo: PLANFORME_REPO,
+        source: pfmCalendar,
+        lines: [44, 50],
+        note: '화면은 key 만 정해 주면 된다. 날짜가 key 에 들어 있어 날짜를 바꾸면 알아서 다시 불러온다.',
       },
     ],
   },
@@ -477,6 +575,178 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
         source: accioHealth,
         lines: [27, 38],
         note: '서버만 확인하는 /health 와 DB 까지 확인하는 /health/db 를 나눴다. DB 가 안 되면 503 으로 알린다.',
+      },
+    ],
+  },
+  'planforme-replan-overdue': {
+    problem:
+      'PlanForMe 의 핵심은 할 일을 덜 하거나 더 했을 때 남은 분량을 남은 날짜로 다시 나누는 재계산(Re-plan)이다. 그런데 진행량을 적게 입력하고 “네, 다시 계산해 주세요”를 눌러도 홈의 “밀린 분량이 있어요” 배너가 사라지지 않았다. 다시 나눠 놓고도 여전히 밀렸다고 말하는 셈이었다.',
+    points: [
+      {
+        title: '원인은 지우지 않는 기록',
+        body: '‘밀림’을 오늘 이전 + 미완료인 할 일로 셌다. 재계산은 남은 분량만 다시 나누고 지난 기록은 그대로 두는데(기획 의도), 그 기록이 영원히 밀림으로 남았다.',
+      },
+      {
+        title: '기록 대신 기준 시점을 저장',
+        body: '플랜에 마지막 재계산 시작일(rebased_on)을 두고, 그날 이후의 미완료만 밀림으로 센다. 지난 기록은 지우지 않아 플랜 상세의 수행 기록에는 ‘미완료’로 그대로 남는다.',
+      },
+      {
+        title: '어디서부터 다시 나눌지',
+        body: '오늘 할 일을 이미 끝냈으면 내일부터, 아니면 오늘부터 다시 나눈다. 그 뒤 날짜 중 이미 끝낸 날은 남은 유효 일수에서 뺀다.',
+      },
+      {
+        title: '회귀 테스트로 고정',
+        body: '사흘 전 시작한 강의 플랜이 밀림에 있다가 재계산 후 빠지는지 API 로 확인하는 테스트를 더했다.',
+      },
+    ],
+    result: '재계산을 누르면 배너가 바로 사라지고, 지난 기록은 지워지지 않고 남는다.',
+    stack: ['Python', 'FastAPI', 'SQLAlchemy 2', 'pytest'],
+    code: [
+      {
+        label: 'services.py',
+        path: 'api/services.py',
+        repo: PLANFORME_REPO,
+        source: pfmServices,
+        lines: [280, 294],
+        note: 'or_(rebased_on 이 없거나, 그 날 이후) 조건 하나로 재계산 이전 기록을 밀림에서 뺀다. 기록은 그대로 둔다.',
+      },
+      {
+        label: 'services.py · 재계산',
+        path: 'api/services.py',
+        repo: PLANFORME_REPO,
+        source: pfmServices,
+        lines: [195, 231],
+        note: '재계산할 때 rebased_on 을 시작일로 옮기고, 그날부터의 미완료 할 일만 지운 뒤 다시 만든다. 완료한 기록과 시작일 이전 기록은 건드리지 않는다.',
+      },
+      {
+        label: 'test_api.py',
+        path: 'api/tests/test_api.py',
+        repo: PLANFORME_REPO,
+        source: pfmTestApi,
+        lines: [95, 114],
+        note: '밀림에 있음 → 재계산 → 밀림에서 빠짐. 버그가 다시 생기면 이 테스트가 먼저 깨진다.',
+      },
+    ],
+  },
+  'planforme-quota-logic': {
+    problem:
+      '총분량과 마감일만 넣으면 하루 할당량을 계산해 주는 게 PlanForMe 의 핵심이다. 하루 3.4강은 들을 수 없으니 올림해야 하고, 쉬는 요일은 빼야 하고, 강의가 하루 180분을 넘으면 종료일을 늘리라고 안내해야 한다. 이 규칙이 화면이나 DB 코드에 섞이면 어디서 틀렸는지 찾기 어렵다.',
+    points: [
+      {
+        title: '규칙은 디자인 단계에서 먼저',
+        body: '피그마에 계산 로직 페이지를 따로 두고 유효 일수 D, 책·강의·일반 공식, 재계산 공식을 예시와 함께 적었다.',
+      },
+      {
+        title: 'DB 없는 순수 함수로',
+        body: 'planner.py 에는 날짜와 숫자만 받는 함수만 둔다. 미리보기·플랜 생성·재계산이 모두 이 함수를 불러, 같은 규칙이 두 군데에 생기지 않는다.',
+      },
+      {
+        title: '나머지는 마지막 날에 적게',
+        body: '올림(총량 ÷ D)씩 앞에서부터 나누고 남는 만큼만 마지막 날에 둔다. 100p 를 3일이면 34/34/32 이고, 0이 배정된 날은 할 일을 만들지 않는다.',
+      },
+      {
+        title: '디자인 예시가 곧 테스트',
+        body: '피그마에 적은 예시(평일 10일 → D=10, 100p/3일 → 34/34/32, 45강·15일 → 하루 3강, 남은 215p/8일 → 27p)를 그대로 pytest 로 옮겼다.',
+      },
+    ],
+    result: '기획서에 적은 계산 예시가 테스트로 계속 확인되고, 화면은 같은 함수의 결과만 보여준다.',
+    stack: ['Python', 'pytest', 'FastAPI'],
+    code: [
+      {
+        label: 'planner.py',
+        path: 'api/planner.py',
+        repo: PLANFORME_REPO,
+        source: pfmPlanner,
+        lines: [10, 73],
+        note: 'DB·FastAPI 를 import 하지 않는다. 과부하일 때는 종료일을 한 주씩 늘려 보며 하루 180분 아래가 되는 주 수를 찾는다.',
+      },
+      {
+        label: 'test_planner.py',
+        path: 'api/tests/test_planner.py',
+        repo: PLANFORME_REPO,
+        source: pfmTestPlanner,
+        note: '테스트 주석이 곧 피그마 계산 로직 카드의 예시다. 기획과 코드가 어긋나면 여기서 드러난다.',
+      },
+    ],
+  },
+  'planforme-api-key': {
+    problem:
+      'PlanForMe 는 혼자 쓰는 앱이라 로그인 대신 API 키와 앱 비밀번호로 잠갔다. 그런데 배포한 뒤 api 주소의 /today 를 브라우저에서 열었더니 키 없이도 할 일 데이터가 나왔다.',
+    points: [
+      {
+        title: '“설정이 없으면 통과”의 함정',
+        body: '로컬 개발을 편하게 하려고 API_KEY 환경 변수가 없으면 검사를 건너뛰게 짰다. 배포된 api 가 이 변수를 읽지 못하자 조용히 전부 열렸다. 변수를 Production 까지 적용하고 다시 배포해 막았다.',
+      },
+      {
+        title: '키는 서버에서만 붙이기',
+        body: '브라우저는 Next.js 의 /api/* 로만 요청하고, 그 라우트 핸들러가 서버에서 X-API-Key 를 붙여 FastAPI 로 넘긴다. 키가 브라우저 코드에 들어가지 않는다.',
+      },
+      {
+        title: '막혀야 할 요청이 막히는지',
+        body: '배포 직후 키 없는 /today 는 401, 일부러 열어 둔 /health 는 200 인지 직접 열어 확인했다.',
+      },
+    ],
+    result: '키 없는 요청은 “API 키가 올바르지 않아요”(401)로 막히고, 앱에서는 그대로 동작한다.',
+    stack: ['FastAPI', 'Next.js 16', 'Vercel'],
+    code: [
+      {
+        label: 'main.py',
+        path: 'api/main.py',
+        repo: PLANFORME_REPO,
+        source: pfmMain,
+        lines: [18, 43],
+        note: '키 검사는 라우터마다 Depends 로 건다. /health 만 앱에 직접 달아 키 없이도 서버 상태를 볼 수 있게 했다.',
+      },
+      {
+        label: 'route.ts',
+        path: 'web/src/app/api/[...path]/route.ts',
+        repo: PLANFORME_REPO,
+        source: pfmProxyRoute,
+        note: '브라우저 → Next.js → FastAPI. API_KEY 는 NEXT_PUBLIC_ 이 아닌 서버 변수라 브라우저로 내려가지 않는다.',
+      },
+    ],
+  },
+  'planforme-kst-today': {
+    problem:
+      'Vercel 서버는 UTC 로 돈다. date.today() 를 그대로 쓰면 한국 시간 오전 0시~9시에는 ‘오늘’이 하루 전 날짜가 되어, 아침에 앱을 열면 어제 할 일이 오늘 할 일로 보인다. 날짜가 전부인 플래너라 배포 전에 미리 막았다.',
+    points: [
+      {
+        title: '백엔드의 오늘은 한 곳에서',
+        body: '모든 ‘오늘’을 timeutil.py 의 today_kst() 로 구하고, Asia/Seoul 기준으로 계산한다. 시간대 데이터가 없는 Windows 에서도 돌도록 tzdata 를 함께 설치했다.',
+      },
+      {
+        title: '프론트도 같은 기준',
+        body: '브라우저의 오늘도 Intl.DateTimeFormat 에 timeZone: Asia/Seoul 을 줘서 구한다. 기기 시간대가 달라도 서버와 같은 날짜를 쓴다.',
+      },
+      {
+        title: 'build 한 날짜가 박히지 않게',
+        body: 'Next 16 은 build 때 클라이언트 컴포넌트도 미리 그려서, 렌더 중에 new Date() 를 쓰면 build 가 막힌다. useSyncExternalStore 의 서버용 값을 null 로 두어 오늘은 브라우저에서만 읽는다.',
+      },
+    ],
+    result: '서버·브라우저 어디서 계산해도 ‘오늘’이 한국 날짜 하나로 맞는다.',
+    stack: ['Python', 'zoneinfo', 'Next.js 16', 'React 19'],
+    code: [
+      {
+        label: 'timeutil.py',
+        path: 'api/timeutil.py',
+        repo: PLANFORME_REPO,
+        source: pfmTimeutil,
+        note: '백엔드는 date.today() 를 쓰지 않고 이 두 함수만 쓴다.',
+      },
+      {
+        label: 'format.ts',
+        path: 'web/src/lib/format.ts',
+        repo: PLANFORME_REPO,
+        source: pfmFormat,
+        lines: [11, 14],
+        note: 'en-CA 형식이 YYYY-MM-DD 라 서버와 주고받는 날짜 문자열을 그대로 만든다.',
+      },
+      {
+        label: 'useToday.ts',
+        path: 'web/src/lib/useToday.ts',
+        repo: PLANFORME_REPO,
+        source: pfmUseToday,
+        note: '세 번째 인자가 미리 그릴 때 쓰는 값이다. 캘린더·플랜 생성은 today 가 null 이면 아무것도 그리지 않고, 브라우저에서 날짜를 읽은 뒤 그린다.',
       },
     ],
   },

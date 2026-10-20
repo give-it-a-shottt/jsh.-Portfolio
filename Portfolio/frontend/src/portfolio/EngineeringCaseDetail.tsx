@@ -51,7 +51,9 @@ function CodePanel({ samples, tall }: { samples: CodeSample[]; tall: boolean }) 
   const allLines = sample.source.replace(/\r?\n$/, '').split(/\r?\n/)
   const [start, end] = sample.lines ?? [1, allLines.length]
   const code = allLines.slice(start - 1, end).join('\n')
-  const githubHref = `${REPO_URL}/blob/main/${sample.path.split('/').map(encodeURIComponent).join('/')}${
+  // 다른 저장소의 코드는 경로 앞에 저장소 이름을 붙여, 이 저장소 파일이 아니라는 걸 보여준다
+  const shownPath = sample.repo ? `${sample.repo.split('/').pop()}/${sample.path}` : sample.path
+  const githubHref = `${sample.repo ?? REPO_URL}/blob/main/${sample.path.split('/').map(encodeURIComponent).join('/')}${
     sample.lines ? `#L${start}-L${end}` : ''
   }`
 
@@ -116,7 +118,7 @@ function CodePanel({ samples, tall }: { samples: CodeSample[]; tall: boolean }) 
 
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-white/10 px-4 py-2.5">
           <p lang="en" className="min-w-0 truncate font-mono text-12 tracking-normal text-white/50">
-            {sample.path}
+            {shownPath}
             {sample.lines && ` · L${start}–${end}`}
           </p>
           <div className="flex shrink-0 items-center gap-4 text-12 font-medium">

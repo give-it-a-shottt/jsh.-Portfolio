@@ -41,6 +41,10 @@ import rmIa from './assets/design/remind/system-07-ia.webp'
 import rmUserFlow from './assets/design/remind/system-08-user-flow.webp'
 import rmLearningModel from './assets/design/remind/system-09-learning-model.webp'
 import rmComponentSheet from './assets/design/remind/system-10-component-sheet.webp'
+import pfmIa from './assets/design/planforme/system-01-ia.webp'
+import pfmFlowCreate from './assets/design/planforme/system-02-flow-create.webp'
+import pfmFlowReplan from './assets/design/planforme/system-03-flow-replan.webp'
+import pfmLogic from './assets/design/planforme/system-04-logic.webp'
 import type { Level } from './rank'
 
 // 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
@@ -80,6 +84,8 @@ export interface DesignCase {
   screens?: DesignVariant[]
   /** 디자인 시스템 가이드(컬러·타이포·컴포넌트). 넓고 긴 문서라 device 와 상관없이 데스크톱 카드로 보여준다 */
   system?: DesignVariant[]
+  /** system 칸의 제목·설명. 없으면 '디자인 시스템'. IA·플로우만 있는 사례처럼 내용이 다를 때 쓴다 */
+  systemHeading?: { title: string; description: string }
   /** 실제 동작 화면 칸의 제목·설명. 데모가 등록된 사례에만 쓴다 */
   demo?: { title: string; note: string; caveat?: string }
 }
@@ -197,6 +203,41 @@ export const CASES: PortfolioCase[] = [
     href: '#/case/accio-v1',
     links: [{ label: 'v1 원본 보기', href: '/accio-v1/' }],
   },
+  {
+    slug: 'planforme-activity-state',
+    type: 'Front',
+    code: 'PROJECT 06',
+    date: '2026.10',
+    level: 3,
+    title: '플랜 등록 후 다시 열면 지난 화면이 남던 문제 — Next 16 화면 보관',
+    description:
+      'PlanForMe 에서 플랜을 등록하고 다시 +를 누르면 방금 쓴 3단계 화면이 그대로 나옴. Next 16 이 떠난 화면을 숨겨 보관하는 걸 확인하고, 상태마다 유지·초기화를 정해 끝난 폼과 열린 시트만 비움.',
+    metrics: [
+      { label: '초기화 시점', value: '등록 성공 · 닫기' },
+      { label: '유지', value: '작성 중인 폼' },
+    ],
+    tags: ['Next.js 16', 'React', '상태 관리'],
+    keywords:
+      'planforme 플랜포미 플래너 next.js nextjs 16 activity cache components 상태 초기화 화면 보관 useLayoutEffect 바텀시트 폼 리셋 버그',
+    href: '#/case/planforme-activity-state',
+    links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
+  },
+  {
+    slug: 'planforme-stale-response',
+    type: 'Front',
+    code: 'PROJECT 07',
+    date: '2026.10',
+    level: 2,
+    title: '날짜를 바꾸면 이전 날짜의 할 일이 잠깐 보이던 문제',
+    description:
+      'PlanForMe 캘린더에서 날짜를 누르면 새 응답이 올 때까지 지난 날짜의 목록이 남아 있었음. 응답을 요청 key 와 함께 저장하고, key 가 다르면 스켈레톤을 보여 오래된 데이터가 섞이지 않게 함.',
+    metrics: [{ label: '판단 기준', value: '요청 key' }],
+    tags: ['React', '데이터 패칭', '스켈레톤'],
+    keywords:
+      'planforme 플랜포미 플래너 캘린더 useapi 데이터 패칭 fetch 오래된 응답 stale 경쟁 상태 race condition 로딩 스켈레톤 훅',
+    href: '#/case/planforme-stale-response',
+    links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
+  },
   // ── Back ──
   {
     slug: 'maestro-quota',
@@ -291,6 +332,74 @@ export const CASES: PortfolioCase[] = [
     tags: ['Render', 'GitHub Actions', 'Supabase'],
     keywords: '무료 서버 render supabase 배포 github actions cron 크론 헬스체크 인프라 운영 블루프린트',
     href: '#/case/free-tier-infra',
+  },
+  {
+    slug: 'planforme-replan-overdue',
+    type: 'Back',
+    code: 'CASE 07',
+    date: '2026.10',
+    level: 3,
+    title: '재계산해도 “밀린 분량” 배너가 남던 문제 — 기록은 두고 기준 시점만 저장',
+    description:
+      'PlanForMe 에서 남은 분량을 다시 나눠도 밀림 배너가 사라지지 않음. 지난 기록을 지우는 대신 마지막 재계산 시작일(rebased_on)을 저장해, 그 이후의 미완료만 밀림으로 세고 회귀 테스트로 고정.',
+    metrics: [
+      { label: '밀림 기준', value: '마지막 재계산 이후' },
+      { label: '회귀 테스트', value: '1개' },
+    ],
+    tags: ['FastAPI', 'SQLAlchemy', 'pytest'],
+    keywords:
+      'planforme 플랜포미 플래너 재계산 replan 리플랜 밀림 연체 overdue 기준 시점 rebased_on 쿼리 회귀 테스트 fastapi sqlalchemy 백엔드 python',
+    href: '#/case/planforme-replan-overdue',
+    links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
+  },
+  {
+    slug: 'planforme-quota-logic',
+    type: 'Back',
+    code: 'CASE 08',
+    date: '2026.10',
+    level: 2,
+    title: '하루 할당량 계산을 순수 함수로 — 기획서 예시가 곧 테스트',
+    description:
+      '총분량·기간·요일로 하루 분량을 정하는 규칙을 DB 없는 함수로 분리. 피그마 계산 로직 페이지의 예시(100p를 3일 → 34·34·32 등)를 그대로 pytest 로 옮겨 기획과 코드가 어긋나지 않게 함.',
+    metrics: [
+      { label: '계산 테스트', value: '8개' },
+      { label: '예시', value: '100p · 3일 → 34·34·32' },
+    ],
+    tags: ['Python', 'pytest', '순수 함수'],
+    keywords:
+      'planforme 플랜포미 플래너 할당량 계산 로직 올림 분배 유효 일수 과부하 순수 함수 단위 테스트 unit test pytest 기획 백엔드 python',
+    href: '#/case/planforme-quota-logic',
+    links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
+  },
+  {
+    slug: 'planforme-api-key',
+    type: 'Back',
+    code: 'CASE 09',
+    date: '2026.10',
+    level: 1,
+    title: '키 없이도 열려 있던 배포 API 막기',
+    description:
+      '“설정이 없으면 검사를 건너뛰는” 코드라 배포 환경에서 변수가 빠지자 API 가 조용히 열림. 변수를 바로잡고, 키는 Next.js 서버 프록시에서만 붙여 브라우저에 노출되지 않게 함.',
+    metrics: [{ label: '키 없는 요청', value: '401' }],
+    tags: ['FastAPI', 'Next.js', '보안'],
+    keywords:
+      'planforme 플랜포미 api 키 api key 인증 보안 환경 변수 프록시 proxy route handler vercel 배포 401 헤더',
+    href: '#/case/planforme-api-key',
+  },
+  {
+    slug: 'planforme-kst-today',
+    type: 'Back',
+    code: 'CASE 10',
+    date: '2026.10',
+    level: 1,
+    title: 'UTC 서버에서도 ‘오늘’을 한국 날짜로',
+    description:
+      'Vercel 서버는 UTC 라 한국 오전 0~9시에는 오늘이 어제가 됨. 백엔드·프론트의 오늘을 Asia/Seoul 기준 한 곳에서 구하고, build 때 날짜가 박히지 않게 브라우저에서만 읽음.',
+    metrics: [{ label: '기준 시간대', value: 'Asia/Seoul' }],
+    tags: ['Python', 'Next.js', '시간대'],
+    keywords:
+      'planforme 플랜포미 시간대 타임존 timezone utc kst 한국 시간 날짜 오늘 zoneinfo tzdata intl usesyncexternalstore 배포',
+    href: '#/case/planforme-kst-today',
   },
   // ── Design ──
   {
@@ -391,6 +500,42 @@ export const CASES: PortfolioCase[] = [
     },
   },
   {
+    slug: 'planforme',
+    type: 'Design',
+    code: 'DESIGN 04',
+    date: '2026.10',
+    level: 2,
+    title: 'PlanForMe — 하루 할당량을 계산해 주는 플래너 IA·유저 플로우 설계',
+    description:
+      '총분량과 마감일만 넣으면 하루 할 일을 정해 주는 1인용 플래너. 정보 구조, 플랜 생성·재계산 두 흐름, 계산 규칙을 피그마로 먼저 설계하고 그대로 구현·배포.',
+    metrics: [
+      { label: '영역', value: '5개' },
+      { label: '유저 플로우', value: '2개' },
+      { label: '계산 규칙', value: '5개' },
+    ],
+    tags: ['Figma', 'IA', 'User Flow'],
+    keywords:
+      'planforme 플랜포미 플래너 계획 할 일 독서 강의 일정 할당량 재계산 ia 정보 구조 유저 플로우 user flow 피그마',
+    image: pfmIa,
+    href: '#/case/planforme',
+    links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
+    design: {
+      app: 'PlanForMe — 총분량과 마감일만 입력하면 하루 할당량을 자동 계산해 일정에 등록해 주는 1인용 스마트 플래너 (개인 프로젝트)',
+      problem:
+        '책·강의 계획은 세우는 것보다 지키는 게 어렵다. 하루 분량을 직접 나눠야 하고, 하루 이틀 밀리면 계산이 꼬인다. 유형마다 필요한 값만 받아 하루 분량을 정해 주고, 밀려도 실제 진행량을 받아 남은 기간에 다시 나눠 주도록 흐름과 계산 규칙을 먼저 정했다.',
+      system: [
+        { label: 'IA', image: pfmIa, note: '홈·플랜 생성·캘린더·플랜 상세·마이 5개 영역을 3단계 깊이로. 플랜 생성은 하단 탭 가운데 버튼으로', width: 1544, height: 1194 },
+        { label: '플랜 생성 플로우', image: pfmFlowCreate, note: '책·강의·일반마다 필요한 값만 받고 기간·요일은 공통으로 → 실시간 계산 미리보기 → 등록. 강의가 하루 180분을 넘으면 종료일 조정 안내', width: 2658, height: 1000 },
+        { label: '진행 · 재계산 플로우', image: pfmFlowReplan, note: '그대로 했으면 체크 한 번, 아니면 실제 진행량을 입력. 목표와 다르면 남은 분량을 내일부터 다시 나눌지 묻는다', width: 2426, height: 860 },
+        { label: '계산 로직', image: pfmLogic, note: '유효 일수 D와 책·강의·일반·재계산 공식을 예시와 함께. 이 예시가 그대로 백엔드 테스트가 됐다', width: 1708, height: 591 },
+      ],
+      systemHeading: {
+        title: 'IA · 유저 플로우',
+        description: '정보 구조와 핵심 흐름 두 개, 그 흐름이 쓰는 계산 규칙이에요.',
+      },
+    },
+  },
+  {
     slug: 'stay-login',
     type: 'Design',
     code: 'DESIGN 01',
@@ -434,6 +579,7 @@ export const KEYWORDS: { label: string; type: CaseType }[] = [
   { label: '복습 퀴즈', type: 'Design' },
   { label: '무료 서버', type: 'Back' },
   { label: '로그인 화면', type: 'Design' },
+  { label: 'PlanForMe', type: 'Back' },
 ]
 
 // ── 검색 ────────────────────────────────────────────────────────────────

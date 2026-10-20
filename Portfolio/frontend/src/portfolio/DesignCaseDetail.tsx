@@ -180,7 +180,7 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
     )
   }
 
-  const { app, device, problem, variants, finalIndex, screens, system, demo } = item.design
+  const { app, device, problem, variants, finalIndex, screens, system, systemHeading, demo } = item.design
   const Demo = DESIGN_DEMOS[item.slug]
 
   return (
@@ -248,8 +248,8 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
       {system && (
         <ScreenSection
           id="system-title"
-          title="디자인 시스템"
-          description={`화면 전체에 쓴 색·글꼴·간격·컴포넌트 규칙이에요.${OPEN_HINT}`}
+          title={systemHeading?.title ?? '디자인 시스템'}
+          description={`${systemHeading?.description ?? '화면 전체에 쓴 색·글꼴·간격·컴포넌트 규칙이에요.'}${OPEN_HINT}`}
           items={system}
           // 가이드는 시안 종류와 상관없이 넓고 긴 문서라 데스크톱 카드로 보여준다
           device="desktop"
