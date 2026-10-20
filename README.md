@@ -37,6 +37,7 @@
 | | remind — 노션 학습노트 복습 퀴즈 앱 설계 |
 | | PlanForMe — 하루 할당량을 계산해 주는 플래너 앱 설계 |
 | | 숙박 예약 앱 로그인 화면 3안 개선 |
+| | 비밀번호 찾기 화면 — 첫 시안에서 세 방향으로 다듬기 |
 
 사례 목록과 상세 내용은 [`data.ts`](Portfolio/frontend/src/portfolio/data.ts)와 [`caseDetails.ts`](Portfolio/frontend/src/portfolio/caseDetails.ts)에 있습니다.
 

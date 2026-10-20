@@ -60,6 +60,11 @@ import pfmIa from './assets/design/planforme/system-01-ia.webp'
 import pfmFlowCreate from './assets/design/planforme/system-02-flow-create.webp'
 import pfmFlowReplan from './assets/design/planforme/system-03-flow-replan.webp'
 import pfmLogic from './assets/design/planforme/system-04-logic.webp'
+import pwDark from './assets/design/find-password/v1-dark.webp'
+import pwLight from './assets/design/find-password/v2-light.webp'
+import pwCard from './assets/design/find-password/v3-card.webp'
+import pwBigTitle from './assets/design/find-password/v4-big-title.webp'
+import pwSoft from './assets/design/find-password/v5-soft.webp'
 import type { Level } from './rank'
 
 // 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
@@ -602,6 +607,36 @@ export const CASES: PortfolioCase[] = [
       },
     },
   },
+  {
+    slug: 'find-password',
+    type: 'Design',
+    code: 'DESIGN 05',
+    date: '2026.10',
+    level: 1,
+    title: '비밀번호 찾기 화면 — 첫 시안에서 세 방향으로 다듬기',
+    description:
+      '휴대폰·이메일 중 하나를 골라 인증번호를 받는 화면. 어두운 첫 시안을 밝게 정리하고, 선택 표시·큰 제목·부드러운 안내 세 방향으로 나눠 비교한 연습.',
+    metrics: [
+      { label: '시안', value: '5장' },
+      { label: '방향', value: '3개' },
+    ],
+    tags: ['Figma', 'Mobile UI'],
+    keywords: '비밀번호 찾기 비번 인증번호 휴대폰 이메일 연락처 선택 카드 여백 다크 라이트 시안 비교 피그마 연습',
+    image: pwCard,
+    href: '#/case/find-password',
+    design: {
+      app: '비밀번호 찾기 — 가입한 휴대폰·이메일 중 하나를 골라 인증번호를 받는 화면 (디자인 연습)',
+      problem:
+        '첫 시안은 연락처 칸이 버튼만큼 크고 둥글어서, 연락처를 고르는 화면인데 무엇을 골랐는지, 무엇이 버튼인지가 흐렸다. 칸을 정리한 뒤 무엇을 더 앞세울지에 따라 세 방향으로 나눠 봤다.',
+      variants: [
+        { label: '첫 시안', image: pwDark, note: '어두운 배경에 높이 82px 알약 모양 연락처 칸. 칸이 전송 버튼과 비슷해 보이고 고른 상태가 없다', width: 400, height: 824 },
+        { label: '정리안', image: pwLight, note: '밝은 배경으로 바꾸고 연락처 칸을 56px 둥근 사각형으로 낮춰 버튼과 구분. 전송 버튼은 검정 한 색', width: 400, height: 820 },
+        { label: '방향 1 · 선택 카드', image: pwCard, note: '고른 연락처를 파란 테두리와 라벨 색으로 표시해 인증번호가 어디로 갈지 바로 보이게', width: 400, height: 820 },
+        { label: '방향 2 · 큰 제목', image: pwBigTitle, note: '제목을 크게 키워 무슨 화면인지 먼저 알리고, 전송 버튼을 아래로 내려 엄지가 닿기 쉽게', width: 400, height: 820 },
+        { label: '방향 3 · 부드러운 안내', image: pwSoft, note: '자물쇠 아이콘과 옅은 회색 배경, 파란 버튼으로 딱딱한 보안 화면의 긴장을 덜어 줌', width: 400, height: 820 },
+      ],
+    },
+  },
 ]
 
 export const KEYWORDS: { label: string; type: CaseType }[] = [
@@ -614,6 +649,7 @@ export const KEYWORDS: { label: string; type: CaseType }[] = [
   { label: '무료 서버', type: 'Back' },
   { label: '로그인 화면', type: 'Design' },
   { label: 'PlanForMe', type: 'Back' },
+  { label: '비밀번호 찾기', type: 'Design' },
 ]
 
 // ── 검색 ────────────────────────────────────────────────────────────────
