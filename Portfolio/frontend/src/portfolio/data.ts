@@ -41,6 +41,21 @@ import rmIa from './assets/design/remind/system-07-ia.webp'
 import rmUserFlow from './assets/design/remind/system-08-user-flow.webp'
 import rmLearningModel from './assets/design/remind/system-09-learning-model.webp'
 import rmComponentSheet from './assets/design/remind/system-10-component-sheet.webp'
+import pfmHome from './assets/design/planforme/screen-01-home.webp'
+import pfmProgress from './assets/design/planforme/screen-02-progress.webp'
+import pfmReplan from './assets/design/planforme/screen-03-replan.webp'
+import pfmNotifications from './assets/design/planforme/screen-04-notifications.webp'
+import pfmNewType from './assets/design/planforme/screen-05-new-type.webp'
+import pfmNewBook from './assets/design/planforme/screen-06-new-book.webp'
+import pfmNewLecture from './assets/design/planforme/screen-07-new-lecture.webp'
+import pfmNewRoutine from './assets/design/planforme/screen-08-new-routine.webp'
+import pfmPreviewBook from './assets/design/planforme/screen-09-preview-book.webp'
+import pfmPreviewOverload from './assets/design/planforme/screen-10-preview-overload.webp'
+import pfmCalendar from './assets/design/planforme/screen-11-calendar.webp'
+import pfmPlans from './assets/design/planforme/screen-12-plans.webp'
+import pfmPlanDetail from './assets/design/planforme/screen-13-plan-detail.webp'
+import pfmMy from './assets/design/planforme/screen-14-my.webp'
+import pfmComponents from './assets/design/planforme/system-00-components.webp'
 import pfmIa from './assets/design/planforme/system-01-ia.webp'
 import pfmFlowCreate from './assets/design/planforme/system-02-flow-create.webp'
 import pfmFlowReplan from './assets/design/planforme/system-03-flow-replan.webp'
@@ -219,6 +234,7 @@ export const CASES: PortfolioCase[] = [
     tags: ['Next.js 16', 'React', '상태 관리'],
     keywords:
       'planforme 플랜포미 플래너 next.js nextjs 16 activity cache components 상태 초기화 화면 보관 useLayoutEffect 바텀시트 폼 리셋 버그',
+    image: pfmPreviewBook,
     href: '#/case/planforme-activity-state',
     links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
   },
@@ -235,6 +251,7 @@ export const CASES: PortfolioCase[] = [
     tags: ['React', '데이터 패칭', '스켈레톤'],
     keywords:
       'planforme 플랜포미 플래너 캘린더 useapi 데이터 패칭 fetch 오래된 응답 stale 경쟁 상태 race condition 로딩 스켈레톤 훅',
+    image: pfmCalendar,
     href: '#/case/planforme-stale-response',
     links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
   },
@@ -504,34 +521,51 @@ export const CASES: PortfolioCase[] = [
     type: 'Design',
     code: 'DESIGN 04',
     date: '2026.10',
-    level: 2,
-    title: 'PlanForMe — 하루 할당량을 계산해 주는 플래너 IA·유저 플로우 설계',
+    level: 3,
+    title: 'PlanForMe — 하루 할당량을 계산해 주는 플래너 앱 설계',
     description:
-      '총분량과 마감일만 넣으면 하루 할 일을 정해 주는 1인용 플래너. 정보 구조, 플랜 생성·재계산 두 흐름, 계산 규칙을 피그마로 먼저 설계하고 그대로 구현·배포.',
+      '총분량과 마감일만 넣으면 하루 할 일을 정해 주는 1인용 플래너. IA·유저 플로우·계산 규칙부터 모바일 화면 14개와 컴포넌트까지 피그마로 설계하고 그대로 구현·배포.',
     metrics: [
-      { label: '영역', value: '5개' },
+      { label: '화면', value: '모바일 14' },
       { label: '유저 플로우', value: '2개' },
       { label: '계산 규칙', value: '5개' },
     ],
-    tags: ['Figma', 'IA', 'User Flow'],
+    tags: ['Figma', 'Mobile UI', 'IA · User Flow'],
     keywords:
-      'planforme 플랜포미 플래너 계획 할 일 독서 강의 일정 할당량 재계산 ia 정보 구조 유저 플로우 user flow 피그마',
-    image: pfmIa,
+      'planforme 플랜포미 플래너 계획 할 일 독서 강의 일정 할당량 재계산 바텀시트 캘린더 통계 글래스모피즘 컴포넌트 ia 정보 구조 유저 플로우 user flow 모바일 피그마',
+    image: pfmHome,
     href: '#/case/planforme',
     links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
     design: {
       app: 'PlanForMe — 총분량과 마감일만 입력하면 하루 할당량을 자동 계산해 일정에 등록해 주는 1인용 스마트 플래너 (개인 프로젝트)',
       problem:
         '책·강의 계획은 세우는 것보다 지키는 게 어렵다. 하루 분량을 직접 나눠야 하고, 하루 이틀 밀리면 계산이 꼬인다. 유형마다 필요한 값만 받아 하루 분량을 정해 주고, 밀려도 실제 진행량을 받아 남은 기간에 다시 나눠 주도록 흐름과 계산 규칙을 먼저 정했다.',
+      screens: [
+        { label: '홈 (Today)', image: pfmHome, note: '남은 할 일 수와 오늘 달성률을 맨 위에. 밀린 분량이 있으면 배너로 알리고, 유형 필터와 체크박스로 바로 완료', width: 390, height: 1169 },
+        { label: '진행량 입력', image: pfmProgress, note: '목표대로 했으면 버튼 한 번, 아니면 실제로 읽은 마지막 페이지를 입력하는 바텀시트', width: 390, height: 844 },
+        { label: '재계산 제안', image: pfmReplan, note: '목표보다 덜 했을 때 지금 하루 25p → 내일부터 27p 처럼 바뀌는 양을 나란히 보여주고 다시 나눌지 묻는다', width: 390, height: 844 },
+        { label: '알림 센터', image: pfmNotifications, note: '재계산 제안·리마인더·달성·미달성을 날짜별로. 재계산 제안은 알림에서 바로 실행', width: 390, height: 844 },
+        { label: '플랜 생성 · 유형', image: pfmNewType, note: '1/3 단계. 책·동영상 강의·일반 중 하나를 고르면 그 유형에 필요한 값만 묻는다', width: 390, height: 844 },
+        { label: '플랜 생성 · 책', image: pfmNewBook, note: '현재·마지막 페이지와 기간, 수행 요일(매일·평일·주말·직접 선택)', width: 390, height: 844 },
+        { label: '플랜 생성 · 강의', image: pfmNewLecture, note: '총 강의 수와 1강 평균 길이를 10분 단위 칩으로', width: 390, height: 953 },
+        { label: '플랜 생성 · 일반', image: pfmNewRoutine, note: '분량 없이 매일 할 일만. 할 일 예시는 칩으로 골라 넣는다', width: 390, height: 844 },
+        { label: '계산 결과 · 책', image: pfmPreviewBook, note: '하루 할당량을 가장 크게. 종료일 슬라이더를 움직이면 바로 다시 계산하고 첫 주 범위를 미리 보여준다', width: 390, height: 933 },
+        { label: '계산 결과 · 과부하', image: pfmPreviewOverload, note: '강의가 하루 180분을 넘으면 경고와 함께 종료일을 1주 늘리는 버튼을 먼저 제안', width: 390, height: 977 },
+        { label: '캘린더', image: pfmCalendar, note: '할 일이 있는 날에 점을 찍고, 날짜를 누르면 그날의 할 일 목록', width: 390, height: 1023 },
+        { label: '플랜 목록', image: pfmPlans, note: '진행 중·완료·보류 필터와 D-Day·진도율·하루 분량 카드', width: 390, height: 863 },
+        { label: '플랜 상세', image: pfmPlanDetail, note: '남은 기간·진도율·남은 분량과 일자별 수행 기록. 밀렸거나 미리 했으면 여기서도 남은 일정을 다시 나눈다', width: 390, height: 1152 },
+        { label: '마이', image: pfmMy, note: '주간·월간 완수율과 유형별 누적 학습량, 다크모드·알림 설정', width: 390, height: 1018 },
+      ],
       system: [
+        { label: '컴포넌트', image: pfmComponents, note: '아이콘·버튼·칩·체크박스·토글·진행바·할 일 카드·입력·유형 선택·탭바를 상태별로. 초록 한 색은 완료와 지금 눌러야 할 것에만', width: 1808, height: 1994 },
         { label: 'IA', image: pfmIa, note: '홈·플랜 생성·캘린더·플랜 상세·마이 5개 영역을 3단계 깊이로. 플랜 생성은 하단 탭 가운데 버튼으로', width: 1544, height: 1194 },
         { label: '플랜 생성 플로우', image: pfmFlowCreate, note: '책·강의·일반마다 필요한 값만 받고 기간·요일은 공통으로 → 실시간 계산 미리보기 → 등록. 강의가 하루 180분을 넘으면 종료일 조정 안내', width: 2658, height: 1000 },
         { label: '진행 · 재계산 플로우', image: pfmFlowReplan, note: '그대로 했으면 체크 한 번, 아니면 실제 진행량을 입력. 목표와 다르면 남은 분량을 내일부터 다시 나눌지 묻는다', width: 2426, height: 860 },
         { label: '계산 로직', image: pfmLogic, note: '유효 일수 D와 책·강의·일반·재계산 공식을 예시와 함께. 이 예시가 그대로 백엔드 테스트가 됐다', width: 1708, height: 591 },
       ],
       systemHeading: {
-        title: 'IA · 유저 플로우',
-        description: '정보 구조와 핵심 흐름 두 개, 그 흐름이 쓰는 계산 규칙이에요.',
+        title: '컴포넌트 · IA · 유저 플로우',
+        description: '화면에 쓴 컴포넌트, 정보 구조와 핵심 흐름 두 개, 그 흐름이 쓰는 계산 규칙이에요.',
       },
     },
   },

@@ -35,7 +35,7 @@
 | | UTC 서버에서도 ‘오늘’을 한국 날짜로 (PlanForMe) |
 | **Design** | GAMEPROBE — 발로란트 전적·공략 웹 서비스 설계 |
 | | remind — 노션 학습노트 복습 퀴즈 앱 설계 |
-| | PlanForMe — 하루 할당량을 계산해 주는 플래너 IA·유저 플로우 설계 |
+| | PlanForMe — 하루 할당량을 계산해 주는 플래너 앱 설계 |
 | | 숙박 예약 앱 로그인 화면 3안 개선 |
 
 사례 목록과 상세 내용은 [`data.ts`](Portfolio/frontend/src/portfolio/data.ts)와 [`caseDetails.ts`](Portfolio/frontend/src/portfolio/caseDetails.ts)에 있습니다.
