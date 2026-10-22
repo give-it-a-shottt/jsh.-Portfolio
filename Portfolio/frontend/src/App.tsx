@@ -23,7 +23,7 @@ function App() {
     window.scrollTo(0, 0);
   }, [route]);
 
-  // 입구는 검색형 포트폴리오('#/', '#/search?q=…', '#/case/…'). 각 프로젝트는 '#/<프로젝트>/…' 아래에 있다.
+  // 입구는 검색형 포트폴리오('#/', '#/search?q=…', '#/case/…', '#/study/…'). 각 프로젝트는 '#/<프로젝트>/…' 아래에 있다.
   const [path, search = ""] = route.split("?");
   const params = new URLSearchParams(search);
 
@@ -47,6 +47,9 @@ function App() {
   // 사례 상세 '#/case/{slug}'
   if (path.startsWith("/case/"))
     return <PortfolioApp path="/case" params={params} slug={path.slice("/case/".length)} />;
+  // 공부 노트 상세 '#/study/{slug}'
+  if (path.startsWith("/study/"))
+    return <PortfolioApp path="/study" params={params} slug={path.slice("/study/".length)} />;
 
   // 그 밖의 주소는 포트폴리오 홈으로 보낸다
   return <PortfolioApp path="/" params={params} />;

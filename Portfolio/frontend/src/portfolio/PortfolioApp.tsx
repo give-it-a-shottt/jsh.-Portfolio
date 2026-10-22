@@ -9,6 +9,7 @@ import { goTo, readTab, searchHref, type ResultTab } from './routes'
 import { SEARCH_INPUT_ID } from './SearchBox'
 import SearchHome from './SearchHome'
 import SearchResults from './SearchResults'
+import StudyDetail from './StudyDetail'
 
 // Front·Back 상세는 코드 원문과 하이라이터를 함께 받아서, 열 때만 받는다
 const EngineeringCaseDetail = lazy(() => import('./EngineeringCaseDetail'))
@@ -34,10 +35,10 @@ function markIntroSeen() {
 }
 
 interface PortfolioAppProps {
-  /** '/' = 검색 홈, '/search' = 결과, '/case' = 사례 상세 */
-  path: '/' | '/search' | '/case'
+  /** '/' = 검색 홈, '/search' = 결과, '/case' = 사례 상세, '/study' = 공부 노트 상세 */
+  path: '/' | '/search' | '/case' | '/study'
   params: URLSearchParams
-  /** path 가 '/case' 일 때 보여줄 사례 */
+  /** path 가 '/case' · '/study' 일 때 보여줄 사례·노트 */
   slug?: string
 }
 
@@ -100,9 +101,13 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
         <div className="flex min-h-svh flex-col bg-default">
           <PortfolioHeader
             search={isResults ? { query, onSearch: search } : undefined}
-            activeTab={isResults ? tab : caseItem ? (caseItem.type.toLowerCase() as ResultTab) : 'all'}
+            activeTab={
+              isResults ? tab : path === '/study' ? 'study' : caseItem ? (caseItem.type.toLowerCase() as ResultTab) : 'all'
+            }
           />
-          {caseItem && !caseItem.design ? (
+          {path === '/study' ? (
+            <StudyDetail slug={slug} />
+          ) : caseItem && !caseItem.design ? (
             <Suspense fallback={null}>
               <EngineeringCaseDetail slug={slug} />
             </Suspense>

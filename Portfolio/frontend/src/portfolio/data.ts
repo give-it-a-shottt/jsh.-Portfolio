@@ -74,6 +74,14 @@ import type { Level } from './rank'
 
 export type CaseType = 'Front' | 'Back' | 'Design'
 
+/** 분류 점 색 — Back 은 포인트 파랑, Front 는 회색, Design 은 주황, 공부 노트(Study)는 인디고 */
+export const TYPE_DOT_CLASS: Record<CaseType | 'Study', string> = {
+  Back: 'bg-portfolio',
+  Front: 'bg-icon-disabled',
+  Design: 'bg-accent',
+  Study: 'bg-study',
+}
+
 /** Design 사례의 화면 한 장(시안·화면 구성·디자인 시스템 가이드) */
 export interface DesignVariant {
   label: string
@@ -639,15 +647,17 @@ export const CASES: PortfolioCase[] = [
   },
 ]
 
-export const KEYWORDS: { label: string; type: CaseType }[] = [
+export const KEYWORDS: { label: string; type: CaseType | 'Study' }[] = [
   { label: '해커톤', type: 'Front' },
   { label: '요청 한도', type: 'Back' },
   { label: '외부 API', type: 'Back' },
   { label: '디자인 시스템', type: 'Design' },
+  { label: '블렌딩', type: 'Study' },
   { label: '게임 전적', type: 'Design' },
   { label: '복습 퀴즈', type: 'Design' },
   { label: '무료 서버', type: 'Back' },
   { label: '로그인 화면', type: 'Design' },
+  { label: '레이아웃', type: 'Study' },
   { label: 'PlanForMe', type: 'Back' },
   { label: '비밀번호 찾기', type: 'Design' },
 ]
@@ -665,7 +675,8 @@ export function matchesQuery(item: PortfolioCase, query: string) {
 
 export interface Suggestion {
   text: string
-  type: CaseType
+  /** 공부 노트 제목이면 'Study' (notes.ts 의 getAllSuggestions) */
+  type: CaseType | 'Study'
 }
 
 /** 빈 입력이면 추천 키워드, 입력이 있으면 키워드 + 사례 제목 중 부분 일치 */

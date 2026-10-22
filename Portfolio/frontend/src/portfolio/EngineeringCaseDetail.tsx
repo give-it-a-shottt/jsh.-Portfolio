@@ -5,6 +5,7 @@ import { CASE_DETAILS, type CodeSample } from './caseDetails'
 import { CASES, type PortfolioCase } from './data'
 import { CheckIcon, ChevronRightIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
+import CaseNotes from './CaseNotes'
 import { searchHref, type ResultTab } from './routes'
 
 const REPO_URL = 'https://github.com/give-it-a-shottt/jsh.-Portfolio'
@@ -317,6 +318,8 @@ export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailPro
           {detail && detail.code.length > 0 && <CodePanel key={slug} samples={detail.code} tall={isBack} />}
         </div>
       </div>
+
+      <CaseNotes slug={slug} />
 
       <nav aria-label="다른 사례" className="mt-16 flex flex-wrap gap-3">
         <a

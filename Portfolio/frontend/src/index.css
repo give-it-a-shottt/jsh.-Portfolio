@@ -88,6 +88,10 @@
   /* 포트폴리오(개인 브랜드) 포인트 — MyDesign.md Primary. Accio 의 주황과 구분한다 */
   --color-portfolio: #2563eb;
   --color-portfolio-soft: #eff4ff;
+  /* 공부 노트(Study) — 로고의 점과 같은 인디고. 배지 글자는 soft 위 대비 4.5:1 을 넘기려 strong 을 쓴다 */
+  --color-study: #6366f1;
+  --color-study-soft: #eef0fe;
+  --color-study-strong: #4f46e5;
 
   /* 마에스트로(해커톤 프로젝트) — 다른 프로젝트 색과 섞이지 않게 maestro- 접두어를 붙인다 */
   --color-maestro: #8855ff;

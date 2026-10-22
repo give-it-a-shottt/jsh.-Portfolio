@@ -1,5 +1,6 @@
 import { useId, useState } from 'react'
-import { getSuggestions, splitMatch } from './data'
+import { splitMatch } from './data'
+import { getAllSuggestions } from './notes'
 import { ArrowRightIcon, CloseIcon, SearchIcon } from '../shared/icons'
 import './SearchBox.css'
 
@@ -49,7 +50,7 @@ export default function SearchBox({ size, defaultValue = '', glow = false, onSea
   const [focused, setFocused] = useState(false)
   const [active, setActive] = useState(-1)
 
-  const suggestions = getSuggestions(value)
+  const suggestions = getAllSuggestions(value)
   const open = focused && suggestions.length > 0
   const optionId = (i: number) => `${listId}-option-${i}`
 

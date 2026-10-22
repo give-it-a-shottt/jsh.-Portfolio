@@ -3,6 +3,7 @@ import { useReducedMotion } from 'motion/react'
 import { CASES, type DesignVariant } from './data'
 import { ChevronRightIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
+import CaseNotes from './CaseNotes'
 import { DESIGN_DEMOS } from './demos'
 import { searchHref } from './routes'
 
@@ -271,6 +272,8 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
           </div>
         </section>
       )}
+
+      <CaseNotes slug={item.slug} />
 
       <a
         href={DESIGN_LIST_HREF}

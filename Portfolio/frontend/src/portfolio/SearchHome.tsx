@@ -1,6 +1,8 @@
 import { motion, useReducedMotion } from 'motion/react'
-import { CASES, KEYWORDS } from './data'
+import { CASES, KEYWORDS, TYPE_DOT_CLASS } from './data'
 import { EASE_OUT } from './motion'
+import NoteCard from './NoteCard'
+import { NOTES } from './notes'
 import { rankCases } from './rank'
 import RecordCard from './RecordCard'
 import { searchHref } from './routes'
@@ -8,13 +10,8 @@ import SearchBox from './SearchBox'
 
 // 홈 아래 카드 — 날짜가 월 단위라 최신순은 거의 다 같아서, 중요도 순(rank.ts)으로 6개를 고른다
 const FEATURED = rankCases(CASES).slice(0, 6)
-
-// 키워드 칩 앞 점 — Back 은 포인트 파랑, Front 는 회색, Design 은 주황
-const TYPE_DOT_CLASS = {
-  Back: 'bg-portfolio',
-  Front: 'bg-icon-disabled',
-  Design: 'bg-accent',
-}
+// 그 아래 공부 노트 — 노트는 날짜가 일 단위라 최신순(notes.ts) 그대로 3개
+const RECENT_NOTES = NOTES.slice(0, 3)
 
 interface SearchHomeProps {
   onSearch: (query: string) => void
@@ -96,10 +93,33 @@ export default function SearchHome({ onSearch }: SearchHomeProps) {
             전체 사례 보기 →
           </a>
         </motion.div>
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
+        <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
           {FEATURED.map((item, i) => (
             <motion.li key={item.slug} {...reveal(i % 3)}>
               <RecordCard item={item} />
+            </motion.li>
+          ))}
+        </ul>
+      </section>
+
+      {/* 사례와 섞지 않고 아래에 따로 — 사례가 먼저 읽히게 한다 */}
+      <section aria-labelledby="recent-notes-title" className="mt-20 w-full max-w-300">
+        <motion.div {...reveal(0)} className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+          <div className="flex flex-col gap-1">
+            <h2 id="recent-notes-title" className="flex items-center gap-2 text-24 font-semibold text-main">
+              <span aria-hidden="true" className="size-2 rounded-full bg-study" />
+              최근 공부 노트
+            </h2>
+            <p className="text-14 break-keep text-sub">강의를 들으며 정리한 노트예요. 실제로 써먹은 곳이 있으면 함께 적었어요.</p>
+          </div>
+          <a href={searchHref('', 'study')} className="text-14 font-medium text-portfolio hover:underline underline-offset-4">
+            모든 노트 보기 →
+          </a>
+        </motion.div>
+        <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
+          {RECENT_NOTES.map((note, i) => (
+            <motion.li key={note.slug} {...reveal(i)}>
+              <NoteCard note={note} />
             </motion.li>
           ))}
         </ul>

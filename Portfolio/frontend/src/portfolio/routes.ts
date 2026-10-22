@@ -1,6 +1,6 @@
-export type ResultTab = 'all' | 'front' | 'back' | 'design'
+export type ResultTab = 'all' | 'front' | 'back' | 'design' | 'study'
 
-const TABS: ResultTab[] = ['all', 'front', 'back', 'design']
+const TABS: ResultTab[] = ['all', 'front', 'back', 'design', 'study']
 
 /** `#/search?q=…&tab=…` 주소. 빈 검색어와 '전체' 탭은 주소에서 뺀다 */
 export function searchHref(query = '', tab: ResultTab = 'all') {
