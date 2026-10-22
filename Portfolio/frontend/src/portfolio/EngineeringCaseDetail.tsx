@@ -246,7 +246,7 @@ export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailPro
               // 마지막 줄의 칸이 남은 폭을 나눠 가져서 빈칸이 생기지 않는다
               <dl className="mt-6 flex flex-wrap gap-px overflow-hidden rounded-card border border-regular bg-regular">
                 {item.metrics.map(({ label, value }) => (
-                  <div key={label} className="flex flex-[1_1_140px] flex-col gap-1 bg-white p-4">
+                  <div key={label} className="flex flex-[1_1_140px] flex-col gap-1 bg-default p-4">
                     <dt className="text-12 break-keep text-sub-weak">{label}</dt>
                     <dd className="text-16 font-semibold break-keep text-main">{value}</dd>
                   </div>

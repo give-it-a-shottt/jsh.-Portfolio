@@ -19,7 +19,7 @@ function KeywordChips({ exclude }: { exclude?: string }) {
         <li key={label}>
           <a
             href={searchHref(label)}
-            className="block rounded-full border border-regular bg-white px-4 py-2 text-14 font-medium text-main hover:bg-light"
+            className="block rounded-full border border-regular bg-default px-4 py-2 text-14 font-medium text-main hover:bg-light"
           >
             {label}
           </a>

@@ -110,6 +110,34 @@
   --radius-badge: 4px;
 }
 
+/*
+ * Ivory 테마 (MyDesign 11장) — 포트폴리오만 쓴다. PortfolioApp 이 <html data-theme="ivory"> 를 붙였다 뗀다.
+ * Accio·마에스트로도 같은 토큰 유틸리티를 쓰므로 위 기본값은 그대로 두고 값만 덮어쓴다.
+ * @theme 변수는 theme 레이어에 있어서, 레이어 밖에 둔 이 규칙이 이긴다.
+ */
+[data-theme="ivory"] {
+  --text-color-main: #1c1a16;
+  --text-color-sub: #4d4840;
+  --text-color-sub-weak: #69635a;
+  --text-color-disabled: #a29b8f;
+
+  --border-color-light: #f0ebe1;
+  --border-color-regular: #e4ddd0;
+  --border-color-black: #1c1a16;
+
+  --background-color-default: #fffdf8;
+  --background-color-light: #f8f4ec;
+  --background-color-regular: #f0ebe1;
+  --background-color-main: #1c1a16;
+
+  --color-portfolio-soft: #edf1fb;
+
+  --color-icon-main: #2d2a25;
+  --color-icon-sub: #57524a;
+  --color-icon-sub-weak: #7e776c;
+  --color-icon-disabled: #aca597;
+}
+
 @utility scrollbar-none {
   scrollbar-width: none;
   -ms-overflow-style: none;

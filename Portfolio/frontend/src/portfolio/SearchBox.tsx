@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { getSuggestions, splitMatch } from './data'
 import { ArrowRightIcon, CloseIcon, SearchIcon } from '../shared/icons'
+import './SearchBox.css'
 
 /** 전역 `/` 단축키가 찾아 포커스하는 입력창 id (화면마다 검색창은 하나뿐이다) */
 export const SEARCH_INPUT_ID = 'portfolio-search'
@@ -35,11 +36,13 @@ const SIZE = {
 interface SearchBoxProps {
   size: keyof typeof SIZE
   defaultValue?: string
+  /** 그라데이션 테두리 글로우(SearchBox.css). 검색 홈에서만 켠다 */
+  glow?: boolean
   onSearch: (query: string) => void
 }
 
 // 자동완성 검색창 — 포커스하면 추천/자동완성 목록이 열리고 ↑↓ 로 고르고 Enter 로 검색, Esc 로 닫는다.
-export default function SearchBox({ size, defaultValue = '', onSearch }: SearchBoxProps) {
+export default function SearchBox({ size, defaultValue = '', glow = false, onSearch }: SearchBoxProps) {
   const style = SIZE[size]
   const listId = useId()
   const [value, setValue] = useState(defaultValue)
@@ -64,7 +67,7 @@ export default function SearchBox({ size, defaultValue = '', onSearch }: SearchB
           e.preventDefault()
           search(suggestions[active]?.text ?? value)
         }}
-        className={`flex items-center rounded-full border bg-white transition-shadow ${style.bar} ${focused ? 'border-black shadow-[0_8px_24px_rgba(17,17,17,0.06)]' : 'border-regular'}`}
+        className={`flex items-center rounded-full border bg-default ${style.bar} ${glow ? 'search-glow border-transparent' : focused ? 'border-black shadow-[0_8px_24px_rgba(45,42,37,0.06)] transition-shadow' : 'border-regular transition-shadow'}`}
       >
         <SearchIcon size={style.icon} className="shrink-0 text-icon-main" />
         <input
@@ -136,7 +139,7 @@ export default function SearchBox({ size, defaultValue = '', onSearch }: SearchB
 
       {open && (
         <div
-          className={`absolute inset-x-0 z-10 rounded-card border border-regular bg-white p-2 shadow-[0_12px_32px_rgba(17,17,17,0.08)] ${style.dropdown}`}
+          className={`absolute inset-x-0 z-10 rounded-card border border-regular bg-default p-2 shadow-[0_12px_32px_rgba(45,42,37,0.08)] ${style.dropdown}`}
         >
           <p className="px-4 pt-2 pb-1 text-12 font-medium text-sub-weak">{value.trim() ? '자동완성' : '추천 검색어'}</p>
           <ul id={listId} role="listbox" aria-label="검색어 제안">

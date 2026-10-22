@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import { CASES } from './data'
 import DesignCaseDetail from './DesignCaseDetail'
@@ -58,6 +58,15 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
 
   const search = useCallback((nextQuery: string) => goTo(searchHref(nextQuery)), [])
 
+  // Ivory 테마는 포트폴리오에만 — <html> 에 붙여 스크롤 끝 배경까지 맞추고, 프로젝트로 나가면 뗀다.
+  // 그리기 전에 붙여야 흰 화면이 한 번 비치지 않는다.
+  useLayoutEffect(() => {
+    document.documentElement.dataset.theme = 'ivory'
+    return () => {
+      delete document.documentElement.dataset.theme
+    }
+  }, [])
+
   // 전역 '/' 단축키 — 입력 중이 아닐 때 검색창으로 포커스
   useEffect(() => {
     if (introPlaying) return
@@ -88,7 +97,7 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
       </AnimatePresence>
 
       {!introPlaying && (
-        <div className="flex min-h-svh flex-col bg-white">
+        <div className="flex min-h-svh flex-col bg-default">
           <PortfolioHeader
             search={isResults ? { query, onSearch: search } : undefined}
             activeTab={isResults ? tab : caseItem ? (caseItem.type.toLowerCase() as ResultTab) : 'all'}
