@@ -3,7 +3,7 @@ import { accioHref } from '../routes'
 import { Logo } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
-import { StateEmpty } from '../ui/states'
+import { DemoAccountHint, StateEmpty } from '../ui/states'
 import useAuth from '../ui/useAuth'
 import { DEMO_SELLER_EMAIL, useSellerClaims, useSellerOrders, useSellerProducts, useSellerProfile } from './sellerData'
 
@@ -30,7 +30,13 @@ export default function SellerLayout({ path, title, actions, children }: { path:
             title="판매자 등록이 필요해요"
             description={'사업자 정보만 있으면 5분이면 끝나요.\n등록하면 AI가 상품 등록을 도와드려요'}
             action={{ label: '판매자 등록하기', href: accioHref('/seller/join') }}
-          />
+          >
+            {/* 지금 계정은 판매자가 아니라서, 예시 스토어(캠프로 스토어)를 보려면 예시 계정으로 바꿔 들어오게 안내한다 */}
+            <div className="flex flex-col items-center gap-1 pt-4">
+              <p className="text-13 text-sub">예시 스토어는 예시 계정으로 로그인하면 볼 수 있어요</p>
+              <DemoAccountHint />
+            </div>
+          </StateEmpty>
         </main>
         <SiteFooter hideOnMobile />
       </div>
