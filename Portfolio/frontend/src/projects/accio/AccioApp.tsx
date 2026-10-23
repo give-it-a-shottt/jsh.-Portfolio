@@ -1,8 +1,8 @@
-import AiChatPage from "./components/AiChatPage";
 import LoginPage from "./components/LoginPage";
 import MyPage from "./components/MyPage";
 import OrderTrackingPage from "./components/OrderTrackingPage";
 import SupportPage from "./components/SupportPage";
+import AiPage from "./ai/AiPage";
 import HomePage from "./home/HomePage";
 import CartPage from "./pages/CartPage";
 import DetailPage from "./pages/DetailPage";
@@ -12,7 +12,7 @@ import { OrderCompletePage, OrderFailPage } from "./pages/OrderResultPage";
 interface AccioAppProps {
   /** '#/accio' 뒤의 경로. '/' 는 쇼핑몰 홈 */
   path: string;
-  /** 주소의 ?뒤 값 — 목록은 q(검색어), 상세는 id(상품)를 읽는다 */
+  /** 주소의 ?뒤 값 — 목록·AI 는 q(검색어·질문), 상세는 id(상품)를 읽는다 */
   params: URLSearchParams;
 }
 
@@ -28,7 +28,7 @@ export default function AccioApp({ path, params }: AccioAppProps) {
     const id = params.get("id") ?? undefined;
     return <DetailPage key={id} productId={id} />;
   }
-  if (path === "/ai") return <AiChatPage />;
+  if (path === "/ai") return <AiPage initialQuestion={params.get("q") ?? undefined} />;
   if (path === "/cart") return <CartPage />;
   if (path === "/mypage") return <MyPage />;
   if (path === "/order/complete") return <OrderCompletePage orderNo={params.get("no") ?? undefined} />;

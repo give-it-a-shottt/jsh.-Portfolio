@@ -87,10 +87,79 @@ export const PRODUCTS = {
   woodChair: { id: 'wood-chair', brand: '노마드', name: '빈티지 우드 캠핑 체어', discountRate: 12, price: 78000, rating: 4.6, reviewCount: 530, image: campingChair, category: '캠핑', delivery: ['무료배송'] },
   chairBag: { id: 'chair-bag', brand: '아웃핏', name: '캠핑 의자 수납 가방', discountRate: 20, price: 12900, rating: 4.4, reviewCount: 845, image: campingChair, category: '캠핑', delivery: ['내일 도착'], soldOut: true },
   chairCover: { id: 'chair-cover', brand: '캠프로', name: '양면 접이식 체어 커버', discountRate: 10, price: 9900, rating: 4.5, reviewCount: 198, image: campingChair, category: '캠핑', delivery: ['오늘 출발'] },
+  // AI 재구매 질문('지난번 산 휴지 또')에 쓰는 생필품
+  decoTissue: { id: 'deco-tissue', brand: '데일리룸', name: '3겹 데코 화장지 30롤', discountRate: 20, price: 15900, rating: 4.8, reviewCount: 5120, image: living, category: '생활', delivery: ['무료배송', '오늘 출발'] },
 } satisfies Record<string, Product>
 
-/** 전체 상품 — 목록·검색 화면이 이 안에서 고른다 */
-export const ALL_PRODUCTS: Product[] = Object.values(PRODUCTS)
+// ── AI 다중검색(김치찌개 재료) — 재료마다 5개, 맨 앞이 판매량 1위 ─────────────────
+const grocery = (id: string, name: string, price: number, rating: number, reviewCount: number): Product => ({
+  id,
+  brand: '그린테이블',
+  name,
+  discountRate: 0,
+  price,
+  rating,
+  reviewCount,
+  image: mealkit,
+  category: '식품',
+  delivery: ['오늘 출발'],
+})
+
+export const KIMCHI_STEW_GROUPS: { label: string; products: Product[] }[] = [
+  {
+    label: '돼지고기',
+    products: [
+      grocery('pork-shoulder-600', '한돈 앞다리 찌개용 600g', 12900, 4.8, 2341),
+      grocery('pork-neck-500', '국내산 목살 찌개용 500g', 14500, 4.7, 1120),
+      grocery('pork-belly-400', '한돈 삼겹 찌개용 400g', 11800, 4.6, 884),
+      grocery('pork-shoulder-500', '무항생제 돼지 앞다리 500g', 13200, 4.7, 402),
+      grocery('pork-minced-300', '한돈 다짐육 300g', 6900, 4.5, 319),
+    ],
+  },
+  {
+    label: '김치',
+    products: [
+      grocery('aged-kimchi-1kg', '3년 숙성 묵은지 1kg', 9900, 4.9, 3012),
+      grocery('napa-kimchi-1kg', '국산 배추김치 1kg', 8900, 4.7, 2210),
+      grocery('stew-kimchi-500', '찌개용 썰은 김치 500g', 5900, 4.6, 980),
+      grocery('aged-kimchi-2kg', '전라도 묵은지 2kg', 17900, 4.8, 640),
+      grocery('vegan-kimchi-1kg', '비건 배추김치 1kg', 10900, 4.5, 211),
+    ],
+  },
+  {
+    label: '두부',
+    products: [
+      grocery('stew-tofu-300', '국산콩 찌개용 두부 300g', 1900, 4.8, 4120),
+      grocery('soft-tofu-400', '부침·찌개 겸용 두부 400g', 2300, 4.7, 1530),
+      grocery('organic-tofu-300', '유기농 두부 300g', 3200, 4.8, 722),
+      grocery('tofu-2pack', '찌개용 두부 2입', 3500, 4.6, 610),
+      grocery('silken-tofu-350', '연두부 350g', 1600, 4.5, 288),
+    ],
+  },
+  {
+    label: '대파',
+    products: [
+      grocery('green-onion-1', '흙대파 1단', 2900, 4.7, 2780),
+      grocery('green-onion-cut', '손질 대파 300g', 2500, 4.6, 1104),
+      grocery('green-onion-frozen', '냉동 썬 대파 500g', 3900, 4.5, 512),
+      grocery('small-onion', '쪽파 1단', 3400, 4.6, 330),
+      grocery('green-onion-2', '흙대파 2단 묶음', 5300, 4.7, 207),
+    ],
+  },
+  {
+    label: '고춧가루',
+    products: [
+      grocery('chili-powder-100', '국산 고춧가루 100g', 4800, 4.8, 1890),
+      grocery('chili-powder-500', '찌개용 고춧가루 500g', 18900, 4.8, 870),
+      grocery('chili-powder-fine', '고운 고춧가루 200g', 7900, 4.7, 455),
+      grocery('chili-powder-mild', '덜 매운 고춧가루 100g', 4600, 4.5, 260),
+      grocery('chili-flakes', '청양 고춧가루 100g', 5200, 4.6, 198),
+    ],
+  },
+]
+
+/** 전체 상품 — 목록·검색·장바구니가 이 안에서 고른다 */
+export const ALL_PRODUCTS: Product[] = [...Object.values(PRODUCTS), ...KIMCHI_STEW_GROUPS.flatMap((g) => g.products)]
 
 /** 할인 전 가격 — 할인율로 되돌려 100원 단위로 반올림 */
 export const listPriceOf = (product: Product) =>

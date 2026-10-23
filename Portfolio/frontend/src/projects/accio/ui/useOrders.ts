@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { cartActions, type CartItem, summarize } from './useCart'
+import { cartActions, type CartItem, findProduct, summarize } from './useCart'
 
 // 주문 — 목업 결제(토스페이 테스트)로 만든 주문을 브라우저에 남긴다. 주문내역·배송 조회가 읽는다.
 export interface OrderLine {
@@ -93,4 +93,15 @@ export default function useOrders() {
     () => snapshot,
     () => snapshot,
   )
+}
+
+/** 가장 최근 주문 — AI 주문 조회·재구매 답에 쓴다 */
+export function latestOrder() {
+  const order = snapshot[0]
+  if (!order) return undefined
+  return {
+    no: order.no,
+    firstName: findProduct(order.lines[0].productId)?.name ?? '상품',
+    productIds: order.lines.map((line) => line.productId),
+  }
 }

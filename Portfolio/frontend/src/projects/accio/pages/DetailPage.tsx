@@ -7,6 +7,7 @@ import thumbIcon from '../assets/v4/icons/thumb.svg'
 import { ALL_PRODUCTS, PRODUCTS, type Product } from '../data/catalog'
 import { getDetail, REVIEW_TOPICS, SHIPPING_INFO, type Review, type ReviewTopic } from '../data/detail'
 import { accioHref } from '../routes'
+import FloatingStack from '../ui/FloatingStack'
 import ProductCard from '../ui/ProductCard'
 import { AiDot, Button, Container, Stepper } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
@@ -470,6 +471,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
       </main>
 
       <SiteFooter hideOnMobile />
+      <FloatingStack />
 
       {/* ── 모바일 고정 구매 바 ── */}
       <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-2 border-t border-light bg-white px-4 pt-2.5 pb-[calc(10px+env(safe-area-inset-bottom))] lg:hidden">

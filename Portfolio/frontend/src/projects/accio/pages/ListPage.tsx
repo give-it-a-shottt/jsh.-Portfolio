@@ -8,11 +8,13 @@ import close14 from '../assets/v4/icons/close-14.svg'
 import filterIcon from '../assets/v4/icons/filter.svg'
 import { ALL_PRODUCTS, DELIVERY_OPTIONS, type Delivery, type Product } from '../data/catalog'
 import { accioHref } from '../routes'
+import FloatingStack from '../ui/FloatingStack'
 import MobileTabBar from '../ui/MobileTabBar'
 import ProductCard from '../ui/ProductCard'
 import { AiDot, Button, CheckMark, Container } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
+import { chatActions, openAiWidget } from '../ui/useAiChat'
 import { formatCount, formatWon } from '../utils/format'
 
 const SORTS = ['관련도순', '인기순', '낮은 가격순', '높은 가격순'] as const
@@ -245,8 +247,11 @@ export default function ListPage({ query = '' }: { query?: string }) {
     const q = draft.trim()
     window.location.hash = q ? `${accioHref('/list')}?q=${encodeURIComponent(q)}` : accioHref('/list')
   }
+  // 보던 목록 위에서 AI 위젯을 열고, 지금 검색어로 대화를 시작한다
   const askAi = () => {
-    window.location.hash = `${accioHref('/ai')}?q=${encodeURIComponent(query || draft)}`
+    chatActions.startNew()
+    chatActions.send(query || draft || '캠핑 갈 때 쓸 가벼운 의자 찾아줘')
+    openAiWidget()
   }
 
   return (
@@ -437,6 +442,7 @@ export default function ListPage({ query = '' }: { query?: string }) {
 
       <SiteFooter hideOnMobile />
       <MobileTabBar />
+      <FloatingStack />
 
       {/* ── 필터 시트 (모바일) ── */}
       {sheetOpen && (
