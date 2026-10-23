@@ -85,6 +85,33 @@ import acTypography from './assets/design/accio/system-03-typography.webp'
 import acSpacing from './assets/design/accio/system-04-spacing.webp'
 import acComponents from './assets/design/accio/system-05-components.webp'
 import acStates from './assets/design/accio/system-06-states.webp'
+import flStoryCover from './assets/design/flaseek/story-01-cover.webp'
+import flStorySummary from './assets/design/flaseek/story-02-summary.webp'
+import flStoryLayout from './assets/design/flaseek/story-03-layout.webp'
+import flStoryEntry from './assets/design/flaseek/story-04-entry.webp'
+import flStoryCard from './assets/design/flaseek/story-05-card.webp'
+import flStoryDetail from './assets/design/flaseek/story-06-detail.webp'
+import flStoryContrast from './assets/design/flaseek/story-07-contrast.webp'
+import flStoryProcess from './assets/design/flaseek/story-08-process.webp'
+import flStorySystem from './assets/design/flaseek/story-09-system.webp'
+import flStoryMobile from './assets/design/flaseek/story-10-mobile.webp'
+import flStoryAiRole from './assets/design/flaseek/story-11-ai-role.webp'
+import flStoryImpact from './assets/design/flaseek/story-12-impact.webp'
+import flPcMain from './assets/design/flaseek/pc-01-main.webp'
+import flPcList from './assets/design/flaseek/pc-02-list.webp'
+import flPcDetail from './assets/design/flaseek/pc-03-detail.webp'
+import flPcLogin from './assets/design/flaseek/pc-04-login.webp'
+import flMoMain from './assets/design/flaseek/mo-01-main.webp'
+import flMoList from './assets/design/flaseek/mo-02-list.webp'
+import flMoFilter from './assets/design/flaseek/mo-03-filter.webp'
+import flMoDetail from './assets/design/flaseek/mo-04-detail.webp'
+import flMoDetailBuybar from './assets/design/flaseek/mo-05-detail-buybar.webp'
+import flMoLogin from './assets/design/flaseek/mo-06-login.webp'
+import flPlanBoard from './assets/design/flaseek/plan-01-board.webp'
+import flOptionA from './assets/design/flaseek/plan-02-option-a.webp'
+import flOptionB from './assets/design/flaseek/plan-03-option-b.webp'
+import flOptionC from './assets/design/flaseek/plan-04-option-c.webp'
+import flComponents from './assets/design/flaseek/system-components.webp'
 import type { Level } from './rank'
 
 // 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
@@ -124,12 +151,18 @@ export interface DesignCase {
   device?: 'mobile' | 'desktop'
   /** 처음 시안에서 느낀 문제, 또는 설계하며 풀려던 문제 */
   problem: string
+  /** 참여 범위와 기여도. 있으면 상단 요약에 '참여' 줄로 보여준다 */
+  role?: string
+  /** 케이스 스터디 장표(16:9). 있으면 맨 앞 칸에 보여준다 */
+  story?: DesignVariant[]
   /** 같은 화면을 고쳐 나간 시안 */
   variants?: DesignVariant[]
   /** variants 중 최종안의 위치 */
   finalIndex?: number
   /** 앱의 주요 화면 */
   screens?: DesignVariant[]
+  /** screens 가 데스크톱일 때 따로 모은 모바일 화면 */
+  mobileScreens?: DesignVariant[]
   /** 디자인 시스템 가이드(컬러·타이포·컴포넌트). 넓고 긴 문서라 device 와 상관없이 데스크톱 카드로 보여준다 */
   system?: DesignVariant[]
   /** system 칸의 제목·설명. 없으면 '디자인 시스템'. IA·플로우만 있는 사례처럼 내용이 다를 때 쓴다 */
@@ -509,6 +542,72 @@ export const CASES: PortfolioCase[] = [
     },
   },
   {
+    slug: 'flaseek-renewal',
+    type: 'Design',
+    code: 'DESIGN 07',
+    date: '2026.10',
+    level: 3,
+    title: 'FLASEEK 자사몰 리뉴얼 시안 — 증거로 보여주고, 기준으로 고르게',
+    description:
+      '보정속옷·압박스타킹 자사몰의 문제 4가지(왼쪽 쏠림·버튼 중복·정보 없는 카드·끝없이 펼쳐진 상세)와 핑크 대비를 진단하고, Before/After 히어로·정보 카드·접히는 상세로 PC·모바일 화면과 디자인 시스템을 제안.',
+    metrics: [
+      { label: '화면', value: 'PC 4 · 모바일 4' },
+      { label: '진입점', value: '11곳 → 3곳' },
+      { label: '버튼 대비', value: '2.53 → 5.10' },
+    ],
+    tags: ['Figma', '리뉴얼 제안', 'Web · Mobile UI'],
+    keywords:
+      'flaseek 플래시크 플라식 자사몰 리뉴얼 개선 제안 보정속옷 압박스타킹 레깅스 쉐이프웨어 쇼핑몰 이커머스 before after 비포 애프터 상세페이지 상품 카드 앵커 탭 스티키 구매바 접근성 명도 대비 wcag 핑크 진단 ia 유저플로우 벤치마킹 3안 생성형 ai 디자인 시스템 피그마 반응형',
+    image: flPcMain,
+    href: '#/case/flaseek-renewal',
+    design: {
+      app: 'FLASEEK — 다리라인·체형 보정 제품을 파는 보정속옷·압박스타킹 자사몰 (리뉴얼 제안 시안)',
+      problem:
+        '왼쪽 고정 사이드바 때문에 콘텐츠가 한쪽으로 쏠리고, 멤버십·쿠폰·문의 버튼이 사이드바·퀵메뉴·헤더·푸터에 겹쳐 진입점이 11곳이었다. 상품 카드에는 할인율·별점·세트 장당가가 없어 고를 근거가 부족했고, 상세는 이미지와 리뷰가 한 번에 펼쳐져 22,400px까지 길어져 구매 버튼을 잃어버렸다. 브랜드 핑크(#FA78A8) 버튼 위 흰 글자는 대비가 2.53 : 1로 기준(4.5 : 1)에 못 미쳤다.',
+      role: '개인 작업 · 기여도 100% — 현재 몰 진단, 기획(IA·유저 플로우), 3안 비교와 선택, 디자인 시스템, PC·모바일 화면까지 판단과 디자인은 모두 직접 했어요. Claude는 근거 수치 정리·피그마 조립 같은 반복 작업을, Figma AI는 연출용 Before/After·상세 이미지 2장을 보조했고 화면에 AI 이미지라고 표기했어요.',
+      device: 'desktop',
+      story: [
+        { label: '표지', image: flStoryCover, note: '증거로 보여주고, 기준으로 고르게 — 기간 2일, 진단부터 PC·모바일 화면과 디자인 시스템까지', width: 1920, height: 1080 },
+        { label: '한눈에 보기', image: flStorySummary, note: '문제 4가지와 브랜드 핑크 대비를 근거·개선·결과 한 표로', width: 1920, height: 1080 },
+        { label: '문제 1 · 레이아웃', image: flStoryLayout, note: '왼쪽 250px 고정 사이드바를 걷어내고 상단 GNB + 1200px 가운데 12칼럼으로', width: 1920, height: 1080 },
+        { label: '문제 2 · 버튼 중복', image: flStoryEntry, note: '혜택·고객센터를 한 페이지씩으로 묶고 퀵메뉴를 줄여 진입점 11곳 → 3곳', width: 1920, height: 1080 },
+        { label: '문제 3 · 상품 카드', image: flStoryCard, note: '이미지 → 상품명 → 할인율·판매가 → 장당가 → 별점 순서를 고정하고 태그는 최대 2개', width: 1920, height: 1080 },
+        { label: '문제 4 · 상세페이지', image: flStoryDetail, note: '앵커 탭과 900px 접기, 리뷰 요약, PC 상단·MO 하단 고정 구매바로 어디서든 바로 구매', width: 1920, height: 1080 },
+        { label: '컬러 접근성', image: flStoryContrast, note: '브랜드 핑크는 지키고 버튼 #D90855 · 장식 #FA78A8 · 글자 #CA074F 세 역할로 나눠 대비 5.10 : 1', width: 1920, height: 1080 },
+        { label: '디자인 과정', image: flStoryProcess, note: '올리브영·에이블리·W컨셉·29CM·마켓컬리 벤치마킹 후 3안을 직접 그려 A안 선택', width: 1920, height: 1080 },
+        { label: '디자인 시스템', image: flStorySystem, note: '개인 디자인 시스템 위에 컬러 변수 21개·텍스트 스타일 28개, 프로젝트 값만 바꿈', width: 1920, height: 1080 },
+        { label: '모바일', image: flStoryMobile, note: '엄지로 고르고 엄지로 산다 — 가로 스크롤 칩, 필터 바텀시트, 하단 고정 구매바', width: 1920, height: 1080 },
+        { label: 'AI 활용 · 참여 범위', image: flStoryAiRole, note: '단계별로 내가 판단한 것과 AI가 보조한 것을 나눠 적음', width: 1920, height: 1080 },
+        { label: '기대 효과', image: flStoryImpact, note: '세트 구매 비중·구매 클릭률·리뷰 도달률·문의 경로를 오픈 후 A/B 테스트로 확인할 계획', width: 1920, height: 1080 },
+      ],
+      screens: [
+        { label: '메인', image: flPcMain, note: '드래그로 비교하는 Before/After 히어로 하나만 크게, 아래는 카테고리·BEST·두께별 고르기를 같은 간격으로 차분하게', width: 1440, height: 2275 },
+        { label: '상품 리스트', image: flPcList, note: '위에 두께 칩과 필터 바, 카드 4열. 카드마다 할인율·장당가·별점을 같은 순서로', width: 1440, height: 2209 },
+        { label: '상품 상세', image: flPcDetail, note: '1·3·5·7매 세트 칩에 장당 가격, 앵커 탭과 접히는 본문, 사이즈감·압박감 리뷰 요약', width: 1440, height: 3374 },
+        { label: '로그인', image: flPcLogin, note: '가운데 384px 한 열 폼. 간편 로그인은 아이디 로그인 아래에 크게', width: 1440, height: 1380 },
+      ],
+      mobileScreens: [
+        { label: '메인', image: flMoMain, note: '히어로 슬라이더를 위, 카피를 아래로. 카테고리·두께는 가로 스크롤', width: 390, height: 2535 },
+        { label: '상품 리스트', image: flMoList, note: '2열 카드와 가로로 넘기는 두께 칩', width: 390, height: 1668 },
+        { label: '필터 바텀시트', image: flMoFilter, note: '두께·피부톤·압박·계절을 한 시트에서 고르고, 결과 수를 버튼에 바로 보여줌', width: 390, height: 844 },
+        { label: '상품 상세', image: flMoDetail, note: '세트 칩 2×2와 위에 고정되는 앵커 탭', width: 390, height: 2629 },
+        { label: '상세 첫 화면', image: flMoDetailBuybar, note: '찜·장바구니·구매하기를 묶은 56px 하단 고정 구매바', width: 390, height: 844 },
+        { label: '로그인', image: flMoLogin, note: '카카오·네이버 간편 로그인은 아래에 크게, 가입 혜택 안내를 이어서', width: 390, height: 1386 },
+      ],
+      system: [
+        { label: '기획 보드', image: flPlanBoard, note: '현재 몰 진단, 정보 구조(IA) 현재 vs 개선, 핵심 유저 플로우', width: 1610, height: 4096 },
+        { label: 'A안 · 증거로 파는 몰', image: flOptionA, note: '선택. Before/After 히어로에 B안의 두께 섹션을 더함 — 회사가 받아들이기 쉽고 이틀 안에 완성 가능', width: 1440, height: 2028 },
+        { label: 'B안 · 두께로 고르는 몰', image: flOptionB, note: '컨덴스드 영문 두께 선택기. 이 선택기만 A안 메인 중간과 리스트 위로 가져감', width: 1440, height: 1420 },
+        { label: 'C안 · 블랙 박스 몰', image: flOptionC, note: '패키지 모티프 다크 테마. 흰 배경 상품 사진을 다시 손봐야 해서 제외', width: 1440, height: 1455 },
+        { label: '컴포넌트', image: flComponents, note: '버튼·탭·필터 칩·태그·상품 카드·카테고리/두께 카드·헤더·구매바를 PC·MO로', width: 4096, height: 1427 },
+      ],
+      systemHeading: {
+        title: '기획 · 3안 비교 · 컴포넌트',
+        description: '진단·IA·유저 플로우를 정리한 기획 보드와 메인 3안, 화면에 쓴 컴포넌트예요.',
+      },
+    },
+  },
+  {
     slug: 'gameprobe',
     type: 'Design',
     code: 'DESIGN 02',
@@ -736,6 +835,7 @@ export const KEYWORDS: { label: string; type: CaseType | 'Study' }[] = [
   { label: '레이아웃', type: 'Study' },
   { label: 'PlanForMe', type: 'Back' },
   { label: '비밀번호 찾기', type: 'Design' },
+  { label: '자사몰 리뉴얼', type: 'Design' },
 ]
 
 // ── 검색 ────────────────────────────────────────────────────────────────

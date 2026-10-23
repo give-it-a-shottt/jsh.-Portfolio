@@ -31,7 +31,8 @@ interface ScreenSectionProps {
   title: string
   description: string
   items: DesignVariant[]
-  device?: 'mobile' | 'desktop'
+  /** slide 는 16:9 케이스 스터디 장표 — 데스크톱 카드 폭에 자르지 않고 통째로 보여준다 */
+  device?: 'mobile' | 'desktop' | 'slide'
   /** 최종 배지를 달 위치. 시안 비교에만 쓴다 */
   finalIndex?: number
 }
@@ -42,6 +43,8 @@ interface ScreenSectionProps {
  */
 function ScreenSection({ id, title, description, items, device = 'mobile', finalIndex }: ScreenSectionProps) {
   const isDesktop = device === 'desktop'
+  // 데스크톱 화면과 장표는 넓은 카드로, 누르면 원본을 연다
+  const isWide = device !== 'mobile'
   const trackRef = useRef<HTMLOListElement>(null)
   const [edges, setEdges] = useState({ atStart: true, atEnd: true })
   const reduceMotion = useReducedMotion()
@@ -112,9 +115,9 @@ function ScreenSection({ id, title, description, items, device = 'mobile', final
             />
           )
           return (
-            <li key={item.label} className={`shrink-0 snap-start ${isDesktop ? 'w-[min(80vw,480px)]' : 'w-60 sm:w-70'}`}>
+            <li key={item.label} className={`shrink-0 snap-start ${isWide ? 'w-[min(80vw,480px)]' : 'w-60 sm:w-70'}`}>
               <figure className="flex flex-col gap-3">
-                {isDesktop ? (
+                {isWide ? (
                   <a href={item.image} target="_blank" rel="noopener" aria-label={`${item.label} 화면 원본 크기로 보기`}>
                     {image}
                   </a>
@@ -165,7 +168,8 @@ interface DesignCaseDetailProps {
   slug: string
 }
 
-// Design 사례 상세 — 문제 정의 → 시안 비교 또는 화면 구성(가로 나열) → 디자인 시스템 → 대표 화면 실제 동작.
+// Design 사례 상세 — 문제 정의 → 케이스 스터디 장표 → 시안 비교 또는 화면 구성(가로 나열) → 모바일 화면
+// → 디자인 시스템 → 대표 화면 실제 동작. 사례에 없는 칸은 건너뛴다.
 export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
   const item = CASES.find((candidate) => candidate.slug === slug && candidate.design)
 
@@ -181,7 +185,8 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
     )
   }
 
-  const { app, device, problem, variants, finalIndex, screens, system, systemHeading, demo } = item.design
+  const { app, device, problem, role, story, variants, finalIndex, screens, mobileScreens, system, systemHeading, demo } =
+    item.design
   const Demo = DESIGN_DEMOS[item.slug]
 
   return (
@@ -196,6 +201,7 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
           {[
             { term: '서비스', detail: app },
             { term: '문제', detail: problem },
+            ...(role ? [{ term: '참여', detail: role }] : []),
           ].map(({ term, detail }) => (
             <div key={term} className="flex flex-col gap-1 sm:flex-row sm:gap-8">
               <dt className="w-12 shrink-0 text-14 font-semibold text-main">{term}</dt>
@@ -225,6 +231,16 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
         )}
       </header>
 
+      {story && (
+        <ScreenSection
+          id="story-title"
+          title="케이스 스터디"
+          description={`진단부터 개선, 기대 효과까지 장표 순서대로 모았어요.${OPEN_HINT}`}
+          items={story}
+          device="slide"
+        />
+      )}
+
       {variants && (
         <ScreenSection
           id="variants-title"
@@ -243,6 +259,15 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
           description={`주요 화면을 사용 흐름 순서로 모았어요.${device === 'desktop' ? OPEN_HINT : ''}`}
           items={screens}
           device={device}
+        />
+      )}
+
+      {mobileScreens && (
+        <ScreenSection
+          id="mobile-screens-title"
+          title="모바일 화면"
+          description="같은 흐름을 모바일 390 폭으로 옮긴 화면이에요."
+          items={mobileScreens}
         />
       )}
 
