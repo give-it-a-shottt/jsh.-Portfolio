@@ -9,7 +9,6 @@ import searchSubIcon from '../assets/v4/icons/search-sub.svg'
 import searchIcon from '../assets/v4/icons/search.svg'
 import userIcon from '../assets/v4/icons/user.svg'
 import {
-  CART_COUNT,
   GNB_LINKS,
   POPULAR_KEYWORDS,
   SEARCH_PLACEHOLDER,
@@ -18,6 +17,7 @@ import {
 } from '../data/catalog'
 import { accioHref } from '../routes'
 import { Container, Logo } from './primitives'
+import useCart from './useCart'
 
 interface SiteHeaderProps {
   /** GNB 에서 밑줄을 그을 메뉴 (상품 상세처럼 해당 없는 화면은 비운다) */
@@ -35,12 +35,15 @@ function goSearch(query: string) {
 
 /** 장바구니 아이콘 + 개수 배지 (흰 테두리로 아이콘과 떼어 놓는다) */
 function CartWithBadge() {
+  const count = useCart().length
   return (
     <span className="relative size-6">
       <img src={cartIcon} alt="" className="size-6" />
-      <span className="absolute -top-1.5 left-3.5 flex size-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-white bg-accio px-1 text-11 font-semibold text-white tabular-nums">
-        {CART_COUNT}
-      </span>
+      {count > 0 && (
+        <span className="absolute -top-1.5 left-3.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-white bg-accio px-1 text-11 font-semibold text-white tabular-nums">
+          {count}
+        </span>
+      )}
     </span>
   )
 }
@@ -118,7 +121,7 @@ function MobileHomeHeader({ active }: { active?: SiteHeaderProps['active'] }) {
           <a href={accioHref('/mypage')} aria-label="찜">
             <img src={heartIcon} alt="" className="size-6" />
           </a>
-          <a href={accioHref('/cart')} aria-label={`장바구니 ${CART_COUNT}개`}>
+          <a href={accioHref('/cart')} aria-label="장바구니">
             <CartWithBadge />
           </a>
         </div>

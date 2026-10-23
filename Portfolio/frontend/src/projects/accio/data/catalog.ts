@@ -105,8 +105,6 @@ export const UTILITY_LINKS = [
 
 export const SEARCH_PLACEHOLDER = { pc: '상품명이나 원하는 걸 말로 검색해 보세요', mo: '상품명이나 원하는 걸 말로 검색' }
 
-export const CART_COUNT = 3
-
 export const GNB_LINKS = [
   { label: '홈', href: accioHref() },
   { label: '베스트', href: accioHref('/list') },

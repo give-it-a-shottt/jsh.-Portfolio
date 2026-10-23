@@ -1,17 +1,17 @@
 import AiChatPage from "./components/AiChatPage";
 import CartPage from "./components/CartPage";
-import DetailPage from "./components/DetailPage";
 import LoginPage from "./components/LoginPage";
 import MyPage from "./components/MyPage";
 import OrderTrackingPage from "./components/OrderTrackingPage";
 import SupportPage from "./components/SupportPage";
 import HomePage from "./home/HomePage";
+import DetailPage from "./pages/DetailPage";
 import ListPage from "./pages/ListPage";
 
 interface AccioAppProps {
   /** '#/accio' 뒤의 경로. '/' 는 쇼핑몰 홈 */
   path: string;
-  /** 주소의 ?뒤 값 — 목록은 q(검색어)를 읽는다 */
+  /** 주소의 ?뒤 값 — 목록은 q(검색어), 상세는 id(상품)를 읽는다 */
   params: URLSearchParams;
 }
 
@@ -23,7 +23,10 @@ export default function AccioApp({ path, params }: AccioAppProps) {
     // 검색어가 바뀌면 필터·페이지를 새로 시작하도록 key 로 다시 만든다
     return <ListPage key={query} query={query} />;
   }
-  if (path === "/detail") return <DetailPage />;
+  if (path === "/detail") {
+    const id = params.get("id") ?? undefined;
+    return <DetailPage key={id} productId={id} />;
+  }
   if (path === "/ai") return <AiChatPage />;
   if (path === "/cart") return <CartPage />;
   if (path === "/mypage") return <MyPage />;
