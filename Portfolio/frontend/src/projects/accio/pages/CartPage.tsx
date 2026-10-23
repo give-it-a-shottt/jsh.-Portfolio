@@ -6,6 +6,7 @@ import { Button, CheckMark, Container, Stepper } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
 import useCart, { cartActions, summarize } from '../ui/useCart'
+import { placeOrder } from '../ui/useOrders'
 import { formatWon } from '../utils/format'
 
 /** 장바구니 → 주문/결제 → 주문 완료 단계 표시 */
@@ -54,8 +55,11 @@ export default function CartPage() {
   const selectable = lines.filter(({ product }) => !product.soldOut)
   const allChecked = selectable.length > 0 && selectable.every(({ item }) => item.checked)
   const checkedKeys = lines.filter(({ item }) => item.checked).map(({ item }) => item.key)
+  // 목업 결제(토스페이 테스트) — 성공하면 주문 완료, 테스트 한도를 넘으면 결제 실패 화면으로
   const goCheckout = () => {
-    window.location.hash = accioHref('/checkout')
+    const result = placeOrder(items)
+    if (result.ok) window.location.hash = accioHref(`/order/complete?no=${result.no}`)
+    else if (result.code !== 'EMPTY') window.location.hash = accioHref(`/order/fail?code=${result.code}`)
   }
 
   return (
