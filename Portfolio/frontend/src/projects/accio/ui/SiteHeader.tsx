@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import backIcon from '../assets/v4/icons/back.svg'
 import cartIcon from '../assets/v4/icons/cart.svg'
 import chevronRightWeak from '../assets/v4/icons/chevron-right-weak.svg'
 import closeIcon from '../assets/v4/icons/close.svg'
@@ -21,6 +22,10 @@ import { Container, Logo } from './primitives'
 interface SiteHeaderProps {
   /** GNB 에서 밑줄을 그을 메뉴 (상품 상세처럼 해당 없는 화면은 비운다) */
   active?: (typeof GNB_LINKS)[number]['label']
+  /** PC 맨 위 '첫 구매 쿠폰' 띠 배너 — 홈에서만 보인다 */
+  showBanner?: boolean
+  /** 모바일 하위 화면 상단바 제목. 주면 홈형 헤더 대신 '뒤로 · 제목 · 검색 · 장바구니' 바를 쓴다 */
+  mobileTitle?: string
 }
 
 function goSearch(query: string) {
@@ -83,6 +88,63 @@ function SearchForm({ variant }: { variant: 'pc' | 'mo' }) {
   )
 }
 
+/** 모바일 하위 화면 상단바 — 뒤로가기 · 제목 · 검색 · 장바구니 */
+function MobileTopBar({ title }: { title: string }) {
+  return (
+    <div className="flex items-center gap-2 py-2.5 pr-4 pl-3 lg:hidden">
+      <button type="button" onClick={() => window.history.back()} aria-label="뒤로 가기">
+        <img src={backIcon} alt="" className="size-6" />
+      </button>
+      <h1 className="min-w-0 flex-1 truncate text-18 font-semibold text-main">{title}</h1>
+      <div className="flex items-center gap-4">
+        <a href={accioHref('/list')} aria-label="검색">
+          <img src={searchIcon} alt="" className="size-6" />
+        </a>
+        <a href={accioHref('/cart')} aria-label="장바구니">
+          <img src={cartIcon} alt="" className="size-6" />
+        </a>
+      </div>
+    </div>
+  )
+}
+
+/** 모바일 홈 헤더 — 로고+찜·장바구니 · 검색창 · 가로 스크롤 탭 */
+function MobileHomeHeader({ active }: { active?: SiteHeaderProps['active'] }) {
+  return (
+    <div className="lg:hidden">
+      <div className="flex items-center justify-between py-2 pr-4 pl-5">
+        <Logo height={30.96} />
+        <div className="flex items-center gap-4">
+          <a href={accioHref('/mypage')} aria-label="찜">
+            <img src={heartIcon} alt="" className="size-6" />
+          </a>
+          <a href={accioHref('/cart')} aria-label={`장바구니 ${CART_COUNT}개`}>
+            <CartWithBadge />
+          </a>
+        </div>
+      </div>
+      <div className="px-5 pt-1 pb-2">
+        <SearchForm variant="mo" />
+      </div>
+      <nav aria-label="쇼핑 메뉴" className="flex gap-[22px] overflow-x-auto border-b border-regular px-5 scrollbar-none">
+        {GNB_LINKS.map((link) => {
+          const isActive = link.label === active
+          return (
+            <a
+              key={link.label}
+              href={link.href}
+              aria-current={isActive ? 'page' : undefined}
+              className={`shrink-0 pt-3 text-15 whitespace-nowrap ${isActive ? 'border-b-2 border-black pb-2 font-semibold text-main' : 'pb-2.5 font-medium text-sub'}`}
+            >
+              {link.label}
+            </a>
+          )
+        })}
+      </nav>
+    </div>
+  )
+}
+
 /** 인기 검색어 — 3초마다 다음 순위로 넘어간다 */
 function PopularKeyword() {
   const [rank, setRank] = useState(0)
@@ -103,10 +165,10 @@ function PopularKeyword() {
 
 /**
  * 공통 헤더. PC(lg~): 상단 띠 배너 · 유틸 링크 · 로고+통합 검색+액션 · GNB.
- * 모바일: 로고+찜·장바구니 · 검색창 · 가로 스크롤 탭. (하단 탭 바는 MobileTabBar)
+ * 모바일: 홈은 로고+찜·장바구니 · 검색창 · 가로 스크롤 탭, 하위 화면은 MobileTopBar. (하단 탭 바는 MobileTabBar)
  */
-export default function SiteHeader({ active }: SiteHeaderProps) {
-  const [bannerOpen, setBannerOpen] = useState(true)
+export default function SiteHeader({ active, showBanner = false, mobileTitle }: SiteHeaderProps) {
+  const [bannerOpen, setBannerOpen] = useState(showBanner)
 
   return (
     <header className="bg-white">
@@ -184,37 +246,7 @@ export default function SiteHeader({ active }: SiteHeaderProps) {
       </div>
 
       {/* ── 모바일 ── */}
-      <div className="lg:hidden">
-        <div className="flex items-center justify-between py-2 pr-4 pl-5">
-          <Logo height={30.96} />
-          <div className="flex items-center gap-4">
-            <a href={accioHref('/mypage')} aria-label="찜">
-              <img src={heartIcon} alt="" className="size-6" />
-            </a>
-            <a href={accioHref('/cart')} aria-label={`장바구니 ${CART_COUNT}개`}>
-              <CartWithBadge />
-            </a>
-          </div>
-        </div>
-        <div className="px-5 pt-1 pb-2">
-          <SearchForm variant="mo" />
-        </div>
-        <nav aria-label="쇼핑 메뉴" className="flex gap-[22px] overflow-x-auto border-b border-regular px-5 scrollbar-none">
-          {GNB_LINKS.map((link) => {
-            const isActive = link.label === active
-            return (
-              <a
-                key={link.label}
-                href={link.href}
-                aria-current={isActive ? 'page' : undefined}
-                className={`shrink-0 pt-3 text-15 whitespace-nowrap ${isActive ? 'border-b-2 border-black pb-2 font-semibold text-main' : 'pb-2.5 font-medium text-sub'}`}
-              >
-                {link.label}
-              </a>
-            )
-          })}
-        </nav>
-      </div>
+      {mobileTitle !== undefined ? <MobileTopBar title={mobileTitle} /> : <MobileHomeHeader active={active} />}
     </header>
   )
 }

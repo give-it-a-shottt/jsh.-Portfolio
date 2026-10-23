@@ -18,7 +18,7 @@ import TimeDeal from './TimeDeal'
 export default function HomePage() {
   return (
     <div className="min-h-svh bg-white">
-      <SiteHeader active="홈" />
+      <SiteHeader active="홈" showBanner />
       <main>
         <AiHero />
         <EventCarousel />

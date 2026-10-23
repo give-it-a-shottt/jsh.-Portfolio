@@ -45,32 +45,49 @@ export interface Product {
   reviewCount: number
   image: string
   category: Category
-  /** 'AI 추천' 배지 — AI 개인 추천 영역에서만 붙인다 */
+  /** 'AI 추천' 배지 — AI 개인 추천·검색 결과 맨 앞에 붙인다 */
   aiPick?: boolean
+  /** 목록 필터 '배송' 에 걸리는 조건 */
+  delivery?: Delivery[]
 }
 
+export type Delivery = '무료배송' | '오늘 출발' | '내일 도착'
+export const DELIVERY_OPTIONS: Delivery[] = ['무료배송', '오늘 출발', '내일 도착']
+
 export const PRODUCTS = {
-  winterBedding: { id: 'winter-bedding', brand: '데일리룸', name: '도톰한 극세사 겨울 이불 세트 Q', discountRate: 45, price: 59000, rating: 4.6, reviewCount: 3410, image: bedding, category: '생활' },
-  shineMuscat: { id: 'shine-muscat', brand: '그린테이블', name: '고당도 샤인머스캣 2kg 특품', discountRate: 50, price: 17900, rating: 4.8, reviewCount: 223, image: fruit, category: '식품' },
-  inductionPan: { id: 'induction-pan', brand: '홈앤쿡', name: '논스틱 인덕션 프라이팬 28cm', discountRate: 38, price: 27500, rating: 4.8, reviewCount: 1522, image: fryingPan, category: '주방' },
-  ancEarbuds: { id: 'anc-earbuds', brand: '사운드핏', name: '노이즈캔슬링 무선 이어폰 2세대', discountRate: 21, price: 34800, rating: 4.5, reviewCount: 2018, image: earbuds, category: '디지털', aiPick: true },
-  woolLamp: { id: 'wool-lamp', brand: '무드라이트', name: '소프트 램스울 무드 조명 스탠드', discountRate: 18, price: 42900, rating: 4.7, reviewCount: 862, image: moodLamp, category: '가구' },
-  campingChair: { id: 'camping-chair', brand: 'Accio', name: '초경량 접이식 캠핑 의자', discountRate: 32, price: 39900, rating: 4.8, reviewCount: 1204, image: campingChair, category: '캠핑', aiPick: true },
-  campingLantern: { id: 'camping-lantern', brand: '캠프로', name: '무선 충전식 캠핑 랜턴', discountRate: 24, price: 22800, rating: 4.7, reviewCount: 688, image: lantern, category: '캠핑' },
-  electricBlanket: { id: 'electric-blanket', brand: '웜홈', name: '캠핑용 전기 담요 더블', discountRate: 30, price: 45500, rating: 4.6, reviewCount: 412, image: bedding, category: '가전' },
-  neckbandEarphone: { id: 'neckband-earphone', brand: '사운드핏', name: '블루투스 넥밴드 이어폰', discountRate: 15, price: 19900, rating: 4.4, reviewCount: 903, image: earbuds, category: '디지털' },
-  trekkingJacket: { id: 'trekking-jacket', brand: '아웃핏', name: '방수 트레킹 자켓 남녀공용', discountRate: 28, price: 89000, rating: 4.7, reviewCount: 276, image: coat, category: '패션' },
-  campingCookware: { id: 'camping-cookware', brand: '홈앤쿡', name: '캠핑 코펠 스테인리스 7종', discountRate: 35, price: 32500, rating: 4.8, reviewCount: 1011, image: fryingPan, category: '주방' },
-  fleeceZipup: { id: 'fleece-zipup', brand: '모노웨어', name: '플리스 집업 하이넥', discountRate: 20, price: 39000, rating: 4.6, reviewCount: 530, image: coat, category: '패션' },
-  campingTable: { id: 'camping-table', brand: '캠프로', name: '접이식 캠핑 테이블 경량', discountRate: 26, price: 49900, rating: 4.7, reviewCount: 845, image: campingTable, category: '캠핑' },
-  bluetoothSpeaker: { id: 'bluetooth-speaker', brand: '사운드핏', name: '휴대용 블루투스 스피커', discountRate: 18, price: 29800, rating: 4.5, reviewCount: 667, image: earbuds, category: '가전' },
-  miniHeater: { id: 'mini-heater', brand: '웜홈', name: '미니 전기 히터 저소음', discountRate: 22, price: 29800, rating: 4.6, reviewCount: 1330, image: moodLamp, category: '가전' },
-  campingMealkit: { id: 'camping-mealkit', brand: '그린테이블', name: '캠핑용 밀키트 4인 세트', discountRate: 12, price: 24900, rating: 4.8, reviewCount: 198, image: mealkit, category: '식품' },
-  catScratcher: { id: 'cat-scratcher', brand: '펫프렌즈', name: '캣 스크래쳐 하우스', discountRate: 0, price: 31900, rating: 4.9, reviewCount: 742, image: catHouse, category: '반려동물' },
-  woolHalfCoat: { id: 'wool-half-coat', brand: '모노웨어', name: '오버핏 울 블렌드 하프 코트', discountRate: 25, price: 129000, rating: 4.7, reviewCount: 318, image: coat, category: '패션' },
-  cashmereKnit: { id: 'cashmere-knit', brand: '모노웨어', name: '캐시미어 터치 라운드 니트', discountRate: 20, price: 59000, rating: 4.6, reviewCount: 204, image: coat, category: '패션' },
-  wideSlacks: { id: 'wide-slacks', brand: '모노웨어', name: '와이드 울 슬랙스', discountRate: 15, price: 69000, rating: 4.5, reviewCount: 151, image: coat, category: '패션' },
+  winterBedding: { id: 'winter-bedding', brand: '데일리룸', name: '도톰한 극세사 겨울 이불 세트 Q', discountRate: 45, price: 59000, rating: 4.6, reviewCount: 3410, image: bedding, category: '생활', delivery: ['무료배송', '내일 도착'] },
+  shineMuscat: { id: 'shine-muscat', brand: '그린테이블', name: '고당도 샤인머스캣 2kg 특품', discountRate: 50, price: 17900, rating: 4.8, reviewCount: 223, image: fruit, category: '식품', delivery: ['오늘 출발'] },
+  inductionPan: { id: 'induction-pan', brand: '홈앤쿡', name: '논스틱 인덕션 프라이팬 28cm', discountRate: 38, price: 27500, rating: 4.8, reviewCount: 1522, image: fryingPan, category: '주방', delivery: ['무료배송', '오늘 출발'] },
+  ancEarbuds: { id: 'anc-earbuds', brand: '사운드핏', name: '노이즈캔슬링 무선 이어폰 2세대', discountRate: 21, price: 34800, rating: 4.5, reviewCount: 2018, image: earbuds, category: '디지털', aiPick: true, delivery: ['무료배송', '오늘 출발', '내일 도착'] },
+  woolLamp: { id: 'wool-lamp', brand: '무드라이트', name: '소프트 램스울 무드 조명 스탠드', discountRate: 18, price: 42900, rating: 4.7, reviewCount: 862, image: moodLamp, category: '가구', delivery: ['무료배송'] },
+  campingChair: { id: 'camping-chair', brand: 'Accio', name: '초경량 접이식 캠핑 의자', discountRate: 32, price: 39900, rating: 4.8, reviewCount: 1204, image: campingChair, category: '캠핑', aiPick: true, delivery: ['무료배송', '오늘 출발'] },
+  campingLantern: { id: 'camping-lantern', brand: '캠프로', name: '무선 충전식 캠핑 랜턴', discountRate: 24, price: 22800, rating: 4.7, reviewCount: 688, image: lantern, category: '캠핑', delivery: ['무료배송', '내일 도착'] },
+  electricBlanket: { id: 'electric-blanket', brand: '웜홈', name: '캠핑용 전기 담요 더블', discountRate: 30, price: 45500, rating: 4.6, reviewCount: 412, image: bedding, category: '가전', delivery: ['무료배송'] },
+  neckbandEarphone: { id: 'neckband-earphone', brand: '사운드핏', name: '블루투스 넥밴드 이어폰', discountRate: 15, price: 19900, rating: 4.4, reviewCount: 903, image: earbuds, category: '디지털', delivery: ['오늘 출발'] },
+  trekkingJacket: { id: 'trekking-jacket', brand: '아웃핏', name: '방수 트레킹 자켓 남녀공용', discountRate: 28, price: 89000, rating: 4.7, reviewCount: 276, image: coat, category: '패션', delivery: ['무료배송'] },
+  campingCookware: { id: 'camping-cookware', brand: '홈앤쿡', name: '캠핑 코펠 스테인리스 7종', discountRate: 35, price: 32500, rating: 4.8, reviewCount: 1011, image: fryingPan, category: '주방', delivery: ['무료배송', '오늘 출발'] },
+  fleeceZipup: { id: 'fleece-zipup', brand: '모노웨어', name: '플리스 집업 하이넥', discountRate: 20, price: 39000, rating: 4.6, reviewCount: 530, image: coat, category: '패션', delivery: ['내일 도착'] },
+  campingTable: { id: 'camping-table', brand: '캠프로', name: '접이식 캠핑 테이블 경량', discountRate: 26, price: 49900, rating: 4.7, reviewCount: 845, image: campingTable, category: '캠핑', delivery: ['무료배송', '오늘 출발'] },
+  bluetoothSpeaker: { id: 'bluetooth-speaker', brand: '사운드핏', name: '휴대용 블루투스 스피커', discountRate: 18, price: 29800, rating: 4.5, reviewCount: 667, image: earbuds, category: '가전', delivery: ['무료배송', '내일 도착'] },
+  miniHeater: { id: 'mini-heater', brand: '웜홈', name: '미니 전기 히터 저소음', discountRate: 22, price: 29800, rating: 4.6, reviewCount: 1330, image: moodLamp, category: '가전', delivery: ['무료배송', '오늘 출발'] },
+  campingMealkit: { id: 'camping-mealkit', brand: '그린테이블', name: '캠핑용 밀키트 4인 세트', discountRate: 12, price: 24900, rating: 4.8, reviewCount: 198, image: mealkit, category: '식품', delivery: ['오늘 출발'] },
+  catScratcher: { id: 'cat-scratcher', brand: '펫프렌즈', name: '캣 스크래쳐 하우스', discountRate: 0, price: 31900, rating: 4.9, reviewCount: 742, image: catHouse, category: '반려동물', delivery: ['무료배송'] },
+  woolHalfCoat: { id: 'wool-half-coat', brand: '모노웨어', name: '오버핏 울 블렌드 하프 코트', discountRate: 25, price: 129000, rating: 4.7, reviewCount: 318, image: coat, category: '패션', delivery: ['무료배송'] },
+  cashmereKnit: { id: 'cashmere-knit', brand: '모노웨어', name: '캐시미어 터치 라운드 니트', discountRate: 20, price: 59000, rating: 4.6, reviewCount: 204, image: coat, category: '패션', delivery: ['무료배송', '내일 도착'] },
+  wideSlacks: { id: 'wide-slacks', brand: '모노웨어', name: '와이드 울 슬랙스', discountRate: 15, price: 69000, rating: 4.5, reviewCount: 151, image: coat, category: '패션', delivery: ['무료배송'] },
+  // 상품 목록·검색 시안('캠핑 의자' 검색 결과)에 나오는 상품
+  relaxChair: { id: 'relax-chair', brand: '캠프로', name: '릴렉스 캠핑 체어 하이백', discountRate: 24, price: 52800, rating: 4.7, reviewCount: 688, image: campingChair, category: '캠핑', delivery: ['무료배송', '내일 도착'] },
+  lowChairSet: { id: 'low-chair-set', brand: '아웃핏', name: '알루미늄 로우 체어 2개 세트', discountRate: 18, price: 64000, rating: 4.6, reviewCount: 412, image: campingChair, category: '캠핑', delivery: ['무료배송'] },
+  chairCushion: { id: 'chair-cushion', brand: '웜홈', name: '캠핑 의자 방석 겸 담요', discountRate: 30, price: 19900, rating: 4.5, reviewCount: 903, image: campingChair, category: '캠핑', delivery: ['오늘 출발'] },
+  rollTableSet: { id: 'roll-table-set', brand: '캠프로', name: '롤 테이블 + 체어 세트', discountRate: 26, price: 89900, rating: 4.7, reviewCount: 276, image: campingTable, category: '캠핑', delivery: ['무료배송', '오늘 출발'] },
+  miniStool: { id: 'mini-stool', brand: 'Accio', name: '초경량 스툴 접이식 미니', discountRate: 15, price: 16800, rating: 4.8, reviewCount: 1011, image: campingChair, category: '캠핑', delivery: ['무료배송', '오늘 출발'] },
+  woodChair: { id: 'wood-chair', brand: '노마드', name: '빈티지 우드 캠핑 체어', discountRate: 12, price: 78000, rating: 4.6, reviewCount: 530, image: campingChair, category: '캠핑', delivery: ['무료배송'] },
+  chairBag: { id: 'chair-bag', brand: '아웃핏', name: '캠핑 의자 수납 가방', discountRate: 20, price: 12900, rating: 4.4, reviewCount: 845, image: campingChair, category: '캠핑', delivery: ['내일 도착'] },
+  chairCover: { id: 'chair-cover', brand: '캠프로', name: '양면 접이식 체어 커버', discountRate: 10, price: 9900, rating: 4.5, reviewCount: 198, image: campingChair, category: '캠핑', delivery: ['오늘 출발'] },
 } satisfies Record<string, Product>
+
+/** 전체 상품 — 목록·검색 화면이 이 안에서 고른다 */
+export const ALL_PRODUCTS: Product[] = Object.values(PRODUCTS)
 
 /** 목업이라 모든 상품이 같은 상세 화면으로 간다 (id 는 주소에만 남긴다) */
 export const productHref = (product: Product) => `${accioHref('/detail')}?id=${product.id}`

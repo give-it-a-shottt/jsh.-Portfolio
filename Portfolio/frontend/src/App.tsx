@@ -31,7 +31,7 @@ function App() {
   if (accioPath)
     return (
       <Suspense fallback={null}>
-        <AccioApp path={accioPath} />
+        <AccioApp path={accioPath} params={params} />
       </Suspense>
     );
 

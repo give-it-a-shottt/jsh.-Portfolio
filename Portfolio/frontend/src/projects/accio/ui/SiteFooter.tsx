@@ -2,8 +2,8 @@ import { FOOTER } from '../data/catalog'
 import { accioHref } from '../routes'
 import { Container, Logo } from './primitives'
 
-/** 공통 푸터. PC 는 고객센터 + 링크 3열, 모바일은 로고·정책 링크·회사 정보만 회색 바탕에 둔다 */
-export default function SiteFooter() {
+/** 공통 푸터. PC 는 고객센터 + 링크 3열, 모바일은 로고·정책 링크·회사 정보만 회색 바탕에 둔다(목록처럼 시안에 없는 화면은 hideOnMobile) */
+export default function SiteFooter({ hideOnMobile = false }: { hideOnMobile?: boolean }) {
   return (
     <footer>
       {/* ── PC ── */}
@@ -55,7 +55,7 @@ export default function SiteFooter() {
       </div>
 
       {/* ── 모바일 (아래 120 은 하단 탭 바 자리) ── */}
-      <div className="flex flex-col gap-4 bg-light px-5 pt-8 pb-30 lg:hidden">
+      <div className={`flex-col gap-4 bg-light px-5 pt-8 pb-30 lg:hidden ${hideOnMobile ? 'hidden' : 'flex'}`}>
         <Logo height={25.8} />
         <div className="flex flex-wrap gap-x-3.5 gap-y-1 text-12 text-sub">
           {['이용약관', '개인정보처리방침', '고객센터', '입점 문의'].map((policy) => (
