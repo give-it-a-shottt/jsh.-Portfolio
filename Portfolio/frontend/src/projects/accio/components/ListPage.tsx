@@ -3,10 +3,8 @@ import checkIcon from '../assets/figma/v3/icons/check.svg'
 import gridViewIcon from '../assets/figma/v3/icons/grid-view.svg'
 import viewListIcon from '../assets/figma/v3/icons/view-list.svg'
 import { LIST_PAGE } from '../data/mock'
-import CategoryNav from './CategoryNav'
-import MainHeader from './MainHeader'
 import ProductCard from './ProductCard'
-import TopUtilityHeader from './TopUtilityHeader'
+import SiteHeader from '../ui/SiteHeader'
 
 const CHIP_CLASS = 'shrink-0 rounded-full px-3 py-1.5 text-12 font-semibold whitespace-nowrap'
 
@@ -29,9 +27,7 @@ export default function ListPage() {
 
   return (
     <div className="flex min-h-svh flex-col bg-white">
-      <TopUtilityHeader />
-      <MainHeader />
-      <CategoryNav />
+      <SiteHeader />
 
       <main className="mx-auto flex w-full max-w-[1280px] flex-col gap-2.5 px-4 py-6 sm:px-6">
         <nav aria-label="현재 위치" className="text-12 text-disabled">

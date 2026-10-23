@@ -5,10 +5,8 @@ import localShippingIcon from '../assets/figma/v3/icons/local-shipping.svg'
 import restartAltIcon from '../assets/figma/v3/icons/restart-alt.svg'
 import shieldIcon from '../assets/figma/v3/icons/shield.svg'
 import { PRODUCT_DETAIL } from '../data/mock'
-import CategoryNav from './CategoryNav'
-import MainHeader from './MainHeader'
 import ReviewSection from './ReviewSection'
-import TopUtilityHeader from './TopUtilityHeader'
+import SiteHeader from '../ui/SiteHeader'
 
 const formatWon = (value: number) => `${value.toLocaleString('ko-KR')}원`
 const formatCount = (value: number) => value.toLocaleString('ko-KR')
@@ -36,9 +34,7 @@ export default function DetailPage() {
 
   return (
     <div className="flex min-h-svh flex-col bg-white">
-      <TopUtilityHeader />
-      <MainHeader />
-      <CategoryNav />
+      <SiteHeader />
 
       <main className="mx-auto flex w-full max-w-7xl flex-col gap-9.5 px-4 pt-6.5 pb-10 sm:px-6">
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-6 lg:gap-8.5">

@@ -1,0 +1,220 @@
+import { useEffect, useState, type FormEvent } from 'react'
+import cartIcon from '../assets/v4/icons/cart.svg'
+import chevronRightWeak from '../assets/v4/icons/chevron-right-weak.svg'
+import closeIcon from '../assets/v4/icons/close.svg'
+import heartIcon from '../assets/v4/icons/heart.svg'
+import menuIcon from '../assets/v4/icons/menu.svg'
+import searchSubIcon from '../assets/v4/icons/search-sub.svg'
+import searchIcon from '../assets/v4/icons/search.svg'
+import userIcon from '../assets/v4/icons/user.svg'
+import {
+  CART_COUNT,
+  GNB_LINKS,
+  POPULAR_KEYWORDS,
+  SEARCH_PLACEHOLDER,
+  TOP_BANNER,
+  UTILITY_LINKS,
+} from '../data/catalog'
+import { accioHref } from '../routes'
+import { Container, Logo } from './primitives'
+
+interface SiteHeaderProps {
+  /** GNB 에서 밑줄을 그을 메뉴 (상품 상세처럼 해당 없는 화면은 비운다) */
+  active?: (typeof GNB_LINKS)[number]['label']
+}
+
+function goSearch(query: string) {
+  const q = query.trim()
+  if (q) window.location.hash = `${accioHref('/list')}?q=${encodeURIComponent(q)}`.slice(1)
+}
+
+/** 장바구니 아이콘 + 개수 배지 (흰 테두리로 아이콘과 떼어 놓는다) */
+function CartWithBadge() {
+  return (
+    <span className="relative size-6">
+      <img src={cartIcon} alt="" className="size-6" />
+      <span className="absolute -top-1.5 left-3.5 flex size-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-white bg-accio px-1 text-11 font-semibold text-white tabular-nums">
+        {CART_COUNT}
+      </span>
+    </span>
+  )
+}
+
+function SearchForm({ variant }: { variant: 'pc' | 'mo' }) {
+  const [query, setQuery] = useState('')
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    goSearch(query)
+  }
+
+  if (variant === 'mo')
+    return (
+      <form role="search" onSubmit={onSubmit} className="flex h-11 items-center gap-2 rounded-full bg-light pr-3.5 pl-4">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={SEARCH_PLACEHOLDER.mo}
+          aria-label="상품 검색"
+          className="min-w-0 flex-1 bg-transparent text-14 text-main outline-none placeholder:text-disabled"
+        />
+        <button type="submit" aria-label="검색" className="shrink-0">
+          <img src={searchSubIcon} alt="" className="size-6" />
+        </button>
+      </form>
+    )
+
+  return (
+    <form
+      role="search"
+      onSubmit={onSubmit}
+      className="flex h-12 min-w-0 flex-1 items-center gap-3 rounded-full border-[1.5px] border-black bg-white pr-4 pl-6 focus-within:border-accio focus-within:shadow-accio-3"
+    >
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder={SEARCH_PLACEHOLDER.pc}
+        aria-label="상품 검색"
+        className="min-w-0 flex-1 bg-transparent text-15 text-main outline-none placeholder:text-disabled"
+      />
+      <button type="submit" aria-label="검색" className="shrink-0">
+        <img src={searchIcon} alt="" className="size-6" />
+      </button>
+    </form>
+  )
+}
+
+/** 인기 검색어 — 3초마다 다음 순위로 넘어간다 */
+function PopularKeyword() {
+  const [rank, setRank] = useState(0)
+  useEffect(() => {
+    const id = window.setInterval(() => setRank((r) => (r + 1) % POPULAR_KEYWORDS.length), 3000)
+    return () => window.clearInterval(id)
+  }, [])
+
+  return (
+    <button type="button" onClick={() => goSearch(POPULAR_KEYWORDS[rank])} className="flex items-center gap-2">
+      <span className="text-12 text-sub-weak">인기 검색어</span>
+      <span className="text-13 font-semibold text-main tabular-nums">{rank + 1}</span>
+      <span className="text-13 font-medium text-main">{POPULAR_KEYWORDS[rank]}</span>
+      <img src={chevronRightWeak} alt="" className="size-4" />
+    </button>
+  )
+}
+
+/**
+ * 공통 헤더. PC(lg~): 상단 띠 배너 · 유틸 링크 · 로고+통합 검색+액션 · GNB.
+ * 모바일: 로고+찜·장바구니 · 검색창 · 가로 스크롤 탭. (하단 탭 바는 MobileTabBar)
+ */
+export default function SiteHeader({ active }: SiteHeaderProps) {
+  const [bannerOpen, setBannerOpen] = useState(true)
+
+  return (
+    <header className="bg-white">
+      {/* ── PC ── */}
+      <div className="hidden lg:block">
+        {bannerOpen && (
+          <div className="bg-light">
+            <Container className="flex items-center justify-between py-2.5">
+              <span className="size-4" aria-hidden />
+              <a href={TOP_BANNER.href} className="flex items-center gap-2 text-13">
+                <span className="text-sub">{TOP_BANNER.lead}</span>
+                <span className="font-semibold text-main">{TOP_BANNER.highlight}</span>
+                <img src={chevronRightWeak} alt="" className="size-4" />
+              </a>
+              <button type="button" onClick={() => setBannerOpen(false)} aria-label="배너 닫기">
+                <img src={closeIcon} alt="" className="size-4" />
+              </button>
+            </Container>
+          </div>
+        )}
+
+        <Container className="flex items-center justify-end gap-4 pt-2.5">
+          {UTILITY_LINKS.map((link, i) => (
+            <span key={link.label} className="flex items-center gap-4">
+              {i > 0 && <span aria-hidden className="h-2.5 w-px bg-regular" />}
+              <a href={link.href} className="text-12 text-sub-weak hover:text-main">
+                {link.label}
+              </a>
+            </span>
+          ))}
+        </Container>
+
+        <Container className="flex items-center gap-10 pt-3.5 pb-[18px]">
+          <Logo height={46.44} />
+          <SearchForm variant="pc" />
+          <nav aria-label="내 메뉴" className="flex items-end gap-5">
+            <a href={accioHref('/mypage')} className="flex min-w-11 flex-col items-center gap-1 text-12 text-sub">
+              <img src={heartIcon} alt="" className="size-6" />찜
+            </a>
+            <a href={accioHref('/cart')} className="flex min-w-11 flex-col items-center gap-1 text-12 text-sub">
+              <CartWithBadge />
+              장바구니
+            </a>
+            <a href={accioHref('/mypage')} className="flex min-w-11 flex-col items-center gap-1 text-12 text-sub">
+              <img src={userIcon} alt="" className="size-6" />
+              마이
+            </a>
+          </nav>
+        </Container>
+
+        <div className="border-b border-regular">
+          <Container className="flex items-center justify-between">
+            <nav aria-label="쇼핑 메뉴" className="flex items-center gap-7">
+              <a href={accioHref('/list')} className="flex items-center gap-1.5 py-3.5 text-15 font-semibold text-main">
+                <img src={menuIcon} alt="" className="size-6" />
+                카테고리
+              </a>
+              {GNB_LINKS.map((link) => {
+                const isActive = link.label === active
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`pt-3.5 text-15 ${isActive ? 'border-b-2 border-black pb-3 font-semibold text-main' : 'pb-3.5 font-medium text-sub hover:text-main'}`}
+                  >
+                    {link.label}
+                  </a>
+                )
+              })}
+            </nav>
+            <PopularKeyword />
+          </Container>
+        </div>
+      </div>
+
+      {/* ── 모바일 ── */}
+      <div className="lg:hidden">
+        <div className="flex items-center justify-between py-2 pr-4 pl-5">
+          <Logo height={30.96} />
+          <div className="flex items-center gap-4">
+            <a href={accioHref('/mypage')} aria-label="찜">
+              <img src={heartIcon} alt="" className="size-6" />
+            </a>
+            <a href={accioHref('/cart')} aria-label={`장바구니 ${CART_COUNT}개`}>
+              <CartWithBadge />
+            </a>
+          </div>
+        </div>
+        <div className="px-5 pt-1 pb-2">
+          <SearchForm variant="mo" />
+        </div>
+        <nav aria-label="쇼핑 메뉴" className="flex gap-[22px] overflow-x-auto border-b border-regular px-5 scrollbar-none">
+          {GNB_LINKS.map((link) => {
+            const isActive = link.label === active
+            return (
+              <a
+                key={link.label}
+                href={link.href}
+                aria-current={isActive ? 'page' : undefined}
+                className={`shrink-0 pt-3 text-15 whitespace-nowrap ${isActive ? 'border-b-2 border-black pb-2 font-semibold text-main' : 'pb-2.5 font-medium text-sub'}`}
+              >
+                {link.label}
+              </a>
+            )
+          })}
+        </nav>
+      </div>
+    </header>
+  )
+}

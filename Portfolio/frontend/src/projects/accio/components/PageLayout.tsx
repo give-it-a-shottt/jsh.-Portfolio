@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react'
-import CategoryNav from './CategoryNav'
 import Container from './Container'
-import MainHeader from './MainHeader'
-import TopUtilityHeader from './TopUtilityHeader'
+import SiteHeader from '../ui/SiteHeader'
 
 interface PageLayoutProps {
   title: string
@@ -19,9 +17,7 @@ interface PageLayoutProps {
 export default function PageLayout({ title, description, aside, narrow = false, children }: PageLayoutProps) {
   return (
     <div className="flex min-h-svh flex-col bg-light">
-      <TopUtilityHeader />
-      <MainHeader />
-      <CategoryNav />
+      <SiteHeader />
 
       <main className="flex-1 pt-6 pb-16 sm:pt-8 lg:pt-10">
         <Container>
