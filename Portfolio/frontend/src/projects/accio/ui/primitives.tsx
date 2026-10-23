@@ -12,9 +12,12 @@ import { accioHref } from '../routes'
 /** 시안(1440) 좌우 120 → 콘텐츠 1200. 모바일(390)은 좌우 20 */
 export const CONTAINER_CLASS = 'mx-auto w-full max-w-[1240px] px-5'
 
-/** 가로 스크롤 트랙이 화면 끝까지 닿되 첫 카드는 Container 콘텐츠 왼쪽 선에 맞도록 하는 여백 */
+/**
+ * 가로 스크롤 트랙이 화면 끝까지 닿되 첫 카드는 Container 콘텐츠 왼쪽 선에 맞도록 하는 여백.
+ * 시안 폭(1440)보다 넓은 화면에서는 트랙을 1440 으로 묶고 양 끝을 흐려, 카드가 화면 끝까지 늘어서지 않게 한다.
+ */
 export const BLEED_TRACK_CLASS =
-  'flex snap-x snap-mandatory overflow-x-auto scrollbar-none px-5 scroll-px-5 lg:px-[max(20px,calc((100%-1200px)/2))] lg:scroll-px-[max(20px,calc((100%-1200px)/2))]'
+  'flex snap-x snap-mandatory overflow-x-auto scrollbar-none px-5 scroll-px-5 lg:mx-auto lg:w-full lg:max-w-[1440px] lg:px-[max(20px,calc((min(100%,1440px)-1200px)/2))] lg:scroll-px-[max(20px,calc((100%-1200px)/2))] min-[1441px]:[mask-image:linear-gradient(to_right,transparent,#000_96px,#000_calc(100%-96px),transparent)]'
 
 export function Container({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`${CONTAINER_CLASS} ${className}`}>{children}</div>
@@ -132,7 +135,8 @@ export function CarouselControls({
   return (
     <div className="flex items-center gap-2">
       <p className="flex gap-1 pr-2 text-13 tabular-nums" aria-live="polite">
-        <span className="font-semibold text-main">{format(index)}</span>
+        {/* 끝까지 넘기면 마지막 카드가 보이므로 '04 / 06' 대신 '06 / 06' */}
+        <span className="font-semibold text-main">{format(index >= count ? total : index)}</span>
         <span className="text-sub-weak">/ {format(total)}</span>
       </p>
       <ArrowButton direction="prev" onClick={onPrev} disabled={index <= 1} />
