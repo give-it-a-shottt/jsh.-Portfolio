@@ -116,6 +116,16 @@
   --font-maestro-opus: "Lora", serif;
   --font-maestro-quote: "Noto Serif KR", serif;
 
+  /*
+   * FLASEEK 리뉴얼 시안 — 핑크는 역할이 셋: 흰 글자를 얹는 버튼은 flaseek, 장식·배지는 flaseek-pink,
+   * 핑크 글자는 flaseek-text 하나. 브랜드 지정색(#FA78A8) 위 흰 글자는 대비 2.53 이라 검정 글자를 쓴다.
+   */
+  --color-flaseek: #d90855;
+  --color-flaseek-text: #ca074f;
+  --color-flaseek-soft: #fcebf1;
+  --color-flaseek-pink: #fa78a8;
+  --color-flaseek-pink-soft: #fff4f8;
+
   /* Neutral — icon (text-icon-main …) */
   --color-icon-main: #2a2a37;
   --color-icon-sub: #545461;
@@ -142,6 +152,11 @@
   --shadow-accio-3: 0 4px 8px rgb(42 42 55 / 0.1);
   /* 4 모달·AI 위젯 패널 */
   --shadow-accio-4: 0 6px 12px rgb(42 42 55 / 0.12);
+
+  /* FLASEEK 그림자 — 2 찜 버튼·고정 구매바 / 3 슬라이더 손잡이 / 4 바텀시트 */
+  --shadow-flaseek-2: 0 2px 4px rgb(42 42 55 / 0.08);
+  --shadow-flaseek-3: 0 4px 8px rgb(42 42 55 / 0.1);
+  --shadow-flaseek-4: 0 6px 12px rgb(42 42 55 / 0.12);
 }
 
 /*

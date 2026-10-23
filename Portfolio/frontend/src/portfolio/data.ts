@@ -560,6 +560,7 @@ export const CASES: PortfolioCase[] = [
       'flaseek 플래시크 플라식 자사몰 리뉴얼 개선 제안 보정속옷 압박스타킹 레깅스 쉐이프웨어 쇼핑몰 이커머스 before after 비포 애프터 상세페이지 상품 카드 앵커 탭 스티키 구매바 접근성 명도 대비 wcag 핑크 진단 ia 유저플로우 벤치마킹 3안 생성형 ai 디자인 시스템 피그마 반응형',
     image: flPcMain,
     href: '#/case/flaseek-renewal',
+    links: [{ label: '실제 화면 보기', href: '#/flaseek' }],
     design: {
       app: 'FLASEEK — 다리라인·체형 보정 제품을 파는 보정속옷·압박스타킹 자사몰 (리뉴얼 제안 시안)',
       problem:
