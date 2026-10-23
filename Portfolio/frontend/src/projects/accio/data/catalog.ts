@@ -88,7 +88,9 @@ export const PRODUCTS = {
   chairBag: { id: 'chair-bag', brand: '아웃핏', name: '캠핑 의자 수납 가방', discountRate: 20, price: 12900, rating: 4.4, reviewCount: 845, image: campingChair, category: '캠핑', delivery: ['내일 도착'], soldOut: true },
   chairCover: { id: 'chair-cover', brand: '캠프로', name: '양면 접이식 체어 커버', discountRate: 10, price: 9900, rating: 4.5, reviewCount: 198, image: campingChair, category: '캠핑', delivery: ['오늘 출발'] },
   // AI 재구매 질문('지난번 산 휴지 또')에 쓰는 생필품
-  decoTissue: { id: 'deco-tissue', brand: '데일리룸', name: '3겹 데코 화장지 30롤', discountRate: 20, price: 15900, rating: 4.8, reviewCount: 5120, image: living, category: '생활', delivery: ['무료배송', '오늘 출발'] },
+  decoTissue: { id: 'deco-tissue', brand: '데일리룸', name: '3겹 천연펄프 화장지 30롤', discountRate: 20, price: 18900, rating: 4.8, reviewCount: 5120, image: living, category: '생활', delivery: ['무료배송', '오늘 출발'] },
+  organicApple: { id: 'organic-apple', brand: '그린테이블', name: '유기농 제철 사과 3kg', discountRate: 10, price: 24900, rating: 4.7, reviewCount: 1840, image: fruit, category: '식품', delivery: ['오늘 출발'] },
+  capsuleDetergent: { id: 'capsule-detergent', brand: '데일리룸', name: '캡슐 세탁세제 60입', discountRate: 15, price: 21500, rating: 4.8, reviewCount: 2930, image: living, category: '생활', delivery: ['무료배송', '내일 도착'] },
 } satisfies Record<string, Product>
 
 // ── AI 다중검색(김치찌개 재료) — 재료마다 5개, 맨 앞이 판매량 1위 ─────────────────

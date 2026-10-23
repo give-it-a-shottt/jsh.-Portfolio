@@ -10,7 +10,7 @@ type Tab = '홈' | '카테고리' | 'AI 검색' | '찜' | '마이'
 const TABS: { label: Exclude<Tab, 'AI 검색'>; icon: string; href: string }[] = [
   { label: '홈', icon: tabHome, href: accioHref() },
   { label: '카테고리', icon: tabCategory, href: accioHref('/list') },
-  { label: '찜', icon: tabHeart, href: accioHref('/mypage') },
+  { label: '찜', icon: tabHeart, href: accioHref('/mypage/wishlist') },
   { label: '마이', icon: tabUser, href: accioHref('/mypage') },
 ]
 

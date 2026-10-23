@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import chevronDownDark from '../assets/v4/icons/chevron-down-dark.svg'
 import chevronRightWeak from '../assets/v4/icons/chevron-right-weak.svg'
 import heart20On from '../assets/v4/icons/heart-20-on.svg'
@@ -13,6 +13,7 @@ import { AiDot, Button, Container, Stepper } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
 import { cartActions, findProduct } from '../ui/useCart'
+import { recentActions } from '../ui/useMyData'
 import useWishlist from '../ui/useWishlist'
 import { formatCount, formatWon } from '../utils/format'
 
@@ -212,6 +213,8 @@ export default function DetailPage({ productId }: { productId?: string }) {
   const { colors, sizes } = detail.options
   const wishlist = useWishlist()
   const liked = wishlist.has(product.id)
+  // 연 상품은 '최근 본 상품' 맨 앞에 남긴다
+  useEffect(() => recentActions.record(product.id), [product.id])
 
   const [imageIndex, setImageIndex] = useState(0)
   const [color, setColor] = useState(colors?.[0]?.name)

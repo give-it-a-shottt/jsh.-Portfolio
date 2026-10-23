@@ -120,7 +120,7 @@ function MobileHomeHeader({ active }: { active?: SiteHeaderProps['active'] }) {
       <div className="flex items-center justify-between py-2 pr-4 pl-5">
         <Logo height={30.96} />
         <div className="flex items-center gap-4">
-          <a href={accioHref('/mypage')} aria-label="찜">
+          <a href={accioHref('/mypage/wishlist')} aria-label="찜">
             <img src={heartIcon} alt="" className="size-6" />
           </a>
           <a href={accioHref('/cart')} aria-label="장바구니">
@@ -221,7 +221,7 @@ export default function SiteHeader({ active, showBanner = false, mobileTitle }: 
           <Logo height={46.44} />
           <SearchForm variant="pc" />
           <nav aria-label="내 메뉴" className="flex items-end gap-5">
-            <a href={accioHref('/mypage')} className="flex min-w-11 flex-col items-center gap-1 text-12 text-sub">
+            <a href={accioHref('/mypage/wishlist')} className="flex min-w-11 flex-col items-center gap-1 text-12 text-sub">
               <img src={heartIcon} alt="" className="size-6" />찜
             </a>
             <a href={accioHref('/cart')} className="flex min-w-11 flex-col items-center gap-1 text-12 text-sub">

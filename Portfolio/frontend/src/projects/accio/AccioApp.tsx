@@ -1,8 +1,7 @@
-import MyPage from "./components/MyPage";
-import OrderTrackingPage from "./components/OrderTrackingPage";
 import SupportPage from "./components/SupportPage";
 import AiPage from "./ai/AiPage";
 import HomePage from "./home/HomePage";
+import { ClaimsPage, MyHomePage, OrdersPage, RecentPage, ReorderPage, ReviewsPage, WishlistPage } from "./my/MyPages";
 import { LoginPage, SignupPage } from "./pages/AuthPages";
 import CartPage from "./pages/CartPage";
 import DetailPage from "./pages/DetailPage";
@@ -31,10 +30,15 @@ export default function AccioApp({ path, params }: AccioAppProps) {
   }
   if (path === "/ai") return <AiPage initialQuestion={params.get("q") ?? undefined} />;
   if (path === "/cart") return <CartPage />;
-  if (path === "/mypage") return <MyPage />;
+  if (path === "/mypage") return <MyHomePage />;
+  if (path === "/mypage/orders" || path === "/order") return <OrdersPage />;
+  if (path === "/mypage/claims") return <ClaimsPage />;
+  if (path === "/mypage/reorder") return <ReorderPage />;
+  if (path === "/mypage/wishlist") return <WishlistPage />;
+  if (path === "/mypage/recent") return <RecentPage />;
+  if (path === "/mypage/reviews") return <ReviewsPage />;
   if (path === "/order/complete") return <OrderCompletePage orderNo={params.get("no") ?? undefined} />;
   if (path === "/order/fail") return <OrderFailPage code={params.get("code") ?? undefined} />;
-  if (path === "/order") return <OrderTrackingPage />;
   if (path === "/support") return <SupportPage />;
 
   return <HomePage />;

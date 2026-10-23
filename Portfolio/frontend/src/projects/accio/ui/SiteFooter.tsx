@@ -2,6 +2,24 @@ import { FOOTER } from '../data/catalog'
 import { accioHref } from '../routes'
 import { Container, Logo } from './primitives'
 
+/** 푸터 링크 → 화면. 나머지(회사 소개·공지사항·약관 등)는 고객센터로 */
+const FOOTER_PATHS: Record<string, string> = {
+  베스트: '/list',
+  '오늘의 특가': '/list',
+  신상품: '/list',
+  기획전: '/list',
+  숏폼: '/list',
+  주문내역: '/mypage/orders',
+  '취소·반품': '/mypage/claims',
+  찜: '/mypage/wishlist',
+  '최근 본 상품': '/mypage/recent',
+  '내 리뷰': '/mypage/reviews',
+  '판매자 입점': '/seller',
+  '입점 문의': '/seller',
+  'AI 검색 안내': '/ai',
+}
+const footerHref = (label: string) => accioHref(FOOTER_PATHS[label] ?? '/support')
+
 /** 공통 푸터. PC 는 고객센터 + 링크 3열, 모바일은 로고·정책 링크·회사 정보만 회색 바탕에 둔다(목록처럼 시안에 없는 화면은 hideOnMobile) */
 export default function SiteFooter({ hideOnMobile = false }: { hideOnMobile?: boolean }) {
   return (
@@ -23,7 +41,7 @@ export default function SiteFooter({ hideOnMobile = false }: { hideOnMobile?: bo
               <nav key={column.title} aria-label={column.title} className="flex flex-col gap-2.5">
                 <p className="text-15 font-semibold text-main">{column.title}</p>
                 {column.links.map((link) => (
-                  <a key={link} href={accioHref('/support')} className="w-fit text-14 text-sub hover:text-main">
+                  <a key={link} href={footerHref(link)} className="w-fit text-14 text-sub hover:text-main">
                     {link}
                   </a>
                 ))}
@@ -38,7 +56,7 @@ export default function SiteFooter({ hideOnMobile = false }: { hideOnMobile?: bo
               <Logo height={34.4} />
               <div className="flex gap-5 text-13 text-sub">
                 {FOOTER.policies.map((policy) => (
-                  <a key={policy} href={accioHref('/support')} className={policy === '개인정보처리방침' ? 'font-semibold' : ''}>
+                  <a key={policy} href={footerHref(policy)} className={policy === '개인정보처리방침' ? 'font-semibold' : ''}>
                     {policy}
                   </a>
                 ))}
@@ -59,7 +77,7 @@ export default function SiteFooter({ hideOnMobile = false }: { hideOnMobile?: bo
         <Logo height={25.8} />
         <div className="flex flex-wrap gap-x-3.5 gap-y-1 text-12 text-sub">
           {['이용약관', '개인정보처리방침', '고객센터', '입점 문의'].map((policy) => (
-            <a key={policy} href={accioHref('/support')} className={policy === '개인정보처리방침' ? 'font-semibold' : ''}>
+            <a key={policy} href={footerHref(policy)} className={policy === '개인정보처리방침' ? 'font-semibold' : ''}>
               {policy}
             </a>
           ))}
