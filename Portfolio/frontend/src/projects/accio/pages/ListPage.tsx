@@ -1,5 +1,4 @@
 import { useMemo, useState, type FormEvent, type ReactNode } from 'react'
-import checkedOn from '../assets/v4/icons/checked-on.svg'
 import chevronDownDark from '../assets/v4/icons/chevron-down-dark.svg'
 import chevronDown from '../assets/v4/icons/chevron-down.svg'
 import chevronRightBrand from '../assets/v4/icons/chevron-right-brand.svg'
@@ -11,7 +10,7 @@ import { ALL_PRODUCTS, DELIVERY_OPTIONS, type Delivery, type Product } from '../
 import { accioHref } from '../routes'
 import MobileTabBar from '../ui/MobileTabBar'
 import ProductCard from '../ui/ProductCard'
-import { AiDot, Button, Container } from '../ui/primitives'
+import { AiDot, Button, CheckMark, Container } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
 import { formatCount, formatWon } from '../utils/format'
@@ -52,16 +51,11 @@ function countBy(products: Product[], key: (p: Product) => string) {
   return [...counts.entries()].sort((a, b) => b[1] - a[1])
 }
 
-/** 디자인 시스템 Checkbox — 켜짐은 검은 네모 + 흰 체크 */
 function CheckRow({ checked, onChange, label, count }: { checked: boolean; onChange: () => void; label: string; count?: number }) {
   return (
     <label className="flex cursor-pointer items-center gap-2">
-      <input type="checkbox" checked={checked} onChange={onChange} className="peer sr-only" />
-      {checked ? (
-        <img src={checkedOn} alt="" className="size-5" />
-      ) : (
-        <span aria-hidden className="size-5 rounded-[6px] border-[1.5px] border-regular bg-white" />
-      )}
+      <input type="checkbox" checked={checked} onChange={onChange} className="sr-only" />
+      <CheckMark checked={checked} />
       <span className={`text-14 ${checked ? 'text-main' : 'text-sub'}`}>{label}</span>
       {count !== undefined && <span className="text-12 text-disabled tabular-nums">{formatCount(count)}</span>}
     </label>

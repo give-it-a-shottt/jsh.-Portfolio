@@ -1,5 +1,5 @@
 // 상품 상세 목데이터 — 시안(초경량 접이식 캠핑 의자)의 옵션·리뷰. 다른 상품은 기본 옵션과 공통 리뷰를 쓴다.
-import { PRODUCTS, type Product } from './catalog'
+import { listPriceOf, PRODUCTS, type Product } from './catalog'
 
 export interface ColorOption {
   name: string
@@ -84,13 +84,11 @@ const GENERIC_REVIEWS: Review[] = [
 export function getDetail(product: Product) {
   const isChair = product.id === PRODUCTS.campingChair.id
   return {
-    // 시안 상품명은 '등받이형'까지 붙어 있다
-    title: isChair ? '초경량 접이식 캠핑 의자 등받이형' : product.name,
+    title: product.fullName ?? product.name,
     options: isChair ? CHAIR_OPTIONS : {},
     summary: isChair ? CHAIR_SUMMARY : GENERIC_SUMMARY,
     reviews: isChair ? CHAIR_REVIEWS : GENERIC_REVIEWS,
-    /** 할인 전 가격 — 100원 단위로 반올림 */
-    listPrice: product.discountRate > 0 ? Math.round(product.price / (1 - product.discountRate / 100) / 100) * 100 : product.price,
+    listPrice: listPriceOf(product),
     /** 적립 1% (10원 단위 버림) */
     points: Math.floor((product.price * 0.01) / 10) * 10,
     description: [

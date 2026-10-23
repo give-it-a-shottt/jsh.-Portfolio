@@ -17,7 +17,7 @@ import {
 } from '../data/catalog'
 import { accioHref } from '../routes'
 import { Container, Logo } from './primitives'
-import useCart from './useCart'
+import useCart, { findProduct } from './useCart'
 
 interface SiteHeaderProps {
   /** GNB 에서 밑줄을 그을 메뉴 (상품 상세처럼 해당 없는 화면은 비운다) */
@@ -35,7 +35,8 @@ function goSearch(query: string) {
 
 /** 장바구니 아이콘 + 개수 배지 (흰 테두리로 아이콘과 떼어 놓는다) */
 function CartWithBadge() {
-  const count = useCart().length
+  // 품절 상품은 살 수 없으니 개수에서 뺀다
+  const count = useCart().filter((item) => !findProduct(item.productId)?.soldOut).length
   return (
     <span className="relative size-6">
       <img src={cartIcon} alt="" className="size-6" />

@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { ALL_PRODUCTS, PRODUCTS, type Product } from '../data/catalog'
+import { ALL_PRODUCTS, listPriceOf, PRODUCTS, type Product } from '../data/catalog'
 
 // 장바구니 — 화면을 옮겨도 유지되도록 localStorage 에 둔다(목업이라 서버 없이 브라우저에만).
 export interface CartItem {
@@ -14,11 +14,20 @@ export interface CartItem {
 const KEY = 'accio:cart'
 const listeners = new Set<() => void>()
 
-// 처음 들어온 사람에게도 시안처럼 3개가 담겨 있도록 한다
+const seed = (product: Product, option: string, quantity: number, checked: boolean): CartItem => ({
+  key: `${product.id}|${option}`,
+  productId: product.id,
+  option,
+  quantity,
+  checked,
+})
+
+// 처음 들어온 사람에게도 시안(장바구니 424:971)처럼 4개(1개는 품절)가 담겨 있도록 한다
 const SEED: CartItem[] = [
-  { key: `${PRODUCTS.campingChair.id}|샌드 / 기본`, productId: PRODUCTS.campingChair.id, option: '샌드 / 기본', quantity: 1, checked: true },
-  { key: `${PRODUCTS.campingLantern.id}|기본`, productId: PRODUCTS.campingLantern.id, option: '기본', quantity: 2, checked: true },
-  { key: `${PRODUCTS.electricBlanket.id}|기본`, productId: PRODUCTS.electricBlanket.id, option: '기본', quantity: 1, checked: true },
+  seed(PRODUCTS.campingChair, '샌드 / 기본', 1, true),
+  seed(PRODUCTS.campingLantern, '화이트', 2, true),
+  seed(PRODUCTS.electricBlanket, '그레이', 1, false),
+  seed(PRODUCTS.chairBag, '블랙', 1, false),
 ]
 
 function read(): CartItem[] {
@@ -64,6 +73,21 @@ export const cartActions = {
   toggle: (key: string) => write(snapshot.map((item) => (item.key === key ? { ...item, checked: !item.checked } : item))),
   toggleAll: (checked: boolean) => write(snapshot.map((item) => ({ ...item, checked }))),
   remove: (keys: string[]) => write(snapshot.filter((item) => !keys.includes(item.key))),
+}
+
+/** 배송비 — 결제할 상품 금액이 3만원 이상이면 무료 */
+export const shippingFee = (amount: number) => (amount === 0 || amount >= 30000 ? 0 : 3000)
+
+/** 결제할 항목(체크했고 품절 아닌 것)과 금액 — 장바구니·주문서가 같이 쓴다 */
+export function summarize(items: CartItem[]) {
+  const lines = items
+    .map((item) => ({ item, product: findProduct(item.productId) }))
+    .filter((line): line is { item: CartItem; product: Product } => !!line.product)
+  const payable = lines.filter(({ item, product }) => item.checked && !product.soldOut)
+  const listTotal = payable.reduce((sum, { item, product }) => sum + listPriceOf(product) * item.quantity, 0)
+  const saleTotal = payable.reduce((sum, { item, product }) => sum + product.price * item.quantity, 0)
+  const fee = shippingFee(saleTotal)
+  return { lines, payable, listTotal, discount: listTotal - saleTotal, fee, total: saleTotal + fee }
 }
 
 export default function useCart() {

@@ -3,7 +3,7 @@
 // 원본 파일을 고쳐 줄이 밀리면 여기 lines 도 같이 고친다.
 // 이 파일은 상세 화면을 열 때만 받는다(PortfolioApp 의 lazy) — 코드 원문이 첫 화면 용량에 들어가지 않는다.
 
-import accioCartPage from '../projects/accio/components/CartPage.tsx?raw'
+import accioCart from '../projects/accio/ui/useCart.ts?raw'
 import appRoutes from '../App.tsx?raw'
 import designTokens from '../index.css?raw'
 import maestroApi from '../projects/maestro/api.ts?raw'
@@ -122,7 +122,7 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
       },
       {
         title: '계산 값은 상태로 두지 않기',
-        body: '장바구니의 선택 상품·합계·쿠폰까지 남은 금액은 따로 저장하지 않고 매번 계산한다. 수량을 바꾸거나 지워도 숫자가 어긋날 틈이 없다.',
+        body: '장바구니의 결제할 상품·할인·배송비·합계는 따로 저장하지 않고 매번 계산한다. 수량을 바꾸거나 지워도 숫자가 어긋날 틈이 없다.',
       },
       {
         title: '보이지 않는 사용자도',
@@ -139,11 +139,11 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
         note: '--font-weight-*: initial, --text-*: initial 로 Tailwind 기본값을 지우고 디자인 문서의 값만 남겼다. 토큰에 없는 크기는 쓰려 해도 클래스가 없다.',
       },
       {
-        label: 'CartPage.tsx',
-        path: 'Portfolio/frontend/src/projects/accio/components/CartPage.tsx',
-        source: accioCartPage,
-        lines: [118, 141],
-        note: '상태는 담은 상품(items)과 선택(selected) 두 개뿐이고, 합계·쿠폰까지 남은 금액은 렌더할 때 계산한다.',
+        label: 'useCart.ts',
+        path: 'Portfolio/frontend/src/projects/accio/ui/useCart.ts',
+        source: accioCart,
+        lines: [81, 91],
+        note: '저장하는 건 담은 상품·옵션·수량·선택뿐이고, 결제할 항목과 할인·배송비·합계는 장바구니와 주문서가 이 함수로 매번 계산한다.',
       },
     ],
   },

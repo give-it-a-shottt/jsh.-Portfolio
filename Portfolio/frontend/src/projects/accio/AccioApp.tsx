@@ -1,10 +1,10 @@
 import AiChatPage from "./components/AiChatPage";
-import CartPage from "./components/CartPage";
 import LoginPage from "./components/LoginPage";
 import MyPage from "./components/MyPage";
 import OrderTrackingPage from "./components/OrderTrackingPage";
 import SupportPage from "./components/SupportPage";
 import HomePage from "./home/HomePage";
+import CartPage from "./pages/CartPage";
 import DetailPage from "./pages/DetailPage";
 import ListPage from "./pages/ListPage";
 

@@ -38,6 +38,8 @@ export interface Product {
   id: string
   brand: string
   name: string
+  /** 상세·장바구니처럼 자리가 넉넉한 곳에서 쓰는 긴 상품명 */
+  fullName?: string
   /** 할인 전 가격에서 깎인 비율(%). 할인이 없으면 0 */
   discountRate: number
   price: number
@@ -49,6 +51,7 @@ export interface Product {
   aiPick?: boolean
   /** 목록 필터 '배송' 에 걸리는 조건 */
   delivery?: Delivery[]
+  soldOut?: boolean
 }
 
 export type Delivery = '무료배송' | '오늘 출발' | '내일 도착'
@@ -60,7 +63,7 @@ export const PRODUCTS = {
   inductionPan: { id: 'induction-pan', brand: '홈앤쿡', name: '논스틱 인덕션 프라이팬 28cm', discountRate: 38, price: 27500, rating: 4.8, reviewCount: 1522, image: fryingPan, category: '주방', delivery: ['무료배송', '오늘 출발'] },
   ancEarbuds: { id: 'anc-earbuds', brand: '사운드핏', name: '노이즈캔슬링 무선 이어폰 2세대', discountRate: 21, price: 34800, rating: 4.5, reviewCount: 2018, image: earbuds, category: '디지털', aiPick: true, delivery: ['무료배송', '오늘 출발', '내일 도착'] },
   woolLamp: { id: 'wool-lamp', brand: '무드라이트', name: '소프트 램스울 무드 조명 스탠드', discountRate: 18, price: 42900, rating: 4.7, reviewCount: 862, image: moodLamp, category: '가구', delivery: ['무료배송'] },
-  campingChair: { id: 'camping-chair', brand: 'Accio', name: '초경량 접이식 캠핑 의자', discountRate: 32, price: 39900, rating: 4.8, reviewCount: 1204, image: campingChair, category: '캠핑', aiPick: true, delivery: ['무료배송', '오늘 출발'] },
+  campingChair: { id: 'camping-chair', brand: 'Accio', name: '초경량 접이식 캠핑 의자', fullName: '초경량 접이식 캠핑 의자 등받이형', discountRate: 32, price: 39900, rating: 4.8, reviewCount: 1204, image: campingChair, category: '캠핑', aiPick: true, delivery: ['무료배송', '오늘 출발'] },
   campingLantern: { id: 'camping-lantern', brand: '캠프로', name: '무선 충전식 캠핑 랜턴', discountRate: 24, price: 22800, rating: 4.7, reviewCount: 688, image: lantern, category: '캠핑', delivery: ['무료배송', '내일 도착'] },
   electricBlanket: { id: 'electric-blanket', brand: '웜홈', name: '캠핑용 전기 담요 더블', discountRate: 30, price: 45500, rating: 4.6, reviewCount: 412, image: bedding, category: '가전', delivery: ['무료배송'] },
   neckbandEarphone: { id: 'neckband-earphone', brand: '사운드핏', name: '블루투스 넥밴드 이어폰', discountRate: 15, price: 19900, rating: 4.4, reviewCount: 903, image: earbuds, category: '디지털', delivery: ['오늘 출발'] },
@@ -82,12 +85,16 @@ export const PRODUCTS = {
   rollTableSet: { id: 'roll-table-set', brand: '캠프로', name: '롤 테이블 + 체어 세트', discountRate: 26, price: 89900, rating: 4.7, reviewCount: 276, image: campingTable, category: '캠핑', delivery: ['무료배송', '오늘 출발'] },
   miniStool: { id: 'mini-stool', brand: 'Accio', name: '초경량 스툴 접이식 미니', discountRate: 15, price: 16800, rating: 4.8, reviewCount: 1011, image: campingChair, category: '캠핑', delivery: ['무료배송', '오늘 출발'] },
   woodChair: { id: 'wood-chair', brand: '노마드', name: '빈티지 우드 캠핑 체어', discountRate: 12, price: 78000, rating: 4.6, reviewCount: 530, image: campingChair, category: '캠핑', delivery: ['무료배송'] },
-  chairBag: { id: 'chair-bag', brand: '아웃핏', name: '캠핑 의자 수납 가방', discountRate: 20, price: 12900, rating: 4.4, reviewCount: 845, image: campingChair, category: '캠핑', delivery: ['내일 도착'] },
+  chairBag: { id: 'chair-bag', brand: '아웃핏', name: '캠핑 의자 수납 가방', discountRate: 20, price: 12900, rating: 4.4, reviewCount: 845, image: campingChair, category: '캠핑', delivery: ['내일 도착'], soldOut: true },
   chairCover: { id: 'chair-cover', brand: '캠프로', name: '양면 접이식 체어 커버', discountRate: 10, price: 9900, rating: 4.5, reviewCount: 198, image: campingChair, category: '캠핑', delivery: ['오늘 출발'] },
 } satisfies Record<string, Product>
 
 /** 전체 상품 — 목록·검색 화면이 이 안에서 고른다 */
 export const ALL_PRODUCTS: Product[] = Object.values(PRODUCTS)
+
+/** 할인 전 가격 — 할인율로 되돌려 100원 단위로 반올림 */
+export const listPriceOf = (product: Product) =>
+  product.discountRate > 0 ? Math.round(product.price / (1 - product.discountRate / 100) / 100) * 100 : product.price
 
 /** 목업이라 모든 상품이 같은 상세 화면으로 간다 (id 는 주소에만 남긴다) */
 export const productHref = (product: Product) => `${accioHref('/detail')}?id=${product.id}`

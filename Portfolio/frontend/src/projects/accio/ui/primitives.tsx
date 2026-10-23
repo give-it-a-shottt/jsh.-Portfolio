@@ -1,7 +1,10 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import chevronLeft from '../assets/v4/icons/chevron-left.svg'
 import chevronRight from '../assets/v4/icons/chevron-right.svg'
+import checkedOn from '../assets/v4/icons/checked-on.svg'
 import chevronRightWeak from '../assets/v4/icons/chevron-right-weak.svg'
+import minusIcon from '../assets/v4/icons/minus.svg'
+import plusIcon from '../assets/v4/icons/plus.svg'
 import symbol from '../assets/v4/logo/symbol.svg'
 import wordmark from '../assets/v4/logo/wordmark-dark.svg'
 import { accioHref } from '../routes'
@@ -159,5 +162,42 @@ export function Button({
     >
       {children}
     </button>
+  )
+}
+
+/** 디자인 시스템 Checkbox — 켜짐은 검은 네모 + 흰 체크, 꺼짐은 회색 테두리. 진짜 체크박스는 감싼 label 이 맡는다 */
+export function CheckMark({ checked }: { checked: boolean }) {
+  return checked ? (
+    <img src={checkedOn} alt="" className="block size-5 shrink-0" />
+  ) : (
+    <span aria-hidden className="block size-5 shrink-0 rounded-[6px] border-[1.5px] border-regular bg-white" />
+  )
+}
+
+/** 수량 스테퍼 — 상세는 칸 32, 장바구니는 30 */
+export function Stepper({
+  value,
+  onChange,
+  compact = false,
+  label = '수량',
+}: {
+  value: number
+  onChange: (n: number) => void
+  compact?: boolean
+  label?: string
+}) {
+  const cell = compact ? 'size-[30px]' : 'size-8'
+  return (
+    <div role="group" aria-label={label} className="flex items-center rounded-sm border border-regular bg-white">
+      <button type="button" onClick={() => onChange(value - 1)} disabled={value <= 1} aria-label="수량 빼기" className={`flex items-center justify-center disabled:opacity-30 ${cell}`}>
+        <img src={minusIcon} alt="" className="size-4" />
+      </button>
+      <span className={`flex items-center justify-center text-14 font-semibold text-main tabular-nums ${compact ? 'h-[30px] w-9' : 'h-8 w-10'}`} aria-live="polite">
+        {value}
+      </span>
+      <button type="button" onClick={() => onChange(value + 1)} disabled={value >= 99} aria-label="수량 더하기" className={`flex items-center justify-center disabled:opacity-30 ${cell}`}>
+        <img src={plusIcon} alt="" className="size-4" />
+      </button>
+    </div>
   )
 }

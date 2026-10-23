@@ -3,14 +3,12 @@ import chevronDownDark from '../assets/v4/icons/chevron-down-dark.svg'
 import chevronRightWeak from '../assets/v4/icons/chevron-right-weak.svg'
 import heart20On from '../assets/v4/icons/heart-20-on.svg'
 import heartIcon from '../assets/v4/icons/heart.svg'
-import minusIcon from '../assets/v4/icons/minus.svg'
-import plusIcon from '../assets/v4/icons/plus.svg'
 import thumbIcon from '../assets/v4/icons/thumb.svg'
 import { ALL_PRODUCTS, PRODUCTS, type Product } from '../data/catalog'
 import { getDetail, REVIEW_TOPICS, SHIPPING_INFO, type Review, type ReviewTopic } from '../data/detail'
 import { accioHref } from '../routes'
 import ProductCard from '../ui/ProductCard'
-import { AiDot, Button, Container } from '../ui/primitives'
+import { AiDot, Button, Container, Stepper } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
 import { cartActions, findProduct } from '../ui/useCart'
@@ -23,22 +21,6 @@ const REVIEW_SORTS = ['AI 관련순', '최신순', '도움순'] as const
 
 /** '★★★★★' — 점수만큼 채운 별 */
 const stars = (rating: number) => '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating))
-
-function Stepper({ value, onChange }: { value: number; onChange: (n: number) => void }) {
-  return (
-    <div className="flex items-center rounded-sm border border-regular bg-white">
-      <button type="button" onClick={() => onChange(value - 1)} disabled={value <= 1} aria-label="수량 빼기" className="flex size-8 items-center justify-center disabled:opacity-30">
-        <img src={minusIcon} alt="" className="size-4" />
-      </button>
-      <span className="flex h-8 w-10 items-center justify-center text-14 font-semibold text-main tabular-nums" aria-live="polite">
-        {value}
-      </span>
-      <button type="button" onClick={() => onChange(value + 1)} disabled={value >= 99} aria-label="수량 더하기" className="flex size-8 items-center justify-center disabled:opacity-30">
-        <img src={plusIcon} alt="" className="size-4" />
-      </button>
-    </div>
-  )
-}
 
 /** 리뷰 한 건 — 강조어는 브랜드 진한 오렌지 */
 function ReviewItem({ review, image }: { review: Review; image: string }) {
