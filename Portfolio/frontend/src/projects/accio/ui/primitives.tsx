@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from 'react'
 import chevronLeft from '../assets/v4/icons/chevron-left.svg'
 import chevronRight from '../assets/v4/icons/chevron-right.svg'
 import checkedOn from '../assets/v4/icons/checked-on.svg'
@@ -198,6 +198,42 @@ export function Stepper({
       <button type="button" onClick={() => onChange(value + 1)} disabled={value >= 99} aria-label="수량 더하기" className={`flex items-center justify-center disabled:opacity-30 ${cell}`}>
         <img src={plusIcon} alt="" className="size-4" />
       </button>
+    </div>
+  )
+}
+
+/**
+ * 디자인 시스템 Input — 라벨 14 · 높이 48 · radius 12. 기본은 회색 테두리, 포커스는 검은 1.5,
+ * 오류는 빨간 1.5 + 빨간 도움말. 성공 도움말(예: 사용할 수 있는 이메일)은 회색으로 둔다.
+ */
+export function TextField({
+  label,
+  helper,
+  error,
+  id,
+  className = '',
+  ...props
+}: InputHTMLAttributes<HTMLInputElement> & { label: string; helper?: string; error?: string; id: string }) {
+  const message = error ?? helper
+  return (
+    <div className={`flex flex-col gap-1.5 ${className}`}>
+      <label htmlFor={id} className="text-14 font-medium text-main">
+        {label}
+      </label>
+      <input
+        id={id}
+        aria-invalid={!!error}
+        aria-describedby={message ? `${id}-help` : undefined}
+        className={`h-12 w-full rounded-md bg-white px-4 text-15 text-main outline-none placeholder:text-disabled ${
+          error ? 'border-[1.5px] border-status-error' : 'border border-regular focus:border-[1.5px] focus:border-black'
+        }`}
+        {...props}
+      />
+      {message && (
+        <p id={`${id}-help`} className={`text-12 ${error ? 'text-status-error' : 'text-sub-weak'}`}>
+          {message}
+        </p>
+      )}
     </div>
   )
 }

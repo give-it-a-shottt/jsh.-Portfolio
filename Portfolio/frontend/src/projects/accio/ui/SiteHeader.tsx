@@ -17,6 +17,7 @@ import {
 } from '../data/catalog'
 import { accioHref } from '../routes'
 import { Container, Logo } from './primitives'
+import useAuth, { authActions } from './useAuth'
 import useCart, { findProduct } from './useCart'
 
 interface SiteHeaderProps {
@@ -173,6 +174,11 @@ function PopularKeyword() {
  */
 export default function SiteHeader({ active, showBanner = false, mobileTitle }: SiteHeaderProps) {
   const [bannerOpen, setBannerOpen] = useState(showBanner)
+  const user = useAuth()
+  // 로그인하면 '로그인·회원가입' 자리에 이름과 로그아웃이 온다
+  const utilityLinks: { label: string; href?: string; onClick?: () => void }[] = user
+    ? [{ label: `${user.name}님`, href: accioHref('/mypage') }, { label: '로그아웃', onClick: authActions.logout }, ...UTILITY_LINKS.slice(2)]
+    : UTILITY_LINKS
 
   return (
     <header className="bg-white">
@@ -195,12 +201,18 @@ export default function SiteHeader({ active, showBanner = false, mobileTitle }: 
         )}
 
         <Container className="flex items-center justify-end gap-4 pt-2.5">
-          {UTILITY_LINKS.map((link, i) => (
+          {utilityLinks.map((link, i) => (
             <span key={link.label} className="flex items-center gap-4">
               {i > 0 && <span aria-hidden className="h-2.5 w-px bg-regular" />}
-              <a href={link.href} className="text-12 text-sub-weak hover:text-main">
-                {link.label}
-              </a>
+              {link.onClick ? (
+                <button type="button" onClick={link.onClick} className="text-12 text-sub-weak hover:text-main">
+                  {link.label}
+                </button>
+              ) : (
+                <a href={link.href} className="text-12 text-sub-weak hover:text-main">
+                  {link.label}
+                </a>
+              )}
             </span>
           ))}
         </Container>

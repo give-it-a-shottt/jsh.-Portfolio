@@ -92,6 +92,13 @@
   --color-accio: #f07a57;
   --color-accio-soft: #fff5f1;
   --color-accio-strong: #b8482a;
+  /* Accio 상태색 — 오류·성공·주의·안내 (디자인 시스템 Status) */
+  --color-status-error: #e5484d;
+  --color-status-error-soft: #fff0f0;
+  --color-status-success: #12a150;
+  --color-status-success-soft: #edfaf2;
+  --color-status-warning: #f8a524;
+  --color-status-info: #2f6fed;
 
   /* 포트폴리오(개인 브랜드) 포인트 — MyDesign.md Primary. Accio 의 주황과 구분한다 */
   --color-portfolio: #2563eb;

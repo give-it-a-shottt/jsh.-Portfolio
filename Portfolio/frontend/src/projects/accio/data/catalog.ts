@@ -174,7 +174,7 @@ export const TOP_BANNER = { lead: '첫 구매라면', highlight: '전 상품 10%
 
 export const UTILITY_LINKS = [
   { label: '로그인', href: accioHref('/login') },
-  { label: '회원가입', href: accioHref('/login') },
+  { label: '회원가입', href: accioHref('/signup') },
   { label: '고객센터', href: accioHref('/support') },
   { label: '판매자센터', href: accioHref('/support') },
 ]

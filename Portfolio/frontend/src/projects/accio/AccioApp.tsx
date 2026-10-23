@@ -1,9 +1,9 @@
-import LoginPage from "./components/LoginPage";
 import MyPage from "./components/MyPage";
 import OrderTrackingPage from "./components/OrderTrackingPage";
 import SupportPage from "./components/SupportPage";
 import AiPage from "./ai/AiPage";
 import HomePage from "./home/HomePage";
+import { LoginPage, SignupPage } from "./pages/AuthPages";
 import CartPage from "./pages/CartPage";
 import DetailPage from "./pages/DetailPage";
 import ListPage from "./pages/ListPage";
@@ -18,7 +18,8 @@ interface AccioAppProps {
 
 // Accio 쇼핑몰 — 포트폴리오 안에서 '#/accio/…' 로 연다. 모르는 경로는 쇼핑몰 홈으로 보낸다.
 export default function AccioApp({ path, params }: AccioAppProps) {
-  if (path === "/login") return <LoginPage />;
+  if (path === "/login") return <LoginPage next={params.get("next") ?? ""} />;
+  if (path === "/signup") return <SignupPage />;
   if (path === "/list") {
     const query = params.get("q") ?? "";
     // 검색어가 바뀌면 필터·페이지를 새로 시작하도록 key 로 다시 만든다
