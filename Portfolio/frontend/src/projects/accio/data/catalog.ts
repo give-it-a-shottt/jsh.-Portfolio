@@ -178,7 +178,7 @@ export const UTILITY_LINKS = [
   { label: '로그인', href: accioHref('/login') },
   { label: '회원가입', href: accioHref('/signup') },
   { label: '고객센터', href: accioHref('/support') },
-  { label: '판매자센터', href: accioHref('/support') },
+  { label: '판매자센터', href: accioHref('/seller') },
 ]
 
 export const SEARCH_PLACEHOLDER = { pc: '상품명이나 원하는 걸 말로 검색해 보세요', mo: '상품명이나 원하는 걸 말로 검색' }

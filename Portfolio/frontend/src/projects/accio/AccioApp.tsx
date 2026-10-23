@@ -6,6 +6,8 @@ import { LoginPage, SignupPage } from "./pages/AuthPages";
 import CartPage from "./pages/CartPage";
 import DetailPage from "./pages/DetailPage";
 import ListPage from "./pages/ListPage";
+import SellerJoin from "./seller/SellerJoin";
+import { SellerClaims, SellerDashboard, SellerOrders, SellerProductNew, SellerProducts } from "./seller/SellerPages";
 import { OrderCompletePage, OrderFailPage } from "./pages/OrderResultPage";
 
 interface AccioAppProps {
@@ -40,6 +42,12 @@ export default function AccioApp({ path, params }: AccioAppProps) {
   if (path === "/order/complete") return <OrderCompletePage orderNo={params.get("no") ?? undefined} />;
   if (path === "/order/fail") return <OrderFailPage code={params.get("code") ?? undefined} />;
   if (path === "/support") return <SupportPage />;
+  if (path === "/seller") return <SellerDashboard />;
+  if (path === "/seller/join") return <SellerJoin />;
+  if (path === "/seller/products") return <SellerProducts />;
+  if (path === "/seller/products/new") return <SellerProductNew />;
+  if (path === "/seller/orders") return <SellerOrders />;
+  if (path === "/seller/claims") return <SellerClaims />;
 
   return <HomePage />;
 }

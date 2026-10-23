@@ -14,8 +14,8 @@ const FOOTER_PATHS: Record<string, string> = {
   찜: '/mypage/wishlist',
   '최근 본 상품': '/mypage/recent',
   '내 리뷰': '/mypage/reviews',
-  '판매자 입점': '/seller',
-  '입점 문의': '/seller',
+  '판매자 입점': '/seller/join',
+  '입점 문의': '/seller/join',
   'AI 검색 안내': '/ai',
 }
 const footerHref = (label: string) => accioHref(FOOTER_PATHS[label] ?? '/support')
