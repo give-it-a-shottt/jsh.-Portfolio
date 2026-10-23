@@ -65,6 +65,26 @@ import pwLight from './assets/design/find-password/v2-light.webp'
 import pwCard from './assets/design/find-password/v3-card.webp'
 import pwBigTitle from './assets/design/find-password/v4-big-title.webp'
 import pwSoft from './assets/design/find-password/v5-soft.webp'
+import acHome from './assets/design/accio/screen-01-home.webp'
+import acList from './assets/design/accio/screen-02-list.webp'
+import acDetail from './assets/design/accio/screen-03-detail.webp'
+import acAi from './assets/design/accio/screen-04-ai.webp'
+import acAiWidget from './assets/design/accio/screen-05-ai-widget.webp'
+import acCart from './assets/design/accio/screen-06-cart.webp'
+import acLogin from './assets/design/accio/screen-07-login.webp'
+import acMypage from './assets/design/accio/screen-08-mypage.webp'
+import acOrders from './assets/design/accio/screen-09-orders.webp'
+import acSupport from './assets/design/accio/screen-10-support.webp'
+import acSellerDashboard from './assets/design/accio/screen-11-seller-dashboard.webp'
+import acSellerNew from './assets/design/accio/screen-12-seller-new.webp'
+import acSellerClaims from './assets/design/accio/screen-13-seller-claims.webp'
+import acCover from './assets/design/accio/system-00-cover.webp'
+import acLogo from './assets/design/accio/system-01-logo.webp'
+import acColor from './assets/design/accio/system-02-color.webp'
+import acTypography from './assets/design/accio/system-03-typography.webp'
+import acSpacing from './assets/design/accio/system-04-spacing.webp'
+import acComponents from './assets/design/accio/system-05-components.webp'
+import acStates from './assets/design/accio/system-06-states.webp'
 import type { Level } from './rank'
 
 // 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
@@ -123,7 +143,7 @@ export interface PortfolioCase {
   type: CaseType
   code: string
   date: string
-  /** 중요도 1~3 — 높은 것부터 보여준다. 화면에는 보이지 않는다(기준은 rank.ts) */
+  /** 중요도 1~4 — 높은 것부터 보여준다. 화면에는 보이지 않는다(기준은 rank.ts) */
   level: Level
   title: string
   description: string
@@ -167,7 +187,8 @@ export const CASES: PortfolioCase[] = [
     type: 'Front',
     code: 'PROJECT 01',
     date: '2025.11',
-    level: 3,
+    // 대표 프로젝트 — 전체 결과 맨 위에 둔다
+    level: 4,
     title: 'Accio — AI 자연어 검색 쇼핑몰',
     description:
       '“USB 여러 개 꽂는 거”처럼 모호한 말도 알아듣는 쇼핑몰. 디자인 시스템을 정의하고 대화형 검색부터 장바구니·주문까지 구현.',
@@ -432,6 +453,61 @@ export const CASES: PortfolioCase[] = [
     href: '#/case/planforme-kst-today',
   },
   // ── Design ──
+  {
+    slug: 'accio-redesign',
+    type: 'Design',
+    code: 'DESIGN 06',
+    date: '2026.10',
+    level: 3,
+    title: 'Accio 리디자인 — AI 쇼핑몰 화면·디자인 시스템 설계',
+    description:
+      '팀 프로젝트였던 AI 자연어 검색 쇼핑몰을 다시 설계. 디자인 시스템부터 쇼핑·AI 대화·마이페이지·판매자센터의 PC·모바일 화면, 빈 상태·오류 같은 상태 화면까지 피그마로 그리고 그대로 구현.',
+    metrics: [
+      { label: '화면', value: 'PC 28 · 모바일 22' },
+      { label: '상태 화면', value: '21개' },
+      { label: '디자인 시스템', value: '6장' },
+    ],
+    tags: ['Figma', '디자인 시스템', 'Web · Mobile UI'],
+    keywords:
+      'accio 아씨오 아시오 리디자인 쇼핑몰 이커머스 ai 검색 대화 장바구니 마이페이지 판매자센터 상태 화면 빈 상태 오류 토스트 디자인 시스템 피그마 반응형',
+    image: acHome,
+    href: '#/case/accio-redesign',
+    links: [{ label: '실제 화면 보기', href: '#/accio' }],
+    design: {
+      app: 'Accio — 상품 이름을 몰라도 말로 찾는 AI 쇼핑몰 (팀 프로젝트 리디자인)',
+      problem:
+        '쇼핑·AI 대화·마이페이지·판매자센터까지 화면이 50개 가까이 되고 PC·모바일을 모두 맞춰야 했다. 화면마다 값을 정하면 금방 어긋나서, 오렌지는 클릭할 곳과 AI 순간에만 쓴다는 규칙과 토큰을 먼저 정하고 모든 화면을 그 위에서 그렸다. 빈 상태·오류·로그인 필요처럼 놓치기 쉬운 상태 화면도 따로 모아 설계했다.',
+      device: 'desktop',
+      screens: [
+        { label: '홈', image: acHome, note: 'AI 검색창을 첫 화면 가운데에 크게 두고, 기획전·특가·숏폼·브랜드·AI 추천을 아래로 이어 붙임', width: 901, height: 4096 },
+        { label: '상품 목록 · 검색', image: acList, note: '왼쪽 필터와 걸린 조건 칩. 조건이 길어지면 AI 검색으로 넘어가도록 배너로 권함', width: 1440, height: 2359 },
+        { label: '상품 상세', image: acDetail, note: '갤러리·옵션·구매 버튼 아래에 AI 리뷰 요약과 주제별 리뷰 필터', width: 1440, height: 3079 },
+        { label: 'AI 검색', image: acAi, note: '대화는 가운데, 찾은 상품은 오른쪽 결과 패널에 모아 바로 골라 담기', width: 1440, height: 900 },
+        { label: 'AI 위젯', image: acAiWidget, note: '보던 화면을 떠나지 않고 오른쪽 아래에서 AI에게 묻는 패널', width: 1440, height: 900 },
+        { label: '장바구니', image: acCart, note: '고른 상품만 결제 금액에 들어가고, 품절 상품은 고를 수 없게 회색으로', width: 1440, height: 1489 },
+        { label: '로그인', image: acLogin, note: '이메일 로그인을 위에, 소셜 로그인을 아래에 둔 한 열 폼', width: 1440, height: 1517 },
+        { label: '마이페이지', image: acMypage, note: '주문 상태 요약과 메뉴, 최근 주문을 한 화면에', width: 1440, height: 1743 },
+        { label: '주문내역', image: acOrders, note: '기간 필터와, 상태마다 할 수 있는 일(배송조회·취소·반품)이 다른 주문 카드', width: 1440, height: 1815 },
+        { label: '고객센터', image: acSupport, note: '자주 묻는 질문 검색·분류와 AI 상담·1:1 문의·전화 창구', width: 1440, height: 1655 },
+        { label: '판매자 · 대시보드', image: acSellerDashboard, note: '오늘 주문·매출·처리할 일과 AI 인사이트를 한 화면에', width: 1440, height: 900 },
+        { label: '판매자 · 상품 등록', image: acSellerNew, note: '사진을 보고 AI가 7개 항목을 미리 채우고 판매자는 확인만. 재고만 직접 입력', width: 1440, height: 900 },
+        { label: '판매자 · 클레임', image: acSellerClaims, note: '구매자 사유·사진 옆에 AI가 귀책·감정·우선순위를 정리하고 다음 조치를 추천', width: 1440, height: 900 },
+      ],
+      system: [
+        { label: '표지', image: acCover, note: '로고와 한 줄 소개, 기본 설정(라이트 테마 · Pretendard · 브랜드 오렌지 #F07A57)', width: 1200, height: 461 },
+        { label: '로고', image: acLogo, note: '검색 렌즈 모양의 a와 말풍선 점 심볼. 워드마크의 i 점도 AI 점으로', width: 1200, height: 649 },
+        { label: '컬러', image: acColor, note: '오렌지 10단계와 글자·선·배경·상태색. 오렌지는 클릭할 곳과 AI 순간에만', width: 1200, height: 1259 },
+        { label: '타이포그래피', image: acTypography, note: 'Pretendard 크기·굵기 스케일과 줄 간격', width: 1200, height: 1953 },
+        { label: '간격 · 모서리 · 그림자', image: acSpacing, note: '간격 스케일, 모서리 xs~xl, 그림자 4단계', width: 1200, height: 1102 },
+        { label: '컴포넌트', image: acComponents, note: '버튼·AI 검색창·상품 카드·칩·입력창', width: 1200, height: 1383 },
+        { label: '상태 화면', image: acStates, note: '로딩·빈 상태·오류·로그인 필요·AI 한도 등 21개를 모바일 기준으로 모은 보드', width: 1649, height: 4096 },
+      ],
+      systemHeading: {
+        title: '디자인 시스템 · 상태 화면',
+        description: '토큰과 컴포넌트, 그리고 빈 상태·오류·로그인 필요 같은 상태 화면을 모은 보드예요.',
+      },
+    },
+  },
   {
     slug: 'gameprobe',
     type: 'Design',
