@@ -3,6 +3,7 @@ import { accioHref } from '../routes'
 import { Button, TextField } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
+import useAuth from '../ui/useAuth'
 import { sellerActions } from './sellerData'
 
 const STEPS = ['사업자 정보', '정산 정보', '완료']
@@ -21,6 +22,7 @@ export default function SellerJoin() {
   const [form, setForm] = useState({ storeName: '', owner: '', bizNo: '', phone: '', shipping: SHIPPING[2], bank: BANKS[0], account: '', holder: '' })
   const [verified, setVerified] = useState<'idle' | 'ok' | 'fail'>('idle')
   const [submitted, setSubmitted] = useState(false)
+  const user = useAuth()
   const set = (key: keyof typeof form, value: string) => setForm((f) => ({ ...f, [key]: value }))
 
   const step1Errors = {
@@ -42,7 +44,7 @@ export default function SellerJoin() {
     if (Object.values(errors).some(Boolean)) return
     setSubmitted(false)
     if (step === 1)
-      sellerActions.register({ storeName: form.storeName.trim(), owner: form.owner.trim(), bizNo: form.bizNo, phone: form.phone, shipping: form.shipping, bank: form.bank, account: form.account })
+      sellerActions.register({ email: user?.email, storeName: form.storeName.trim(), owner: form.owner.trim(), bizNo: form.bizNo, phone: form.phone, shipping: form.shipping, bank: form.bank, account: form.account })
     setStep((s) => s + 1)
   }
 

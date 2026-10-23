@@ -13,6 +13,8 @@ import { AiDot, Button, Container, Stepper } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
 import { cartActions, findProduct } from '../ui/useCart'
+import { StateEmpty } from '../ui/states'
+import { showToast } from '../ui/toast'
 import { recentActions } from '../ui/useMyData'
 import useWishlist from '../ui/useWishlist'
 import { formatCount, formatWon } from '../utils/format'
@@ -73,6 +75,87 @@ function ReviewItem({ review, image }: { review: Review; image: string }) {
   )
 }
 
+// 이번 방문에서 이미 요약을 만든 상품 — 다시 열면 바로 보여 준다 (서버에 저장된 요약 흉내)
+const summarizedIds = new Set<string>()
+
+/**
+ * AI 리뷰 요약 (상태 시안 438:3217) — 저장된 요약이 없으면 '리뷰 N개를 읽는 중…' 스켈레톤을 잠깐 보여 주고,
+ * 인터넷이 끊겨 만들지 못하면 다시 시도 카드를 띄운다. 실패해도 아래 일반 리뷰는 그대로 보인다.
+ */
+function AiReviewSummary({ product, summary }: { product: Product; summary: ReturnType<typeof getDetail>['summary'] }) {
+  const [status, setStatus] = useState<'loading' | 'done' | 'error'>(() => (summarizedIds.has(product.id) ? 'done' : 'loading'))
+
+  useEffect(() => {
+    if (status !== 'loading') return
+    const timer = window.setTimeout(() => {
+      if (!navigator.onLine) return setStatus('error')
+      summarizedIds.add(product.id)
+      setStatus('done')
+    }, 1200)
+    return () => window.clearTimeout(timer)
+  }, [status, product.id])
+
+  if (status === 'loading')
+    return (
+      <section aria-label="AI 리뷰 요약" aria-busy="true" className="flex flex-col gap-2.5 rounded-lg bg-light px-5 py-4.5 lg:px-6 lg:py-5">
+        <p className="flex items-center gap-1.5 text-14 font-semibold text-main">
+          <AiDot size={12} />
+          리뷰 {formatCount(product.reviewCount)}개를 읽는 중…
+        </p>
+        {['w-[300px]', 'w-[260px]', 'w-[280px]', 'w-[180px]'].map((width) => (
+          <span key={width} className={`h-3 max-w-full rounded-[6px] bg-white ${width}`} />
+        ))}
+      </section>
+    )
+
+  if (status === 'error')
+    return (
+      <section aria-label="AI 리뷰 요약" className="flex flex-col items-start gap-2.5 rounded-lg border border-regular px-5 py-4.5 lg:px-6 lg:py-5">
+        <p className="flex items-center gap-1.5 text-14 font-semibold text-main">
+          <AiDot size={12} muted />
+          요약을 만들지 못했어요
+        </p>
+        <p className="text-13 text-sub">잠시 뒤 다시 눌러 주세요. 리뷰는 아래에서 그대로 볼 수 있어요.</p>
+        <Button onClick={() => setStatus('loading')} className="h-12 min-w-30 px-5">
+          다시 시도
+        </Button>
+      </section>
+    )
+
+  return (
+    <section aria-label="AI 리뷰 요약" className="flex flex-col gap-3.5 rounded-lg bg-light px-6 py-5">
+      <p className="flex items-center gap-1.5">
+        <AiDot size={12} />
+        <span className="text-14 font-semibold text-main">AI 리뷰 요약</span>
+        <span className="text-12 text-sub-weak">리뷰 {formatCount(product.reviewCount)}개 기준</span>
+      </p>
+      <p className="text-15 text-main">{summary.summary}</p>
+      <div className="flex gap-3">
+        {[
+          ['좋아요', summary.pros],
+          ['아쉬워요', summary.cons],
+        ].map(([title, items]) => (
+          <div key={title as string} className="flex min-w-0 flex-1 flex-col gap-1.5 rounded-md bg-white px-4 py-3">
+            <p className="text-13 font-semibold text-sub">{title}</p>
+            {(items as string[]).map((item) => (
+              <p key={item} className="text-14 text-main">
+                · {item}
+              </p>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {summary.tags.map((tag) => (
+          <span key={tag} className="rounded-full bg-white px-2.5 py-1 text-12 font-medium text-sub">
+            {tag}
+          </span>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function ReviewSection({ product, detail }: { product: Product; detail: ReturnType<typeof getDetail> }) {
   const [topic, setTopic] = useState<'전체' | ReviewTopic | '사진 리뷰'>('전체')
   const [sort, setSort] = useState<(typeof REVIEW_SORTS)[number]>('AI 관련순')
@@ -88,6 +171,18 @@ function ReviewSection({ product, detail }: { product: Product; detail: ReturnTy
     if (sort === '도움순') sorted.sort((a, b) => b.helpful - a.helpful)
     return sorted
   }, [detail.reviews, topic, sort])
+
+  // 리뷰 0개 (상태 시안 438:3176) — AI 요약은 숨기고 첫 리뷰를 권한다
+  if (product.reviewCount === 0)
+    return (
+      <div className="flex flex-col gap-4 lg:mx-auto lg:max-w-[870px]">
+        <StateEmpty icon="box" title="아직 리뷰가 없어요" description="첫 리뷰를 남기면 300P를 드려요" />
+        <p className="flex items-center gap-2 rounded-[10px] bg-light px-3.5 py-3 text-12 text-sub-weak">
+          <AiDot size={10} muted />
+          리뷰가 5개 이상 모이면 AI 요약이 열려요
+        </p>
+      </div>
+    )
 
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
@@ -109,37 +204,7 @@ function ReviewSection({ product, detail }: { product: Product; detail: ReturnTy
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-4 lg:gap-5">
-        {/* AI 리뷰 요약 */}
-        <section aria-label="AI 리뷰 요약" className="flex flex-col gap-3.5 rounded-lg bg-light px-6 py-5">
-          <p className="flex items-center gap-1.5">
-            <AiDot size={12} />
-            <span className="text-14 font-semibold text-main">AI 리뷰 요약</span>
-            <span className="text-12 text-sub-weak">리뷰 {formatCount(product.reviewCount)}개 기준</span>
-          </p>
-          <p className="text-15 text-main">{summary.summary}</p>
-          <div className="flex gap-3">
-            {[
-              ['좋아요', summary.pros],
-              ['아쉬워요', summary.cons],
-            ].map(([title, items]) => (
-              <div key={title as string} className="flex min-w-0 flex-1 flex-col gap-1.5 rounded-md bg-white px-4 py-3">
-                <p className="text-13 font-semibold text-sub">{title}</p>
-                {(items as string[]).map((item) => (
-                  <p key={item} className="text-14 text-main">
-                    · {item}
-                  </p>
-                ))}
-              </div>
-            ))}
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {summary.tags.map((tag) => (
-              <span key={tag} className="rounded-full bg-white px-2.5 py-1 text-12 font-medium text-sub">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </section>
+        <AiReviewSummary product={product} summary={summary} />
 
         {/* 주제 칩 · 정렬 */}
         <div className="flex items-center justify-between gap-3">
@@ -208,8 +273,26 @@ function InfoTable({ rows }: { rows: [string, string][] }) {
  * 모바일은 아래 고정 구매 바에서 옵션 시트를 연다.
  */
 export default function DetailPage({ productId }: { productId?: string }) {
-  const product = (productId && findProduct(productId)) || PRODUCTS.campingChair
+  const product = productId ? findProduct(productId) : PRODUCTS.campingChair
+  return product ? <DetailView product={product} /> : <DetailNotFound />
+}
+
+/** 없는 상품 (상태 시안 438:3160) — 판매가 끝났거나 숨긴 상품 링크로 들어왔을 때 */
+function DetailNotFound() {
+  return (
+    <div className="flex min-h-svh flex-col bg-white">
+      <SiteHeader mobileTitle="" />
+      <main className="flex flex-1 items-center justify-center px-5 py-20 lg:py-40">
+        <StateEmpty icon="alert" title="없는 상품이에요" description="판매가 끝났거나 주소가 잘못됐어요" action={{ label: '홈으로 가기', href: accioHref() }} />
+      </main>
+      <SiteFooter hideOnMobile />
+    </div>
+  )
+}
+
+function DetailView({ product }: { product: Product }) {
   const detail = useMemo(() => getDetail(product), [product])
+  const soldOut = !!product.soldOut
   const { colors, sizes } = detail.options
   const wishlist = useWishlist()
   const liked = wishlist.has(product.id)
@@ -222,7 +305,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
   const [quantity, setQuantity] = useState(1)
   const [tab, setTab] = useState<Tab>('리뷰')
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [toast, setToast] = useState('')
+  const [restockAlert, setRestockAlert] = useState(false)
 
   const gallery = Array.from({ length: 5 }, () => product.image)
   const optionLabel = [color, size].filter(Boolean).join(' / ') || '기본'
@@ -232,9 +315,27 @@ export default function DetailPage({ productId }: { productId?: string }) {
   const addToCart = () => {
     cartActions.add(product, optionLabel, quantity)
     setSheetOpen(false)
-    setToast('장바구니에 담았어요')
-    window.setTimeout(() => setToast(''), 2400)
+    showToast({ message: '장바구니에 담았어요', action: { label: '장바구니로 가기', href: accioHref('/cart') } })
   }
+  const toggleRestock = () => {
+    setRestockAlert((on) => !on)
+    showToast({ message: restockAlert ? '재입고 알림을 껐어요' : '다시 들어오면 알림으로 알려 드릴게요' })
+  }
+
+  // 품절 (상태 시안 438:3200) — 구매 버튼은 끄고 재입고 알림만 받는다
+  const soldOutButtons = (heightClass: string) => (
+    <>
+      <Button onClick={toggleRestock} aria-pressed={restockAlert} className={`flex-1 ${heightClass}`}>
+        {restockAlert ? '알림 신청됨' : '재입고 알림 받기'}
+      </Button>
+      <Button variant="primary" disabled className={`flex-1 ${heightClass}`}>
+        품절됐어요
+      </Button>
+    </>
+  )
+  const soldOutBadge = soldOut && (
+    <span className="absolute top-3.5 left-3.5 rounded-[6px] bg-main px-2.5 py-1 text-12 font-semibold text-white">품절</span>
+  )
   const buyNow = () => {
     cartActions.add(product, optionLabel, quantity)
     window.location.hash = accioHref('/cart')
@@ -336,7 +437,10 @@ export default function DetailPage({ productId }: { productId?: string }) {
                   </button>
                 ))}
               </div>
-              <img src={gallery[imageIndex]} alt={product.name} className="size-[588px] rounded-lg object-cover" />
+              <div className="relative">
+                <img src={gallery[imageIndex]} alt={product.name} className="size-[588px] rounded-lg object-cover" />
+                {soldOutBadge}
+              </div>
             </div>
             <div className="relative lg:hidden">
               <div
@@ -347,6 +451,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
                   <img key={i} src={image} alt={i === 0 ? product.name : ''} className="size-full shrink-0 snap-start object-cover" />
                 ))}
               </div>
+              {soldOutBadge}
               <p className="absolute right-5 bottom-3.5 rounded-full bg-black/35 px-2 py-[3px] text-11 font-medium text-white tabular-nums">
                 {imageIndex + 1} / {gallery.length}
               </p>
@@ -360,22 +465,26 @@ export default function DetailPage({ productId }: { productId?: string }) {
               </a>
               <h1 className="text-20 font-semibold text-main lg:text-24">{detail.title}</h1>
               <p className="flex items-center gap-1.5 lg:gap-2">
-                <span className="flex items-center gap-1 text-main">
-                  <span className="text-14">{stars(product.rating)}</span>
-                  <span className="text-13 font-semibold lg:text-14">{product.rating.toFixed(1)}</span>
-                </span>
+                {product.reviewCount > 0 ? (
+                  <span className="flex items-center gap-1 text-main">
+                    <span className="text-14">{stars(product.rating)}</span>
+                    <span className="text-13 font-semibold lg:text-14">{product.rating.toFixed(1)}</span>
+                  </span>
+                ) : (
+                  <span className="text-13 font-medium text-sub lg:text-14">새 상품</span>
+                )}
                 <button type="button" onClick={() => setTab('리뷰')} className="text-13 text-sub-weak lg:text-14">
                   리뷰 {formatCount(product.reviewCount)}
                 </button>
               </p>
               <div className="hidden h-px bg-light lg:block" />
               <div className="flex flex-wrap items-baseline gap-x-1.5 lg:flex-col lg:items-start lg:gap-0.5">
-                {product.discountRate > 0 && (
+                {product.discountRate > 0 && !soldOut && (
                   <p className="order-last text-13 text-disabled line-through lg:order-first lg:text-14">{formatWon(detail.listPrice)}</p>
                 )}
                 <p className="flex items-baseline gap-1.5 text-24 font-semibold lg:gap-2 lg:text-28">
-                  {product.discountRate > 0 && <span className="text-accio-strong">{product.discountRate}%</span>}
-                  <span className="text-main tabular-nums">{formatWon(product.price)}</span>
+                  {product.discountRate > 0 && !soldOut && <span className="text-accio-strong">{product.discountRate}%</span>}
+                  <span className={`tabular-nums ${soldOut ? 'text-disabled' : 'text-main'}`}>{formatWon(product.price)}</span>
                 </p>
               </div>
               <div className="flex flex-col gap-1 rounded-[10px] bg-light px-3.5 py-3 lg:gap-1.5 lg:rounded-md lg:px-4 lg:py-3.5">
@@ -394,15 +503,21 @@ export default function DetailPage({ productId }: { productId?: string }) {
               </div>
 
               <div className="hidden flex-col gap-4 lg:flex">
-                {optionsBlock}
+                {!soldOut && optionsBlock}
                 <div className="flex gap-2">
                   {heartButton('size-14')}
-                  <Button onClick={addToCart} className="h-14 flex-1">
-                    장바구니
-                  </Button>
-                  <Button variant="primary" onClick={buyNow} className="h-14 flex-1">
-                    바로 구매
-                  </Button>
+                  {soldOut ? (
+                    soldOutButtons('h-14')
+                  ) : (
+                    <>
+                      <Button onClick={addToCart} className="h-14 flex-1">
+                        장바구니
+                      </Button>
+                      <Button variant="primary" onClick={buyNow} className="h-14 flex-1">
+                        바로 구매
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -478,10 +593,16 @@ export default function DetailPage({ productId }: { productId?: string }) {
 
       {/* ── 모바일 고정 구매 바 ── */}
       <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-2 border-t border-light bg-white px-4 pt-2.5 pb-[calc(10px+env(safe-area-inset-bottom))] lg:hidden">
-        {heartButton('size-13')}
-        <Button variant="primary" onClick={() => setSheetOpen(true)} className="h-13 flex-1">
-          구매하기
-        </Button>
+        {soldOut ? (
+          soldOutButtons('h-12')
+        ) : (
+          <>
+            {heartButton('size-13')}
+            <Button variant="primary" onClick={() => setSheetOpen(true)} className="h-13 flex-1">
+              구매하기
+            </Button>
+          </>
+        )}
       </div>
 
       {/* ── 모바일 옵션 시트 ── */}
@@ -504,18 +625,6 @@ export default function DetailPage({ productId }: { productId?: string }) {
               </Button>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* 담기 완료 안내 */}
-      {toast && (
-        <div role="status" className="fixed inset-x-0 bottom-24 z-50 flex justify-center px-5 lg:bottom-10">
-          <p className="flex items-center gap-3 rounded-full bg-main px-5 py-3 text-14 text-white shadow-accio-3">
-            {toast}
-            <a href={accioHref('/cart')} className="font-semibold text-accio">
-              보러 가기
-            </a>
-          </p>
         </div>
       )}
     </div>

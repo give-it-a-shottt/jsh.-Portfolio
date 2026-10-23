@@ -151,6 +151,11 @@ export function respond(question: string, history: AiReply[], latestOrder?: { no
     return { text: [`3만원대 집들이 선물로 많이 고르는 걸 ${gifts.length}개 모았어요. 실패 없는 생활용품 위주예요.`], result: { title: '선물 추천', groups: [{ label: '선물', products: gifts }] }, chips: ['더 저렴한 걸로', '이걸로 다 담아줘'] }
   }
 
+  // 로그인 안내에서 '그냥 상품 찾을래'를 고른 경우
+  if (/그냥 상품/.test(q)) {
+    return { text: ['좋아요. 어떤 상품을 찾을까요? 쓰임새나 예산을 말해 주면 더 잘 골라요.'], chips: ['캠핑 갈 때 쓸 가벼운 의자 찾아줘', '3만원대 집들이 선물 추천해줘'] }
+  }
+
   // 이미지로 찾기
   if (/사진|이미지/.test(q)) {
     return { text: ['입력창 왼쪽 사진 버튼으로 사진을 올리면 비슷한 상품을 찾아 드려요.'], chips: ['캠핑 의자 찾아줘'] }
@@ -161,7 +166,11 @@ export function respond(question: string, history: AiReply[], latestOrder?: { no
   if (found.length > 0) {
     const isChair = /의자|체어/.test(q)
     return {
-      text: [isChair ? `2kg 안팎의 가벼운 의자 ${Math.min(found.length, 3)}개를 먼저 골랐어요. 등받이가 높은 순이에요.` : `‘${q}’에 맞는 상품을 ${found.length}개 찾았어요. 많이 팔린 순이에요.`],
+      text: [
+        isChair
+          ? `2kg 안팎의 가벼운 의자 ${Math.min(found.length, 3)}개를 먼저 골랐어요. 등받이가 높은 순이에요.`
+          : `‘${q.replace(/\s*(찾아줘|추천해줘|보여줘|알려줘)$/, '')}’에 맞는 상품을 ${found.length}개 찾았어요. 많이 팔린 순이에요.`,
+      ],
       result: { title: '검색 결과', groups: [{ label: '전체', products: found }] },
       chips: isChair ? ['더 저렴한 걸로', '이걸로 다 담아줘'] : ['더 저렴한 걸로', '리뷰 많은 순으로'],
     }

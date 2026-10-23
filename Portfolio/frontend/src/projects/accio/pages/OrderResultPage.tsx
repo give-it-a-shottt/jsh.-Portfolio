@@ -1,10 +1,11 @@
-import type { ReactNode } from 'react'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import resultFail from '../assets/v4/icons/result-fail.svg'
 import resultSuccess from '../assets/v4/icons/result-success.svg'
 import { accioHref } from '../routes'
 import { Button } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
+import { Spinner } from '../ui/states'
 import useCart, { findProduct } from '../ui/useCart'
 import useOrders, { arrivalLabel, PAYMENT_ERRORS, placeOrder } from '../ui/useOrders'
 import { formatWon } from '../utils/format'
@@ -57,10 +58,49 @@ function ResultLayout({
   )
 }
 
-/** 결제 성공 (Figma PC 424:1339 · MO 424:1489) */
+// 이번 방문에서 승인 확인을 마친 주문 — 같은 주문을 다시 열면 확인 화면 없이 바로 결과를 보여 준다
+const confirmedOrders = new Set<string>()
+const CONFIRM_STEPS = ['결제 정보 받음', '금액 확인 중', '주문 확정']
+
+/**
+ * 결제 승인 확인 중 (상태 시안 439:3304) — 결제창에서 돌아온 뒤 서버가 금액이 맞는지 보는 동안.
+ * 목업이라 단계마다 0.6초씩 넘어가고, 승인은 장바구니에서 이미 한 번만 일어났다.
+ */
+function PaymentConfirming({ onDone }: { onDone: () => void }) {
+  const [step, setStep] = useState(0)
+  useEffect(() => {
+    const timer = window.setTimeout(() => (step < CONFIRM_STEPS.length - 1 ? setStep(step + 1) : onDone()), 600)
+    return () => window.clearTimeout(timer)
+  }, [step, onDone])
+
+  return (
+    <main aria-busy="true" className="flex min-h-svh flex-col items-center justify-center gap-3.5 bg-white px-5">
+      <Spinner size={40} />
+      <h1 className="text-20 font-semibold text-main">결제를 확인하고 있어요</h1>
+      <p className="text-14 text-sub-weak">창을 닫거나 뒤로 가지 마세요</p>
+      <ol className="flex w-[300px] flex-col gap-2 rounded-[14px] bg-light px-5 py-4">
+        {CONFIRM_STEPS.map((label, i) => (
+          <li key={label} aria-current={i === step ? 'step' : undefined} className={`flex items-center gap-2 text-14 ${i <= step ? 'font-medium text-main' : 'text-sub-weak'}`}>
+            <span aria-hidden className={`size-2 rounded-full ${i <= step ? 'bg-main' : 'bg-icon-disabled/40'}`} />
+            {label}
+          </li>
+        ))}
+      </ol>
+    </main>
+  )
+}
+
+/** 결제 성공 (Figma PC 424:1339 · MO 424:1489) — 막 결제한 주문은 승인 확인 화면을 먼저 거친다 */
 export function OrderCompletePage({ orderNo }: { orderNo?: string }) {
   const orders = useOrders()
   const order = orders.find((o) => o.no === orderNo) ?? orders[0]
+  const [confirming, setConfirming] = useState(() => !!orderNo && !confirmedOrders.has(orderNo))
+  const finishConfirm = useCallback(() => {
+    if (orderNo) confirmedOrders.add(orderNo)
+    setConfirming(false)
+  }, [orderNo])
+
+  if (confirming) return <PaymentConfirming onDone={finishConfirm} />
 
   if (!order)
     return (

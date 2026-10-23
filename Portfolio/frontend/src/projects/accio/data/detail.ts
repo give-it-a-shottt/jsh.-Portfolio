@@ -87,7 +87,7 @@ export function getDetail(product: Product) {
     title: product.fullName ?? product.name,
     options: isChair ? CHAIR_OPTIONS : {},
     summary: isChair ? CHAIR_SUMMARY : GENERIC_SUMMARY,
-    reviews: isChair ? CHAIR_REVIEWS : GENERIC_REVIEWS,
+    reviews: product.reviewCount === 0 ? [] : isChair ? CHAIR_REVIEWS : GENERIC_REVIEWS,
     listPrice: listPriceOf(product),
     /** 적립 1% (10원 단위 버림) */
     points: Math.floor((product.price * 0.01) / 10) * 10,

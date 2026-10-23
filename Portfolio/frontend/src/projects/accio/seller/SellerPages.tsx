@@ -1,9 +1,10 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import chevronDownDark from '../assets/v4/icons/chevron-down-dark.svg'
 import searchSub from '../assets/v4/icons/search-sub.svg'
 import uploadIcon from '../assets/v4/icons/upload.svg'
 import { accioHref } from '../routes'
 import { AiDot, CheckMark } from '../ui/primitives'
+import { Skeleton, Spinner } from '../ui/states'
 import { formatCount, formatWon } from '../utils/format'
 import SellerLayout, { SellerButton } from './SellerLayout'
 import {
@@ -353,6 +354,9 @@ const AI_DRAFT = {
   sizes: ['기본', '와이드'],
 }
 type DraftField = keyof typeof AI_DRAFT
+/** AI 가 채우는 순서 — 화면 위에서 아래로 */
+const FILL_ORDER: DraftField[] = ['name', 'category', 'brand', 'price', 'description', 'colors', 'sizes']
+const EMPTY_DRAFT = { name: '', category: '', brand: '', price: '', description: '', colors: [] as string[], sizes: [] as string[] }
 
 function TagInput({ values, onChange, label }: { values: string[]; onChange: (v: string[]) => void; label: string }) {
   const [adding, setAdding] = useState(false)
@@ -402,17 +406,35 @@ export function SellerProductNew() {
   const [cover, setCover] = useState(0)
   const [saved, setSaved] = useState('')
   const [touched, setTouched] = useState(false)
+  // AI 자동 채움 중 (상태 시안 439:3448) — 채운 항목 수. null 이면 다 채웠다
+  const [filling, setFilling] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (filling === null) return
+    const timer = window.setTimeout(() => {
+      if (filling >= FILL_ORDER.length) return setFilling(null)
+      const key = FILL_ORDER[filling]
+      setForm((f) => ({ ...f, [key]: AI_DRAFT[key] }))
+      setAiFields((list) => [...list, key])
+      setFilling(filling + 1)
+    }, 450)
+    return () => window.clearTimeout(timer)
+  }, [filling])
 
   const edit = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => {
     setForm((f) => ({ ...f, [key]: value }))
     setAiFields((list) => list.filter((k) => k !== key))
   }
+  // 사진이 바뀌면 AI 가 처음부터 다시 본다 — 항목마다 스켈레톤이었다가 채워진 순서대로 나타난다
   const refill = () => {
-    setForm((f) => ({ ...f, ...AI_DRAFT }))
-    setAiFields(Object.keys(AI_DRAFT) as DraftField[])
+    setForm((f) => ({ ...f, ...EMPTY_DRAFT }))
+    setAiFields([])
+    setFilling(0)
   }
+  const pending = filling === null ? [] : FILL_ORDER.slice(filling)
   const stockError = touched && !/^\d+$/.test(form.stock) ? '재고 수량을 숫자로 입력해 주세요' : undefined
   const submit = () => {
+    if (filling !== null) return
     setTouched(true)
     if (!/^\d+$/.test(form.stock) || !form.name.trim()) return
     sellerActions.addProduct({
@@ -431,8 +453,8 @@ export function SellerProductNew() {
         {label}
         {aiFields.includes(key) && <AiFilled />}
       </p>
-      {input}
-      {helper && <p className="text-12 text-sub-weak">{helper}</p>}
+      {pending.includes(key) ? <Skeleton className={`w-full rounded-md ${key === 'description' ? 'h-20' : key === 'colors' || key === 'sizes' ? 'h-[34px] max-w-60 rounded-full' : 'h-12'}`} /> : input}
+      {helper && !pending.includes(key) && <p className="text-12 text-sub-weak">{helper}</p>}
     </div>
   )
   const inputClass = 'h-12 w-full rounded-md border border-regular px-4 text-15 text-main outline-none focus:border-[1.5px] focus:border-black'
@@ -451,19 +473,26 @@ export function SellerProductNew() {
           >
             {saved || '임시 저장'}
           </SellerButton>
-          <SellerButton primary onClick={submit}>
+          <SellerButton primary onClick={submit} disabled={filling !== null}>
             등록하기
           </SellerButton>
         </>
       }
     >
-      <p className="flex items-center gap-2.5 rounded-md bg-accio-soft px-5 py-3.5 text-14 font-medium text-main">
-        <AiDot size={14} />
-        <span className="flex-1">사진을 보고 AI가 {aiFields.length}개 항목을 채웠어요. 틀린 곳이 없는지 확인해 주세요.</span>
-        <button type="button" onClick={refill} className="font-semibold text-accio-strong">
-          다시 채우기
-        </button>
-      </p>
+      {filling !== null ? (
+        <p role="status" className="flex items-center gap-2.5 rounded-md bg-accio-soft px-5 py-3.5 text-14 font-medium text-main">
+          <Spinner size={14} />
+          사진을 보고 채우는 중 · {filling}/{FILL_ORDER.length}
+        </p>
+      ) : (
+        <p className="flex items-center gap-2.5 rounded-md bg-accio-soft px-5 py-3.5 text-14 font-medium text-main">
+          <AiDot size={14} />
+          <span className="flex-1">사진을 보고 AI가 {aiFields.length}개 항목을 채웠어요. 틀린 곳이 없는지 확인해 주세요.</span>
+          <button type="button" onClick={refill} className="font-semibold text-accio-strong">
+            다시 채우기
+          </button>
+        </p>
+      )}
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <Card className="flex flex-col gap-3 lg:w-95">
@@ -489,7 +518,11 @@ export function SellerProductNew() {
                 aria-label="사진 올리기"
                 onChange={(e) => {
                   const file = e.target.files?.[0]
-                  if (file) setImages((list) => [...list, URL.createObjectURL(file)])
+                  if (file) {
+                    setImages((list) => [...list, URL.createObjectURL(file)])
+                    setCover(images.length)
+                    refill()
+                  }
                   e.target.value = ''
                 }}
               />

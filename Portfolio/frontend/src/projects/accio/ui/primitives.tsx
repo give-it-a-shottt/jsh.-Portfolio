@@ -27,11 +27,11 @@ export function Container({ children, className = '' }: { children: ReactNode; c
  * AI 표시 말풍선 점 — 로고의 i 위 점과 같은 모양(왼쪽 아래만 뾰족). 오렌지는 AI 기능에서만 쓴다.
  * size 는 시안의 점 지름(px).
  */
-export function AiDot({ size = 10, className = '' }: { size?: number; className?: string }) {
+export function AiDot({ size = 10, muted = false, className = '' }: { size?: number; /** AI 가 쉬는 중(실패·아직 안 열림) — 회색 */ muted?: boolean; className?: string }) {
   return (
     <span
       aria-hidden
-      className={`inline-block shrink-0 rounded-full rounded-bl-[10%] bg-accio ${className}`}
+      className={`inline-block shrink-0 rounded-full rounded-bl-[10%] ${muted ? 'bg-icon-disabled' : 'bg-accio'} ${className}`}
       style={{ width: size, height: size }}
     />
   )
@@ -228,7 +228,7 @@ export function TextField({
         id={id}
         aria-invalid={!!error}
         aria-describedby={message ? `${id}-help` : undefined}
-        className={`h-12 w-full rounded-md bg-white px-4 text-15 text-main outline-none placeholder:text-disabled ${
+        className={`h-12 w-full rounded-md bg-white px-4 text-15 text-main outline-none placeholder:text-disabled disabled:border-transparent disabled:bg-light disabled:text-sub-weak ${
           error ? 'border-[1.5px] border-status-error' : 'border border-regular focus:border-[1.5px] focus:border-black'
         }`}
         {...props}

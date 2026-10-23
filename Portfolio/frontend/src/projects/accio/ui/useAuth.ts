@@ -59,6 +59,8 @@ export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 /** 영문·숫자를 모두 포함해 8자 이상 */
 export const isValidPassword = (pw: string) => pw.length >= 8 && /[a-zA-Z]/.test(pw) && /\d/.test(pw)
 export const isTakenEmail = (email: string) => state.accounts.some((a) => a.email === email.trim().toLowerCase())
+/** 훅 밖(대화 저장소 등)에서 로그인했는지 볼 때 */
+export const isLoggedIn = () => state.current !== null
 
 export type LoginResult = { ok: true } | { ok: false; field: 'email' | 'password'; message: string }
 

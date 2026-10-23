@@ -9,6 +9,7 @@ import useAuth, { authActions } from '../ui/useAuth'
 import { cartActions, findProduct } from '../ui/useCart'
 import { FREQUENT_PURCHASES, recentActions, reviewActions, useMyReviews, useRecentViews } from '../ui/useMyData'
 import useOrders, { formatDate, orderActions, useClaims, type ClaimStatus, type OrderStatus } from '../ui/useOrders'
+import { StateEmpty } from '../ui/states'
 import useWishlist from '../ui/useWishlist'
 import { formatWon } from '../utils/format'
 import { MY_MENU } from './menu'
@@ -187,7 +188,13 @@ export function OrdersPage() {
           ))}
         </div>
       ) : (
-        <Empty title={`최근 ${period.label} 동안 주문이 없어요`} action={{ label: '쇼핑하러 가기', path: '' }} />
+        // 주문내역 빈 상태 (상태 시안 439:3328) — 기간 필터로 0건이면 문구만 '이 기간에는'으로
+        <Empty
+          icon="box"
+          title={orders.length === 0 ? '아직 주문한 상품이 없어요' : '이 기간에는 주문한 상품이 없어요'}
+          description="AI에게 필요한 걸 말해 보세요"
+          action={{ label: 'AI로 찾아보기', path: '/ai' }}
+        />
       )}
     </MyLayout>
   )
@@ -206,7 +213,7 @@ export function ClaimsPage() {
 
   return (
     <MyLayout path="/mypage/claims" title="취소·반품 내역">
-      {claims.length === 0 && <Empty title="취소·반품 신청이 없어요" />}
+      {claims.length === 0 && <Empty icon="box" title="취소·반품 신청이 없어요" />}
       <div className="flex flex-col gap-3 lg:gap-4">
         {claims.map((claim) => {
           const product = findProduct(claim.productId)
@@ -403,7 +410,7 @@ export function WishlistPage() {
       }
     >
       {products.length === 0 ? (
-        <Empty title="찜한 상품이 없어요" description="마음에 드는 상품의 하트를 눌러 두세요." action={{ label: '상품 보러 가기', path: '/list' }} />
+        <Empty icon="heart" title="찜한 상품이 없어요" description="상품의 하트를 눌러 모아 보세요" action={{ label: '인기 상품 보기', path: '/list' }} />
       ) : (
         <div className="grid grid-cols-2 gap-x-3 gap-y-6 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-8">
           {products.map((product) => (
@@ -462,7 +469,7 @@ export function RecentPage() {
         )
       }
     >
-      {recent.length === 0 && <Empty title="최근 본 상품이 없어요" action={{ label: '상품 보러 가기', path: '/list' }} />}
+      {recent.length === 0 && <Empty icon="box" title="최근 본 상품이 없어요" description="상품을 보면 여기에 차례로 남아요" action={{ label: '인기 상품 보기', path: '/list' }} />}
       {groups.map((group) => (
         <section key={group.label} aria-label={group.label} className="flex flex-col">
           <h2 className="pb-1 text-15 font-semibold text-main">{group.label}</h2>
@@ -621,7 +628,7 @@ export function ReviewsPage() {
             )
           })()
         ) : (
-          <Empty title="지금 쓸 수 있는 리뷰가 없어요" description="배송이 끝난 상품이 생기면 여기에 보여요." />
+          <Empty icon="box" title="지금 쓸 수 있는 리뷰가 없어요" description="배송이 끝난 상품이 생기면 여기에 보여요" />
         ))}
 
       {(tab === 'written' || reviews.length > 0) && (
@@ -685,17 +692,15 @@ export function ReviewsPage() {
 }
 
 /** 빈 화면 — 안내 + 다음 행동 */
-function Empty({ title, description, action }: { title: string; description?: string; action?: { label: string; path: string } }) {
+function Empty({ icon, title, description, action }: { icon: 'box' | 'heart'; title: string; description?: string; action?: { label: string; path: string } }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-lg bg-light px-5 py-14 text-center">
-      <p className="text-16 font-semibold text-main">{title}</p>
-      {description && <p className="text-14 text-sub">{description}</p>}
-      {action && (
-        <button type="button" onClick={() => go(action.path)} className="mt-2 flex h-11 items-center rounded-md border border-regular bg-white px-5 text-15 font-semibold text-main">
-          {action.label}
-        </button>
-      )}
-    </div>
+    <StateEmpty
+      icon={icon}
+      title={title}
+      description={description}
+      action={action && { label: action.label, onClick: () => go(action.path) }}
+      className="py-14 lg:py-20"
+    />
   )
 }
 

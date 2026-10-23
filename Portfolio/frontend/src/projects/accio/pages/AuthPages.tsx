@@ -3,6 +3,7 @@ import { accioHref } from '../routes'
 import { Button, CheckMark, Logo, TextField } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
+import { Spinner } from '../ui/states'
 import useAuth, { authActions, EMAIL_PATTERN, isTakenEmail, isValidPassword } from '../ui/useAuth'
 
 const go = (path: string) => {
@@ -44,15 +45,22 @@ export function LoginPage({ next = '' }: { next?: string }) {
   const [password, setPassword] = useState('')
   const [keep, setKeep] = useState(true)
   const [error, setError] = useState<{ field: 'email' | 'password'; message: string } | null>(null)
+  const [submitting, setSubmitting] = useState(false)
   const user = useAuth()
 
+  // 제출 중 (상태 시안 439:3428) — 버튼 안 스피너 + 입력 잠금. 두 번 눌러도 요청은 한 번만 간다
   const submit = (e: FormEvent) => {
     e.preventDefault()
+    if (submitting) return
     if (!EMAIL_PATTERN.test(email.trim())) return setError({ field: 'email', message: '이메일 형식을 확인해 주세요' })
     if (!password) return setError({ field: 'password', message: '비밀번호를 입력해 주세요' })
-    const result = authActions.login(email, password, keep)
-    if (result.ok) go(next)
-    else setError({ field: result.field, message: result.message })
+    setSubmitting(true)
+    window.setTimeout(() => {
+      const result = authActions.login(email, password, keep)
+      setSubmitting(false)
+      if (result.ok) go(next)
+      else setError({ field: result.field, message: result.message })
+    }, 700)
   }
 
   return (
@@ -73,6 +81,7 @@ export function LoginPage({ next = '' }: { next?: string }) {
         <TextField
           id="login-email"
           label="이메일"
+          disabled={submitting}
           type="email"
           autoComplete="email"
           placeholder="abc@accio.kr"
@@ -86,6 +95,7 @@ export function LoginPage({ next = '' }: { next?: string }) {
         <TextField
           id="login-password"
           label="비밀번호"
+          disabled={submitting}
           type="password"
           autoComplete="current-password"
           placeholder="입력해 주세요"
@@ -104,9 +114,16 @@ export function LoginPage({ next = '' }: { next?: string }) {
             비밀번호 찾기
           </a>
         </div>
-        <Button type="submit" variant="primary" className="h-13 w-full">
-          로그인
-        </Button>
+        {submitting ? (
+          <button type="submit" aria-disabled="true" className="flex h-13 w-full items-center justify-center gap-2 rounded-md bg-accio-hover text-16 font-semibold text-white">
+            <Spinner size={18} />
+            로그인 중…
+          </button>
+        ) : (
+          <Button type="submit" variant="primary" className="h-13 w-full">
+            로그인
+          </Button>
+        )}
         <p className="text-center text-12 text-sub-weak">예시 계정 abc@accio.kr · accio1234</p>
         <div className="flex items-center gap-3">
           <span className="h-px flex-1 bg-regular" />

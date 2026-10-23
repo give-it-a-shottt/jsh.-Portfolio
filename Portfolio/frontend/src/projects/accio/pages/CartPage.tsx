@@ -1,11 +1,14 @@
 import close20 from '../assets/v4/icons/close-20.svg'
 import chevronRightWeak from '../assets/v4/icons/chevron-right-weak.svg'
-import { listPriceOf, productHref } from '../data/catalog'
+import { listPriceOf, productHref, type Product } from '../data/catalog'
 import { accioHref } from '../routes'
 import { Button, CheckMark, Container, Stepper } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
-import useCart, { cartActions, summarize } from '../ui/useCart'
+import { StateEmpty } from '../ui/states'
+import useAuth from '../ui/useAuth'
+import useCart, { cartActions, findProduct, summarize } from '../ui/useCart'
+import { useRecentViews } from '../ui/useMyData'
 import { placeOrder } from '../ui/useOrders'
 import { formatWon } from '../utils/format'
 
@@ -50,6 +53,11 @@ export function PriceRows({ listTotal, discount, fee }: { listTotal: number; dis
  * 선택한 상품만 결제 금액에 들어가고, 품절 상품은 선택할 수 없다. 수량·삭제는 바로 저장된다.
  */
 export default function CartPage() {
+  const user = useAuth()
+  const recentProducts = useRecentViews()
+    .map((v) => findProduct(v.productId))
+    .filter((p): p is Product => !!p)
+    .slice(0, 5)
   const items = useCart()
   const { lines, payable, listTotal, discount, fee, total } = summarize(items)
   const selectable = lines.filter(({ product }) => !product.soldOut)
@@ -75,18 +83,50 @@ export default function CartPage() {
             <OrderSteps current={1} />
           </div>
 
-          {lines.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 rounded-xl bg-white py-20 text-center">
-              <p className="text-18 font-semibold text-main">장바구니가 비어 있어요</p>
-              <p className="text-14 text-sub">마음에 드는 상품을 담거나, AI에게 찾아 달라고 해 보세요.</p>
-              <div className="flex gap-2 pt-2">
-                <a href={accioHref('/list')} className="flex h-12 items-center rounded-md border border-regular bg-white px-5 text-16 font-semibold text-main">
-                  쇼핑 계속하기
+          {!user ? (
+            // 비로그인 (상태 시안 439:3253) — 로그인하면 장바구니로 돌아온다
+            <div className="flex flex-col items-center gap-4 bg-white py-16 lg:rounded-xl lg:py-20">
+              <StateEmpty
+                icon="lock"
+                title="로그인이 필요해요"
+                description={'로그인하면 담아 둔 상품을\n어느 기기에서나 볼 수 있어요'}
+                action={{ label: '로그인하기', href: `${accioHref('/login')}?next=${encodeURIComponent('/cart')}` }}
+              />
+              <p className="flex gap-1.5 text-14">
+                <span className="text-sub">처음이신가요?</span>
+                <a href={accioHref('/signup')} className="font-semibold text-main">
+                  회원가입
                 </a>
-                <a href={accioHref('/ai')} className="flex h-12 items-center rounded-md bg-accio-soft px-5 text-16 font-semibold text-accio-strong">
-                  AI에게 묻기
-                </a>
-              </div>
+              </p>
+            </div>
+          ) : lines.length === 0 ? (
+            // 빈 장바구니 (상태 시안 439:3210) — 쇼핑으로 돌려보내고, 최근 본 상품은 바로 담을 수 있게
+            <div className="flex flex-col gap-6 bg-white py-10 lg:rounded-xl lg:px-10 lg:py-16">
+              <StateEmpty icon="box" title="장바구니가 비었어요" description="마음에 드는 상품을 담아 보세요" action={{ label: '쇼핑하러 가기', href: accioHref('/list') }} />
+              {recentProducts.length > 0 && (
+                <section aria-label="최근 본 상품" className="flex flex-col gap-3 pt-6 lg:mx-auto lg:w-full lg:max-w-[720px]">
+                  <h2 className="text-15 font-semibold text-main">최근 본 상품</h2>
+                  <ul className="-mx-5 flex gap-2.5 overflow-x-auto px-5 scrollbar-none lg:mx-0 lg:grid lg:grid-cols-5 lg:px-0">
+                    {recentProducts.map((product) => (
+                      <li key={product.id} className="relative flex w-27.5 shrink-0 flex-col gap-1.5 lg:w-auto">
+                        <a href={productHref(product)} className="block">
+                          <img src={product.image} alt={product.name} className="aspect-square w-full rounded-[10px] object-cover" />
+                        </a>
+                        <p className="text-13 font-semibold text-main tabular-nums">{formatWon(product.price)}</p>
+                        {!product.soldOut && (
+                          <button
+                            type="button"
+                            onClick={() => cartActions.add(product, '기본', 1)}
+                            className="w-fit text-12 font-medium text-sub underline underline-offset-2"
+                          >
+                            담기
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
             </div>
           ) : (
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
@@ -188,7 +228,7 @@ export default function CartPage() {
       </div>
 
       {/* 모바일 고정 주문 바 */}
-      {lines.length > 0 && (
+      {user && lines.length > 0 && (
         <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-light bg-white pt-3 pr-4 pb-[calc(12px+env(safe-area-inset-bottom))] pl-5 lg:hidden">
           <div className="flex flex-col">
             <span className="text-12 text-sub-weak">총 결제 금액</span>

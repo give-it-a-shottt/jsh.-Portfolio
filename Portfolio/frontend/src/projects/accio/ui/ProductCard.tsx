@@ -65,7 +65,7 @@ export default function ProductCard({ product, showAiBadge = false, wideThumbOnM
           <span className="text-main">{formatWon(product.price)}</span>
         </p>
         <p className="text-11 text-sub-weak tabular-nums lg:text-12">
-          ★ {product.rating.toFixed(1)} ({formatCount(product.reviewCount)})
+          {product.reviewCount > 0 ? `★ ${product.rating.toFixed(1)} (${formatCount(product.reviewCount)})` : '새 상품 · 리뷰 없음'}
         </p>
       </div>
     </article>

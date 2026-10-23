@@ -29,7 +29,7 @@ function groupByDate(conversations: Conversation[]) {
   return groups.filter((g) => g.items.length > 0)
 }
 
-const ask = (question: string, label: string) => (label === '이미지로 찾기' ? chatActions.sendImage() : chatActions.send(question))
+const ask = (question: string, label: string) => (label === '이미지로 찾기' ? chatActions.sendImage(1) : chatActions.send(question))
 
 /** PC 왼쪽 대화 기록 */
 function HistorySidebar({ conversations, activeId }: { conversations: Conversation[]; activeId: string | null }) {
@@ -202,19 +202,21 @@ function Welcome() {
  * PC 는 대화 기록 | 대화 | 결과 패널 3단, 모바일은 대화 안에 결과를 그린다. 공통 헤더는 숨긴다.
  * '#/accio/ai?q=…' 로 들어오면 그 질문으로 새 대화를 시작한다.
  */
-export default function AiPage({ initialQuestion }: { initialQuestion?: string }) {
-  const { conversations, activeId, active, thinking, latestResult } = useAiChat()
+export default function AiPage({ initialQuestion, resume }: { initialQuestion?: string; resume?: string }) {
+  const { conversations, activeId, active, thinking, streamingId, latestResult } = useAiChat()
 
   // 개발 모드(StrictMode)에서 효과가 두 번 돌아도 질문은 한 번만 보낸다
   const handled = useRef<string>(undefined)
   useEffect(() => {
-    if (!initialQuestion || handled.current === initialQuestion) return
-    handled.current = initialQuestion
-    chatActions.startNew()
-    chatActions.send(initialQuestion)
+    const question = resume ?? initialQuestion
+    if (!question || handled.current === question) return
+    handled.current = question
+    // 로그인하고 돌아온 질문(resume)은 하던 대화에 이어서, 새 질문(q)은 새 대화로 묻는다
+    if (!resume) chatActions.startNew()
+    chatActions.send(question)
     // 질문은 주소에서 지워 새로고침해도 다시 보내지 않게 한다
     window.history.replaceState(null, '', accioHref('/ai'))
-  }, [initialQuestion])
+  }, [initialQuestion, resume])
 
   // 결과가 바뀌면 패널 선택을 새로 시작하도록 key 로 쓴다
   const resultKey = useMemo(() => {
@@ -263,7 +265,7 @@ export default function AiPage({ initialQuestion }: { initialQuestion?: string }
               </div>
             </div>
             <div className="flex flex-col gap-2 px-4 pt-2 pb-[calc(16px+env(safe-area-inset-bottom))] lg:items-center lg:px-7 lg:pt-3 lg:pb-5">
-              {lastReply?.role === 'ai' && lastReply.reply.chips && !thinking && (
+              {lastReply?.role === 'ai' && lastReply.reply.chips && !thinking && !streamingId && (
                 <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 scrollbar-none lg:hidden">
                   {lastReply.reply.chips.map((chip) => (
                     <AiChip key={chip} label={chip} />

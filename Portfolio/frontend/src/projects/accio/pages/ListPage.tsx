@@ -6,7 +6,7 @@ import chevronRightWeak from '../assets/v4/icons/chevron-right-weak.svg'
 import close14Weak from '../assets/v4/icons/close-14-weak.svg'
 import close14 from '../assets/v4/icons/close-14.svg'
 import filterIcon from '../assets/v4/icons/filter.svg'
-import { ALL_PRODUCTS, DELIVERY_OPTIONS, type Delivery, type Product } from '../data/catalog'
+import { ALL_PRODUCTS, DELIVERY_OPTIONS, POPULAR_KEYWORDS, type Delivery, type Product } from '../data/catalog'
 import { accioHref } from '../routes'
 import FloatingStack from '../ui/FloatingStack'
 import MobileTabBar from '../ui/MobileTabBar'
@@ -14,6 +14,7 @@ import ProductCard from '../ui/ProductCard'
 import { AiDot, Button, CheckMark, Container } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
+import { StateEmpty } from '../ui/states'
 import { chatActions, openAiWidget } from '../ui/useAiChat'
 import { formatCount, formatWon } from '../utils/format'
 
@@ -242,6 +243,13 @@ export default function ListPage({ query = '' }: { query?: string }) {
       : []),
   ]
 
+  // 0건일 때 권할 검색어 — 검색어 앞 두 단어로 줄인 것과 인기 검색어 중 결과가 있는 것만
+  const suggestions = useMemo(() => {
+    const shortened = query.split(/\s+/).slice(0, 2).join(' ')
+    const candidates = [...new Set([shortened, ...query.split(/\s+/), ...POPULAR_KEYWORDS])].filter((k) => k && k !== query)
+    return candidates.filter((k) => ALL_PRODUCTS.some((p) => matches(p, k))).slice(0, 4)
+  }, [query])
+
   const search = (e: FormEvent) => {
     e.preventDefault()
     const q = draft.trim()
@@ -415,15 +423,36 @@ export default function ListPage({ query = '' }: { query?: string }) {
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-3 rounded-lg bg-light px-5 py-16 text-center">
-                  <p className="text-16 font-semibold text-main">조건에 맞는 상품이 없어요</p>
-                  <p className="text-14 text-sub">필터를 풀거나, AI에게 원하는 걸 말로 물어보세요.</p>
-                  <div className="flex gap-2 pt-2">
-                    <Button onClick={() => updateFilters(EMPTY_FILTERS)}>필터 초기화</Button>
-                    <Button variant="secondary" onClick={askAi}>
-                      AI에게 묻기
-                    </Button>
-                  </div>
+                // 검색 결과 0건 (상태 시안 438:3117) — 조건이 많으면 AI 검색을 권하고, 결과가 있는 검색어로 다시 시작하게 한다
+                <div className="flex flex-col gap-4 lg:mx-auto lg:w-full lg:max-w-120">
+                  <StateEmpty
+                    icon="search"
+                    title={activeChips.length > 0 ? '조건에 맞는 상품이 없어요' : '검색 결과가 없어요'}
+                    description={'단어를 줄이거나, 조건을 AI에게\n말로 물어보세요'}
+                    action={{ label: 'AI로 찾아보기', onClick: askAi }}
+                  >
+                    {activeChips.length > 0 && (
+                      <button type="button" onClick={() => updateFilters(EMPTY_FILTERS)} className="text-14 font-medium text-sub underline underline-offset-2">
+                        필터 모두 풀기
+                      </button>
+                    )}
+                  </StateEmpty>
+                  {suggestions.length > 0 && (
+                    <div className="flex flex-col gap-2.5 pt-4">
+                      <p className="text-14 font-semibold text-main">이런 검색어는 어때요?</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {suggestions.map((keyword) => (
+                          <a
+                            key={keyword}
+                            href={`${accioHref('/list')}?q=${encodeURIComponent(keyword)}`}
+                            className="rounded-full border border-regular px-3 py-1.5 text-13 font-medium text-sub"
+                          >
+                            {keyword}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

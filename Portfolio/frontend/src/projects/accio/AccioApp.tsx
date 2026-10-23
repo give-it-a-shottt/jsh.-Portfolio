@@ -9,6 +9,9 @@ import ListPage from "./pages/ListPage";
 import SellerJoin from "./seller/SellerJoin";
 import { SellerClaims, SellerDashboard, SellerOrders, SellerProductNew, SellerProducts } from "./seller/SellerPages";
 import { OrderCompletePage, OrderFailPage } from "./pages/OrderResultPage";
+import { useEffect } from "react";
+import { ToastHost } from "./ui/states";
+import { hideToast, showToast } from "./ui/toast";
 
 interface AccioAppProps {
   /** '#/accio' 뒤의 경로. '/' 는 쇼핑몰 홈 */
@@ -17,8 +20,29 @@ interface AccioAppProps {
   params: URLSearchParams;
 }
 
-// Accio 쇼핑몰 — 포트폴리오 안에서 '#/accio/…' 로 연다. 모르는 경로는 쇼핑몰 홈으로 보낸다.
-export default function AccioApp({ path, params }: AccioAppProps) {
+// Accio 쇼핑몰 — 포트폴리오 안에서 '#/accio/…' 로 연다. 토스트는 화면이 바뀌어도 남도록 여기서 한 번 그린다.
+export default function AccioApp(props: AccioAppProps) {
+  // 연결이 끊기면 오류 토스트를 닫을 때까지 띄우고, 다시 붙으면 거둔다 (상태 시안 439:3392)
+  useEffect(() => {
+    const offline = () => showToast({ message: "인터넷 연결이 끊겼어요", error: true });
+    window.addEventListener("offline", offline);
+    window.addEventListener("online", hideToast);
+    return () => {
+      window.removeEventListener("offline", offline);
+      window.removeEventListener("online", hideToast);
+    };
+  }, []);
+
+  return (
+    <>
+      <AccioRoute {...props} />
+      <ToastHost />
+    </>
+  );
+}
+
+// 경로별 화면 — 모르는 경로는 쇼핑몰 홈으로 보낸다
+function AccioRoute({ path, params }: AccioAppProps) {
   if (path === "/login") return <LoginPage next={params.get("next") ?? ""} />;
   if (path === "/signup") return <SignupPage />;
   if (path === "/list") {
@@ -30,7 +54,7 @@ export default function AccioApp({ path, params }: AccioAppProps) {
     const id = params.get("id") ?? undefined;
     return <DetailPage key={id} productId={id} />;
   }
-  if (path === "/ai") return <AiPage initialQuestion={params.get("q") ?? undefined} />;
+  if (path === "/ai") return <AiPage initialQuestion={params.get("q") ?? undefined} resume={params.get("resume") ?? undefined} />;
   if (path === "/cart") return <CartPage />;
   if (path === "/mypage") return <MyHomePage />;
   if (path === "/mypage/orders" || path === "/order") return <OrdersPage />;

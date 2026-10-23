@@ -16,6 +16,8 @@ const campingTable = 'table'
 const lantern = 'lantern'
 
 export interface SellerProfile {
+  /** 판매자로 등록한 회원 이메일 — 예전 기록엔 없어서 없으면 예시 계정으로 본다 */
+  email?: string
   storeName: string
   owner: string
   bizNo: string
@@ -140,7 +142,11 @@ const SEED_CLAIMS: SellerClaim[] = [
   },
 ]
 
+/** 예시 스토어(캠프로 스토어) 주인 — 로그인 예시 계정과 같다 */
+export const DEMO_SELLER_EMAIL = 'abc@accio.kr'
+
 const profileStore = createStore<SellerProfile | null>('accio:seller:profile', () => ({
+  email: DEMO_SELLER_EMAIL,
   storeName: '캠프로 스토어',
   owner: '김캠프',
   bizNo: '123-45-67890',

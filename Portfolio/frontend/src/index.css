@@ -92,6 +92,8 @@
   --color-accio: #f07a57;
   --color-accio-soft: #fff5f1;
   --color-accio-strong: #b8482a;
+  /* 눌리는 중·제출 중인 주 버튼 (Color/Primary Hover) */
+  --color-accio-hover: #dd5f3b;
   /* Accio 상태색 — 오류·성공·주의·안내 (디자인 시스템 Status) */
   --color-status-error: #e5484d;
   --color-status-error-soft: #fff0f0;
@@ -179,6 +181,35 @@
   to {
     transform: none;
     opacity: 1;
+  }
+}
+
+/* Accio 토스트 — 아래에서 8px 올라오며 나타난다 (200ms ease-out) */
+@keyframes accio-toast-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Accio 스켈레톤 — 밝은 띠가 왼쪽에서 오른쪽으로 지나간다 (1400ms linear 반복) */
+@keyframes accio-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+/* Accio AI 답변이 흐르는 동안 깜빡이는 커서 */
+@keyframes accio-caret {
+  50% {
+    opacity: 0;
   }
 }
 

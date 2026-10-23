@@ -1,7 +1,11 @@
 import type { ReactNode } from 'react'
 import { accioHref } from '../routes'
 import { Logo } from '../ui/primitives'
-import { useSellerClaims, useSellerOrders, useSellerProducts, useSellerProfile } from './sellerData'
+import SiteFooter from '../ui/SiteFooter'
+import SiteHeader from '../ui/SiteHeader'
+import { StateEmpty } from '../ui/states'
+import useAuth from '../ui/useAuth'
+import { DEMO_SELLER_EMAIL, useSellerClaims, useSellerOrders, useSellerProducts, useSellerProfile } from './sellerData'
 
 /**
  * 판매자센터 틀 (Figma 431:3006 등) — 왼쪽 메뉴 240(로고 · 스토어 · 메뉴 · 쇼핑몰로), 오른쪽 회색 본문.
@@ -9,9 +13,28 @@ import { useSellerClaims, useSellerOrders, useSellerProducts, useSellerProfile }
  */
 export default function SellerLayout({ path, title, actions, children }: { path: string; title: string; actions?: ReactNode; children: ReactNode }) {
   const profile = useSellerProfile()
+  const user = useAuth()
   const products = useSellerProducts()
   const orders = useSellerOrders()
   const claims = useSellerClaims()
+
+  // 판매자가 아닌 회원 (상태 시안 439:3494) — 판매자 등록을 안내한다. 로그인 전에는 예시 스토어를 그대로 보여 준다
+  const isSeller = !!profile && (!user || (profile.email ?? DEMO_SELLER_EMAIL) === user.email)
+  if (!isSeller)
+    return (
+      <div className="flex min-h-svh flex-col bg-white">
+        <SiteHeader mobileTitle="판매자센터" />
+        <main className="flex flex-1 items-center justify-center px-5 py-20 lg:py-40">
+          <StateEmpty
+            icon="lock"
+            title="판매자 등록이 필요해요"
+            description={'사업자 정보만 있으면 5분이면 끝나요.\n등록하면 AI가 상품 등록을 도와드려요'}
+            action={{ label: '판매자 등록하기', href: accioHref('/seller/join') }}
+          />
+        </main>
+        <SiteFooter hideOnMobile />
+      </div>
+    )
   const menu = [
     { label: '대시보드', path: '/seller' },
     { label: '상품 관리', path: '/seller/products', count: products.length },
