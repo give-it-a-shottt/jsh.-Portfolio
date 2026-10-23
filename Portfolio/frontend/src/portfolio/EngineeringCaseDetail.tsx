@@ -1,7 +1,7 @@
 import { useId, useRef, useState, type KeyboardEvent } from 'react'
 import { Highlight, themes } from 'prism-react-renderer'
 import screenshotPlaceholder from './assets/screenshot-placeholder.webp'
-import { CASE_DETAILS, type CodeSample } from './caseDetails'
+import { CASE_DETAILS, type CodeSample, type TeamProject } from './caseDetails'
 import { CASES, type PortfolioCase } from './data'
 import { CheckIcon, ChevronRightIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
@@ -201,6 +201,103 @@ function Screenshot({ item }: { item: PortfolioCase }) {
   )
 }
 
+/** 그림 한 장 — 누르면 원본 크기로 새 탭에서 연다 */
+function Figure({ src, alt, caption, className = '' }: { src: string; alt: string; caption?: string; className?: string }) {
+  return (
+    <figure className={`flex flex-col gap-2 ${className}`}>
+      <a href={src} target="_blank" rel="noopener" aria-label={`${alt} 원본 크기로 보기`} className="block overflow-hidden rounded-card border border-regular bg-default">
+        <img src={src} alt={alt} loading="lazy" className="w-full" />
+      </a>
+      {caption && <figcaption className="text-13 break-keep text-sub-weak">{caption}</figcaption>}
+    </figure>
+  )
+}
+
+/**
+ * 팀 프로젝트 원본 — 팀 저장소 README 를 옮긴 칸. 팀원 · 팀 기술 요약 · 시연 영상 · 아키텍처 · 포스터.
+ * 시연 영상은 GIF 대신 소리 없는 mp4 로 돌리고, 움직임 줄이기 설정이면 자동 재생하지 않는다.
+ */
+function TeamProjectSection({ team }: { team: TeamProject }) {
+  const [reduceMotion] = useState(() => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false)
+
+  return (
+    <section aria-labelledby="team-project-title" className="mt-16 flex flex-col gap-10 border-t border-regular pt-12">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-col gap-1.5">
+          <p className="text-13 font-medium text-sub-weak">팀 프로젝트 원본 · {team.period}</p>
+          <h2 id="team-project-title" className="text-20 font-semibold break-keep text-main sm:text-24">
+            <span lang="en">{team.name}</span> — {team.tagline}
+          </h2>
+        </div>
+        <a
+          href={team.repo}
+          target="_blank"
+          rel="noopener"
+          className="flex w-fit items-center gap-1 rounded-full border border-regular px-4 py-2 text-14 font-medium text-main hover:bg-light"
+        >
+          <span>
+            팀 저장소 <span lang="en">README</span> ↗
+          </span>
+        </a>
+      </header>
+
+      <div className="flex flex-col gap-3">
+        <h3 className="text-16 font-semibold text-main">팀원</h3>
+        <img src={team.team.image} alt={`팀원 ${team.team.members.join(', ')}`} loading="lazy" className="w-full rounded-card border border-regular bg-default" />
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <h3 className="text-16 font-semibold text-main">팀이 푼 문제</h3>
+        <ul className="grid gap-3 md:grid-cols-3">
+          {team.highlights.map(({ title, body }) => (
+            <li key={title} className="flex flex-col gap-1.5 rounded-card bg-light p-5">
+              <h4 className="text-15 font-semibold break-keep text-main">{title}</h4>
+              <p className="text-14 break-keep text-sub">{body}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <h3 className="text-16 font-semibold text-main">서비스 시연</h3>
+        <ul className="grid gap-6 md:grid-cols-3">
+          {team.demos.map(({ title, body, video, poster }) => (
+            <li key={title} className="flex flex-col gap-3">
+              <video
+                src={video}
+                poster={poster}
+                autoPlay={!reduceMotion}
+                controls={reduceMotion}
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-label={`${title} 시연 영상`}
+                className="aspect-video w-full rounded-card border border-regular bg-light object-cover"
+              />
+              <div className="flex flex-col gap-1">
+                <h4 className="text-15 font-semibold break-keep text-main">{title}</h4>
+                <p className="text-14 break-keep text-sub">{body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div className="flex flex-col gap-3">
+          <h3 className="text-16 font-semibold text-main">아키텍처</h3>
+          <Figure src={team.architecture.image} alt="Accio 아키텍처" caption={team.architecture.caption} />
+        </div>
+        <div className="flex flex-col gap-3">
+          <h3 className="text-16 font-semibold text-main">포스터</h3>
+          <Figure src={team.poster} alt="Accio 프로젝트 포스터" caption="누르면 원본 크기로 볼 수 있어요." />
+        </div>
+      </div>
+    </section>
+  )
+}
+
 interface EngineeringCaseDetailProps {
   slug: string
 }
@@ -318,6 +415,8 @@ export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailPro
           {detail && detail.code.length > 0 && <CodePanel key={slug} samples={detail.code} tall={isBack} />}
         </div>
       </div>
+
+      {detail?.team && <TeamProjectSection team={detail.team} />}
 
       <CaseNotes slug={slug} />
 

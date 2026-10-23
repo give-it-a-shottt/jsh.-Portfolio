@@ -4,6 +4,15 @@
 // 이 파일은 상세 화면을 열 때만 받는다(PortfolioApp 의 lazy) — 코드 원문이 첫 화면 용량에 들어가지 않는다.
 
 import accioCart from '../projects/accio/ui/useCart.ts?raw'
+import accioArchitecture from './assets/accio/architecture.png'
+import accioDemoIntentPoster from './assets/accio/demo-intent.jpg'
+import accioDemoIntent from './assets/accio/demo-intent.mp4'
+import accioDemoReviewPoster from './assets/accio/demo-review.jpg'
+import accioDemoReview from './assets/accio/demo-review.mp4'
+import accioDemoSearchPoster from './assets/accio/demo-search.jpg'
+import accioDemoSearch from './assets/accio/demo-search.mp4'
+import accioPoster from './assets/accio/poster.jpg'
+import accioTeam from './assets/accio/team.webp'
 import appRoutes from '../App.tsx?raw'
 import designTokens from '../index.css?raw'
 import maestroApi from '../projects/maestro/api.ts?raw'
@@ -55,6 +64,21 @@ export interface CodeSample {
   note: string
 }
 
+/** 팀 프로젝트 원본 소개 — 팀 저장소 README(팀원·시연 영상·아키텍처·포스터)를 사례 아래에 옮겨 둔다 */
+export interface TeamProject {
+  name: string
+  tagline: string
+  period: string
+  repo: string
+  /** 팀원 사진 한 장(이름이 그림 안에 있다) + 화면 읽기용 이름 */
+  team: { image: string; members: string[] }
+  /** 포스터에서 뽑은 팀 기술 요약 */
+  highlights: { title: string; body: string }[]
+  demos: { title: string; body: string; video: string; poster: string }[]
+  architecture: { image: string; caption: string }
+  poster: string
+}
+
 export interface CaseDetail {
   /** 무엇이 문제였나 */
   problem: string
@@ -64,6 +88,7 @@ export interface CaseDetail {
   result?: string
   stack: string[]
   code: CodeSample[]
+  team?: TeamProject
 }
 
 export const CASE_DETAILS: Record<string, CaseDetail> = {
@@ -146,6 +171,53 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
         note: '저장하는 건 담은 상품·옵션·수량·선택뿐이고, 결제할 항목과 할인·배송비·합계는 장바구니와 주문서가 이 함수로 매번 계산한다.',
       },
     ],
+    // 팀 저장소 README(mall-haebwa_) — 시연 GIF 는 용량이 커서(13MB) mp4 로 바꿔 두었다
+    team: {
+      name: 'Accio',
+      tagline: '생각을 담는 장바구니',
+      period: '2025.10.29 – 2025.11.29',
+      repo: 'https://github.com/give-it-a-shottt/mall-haebwa_',
+      team: { image: accioTeam, members: ['신정호(팀장)', '백준렬', '정성훈', '진충열', '서찬진'] },
+      highlights: [
+        {
+          title: '의도를 알아듣는 검색',
+          body: 'ElasticSearch 키워드 검색과 벡터 검색을 함께 써서 “USB 여러 개 꽂는 거” 같은 말의 뜻까지 찾고, 검색 뒤 LLM 이 한 번 더 걸러 관련 없는 상품을 뺐다.',
+        },
+        {
+          title: '대화로 쇼핑몰을 움직이기',
+          body: 'LLM Function Calling 으로 리뷰 요약·주문 조회·배송 조회 같은 쇼핑몰 API 를 대화 한 줄로 부른다.',
+        },
+        {
+          title: 'Redis 캐싱으로 80초 → 5초',
+          body: '대화·최근 검색·최근 본 상품을 Redis 에 두고 TTL 을 걸어, 첫 화면 응답을 80초에서 5초 안으로 줄였다.',
+        },
+      ],
+      demos: [
+        {
+          title: '자연어 기반 검색',
+          body: '상품 이름을 몰라도 원하는 걸 말로 적으면 맞는 상품을 찾아 준다.',
+          video: accioDemoSearch,
+          poster: accioDemoSearchPoster,
+        },
+        {
+          title: '상품 및 리뷰 분석',
+          body: '리뷰를 읽고 좋은 점과 아쉬운 점을 정리해, 사기 전에 핵심만 보게 한다.',
+          video: accioDemoReview,
+          poster: accioDemoReviewPoster,
+        },
+        {
+          title: '사용자 의도 파악',
+          body: '대화 흐름과 지난 구매를 보고 장바구니 담기·주문까지 대화로 이어 준다.',
+          video: accioDemoIntent,
+          poster: accioDemoIntentPoster,
+        },
+      ],
+      architecture: {
+        image: accioArchitecture,
+        caption: 'AWS 위에 React·FastAPI 를 private subnet 에 두고 ALB 로 연결했다. LLM 은 Bedrock, 데이터는 MongoDB·Redis, 이미지는 S3.',
+      },
+      poster: accioPoster,
+    },
   },
   'search-portfolio': {
     problem:
