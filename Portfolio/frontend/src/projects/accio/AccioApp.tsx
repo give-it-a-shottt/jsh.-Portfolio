@@ -1,4 +1,4 @@
-import SupportPage from "./components/SupportPage";
+import SupportPage from "./pages/SupportPage";
 import AiPage from "./ai/AiPage";
 import HomePage from "./home/HomePage";
 import { ClaimsPage, MyHomePage, OrdersPage, RecentPage, ReorderPage, ReviewsPage, WishlistPage } from "./my/MyPages";
