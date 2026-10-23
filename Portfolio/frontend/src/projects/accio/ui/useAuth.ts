@@ -26,6 +26,8 @@ const LOCK_MS = 30_000
 
 // 시안의 예시 계정 — 처음 온 사람도 바로 로그인해 볼 수 있다
 const DEMO: Account = { email: 'abc@accio.kr', password: 'accio1234', name: '김액시오', phone: '010-1234-5678', address: '서울특별시 성동구 왕십리로 83-21' }
+/** 화면에 안내하는 예시 계정 — 포트폴리오를 보는 사람이 바로 로그인해 볼 수 있게 */
+export const DEMO_LOGIN = { email: DEMO.email, password: DEMO.password }
 
 function read(): AuthState {
   try {

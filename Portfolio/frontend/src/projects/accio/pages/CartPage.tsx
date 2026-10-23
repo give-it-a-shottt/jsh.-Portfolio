@@ -5,7 +5,7 @@ import { accioHref } from '../routes'
 import { Button, CheckMark, Container, Stepper } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
-import { StateEmpty } from '../ui/states'
+import { DemoAccountHint, StateEmpty } from '../ui/states'
 import useAuth from '../ui/useAuth'
 import useCart, { cartActions, findProduct, summarize } from '../ui/useCart'
 import { useRecentViews } from '../ui/useMyData'
@@ -98,6 +98,7 @@ export default function CartPage() {
                   회원가입
                 </a>
               </p>
+              <DemoAccountHint />
             </div>
           ) : lines.length === 0 ? (
             // 빈 장바구니 (상태 시안 439:3210) — 쇼핑으로 돌려보내고, 최근 본 상품은 바로 담을 수 있게

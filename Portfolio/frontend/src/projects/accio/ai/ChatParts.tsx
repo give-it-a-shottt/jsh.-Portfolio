@@ -8,6 +8,7 @@ import { describePick, type ResultGroup } from '../data/aiEngine'
 import { productHref, type Product } from '../data/catalog'
 import { accioHref } from '../routes'
 import { AiDot, Button } from '../ui/primitives'
+import { DemoAccountHint } from '../ui/states'
 import { cartActions, findProduct } from '../ui/useCart'
 import useAiChat, { chatActions, type AiNotice, type ChatMessage } from '../ui/useAiChat'
 import { formatWon } from '../utils/format'
@@ -219,6 +220,7 @@ function NoticeCard({ notice }: { notice: AiNotice }) {
         >
           로그인하기
         </a>
+        <DemoAccountHint className="text-center" />
       </div>
     )
   }

@@ -10,6 +10,7 @@ import stateHeart from '../assets/v4/icons/state-heart.svg'
 import stateLock from '../assets/v4/icons/state-lock.svg'
 import stateSearch from '../assets/v4/icons/state-search.svg'
 import { hideToast, useToast } from './toast'
+import { DEMO_LOGIN } from './useAuth'
 
 // 상태 화면 공통 조각 (Figma States Board 438:3016) — 빈 상태·오류·로그인 필요, 스켈레톤, 스피너, 토스트
 
@@ -62,6 +63,15 @@ export function StateEmpty({
       )}
       {children}
     </div>
+  )
+}
+
+/** 예시 계정 한 줄 안내 — 로그인이 필요한 화면 아래에 둔다 */
+export function DemoAccountHint({ className = '' }: { className?: string }) {
+  return (
+    <p className={`text-12 text-sub-weak ${className}`}>
+      예시 계정 <span className="font-medium text-sub">{DEMO_LOGIN.email}</span> · <span className="font-medium text-sub">{DEMO_LOGIN.password}</span>
+    </p>
   )
 }
 

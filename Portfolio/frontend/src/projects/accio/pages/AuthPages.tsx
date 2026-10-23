@@ -4,7 +4,7 @@ import { Button, CheckMark, Logo, TextField } from '../ui/primitives'
 import SiteFooter from '../ui/SiteFooter'
 import SiteHeader from '../ui/SiteHeader'
 import { Spinner } from '../ui/states'
-import useAuth, { authActions, EMAIL_PATTERN, isTakenEmail, isValidPassword } from '../ui/useAuth'
+import useAuth, { authActions, DEMO_LOGIN, EMAIL_PATTERN, isTakenEmail, isValidPassword } from '../ui/useAuth'
 
 const go = (path: string) => {
   window.location.hash = accioHref(path)
@@ -73,6 +73,27 @@ export function LoginPage({ next = '' }: { next?: string }) {
           <h1 className="text-24 font-semibold text-main">다시 만나서 반가워요</h1>
           <p className="text-14 text-sub">로그인하면 AI 추천이 더 정확해져요</p>
         </div>
+        {/* 포트폴리오 데모 — 가입하지 않고도 바로 들어가 볼 수 있게 예시 계정을 눈에 띄게 둔다 */}
+        <div className="flex items-center gap-3 rounded-md bg-accio-soft px-4 py-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <p className="text-13 font-semibold text-accio-strong">예시 계정으로 둘러보세요</p>
+            <p className="truncate text-13 text-main tabular-nums">
+              {DEMO_LOGIN.email} · {DEMO_LOGIN.password}
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={submitting}
+            onClick={() => {
+              setEmail(DEMO_LOGIN.email)
+              setPassword(DEMO_LOGIN.password)
+              setError(null)
+            }}
+            className="shrink-0 rounded-sm border border-regular bg-white px-3 py-2 text-13 font-semibold text-main disabled:opacity-40"
+          >
+            자동 입력
+          </button>
+        </div>
         {user && (
           <p className="rounded-md bg-light px-4 py-3 text-14 text-sub">
             지금 <strong className="font-semibold text-main">{user.name}</strong>님으로 로그인되어 있어요.
@@ -124,7 +145,6 @@ export function LoginPage({ next = '' }: { next?: string }) {
             로그인
           </Button>
         )}
-        <p className="text-center text-12 text-sub-weak">예시 계정 abc@accio.kr · accio1234</p>
         <div className="flex items-center gap-3">
           <span className="h-px flex-1 bg-regular" />
           <span className="text-12 text-sub-weak">또는</span>
