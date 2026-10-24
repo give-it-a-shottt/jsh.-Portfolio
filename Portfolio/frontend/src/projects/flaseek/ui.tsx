@@ -103,7 +103,8 @@ export function WishButton({ id, className = '', iconSize = 20 }: { id: number; 
       aria-label={wished ? '찜 해제' : '찜하기'}
       className={`flex items-center justify-center ${wished ? 'border-flaseek-pink bg-flaseek-pink text-white' : 'border-regular bg-white text-icon-main'} ${className}`}
     >
-      <svg aria-hidden width={iconSize} height={iconSize} viewBox={`0 0 ${iconSize} ${iconSize}`} fill={wished ? 'currentColor' : 'none'}>
+      {/* 채운 하트는 같은 크기여도 선 하트보다 커 보여서 조금 줄인다 */}
+      <svg aria-hidden width={iconSize} height={iconSize} viewBox={`0 0 ${iconSize} ${iconSize}`} fill={wished ? 'currentColor' : 'none'} className={wished ? 'scale-80' : ''}>
         <path d={HEART_PATHS[iconSize]} stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </button>
