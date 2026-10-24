@@ -64,7 +64,7 @@ function CartButton() {
       className="relative flex size-11 items-center justify-center"
     >
       <img src={cartIcon} alt="" width={24} height={24} />
-      <span className="absolute top-1 left-6.5 rounded-full bg-flaseek-pink px-1.25 py-px text-11 font-semibold tracking-normal text-main">
+      <span className="absolute top-1 left-6.5 rounded-full bg-flaseek-pink px-1.25 py-px text-11 font-semibold tracking-normal text-white">
         {count}
       </span>
     </button>

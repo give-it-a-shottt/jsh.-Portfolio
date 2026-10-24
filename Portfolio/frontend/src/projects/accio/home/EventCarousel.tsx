@@ -21,7 +21,6 @@ export default function EventCarousel() {
               pad
               index={scroller.index}
               count={scroller.count}
-              total={EVENT_BANNERS.length}
               onPrev={scroller.prev}
               onNext={scroller.next}
             />
@@ -51,7 +50,7 @@ export default function EventCarousel() {
         ))}
       </div>
 
-      {/* 진행 막대 — 모바일은 오른쪽에 '1 / 8' */}
+      {/* 진행 막대 — 모바일은 오른쪽에 '1 / 4' (넘길 수 있는 위치 수) */}
       <Container className="flex items-center gap-2.5">
         <div className="relative h-0.5 flex-1 overflow-hidden bg-regular">
           <div
@@ -61,7 +60,7 @@ export default function EventCarousel() {
         </div>
         <p className="flex gap-0.5 text-12 tabular-nums lg:hidden">
           <span className="font-semibold text-main">{scroller.index}</span>
-          <span className="text-sub-weak">/ {EVENT_BANNERS.length}</span>
+          <span className="text-sub-weak">/ {scroller.count}</span>
         </p>
       </Container>
     </section>

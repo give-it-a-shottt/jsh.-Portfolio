@@ -116,16 +116,13 @@ export function ArrowButton({
 export function CarouselControls({
   index,
   count,
-  total = count,
   onPrev,
   onNext,
   pad = false,
 }: {
   index: number
-  /** 넘길 수 있는 위치 수 (버튼을 끌 때 쓴다) */
+  /** 넘길 수 있는 위치 수 — 분모로 보여 주고 버튼을 끌 때도 쓴다 */
   count: number
-  /** 분모로 보여 줄 전체 수 — 기획전처럼 '몇 번째 배너 / 전체 배너' 로 보일 때 */
-  total?: number
   onPrev: () => void
   onNext: () => void
   /** 기획전처럼 두 자리로 맞춰 보여 줄 때 */
@@ -135,9 +132,9 @@ export function CarouselControls({
   return (
     <div className="flex items-center gap-2">
       <p className="flex gap-1 pr-2 text-13 tabular-nums" aria-live="polite">
-        {/* 끝까지 넘기면 마지막 카드가 보이므로 '04 / 06' 대신 '06 / 06' */}
-        <span className="font-semibold text-main">{format(index >= count ? total : index)}</span>
-        <span className="text-sub-weak">/ {format(total)}</span>
+        {/* 분모는 배너 수가 아니라 멈출 수 있는 위치 수 — 한 칸 넘길 때마다 1씩 오른다 */}
+        <span className="font-semibold text-main">{format(index)}</span>
+        <span className="text-sub-weak">/ {format(count)}</span>
       </p>
       <ArrowButton direction="prev" onClick={onPrev} disabled={index <= 1} />
       <ArrowButton direction="next" onClick={onNext} disabled={index >= count} />

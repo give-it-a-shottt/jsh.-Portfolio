@@ -60,6 +60,8 @@ export default function BeforeAfterSlider({ className = '' }: { className?: stri
       onPointerMove={onPointerMove}
       onPointerUp={stopDrag}
       onPointerCancel={stopDrag}
+      // 손잡이 화살표(img)를 끌면 브라우저가 이미지 드래그를 시작해 포인터 이벤트가 끊긴다
+      onDragStart={(event) => event.preventDefault()}
       className={`relative cursor-ew-resize touch-pan-y overflow-hidden rounded-card select-none ${className}`}
     >
       <div aria-hidden className="absolute inset-0" style={half('right')} />

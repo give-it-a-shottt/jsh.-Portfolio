@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import chevronDown from '../assets/icon-chevron-down.svg'
-import heart24 from '../assets/icon-heart-24.svg'
 import detailPreview from '../assets/detail-preview.webp'
 import {
   GALLERY_EXTRAS,
@@ -162,6 +161,8 @@ export default function DetailPage({ params }: DetailPageProps) {
   const [activeSection, setActiveSection] = useState<SectionId>('detail-info')
   const [barVisible, setBarVisible] = useState(false)
   const actionsRef = useRef<HTMLDivElement>(null)
+  // 탭으로 이동 중이면 스크롤 위치로 탭을 바꾸지 않는다 — Q&A·배송은 페이지 끝이라 위까지 못 올라온다
+  const pickedSection = useRef<SectionId | null>(null)
 
   // 세트 칩을 바꾸면 그 매수의 상품(이름·가격·사진)으로 바꿔 보여준다
   const product: Product = isSet ? findProduct(SET_OPTIONS.find((option) => option.count === setCount)!.productId)! : base
@@ -180,6 +181,7 @@ export default function DetailPage({ params }: DetailPageProps) {
   // 지금 보고 있는 구역을 앵커 탭에 표시한다
   useEffect(() => {
     const onScroll = () => {
+      if (pickedSection.current) return
       const offset = window.innerWidth >= 1024 ? 160 : 64
       let current: SectionId = 'detail-info'
       for (const { id } of SECTIONS) {
@@ -188,8 +190,17 @@ export default function DetailPage({ params }: DetailPageProps) {
       }
       setActiveSection(current)
     }
+    // 직접 스크롤을 시작하면 다시 스크롤 위치로 판단한다
+    const release = () => {
+      pickedSection.current = null
+    }
+    const releaseEvents = ['wheel', 'touchstart', 'keydown'] as const
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    releaseEvents.forEach((type) => window.addEventListener(type, release, { passive: true }))
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      releaseEvents.forEach((type) => window.removeEventListener(type, release))
+    }
   }, [])
 
   const toggleAccordion = (id: SectionId, force?: boolean) =>
@@ -201,6 +212,8 @@ export default function DetailPage({ params }: DetailPageProps) {
     })
 
   const goToSection = (id: SectionId) => {
+    pickedSection.current = id
+    setActiveSection(id)
     if (id === 'detail-qna' || id === 'detail-shipping') toggleAccordion(id, true)
     // 아코디언이 열린 다음 위치로 간다
     requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
@@ -330,7 +343,7 @@ export default function DetailPage({ params }: DetailPageProps) {
                 <p className="text-28 font-semibold">{won(product.price)}</p>
               </div>
               <div className="flex gap-2">
-                <WishButton id={product.id} icon={heart24} iconSize={24} className="size-12 shrink-0 rounded-sm border border-regular" />
+                <WishButton id={product.id} iconSize={24} className="size-12 shrink-0 rounded-sm border" />
                 <button type="button" onClick={onCart} className={`${BUTTON_SECONDARY} h-12 flex-1`}>
                   장바구니
                 </button>
@@ -490,7 +503,7 @@ export default function DetailPage({ params }: DetailPageProps) {
 
       {/* 모바일 하단 고정 구매바 — 주요 CTA 56 */}
       <div className="fixed inset-x-0 bottom-0 z-40 flex gap-2 bg-white px-5 pt-3 pb-8 shadow-flaseek-3 lg:hidden">
-        <WishButton id={product.id} icon={heart24} iconSize={24} className="size-14 shrink-0 rounded-sm border border-regular" />
+        <WishButton id={product.id} iconSize={24} className="size-14 shrink-0 rounded-sm border" />
         <button type="button" onClick={onCart} className={`${BUTTON_SECONDARY} h-14 flex-1`}>
           장바구니
         </button>
