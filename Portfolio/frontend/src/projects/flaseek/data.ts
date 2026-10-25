@@ -1,7 +1,8 @@
 // FLASEEK 리뉴얼 시안 데이터 — 상품명·가격은 피그마 시안(현재 몰 상품) 그대로, 별점·리뷰 수는 예시 값이다.
-// 상품 사진은 현재 몰을 캡처한 한 장(assets/products.webp)에서 잘라 쓴다. crop 은 그 이미지의 픽셀 좌표.
+// 상품 사진은 현재 몰 캡처에서 쓰는 칸 15개만 모은 한 장(assets/products.webp)에서 잘라 쓴다. crop 은 그 이미지의 픽셀 좌표.
+// 캡처 원본(1920×3745)을 통째로 받으면 쓰는 화소가 14% 뿐이라, 260px 칸 4×4 격자로 다시 모았다(425KB → 132KB).
 
-/** 원본 캡처(products.webp)에서 잘라 쓸 영역 */
+/** 스프라이트(products.webp)에서 잘라 쓸 영역 */
 export interface Crop {
   x: number
   y: number
@@ -9,8 +10,14 @@ export interface Crop {
   h: number
 }
 
-/** 상품 사진 한 칸 — 캡처 속 상품은 260px 정사각형 간격으로 놓여 있다 */
-const square = (x: number, y: number): Crop => ({ x, y, w: 260, h: 260 })
+/** 스프라이트 한 칸의 크기 — 칸은 4열 × 4행 */
+const TILE = 260
+
+/** 상품 사진 한 칸 — col 열 row 행의 정사각형 */
+const tile = (col: number, row: number): Crop => ({ x: col * TILE, y: row * TILE, w: TILE, h: TILE })
+
+/** 두께 카드용 가로로 긴 띠(384×240 비율) — 칸 위에서 top 만큼 내려온 곳 */
+const band = (col: number, row: number, top = 0): Crop => ({ x: col * TILE, y: row * TILE + top, w: TILE, h: 162 })
 
 export type Category = 'legwear' | 'shapewear' | 'set' | 'laundry'
 export type Thickness = 'see-through' | 'premium' | 'napping'
@@ -45,27 +52,27 @@ const ALL_THICKNESS: Thickness[] = ['see-through', 'premium', 'napping']
 const ALL_SKIN: Skin[] = ['밝은', '보통', '어두운']
 
 export const PRODUCTS: Product[] = [
-  { id: 1, name: '압박스타킹 보정레깅스 외 모음구성', discount: 36, price: 15800, original: 24800, rating: 4.8, reviews: 1204, tags: ['다리라인 보정', '사계절'], crop: square(299, 301), categories: ['legwear'], thickness: ALL_THICKNESS, skin: ALL_SKIN, pressure: ['중'], season: ['사계절', '겨울용'], setCount: 1 },
-  { id: 2, name: '압박스타킹/레깅스 3매 SET', discount: 46, price: 39800, original: 74400, perPiece: 13267, rating: 4.9, reviews: 862, tags: ['세트 특가', '타입 선택'], crop: square(580, 301), categories: ['legwear', 'set'], thickness: ALL_THICKNESS, skin: ALL_SKIN, pressure: ['중'], season: ['사계절', '겨울용'], setCount: 3 },
-  { id: 3, name: '압박스타킹/레깅스 5매 SET', discount: 49, price: 62800, original: 124000, perPiece: 12560, rating: 4.9, reviews: 537, tags: ['세트 특가', '타입 선택'], crop: square(860, 301), categories: ['legwear', 'set'], thickness: ALL_THICKNESS, skin: ALL_SKIN, pressure: ['중'], season: ['사계절', '겨울용'], setCount: 5 },
-  { id: 4, name: '시크릿 캐미솔 보정속옷 외 모음구성', discount: 39, price: 45800, original: 74800, rating: 4.7, reviews: 391, tags: ['체형 보정', '사계절'], crop: square(1140, 301), categories: ['shapewear'] },
-  { id: 5, name: '압박스타킹 시스루 플러스 - 스킨2', discount: 36, price: 17800, original: 27800, rating: 4.8, reviews: 2031, tags: ['보통~어두운 피부', '비침 있음'], crop: square(299, 722), categories: ['legwear'], thickness: ['see-through'], skin: ['보통', '어두운'], pressure: ['중'], season: ['사계절'] },
-  { id: 6, name: '압박스타킹/레깅스 7매 SET', discount: 54, price: 79800, original: 173600, perPiece: 11400, rating: 4.9, reviews: 318, tags: ['세트 특가', '타입 선택'], crop: square(580, 722), categories: ['legwear', 'set'], thickness: ALL_THICKNESS, skin: ALL_SKIN, pressure: ['중'], season: ['사계절', '겨울용'], setCount: 7 },
-  { id: 7, name: '시크릿 백 엉뽕 힙업 팬티 보정속옷 모음구성', discount: 36, price: 15800, original: 24800, rating: 4.6, reviews: 744, tags: ['힙업 보정', '사계절'], crop: square(860, 722), categories: ['shapewear'] },
-  { id: 8, name: '시크릿 캐미솔 2종 SET', discount: 49, price: 75800, original: 149600, perPiece: 37900, rating: 4.8, reviews: 205, tags: ['세트 특가', '컬러 선택'], crop: square(1140, 722), categories: ['shapewear', 'set'] },
-  { id: 9, name: '시크릿백 2종 SET', discount: 40, price: 29800, original: 49600, perPiece: 14900, rating: 4.7, reviews: 412, tags: ['세트 특가', '컬러 선택'], crop: square(299, 1144), categories: ['shapewear', 'set'] },
-  { id: 10, name: '보정속옷 + 압박 레그웨어 2종 SET', discount: 45, price: 55200, original: 99600, perPiece: 27600, rating: 4.8, reviews: 169, tags: ['세트 특가', '타입 선택'], crop: square(580, 1144), categories: ['shapewear', 'legwear', 'set'] },
-  { id: 11, name: '압박스타킹 프리미엄 - 블랙', discount: 36, price: 17800, original: 27800, rating: 4.9, reviews: 1587, tags: ['모든 피부톤', '비침 없음'], crop: square(860, 1144), categories: ['legwear'], thickness: ['premium'], skin: ALL_SKIN, pressure: ['강'], season: ['사계절'] },
-  { id: 12, name: '압박스타킹 시스루 플러스 - 스킨1', discount: 36, price: 17800, original: 27800, rating: 4.8, reviews: 1322, tags: ['밝은~보통 피부', '비침 있음'], crop: square(1140, 1144), categories: ['legwear'], thickness: ['see-through'], skin: ['밝은', '보통'], pressure: ['약'], season: ['사계절'] },
+  { id: 1, name: '압박스타킹 보정레깅스 외 모음구성', discount: 36, price: 15800, original: 24800, rating: 4.8, reviews: 1204, tags: ['다리라인 보정', '사계절'], crop: tile(0, 0), categories: ['legwear'], thickness: ALL_THICKNESS, skin: ALL_SKIN, pressure: ['중'], season: ['사계절', '겨울용'], setCount: 1 },
+  { id: 2, name: '압박스타킹/레깅스 3매 SET', discount: 46, price: 39800, original: 74400, perPiece: 13267, rating: 4.9, reviews: 862, tags: ['세트 특가', '타입 선택'], crop: tile(1, 0), categories: ['legwear', 'set'], thickness: ALL_THICKNESS, skin: ALL_SKIN, pressure: ['중'], season: ['사계절', '겨울용'], setCount: 3 },
+  { id: 3, name: '압박스타킹/레깅스 5매 SET', discount: 49, price: 62800, original: 124000, perPiece: 12560, rating: 4.9, reviews: 537, tags: ['세트 특가', '타입 선택'], crop: tile(2, 0), categories: ['legwear', 'set'], thickness: ALL_THICKNESS, skin: ALL_SKIN, pressure: ['중'], season: ['사계절', '겨울용'], setCount: 5 },
+  { id: 4, name: '시크릿 캐미솔 보정속옷 외 모음구성', discount: 39, price: 45800, original: 74800, rating: 4.7, reviews: 391, tags: ['체형 보정', '사계절'], crop: tile(3, 0), categories: ['shapewear'] },
+  { id: 5, name: '압박스타킹 시스루 플러스 - 스킨2', discount: 36, price: 17800, original: 27800, rating: 4.8, reviews: 2031, tags: ['보통~어두운 피부', '비침 있음'], crop: tile(0, 1), categories: ['legwear'], thickness: ['see-through'], skin: ['보통', '어두운'], pressure: ['중'], season: ['사계절'] },
+  { id: 6, name: '압박스타킹/레깅스 7매 SET', discount: 54, price: 79800, original: 173600, perPiece: 11400, rating: 4.9, reviews: 318, tags: ['세트 특가', '타입 선택'], crop: tile(1, 1), categories: ['legwear', 'set'], thickness: ALL_THICKNESS, skin: ALL_SKIN, pressure: ['중'], season: ['사계절', '겨울용'], setCount: 7 },
+  { id: 7, name: '시크릿 백 엉뽕 힙업 팬티 보정속옷 모음구성', discount: 36, price: 15800, original: 24800, rating: 4.6, reviews: 744, tags: ['힙업 보정', '사계절'], crop: tile(2, 1), categories: ['shapewear'] },
+  { id: 8, name: '시크릿 캐미솔 2종 SET', discount: 49, price: 75800, original: 149600, perPiece: 37900, rating: 4.8, reviews: 205, tags: ['세트 특가', '컬러 선택'], crop: tile(3, 1), categories: ['shapewear', 'set'] },
+  { id: 9, name: '시크릿백 2종 SET', discount: 40, price: 29800, original: 49600, perPiece: 14900, rating: 4.7, reviews: 412, tags: ['세트 특가', '컬러 선택'], crop: tile(0, 2), categories: ['shapewear', 'set'] },
+  { id: 10, name: '보정속옷 + 압박 레그웨어 2종 SET', discount: 45, price: 55200, original: 99600, perPiece: 27600, rating: 4.8, reviews: 169, tags: ['세트 특가', '타입 선택'], crop: tile(1, 2), categories: ['shapewear', 'legwear', 'set'] },
+  { id: 11, name: '압박스타킹 프리미엄 - 블랙', discount: 36, price: 17800, original: 27800, rating: 4.9, reviews: 1587, tags: ['모든 피부톤', '비침 없음'], crop: tile(2, 2), categories: ['legwear'], thickness: ['premium'], skin: ALL_SKIN, pressure: ['강'], season: ['사계절'] },
+  { id: 12, name: '압박스타킹 시스루 플러스 - 스킨1', discount: 36, price: 17800, original: 27800, rating: 4.8, reviews: 1322, tags: ['밝은~보통 피부', '비침 있음'], crop: tile(3, 2), categories: ['legwear'], thickness: ['see-through'], skin: ['밝은', '보통'], pressure: ['약'], season: ['사계절'] },
 ]
 
 export const findProduct = (id: number) => PRODUCTS.find((product) => product.id === id)
 
 /** 상세 갤러리 뒤쪽 사진 — 시안의 썸네일 2~4 */
-export const GALLERY_EXTRAS: Crop[] = [square(860, 1144), square(299, 722), square(299, 1987)]
+export const GALLERY_EXTRAS: Crop[] = [tile(2, 2), tile(0, 1), tile(0, 3)]
 
 /** 포토 리뷰 칸 — 시안과 같은 다섯 장 */
-export const PHOTO_REVIEWS: Crop[] = [square(299, 301), square(299, 722), square(860, 1144), square(860, 1565), square(860, 722)]
+export const PHOTO_REVIEWS: Crop[] = [tile(0, 0), tile(0, 1), tile(2, 2), tile(1, 3), tile(2, 1)]
 
 export interface CategoryInfo {
   key: Category | 'all'
@@ -103,9 +110,9 @@ export interface ThicknessInfo {
 }
 
 export const THICKNESSES: ThicknessInfo[] = [
-  { key: 'see-through', en: 'SEE-THROUGH', ko: '시스루', note: '얇게 비치는 시스루', crop: { x: 299, y: 771, w: 260, h: 162 } },
-  { key: 'premium', en: 'PREMIUM', ko: '미디엄', note: '적당한 두께감', crop: { x: 860, y: 1193, w: 260, h: 162 } },
-  { key: 'napping', en: 'NAPPING', ko: '기모', note: '기모 안감 보온', crop: { x: 299, y: 2457, w: 260, h: 162 } },
+  { key: 'see-through', en: 'SEE-THROUGH', ko: '시스루', note: '얇게 비치는 시스루', crop: band(0, 1, 49) },
+  { key: 'premium', en: 'PREMIUM', ko: '미디엄', note: '적당한 두께감', crop: band(2, 2, 49) },
+  { key: 'napping', en: 'NAPPING', ko: '기모', note: '기모 안감 보온', crop: band(2, 3) },
 ]
 
 export const SKINS: Skin[] = ['밝은', '보통', '어두운']

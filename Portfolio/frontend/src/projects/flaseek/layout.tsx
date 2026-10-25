@@ -179,11 +179,12 @@ function Header({ active }: { active: ActiveMenu }) {
   )
 }
 
+// 사업자 정보는 형식만 실제 몰과 같게 둔 예시 값이다 — 시안 화면을 보고 실제 회사·대표에게 연락하지 않게
 const COMPANY = [
-  'Company : Ascend Corp. · CEO : Il-Heum Baek',
-  'Address : 3F, 12 Samseong-ro 126-gil, Gangnam-gu, Seoul',
-  'Business License : 120-88-20685 · Mall Order License : 2013-Seoul Gangnam-03223',
-  'Hosting by Connect Waves',
+  'Company : Sample Corp. · CEO : Gil-Dong Hong',
+  'Address : 3F, 00 Sample-ro, Gangnam-gu, Seoul',
+  'Business License : 000-00-00000 · Mall Order License : 0000-Seoul Gangnam-00000',
+  'Hosting by Sample Hosting',
 ]
 
 function FooterLinks() {
@@ -200,7 +201,7 @@ function CustomerCenter({ className = '' }: { className?: string }) {
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
       <p className="text-13 font-medium text-sub">고객센터</p>
-      <p className="text-24 font-semibold tracking-normal text-main">02-1522-6075</p>
+      <p className="text-24 font-semibold tracking-normal text-main">0000-0000</p>
       <p className="text-12 text-sub">평일 10:30 – 18:00 (점심 12:00 – 13:00) · 주말·공휴일 휴무</p>
     </div>
   )

@@ -4,11 +4,11 @@ import { type Crop, type Product, won } from './data'
 import { flaseekHref } from './routes'
 import { toggleWish, useToast, useWishes } from './store'
 
-/** 캡처 원본(products.webp)의 가로 크기 — crop 좌표를 비율로 바꿀 때 쓴다 */
-const SPRITE_WIDTH = 1920
+/** 스프라이트(products.webp)의 가로 크기 — crop 좌표를 비율로 바꿀 때 쓴다 */
+const SPRITE_WIDTH = 1040
 
 /**
- * 캡처 한 장에서 crop 영역만 보여준다. 칸의 비율이 crop 과 달라도 object-fit: cover 처럼 가운데를 채운다.
+ * 스프라이트 한 장에서 crop 영역만 보여준다. 칸의 비율이 crop 과 달라도 object-fit: cover 처럼 가운데를 채운다.
  * 칸 크기(cqw·cqh)를 알아야 해서 container-type: size 를 쓴다 — className 으로 높이(또는 aspect)를 꼭 정한다.
  */
 export function SpriteImage({ crop, className = '', alt = '' }: { crop: Crop; className?: string; alt?: string }) {

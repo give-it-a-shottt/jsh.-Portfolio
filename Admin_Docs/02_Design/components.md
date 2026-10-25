@@ -10,7 +10,7 @@
 ### FLASEEK 공통 (`projects/flaseek/ui.tsx`)
 | 컴포넌트 | 하는 일 | 상태 | 피그마 |
 |---|---|---|---|
-| `SpriteImage` | 캡처 한 장을 `crop` 좌표로 잘라서 보여 줌 | – | ❓ |
+| `SpriteImage` | 스프라이트 한 장을 `crop` 좌표로 잘라서 보여 줌 | – | ❓ |
 | `Container` | 1200px 가운데 정렬 컨테이너 | – | ❓ |
 | `Tag` | 상품 카드 태그 (최대 2개) | – | ❓ |
 | `BUTTON_PRIMARY` / `BUTTON_SECONDARY` | 버튼 클래스 묶음 | 기본·호버·포커스 | ❓ |

@@ -24,7 +24,7 @@
 | FLASEEK 상품          | `projects/flaseek/data.ts`                              | `Product { id, name, discount, price, original, perPiece?, rating, reviews, tags(≤2), crop, categories[], thickness?/skin?/pressure?/season?, setCount? }` |
 | Accio 상품·AI 응답    | `projects/accio/data/{catalog,detail,aiEngine}.ts`      | 목 데이터                                                                                                                                                  |
 
-- 💡 FLASEEK 상품 사진은 캡처 한 장(`assets/products.webp`)을 `crop` 좌표로 잘라서 써요. 이미지 파일 수를 줄이려고요.
+- 💡 FLASEEK 상품 사진은 스프라이트 한 장(`assets/products.webp`, 260px 칸 4×4)을 `crop` 좌표로 잘라서 써요. 파일 수를 줄이려고 한 장으로 두되, 처음에는 캡처 원본(425KB)을 통째로 받아서 쓰는 영역이 14%뿐이었어요. 그래서 쓰는 칸 15개만 다시 모아 132KB로 줄였어요(F-001 fix-01).
 
 ### 2) 화면 상태 (메모리, 새로고침 시 초기화)
 
