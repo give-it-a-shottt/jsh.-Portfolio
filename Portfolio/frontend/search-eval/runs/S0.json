@@ -1,0 +1,274 @@
+{
+  "savedAt": "2026-10-26",
+  "overall": {
+    "count": 36,
+    "zeroRate": 0.6666666666666666,
+    "hitAtK": 0.3333333333333333,
+    "mrr": 0.3148148148148148,
+    "recall": 0.2948717948717949
+  },
+  "falsePositiveRate": 0,
+  "negativeCount": 3,
+  "categories": {
+    "기본": {
+      "count": 7,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "여러 단어": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "띄어쓰기": {
+      "count": 4,
+      "zeroRate": 1,
+      "hitAtK": 0,
+      "mrr": 0,
+      "recall": 0
+    },
+    "조사": {
+      "count": 3,
+      "zeroRate": 1,
+      "hitAtK": 0,
+      "mrr": 0,
+      "recall": 0
+    },
+    "유사어": {
+      "count": 4,
+      "zeroRate": 0.5,
+      "hitAtK": 0.5,
+      "mrr": 0.3333333333333333,
+      "recall": 0.15384615384615385
+    },
+    "한영 오타": {
+      "count": 3,
+      "zeroRate": 1,
+      "hitAtK": 0,
+      "mrr": 0,
+      "recall": 0
+    },
+    "자모 오타": {
+      "count": 3,
+      "zeroRate": 1,
+      "hitAtK": 0,
+      "mrr": 0,
+      "recall": 0
+    },
+    "본문": {
+      "count": 5,
+      "zeroRate": 1,
+      "hitAtK": 0,
+      "mrr": 0,
+      "recall": 0
+    },
+    "자연어": {
+      "count": 4,
+      "zeroRate": 1,
+      "hitAtK": 0,
+      "mrr": 0,
+      "recall": 0
+    }
+  },
+  "perQuery": {
+    "Q01": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q02": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q03": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q04": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q05": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q06": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q07": {
+      "total": 4,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q08": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q09": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q10": {
+      "total": 3,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q11": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q12": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q13": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q14": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q15": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q16": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q17": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q18": {
+      "total": 6,
+      "firstRank": 3,
+      "recall": 0.11538461538461539
+    },
+    "Q19": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q20": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 0.5
+    },
+    "Q21": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q22": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q23": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q24": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q25": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q26": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q27": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q28": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q29": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q30": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q31": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q32": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q33": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q34": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q35": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q36": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q37": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q38": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q39": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    }
+  }
+}
