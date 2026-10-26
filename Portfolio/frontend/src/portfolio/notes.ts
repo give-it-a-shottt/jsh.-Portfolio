@@ -1,8 +1,7 @@
-import { CASES, getSuggestions, type CaseType, type PortfolioCase, type Suggestion } from './data'
+import { CASES, type CaseType, type PortfolioCase } from './data'
 import { BACK_NOTES } from './noteData/back'
 import { DESIGN_NOTES } from './noteData/design'
 import { FRONT_NOTES } from './noteData/front'
-import { normalize } from './searchText'
 
 // 공부 노트(Study) — 노션 학습노트를 직접 골라 요약해 옮긴다. 노션 원문 링크는 두지 않는다.
 // 사례(CASES)와 따로 두고, 실제로 화면·코드에 쓴 경우에만 applied 로 사례와 잇는다. 억지로 잇지 않는다.
@@ -74,16 +73,4 @@ export function notesForCase(slug: string) {
   return NOTES.filter((note) => note.applied?.some((applied) => applied.slug === slug))
 }
 
-/** 검색창 자동완성 — 사례 쪽 제안(키워드 · 사례 제목) 뒤에 노트 제목을 붙인다. 빈 입력이면 추천 키워드만 */
-export function getAllSuggestions(query: string, limit = 6): Suggestion[] {
-  const q = normalize(query)
-  const fromCases = getSuggestions(query, limit)
-  if (!q) return fromCases
-  const fromNotes = NOTES.filter(({ title }) => normalize(title).includes(q)).map(({ title }) => ({
-    text: title,
-    type: 'Study' as const,
-  }))
-  return [...fromCases, ...fromNotes].slice(0, limit)
-}
-
-// 노트 검색은 사례와 함께 search.ts 에서 한다(본문까지)
+// 노트 검색은 사례와 함께 search.ts, 자동완성은 suggest.ts 에서 한다

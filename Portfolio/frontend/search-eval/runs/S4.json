@@ -88,6 +88,56 @@
       "recall": 1
     }
   },
+  "suggest": {
+    "count": 19,
+    "zeroRate": 0.5263157894736842,
+    "hitRate": 0.47368421052631576,
+    "mrr": 0.47368421052631576,
+    "categories": {
+      "앞부분": {
+        "count": 3,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      },
+      "중간 일치": {
+        "count": 2,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      },
+      "영문": {
+        "count": 2,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      },
+      "띄어쓰기": {
+        "count": 2,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      },
+      "조합 중": {
+        "count": 3,
+        "zeroRate": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "초성": {
+        "count": 4,
+        "zeroRate": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "한영 자판": {
+        "count": 3,
+        "zeroRate": 1,
+        "hitRate": 0,
+        "mrr": 0
+      }
+    }
+  },
   "perQuery": {
     "Q01": {
       "total": 2,

@@ -66,8 +66,16 @@ try {
   const rows = testSet.queries.map((item) => grade(item, visibleOrder(item.query), inHidden))
   const report = summarize(rows)
 
+  // 자동완성 시험지(S5) — 친 글자(치는 도중 포함)마다 기대한 제안이 목록에 나오는지
+  const { getAllSuggestions } = await server.ssrLoadModule('/src/portfolio/suggest.ts')
+  const suggestSet = JSON.parse(readFileSync(join(HERE, 'suggest.json'), 'utf8'))
+  const suggestRows = suggestSet.inputs.map((item) => gradeSuggest(item, getAllSuggestions(item.input).map((s) => s.text)))
+  report.suggest = summarizeSuggest(suggestRows)
+
+  const base = loadBase(baseName)
   console.log(`\n색인: 문서 ${INDEX_STATS.docs}개 · 두 글자 조각 ${INDEX_STATS.grams}개`)
-  printReport(report, rows, loadBase(baseName))
+  printReport(report, rows, base)
+  printSuggest(report.suggest, suggestRows, base?.suggest)
   if (saveAs) save(saveAs, report, rows)
 } finally {
   await server.close()
@@ -123,6 +131,51 @@ function summarize(rows) {
     falsePositiveRate: avg(negative, (row) => (row.total > 0 ? 1 : 0)),
     negativeCount: negative.length,
     categories,
+  }
+}
+
+// ── 자동완성 ────────────────────────────────────────────────────────────
+
+/** 친 글자 하나의 점수 — 기대한 문구가 제안 목록 몇 번째에 있는지 */
+function gradeSuggest(item, shown) {
+  const rank = shown.indexOf(item.expect) + 1
+  return { ...item, shown, rank, hit: rank > 0, reciprocal: rank ? 1 / rank : 0 }
+}
+
+function summarizeSuggest(allRows) {
+  // 처음 보는 입력(heldOut)은 전체 점수에서 빼고 따로 — 검색 채점과 같은 이유
+  const rows = allRows.filter((row) => !row.heldOut)
+  const heldOut = allRows.filter((row) => row.heldOut)
+  const avg = (list, pick) => (list.length ? list.reduce((sum, row) => sum + pick(row), 0) / list.length : 0)
+  const metrics = (list) => ({
+    count: list.length,
+    zeroRate: avg(list, (row) => (row.shown.length === 0 ? 1 : 0)),
+    hitRate: avg(list, (row) => (row.hit ? 1 : 0)),
+    mrr: avg(list, (row) => row.reciprocal),
+  })
+  const categories = {}
+  for (const name of [...new Set(rows.map((row) => row.category))]) categories[name] = metrics(rows.filter((row) => row.category === name))
+  return { ...metrics(rows), heldOut: heldOut.length ? metrics(heldOut) : undefined, categories }
+}
+
+function printSuggest(summary, rows, base) {
+  console.log(`\n자동완성 채점 — 친 글자 ${summary.count}개 (제안은 최대 6개)`)
+  console.log('─'.repeat(64))
+  console.log(`제안 없음       ${pct(summary.zeroRate)}${delta(summary.zeroRate, base?.zeroRate, true, true)}`)
+  console.log(`목록에 나옴     ${pct(summary.hitRate)}${delta(summary.hitRate, base?.hitRate, true)}   기대한 문구가 6개 안에 있는 비율`)
+  console.log(`MRR            ${num(summary.mrr)}${delta(summary.mrr, base?.mrr, false)}`)
+  if (summary.heldOut) {
+    const h = summary.heldOut
+    console.log(`\n처음 보는 입력 ${h.count}개(전체 점수에서 뺌) — 목록에 나옴 ${pct(h.hitRate).trim()}${delta(h.hitRate, base?.heldOut?.hitRate, true)} · MRR ${num(h.mrr)}`)
+  }
+  console.log(`\n${padWide('유형별', 12)} 개수  목록에 나옴   MRR`)
+  for (const [name, m] of Object.entries(summary.categories)) {
+    console.log(`${padWide(name, 12)} ${String(m.count).padStart(4)}  ${pct(m.hitRate).padStart(11)}  ${num(m.mrr)}`)
+  }
+  const missed = rows.filter((row) => !row.hit || (verbose && row.hit))
+  if (missed.length) console.log(verbose ? '\n친 글자별' : '\n못 맞힌 자동완성')
+  for (const row of missed) {
+    console.log(`${row.hit ? 'O' : 'X'} ${row.id} [${row.category}] "${row.input}" → 기대 "${row.expect}" — ${row.hit ? `${row.rank}번째` : `없음 (제안 ${row.shown.length}개)`}`)
   }
 }
 

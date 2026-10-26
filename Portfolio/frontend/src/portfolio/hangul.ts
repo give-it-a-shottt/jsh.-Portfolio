@@ -43,6 +43,17 @@ export function toJamo(text: string) {
   return out
 }
 
+/** 글자의 초성(S5 초성 검색) — '디' → 'ㄷ'. 한글 글자가 아니면 null */
+export function initialOf(char: string) {
+  const code = char.charCodeAt(0)
+  return code >= SYLLABLE_START && code <= SYLLABLE_END ? CHO[Math.floor((code - SYLLABLE_START) / 588)] : null
+}
+
+/** 자음 낱자만으로 된 입력인지 — 'ㄷㅈㅇ' 처럼 초성으로 찾으려는 것 */
+export function isInitialsOnly(text: string) {
+  return /^[ㄱ-ㅎ]+$/.test(text)
+}
+
 /** 자모를 자판 입력처럼 글자로 합친다 — ㅍㅡㄹㄹㅐㄴ → 플랜. 받침 뒤에 모음이 오면 받침이 다음 글자로 넘어간다(ㄱㅏㄴㅏ → 가나) */
 export function fromJamo(jamos: string[]) {
   let out = ''

@@ -155,7 +155,6 @@ import dsMoMain from './assets/design/jsh-ds/g-mo-main.webp'
 import dsMoDetail from './assets/design/jsh-ds/g-mo-detail.webp'
 import dsMoEmptyCart from './assets/design/jsh-ds/g-mo-empty-cart.webp'
 import type { Level } from './rank'
-import { normalize } from './searchText'
 
 // 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
 // 실제로 한 사례만 둔다. 새 사례는 CASES 에, 추천 검색어는 KEYWORDS 에 더한다.
@@ -1010,31 +1009,4 @@ export const KEYWORDS: { label: string; type: CaseType | 'Study' }[] = [
   { label: '자사몰 리뉴얼', type: 'Design' },
 ]
 
-// ── 검색 ────────────────────────────────────────────────────────────────
-// 검색 결과는 search.ts 에서 찾는다. 여기는 자동완성만 둔다.
-
-export interface Suggestion {
-  text: string
-  /** 공부 노트 제목이면 'Study' (notes.ts 의 getAllSuggestions) */
-  type: CaseType | 'Study'
-}
-
-/** 빈 입력이면 추천 키워드, 입력이 있으면 키워드 + 사례 제목 중 부분 일치(띄어쓰기·대소문자 무시) */
-export function getSuggestions(query: string, limit = 6): Suggestion[] {
-  const q = normalize(query)
-  if (!query.trim()) return KEYWORDS.slice(0, limit).map(({ label, type }) => ({ text: label, type }))
-  if (!q) return []
-  const pool = [
-    ...KEYWORDS.map(({ label, type }) => ({ text: label, type })),
-    ...CASES.map(({ title, type }) => ({ text: title, type })),
-  ]
-  return pool.filter(({ text }) => normalize(text).includes(q)).slice(0, limit)
-}
-
-/** 자동완성에서 일치한 부분만 굵게 보여주기 위해 앞·일치·뒤로 나눈다 */
-export function splitMatch(text: string, query: string) {
-  const q = query.trim()
-  const index = q ? text.toLowerCase().indexOf(q.toLowerCase()) : -1
-  if (index < 0) return { before: text, match: '', after: '' }
-  return { before: text.slice(0, index), match: text.slice(index, index + q.length), after: text.slice(index + q.length) }
-}
+// 검색은 search.ts, 자동완성은 suggest.ts 에서 한다.

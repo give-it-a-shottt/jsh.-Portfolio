@@ -1,6 +1,5 @@
 import { useId, useState } from 'react'
-import { splitMatch } from './data'
-import { getAllSuggestions } from './notes'
+import { getAllSuggestions } from './suggest'
 import { ArrowRightIcon, CloseIcon, SearchIcon } from '../shared/icons'
 import './SearchBox.css'
 
@@ -145,7 +144,6 @@ export default function SearchBox({ size, defaultValue = '', glow = false, onSea
           <p className="px-4 pt-2 pb-1 text-12 font-medium text-sub-weak">{value.trim() ? '자동완성' : '추천 검색어'}</p>
           <ul id={listId} role="listbox" aria-label="검색어 제안">
             {suggestions.map((suggestion, i) => {
-              const { before, match, after } = splitMatch(suggestion.text, value)
               return (
                 <li
                   key={`${suggestion.type}-${suggestion.text}`}
@@ -161,10 +159,17 @@ export default function SearchBox({ size, defaultValue = '', glow = false, onSea
                 >
                   <span className="flex min-w-0 items-center gap-3 text-sub">
                     <SearchIcon size={16} className="shrink-0 text-icon-sub-weak" />
+                    {/* 띄어쓰기·초성·치는 도중의 글자로 맞아도 맞은 글자를 굵게(suggest.ts) */}
                     <span className="truncate">
-                      {before}
-                      <b className="font-semibold text-main">{match}</b>
-                      {after}
+                      {suggestion.segments.map(({ text, match }, index) =>
+                        match ? (
+                          <b key={index} className="font-semibold text-main">
+                            {text}
+                          </b>
+                        ) : (
+                          text
+                        ),
+                      )}
                     </span>
                   </span>
                   <span className="shrink-0 text-12 font-medium tracking-normal text-sub-weak">{suggestion.type}</span>

@@ -13,6 +13,7 @@
 | [T-003](T-003-search-index-body.md) | "웨이팅"·"노션으로 복습"이 0건 — 본문 검색·조사 떼기·역색인 (F-007 S2) | [주의] | 2026-10-26 |
 | [T-004](T-004-search-ranking-bm25.md) | "프론트" 정답이 6위, 문장형 검색 0건 — BM25·필드 가중치·minimum_should_match (F-007 S3) | [주의] | 2026-10-26 |
 | [T-005](T-005-search-typo-synonym.md) | "마에스트르"·"vmffosvhal"·"타입스크립트" 0건 — 동의어·한영 자판·자모 편집거리 (F-007 S4) | [주의] | 2026-10-26 |
+| [T-006](T-006-search-autocomplete.md) | "디장"·"ㄷㅈㅇ"에 자동완성이 안 뜸 — 자모 앞부분·초성·굵게 표시 (F-007 S5) | [통과] | 2026-10-26 |
 
 💡 Admin_Docs를 도입하기 전의 트러블 사례는 포트폴리오 Front·Back 사례(`portfolio/caseStories.ts`)에 있어요.
 

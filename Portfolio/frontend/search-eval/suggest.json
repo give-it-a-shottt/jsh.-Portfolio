@@ -1,0 +1,39 @@
+{
+  "about": "자동완성 시험지(F-007 S5). input 은 검색창에 친 그대로(치는 도중 포함), expect 는 제안 목록(최대 6개)에 나와야 하는 문구. heldOut 은 규칙을 다 만든 뒤에 정한 입력으로, 전체 점수에서 빼고 따로 잰다.",
+  "inputs": [
+    { "id": "A01", "category": "앞부분", "input": "해커", "expect": "해커톤" },
+    { "id": "A02", "category": "앞부분", "input": "디자인", "expect": "디자인 시스템" },
+    { "id": "A03", "category": "앞부분", "input": "마에", "expect": "마에스트로 — 틀어진 일정의 플랜 B 지휘자" },
+
+    { "id": "A04", "category": "중간 일치", "input": "시스템", "expect": "디자인 시스템" },
+    { "id": "A05", "category": "중간 일치", "input": "리뉴얼", "expect": "자사몰 리뉴얼" },
+
+    { "id": "A06", "category": "영문", "input": "planf", "expect": "PlanForMe" },
+    { "id": "A07", "category": "영문", "input": "accio", "expect": "Accio — AI 자연어 검색 쇼핑몰" },
+
+    { "id": "A08", "category": "띄어쓰기", "input": "디자인시", "expect": "디자인 시스템" },
+    { "id": "A09", "category": "띄어쓰기", "input": "비밀번호찾", "expect": "비밀번호 찾기" },
+
+    { "id": "A10", "category": "조합 중", "input": "디장", "expect": "디자인 시스템", "memo": "디자인을 치는 도중(ㅇ 까지)" },
+    { "id": "A11", "category": "조합 중", "input": "해컽", "expect": "해커톤", "memo": "해커톤을 치는 도중(ㅌ 까지)" },
+    { "id": "A12", "category": "조합 중", "input": "블렌디", "expect": "블렌딩", "memo": "블렌딩을 치는 도중(ㅣ 까지)" },
+
+    { "id": "A13", "category": "초성", "input": "ㄷㅈㅇ", "expect": "디자인 시스템" },
+    { "id": "A14", "category": "초성", "input": "ㅎㅋㅌ", "expect": "해커톤" },
+    { "id": "A15", "category": "초성", "input": "ㅂㅁㅂㅎ", "expect": "비밀번호 찾기" },
+    { "id": "A16", "category": "초성", "input": "ㅁㅇㅅㅌㄹ", "expect": "마에스트로 — 틀어진 일정의 플랜 B 지휘자" },
+
+    { "id": "A17", "category": "한영 자판", "input": "gozj", "expect": "해커톤", "memo": "해커를 영문 자판으로" },
+    { "id": "A18", "category": "한영 자판", "input": "ㅁㅊㅊㅑ", "expect": "Accio — AI 자연어 검색 쇼핑몰", "memo": "acci 를 한글 자판으로" },
+    { "id": "A19", "category": "한영 자판", "input": "qmffps", "expect": "블렌딩", "memo": "블렌을 영문 자판으로" },
+
+    { "id": "B01", "heldOut": true, "category": "초성", "input": "ㅂㄹㄷ", "expect": "블렌딩", "memo": "S5 를 만든 뒤에 정하고 한 번만 잼" },
+    { "id": "B02", "heldOut": true, "category": "조합 중", "input": "자사모", "expect": "자사몰 리뉴얼", "memo": "S5 를 만든 뒤에 정하고 한 번만 잼" },
+    { "id": "B03", "heldOut": true, "category": "영문", "input": "외부a", "expect": "외부 API", "memo": "S5 를 만든 뒤에 정하고 한 번만 잼" },
+    { "id": "B04", "heldOut": true, "category": "한영 자판", "input": "rpdla", "expect": "게임 전적", "memo": "S5 를 만든 뒤에 정하고 한 번만 잼" },
+    { "id": "B05", "heldOut": true, "category": "초성", "input": "ㄹㅇㅇㅇ", "expect": "레이아웃", "memo": "S5 를 만든 뒤에 정하고 한 번만 잼. 처음엔 ㄹㅇㅇㅅ 으로 적었다가(웃의 ㅅ 은 받침이라 시험지 실수) 첫 측정 뒤 바로잡음" },
+    { "id": "B06", "heldOut": true, "category": "띄어쓰기", "input": "복습 퀴", "expect": "복습 퀴즈", "memo": "S5 를 만든 뒤에 정하고 한 번만 잼" },
+    { "id": "B07", "heldOut": true, "category": "영문", "input": "LRU", "expect": "LRU 캐시 — [1차] 캐시", "memo": "S5 를 만든 뒤에 정하고 한 번만 잼" },
+    { "id": "B08", "heldOut": true, "category": "초성", "input": "ㅍㅌㅅ", "expect": "포토샵 합성 — 마스크와 블렌딩", "memo": "S5 를 만든 뒤에 정하고 한 번만 잼" }
+  ]
+}

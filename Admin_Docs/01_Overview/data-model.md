@@ -22,7 +22,8 @@
 | 사례 상세 코드(Front·Back) | `portfolio/caseDetails.ts`                         | `CaseDetail { stack, code, team? }`, `CodeSample`, `TeamProject`. 상세를 열 때만 받아요                                                                     |
 | 공부 노트             | `portfolio/notes.ts`, `noteData/{front,back,design}.ts` | `StudyNote`. `appliedCases()`로 사례와 연결                                                                                                                |
 | 검색 순위             | `portfolio/rank.ts`                                     | `Level 1~4`, `rankCases()`                                                                                                                                 |
-| 검색                  | `portfolio/search.ts`, `portfolio/searchText.ts`        | `search(query)` → `{ cases, notes }`. 두 글자 조각 역색인 + 정규화·조사 떼기([F-007](../04_Features/F-007-search-algorithm.md))                          |
+| 자동완성              | `portfolio/suggest.ts`                                  | `getAllSuggestions(value)` → `Suggestion { text, type, segments }`. 초성·치는 도중 글자·한영 자판                     |
+| 검색                  | `portfolio/search.ts`, `searchText.ts`, `synonyms.ts`, `hangul.ts` | `search(query)` → `{ cases, notes, corrections }`. 역색인 + BM25 + 동의어·오타 고치기([F-007](../04_Features/F-007-search-algorithm.md))                          |
 | FLASEEK 상품          | `projects/flaseek/data.ts`                              | `Product { id, name, discount, price, original, perPiece?, rating, reviews, tags(≤2), crop, categories[], thickness?/skin?/pressure?/season?, setCount? }` |
 | Accio 상품·AI 응답    | `projects/accio/data/{catalog,detail,aiEngine}.ts`      | 목 데이터                                                                                                                                                  |
 
