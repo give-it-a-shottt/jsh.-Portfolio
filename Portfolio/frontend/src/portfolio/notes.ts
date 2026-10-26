@@ -2,6 +2,7 @@ import { CASES, getSuggestions, type CaseType, type PortfolioCase, type Suggesti
 import { BACK_NOTES } from './noteData/back'
 import { DESIGN_NOTES } from './noteData/design'
 import { FRONT_NOTES } from './noteData/front'
+import { containsAllTerms, normalize } from './searchText'
 
 // 공부 노트(Study) — 노션 학습노트를 직접 골라 요약해 옮긴다. 노션 원문 링크는 두지 않는다.
 // 사례(CASES)와 따로 두고, 실제로 화면·코드에 쓴 경우에만 applied 로 사례와 잇는다. 억지로 잇지 않는다.
@@ -75,22 +76,21 @@ export function notesForCase(slug: string) {
 
 /** 검색창 자동완성 — 사례 쪽 제안(키워드 · 사례 제목) 뒤에 노트 제목을 붙인다. 빈 입력이면 추천 키워드만 */
 export function getAllSuggestions(query: string, limit = 6): Suggestion[] {
-  const q = query.trim().toLowerCase()
+  const q = normalize(query)
   const fromCases = getSuggestions(query, limit)
   if (!q) return fromCases
-  const fromNotes = NOTES.filter(({ title }) => title.toLowerCase().includes(q)).map(({ title }) => ({
+  const fromNotes = NOTES.filter(({ title }) => normalize(title).includes(q)).map(({ title }) => ({
     text: title,
     type: 'Study' as const,
   }))
   return [...fromCases, ...fromNotes].slice(0, limit)
 }
 
-const haystack = (note: StudyNote) =>
-  [note.title, note.summary, note.points.join(' '), note.tags.join(' '), note.keywords].join(' ').toLowerCase()
+const haystacks = new Map(
+  NOTES.map((note) => [note.slug, normalize([note.title, note.summary, note.points.join(' '), note.tags.join(' '), note.keywords].join(' '))]),
+)
 
 /** 사례 검색(matchesQuery)과 같은 규칙 — 모든 단어가 어딘가에 들어 있으면 일치 */
 export function matchesNote(note: StudyNote, query: string) {
-  const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
-  const text = haystack(note)
-  return words.every((word) => text.includes(word))
+  return containsAllTerms(haystacks.get(note.slug) ?? '', query)
 }

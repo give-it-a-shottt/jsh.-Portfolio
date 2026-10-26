@@ -1,5 +1,5 @@
 {
-  "about": "검색 시험지(F-007). relevant 는 '이게 나와야 한다'는 정답 목록이고 맨 앞이 가장 기대하는 것. 비어 있으면 아무것도 안 나와야 하는 검색어. stage 는 이 검색어를 고칠 것으로 보는 단계.",
+  "about": "검색 시험지(F-007). relevant 는 '이게 나와야 한다'는 정답 목록이고 맨 앞이 가장 기대하는 것. 비어 있으면 아무것도 안 나와야 하는 검색어. stage 는 이 검색어를 고칠 것으로 보는 단계. memo 는 사람이 읽는 설명.",
   "queries": [
     { "id": "Q01", "category": "기본", "stage": "S0", "query": "해커톤", "relevant": ["case:maestro"] },
     { "id": "Q02", "category": "기본", "stage": "S0", "query": "디자인 시스템", "relevant": ["case:jsh-design-system", "case:accio-redesign", "case:gameprobe", "case:remind", "case:flaseek-renewal", "case:accio"] },
@@ -45,6 +45,10 @@
     { "id": "Q34", "category": "자연어", "stage": "S3", "query": "서버가 잠들어서 느린 문제", "relevant": ["case:maestro-wake", "case:free-tier-infra"] },
     { "id": "Q35", "category": "자연어", "stage": "S3", "query": "AI 쇼핑몰 만든 거", "relevant": ["case:accio", "case:accio-redesign"] },
     { "id": "Q36", "category": "자연어", "stage": "S3", "query": "날짜가 하루 밀리는 버그", "relevant": ["case:planforme-kst-today"] },
+
+    { "id": "Q40", "category": "표기 차이", "stage": "S1", "query": "디자인 시스템", "relevant": ["case:jsh-design-system", "case:accio-redesign", "case:gameprobe", "case:remind", "case:flaseek-renewal", "case:accio"], "memo": "자모가 풀린 NFD 글자(맥·노션에서 복사하면 생김)" },
+    { "id": "Q41", "category": "표기 차이", "stage": "S1", "query": "ＰｌａｎＦｏｒＭｅ", "relevant": ["case:planforme", "case:planforme-replan-overdue", "case:planforme-activity-state", "case:planforme-quota-logic", "case:planforme-stale-response", "case:planforme-api-key", "case:planforme-kst-today"], "memo": "전각 영문" },
+    { "id": "Q42", "category": "표기 차이", "stage": "S1", "query": "react-query", "relevant": ["note:fe-tanstack-query"], "memo": "하이픈(데이터는 react query)" },
 
     { "id": "Q37", "category": "없어야 함", "stage": "S0", "query": "블록체인", "relevant": [] },
     { "id": "Q38", "category": "없어야 함", "stage": "S0", "query": "쿠버네티스", "relevant": [] },

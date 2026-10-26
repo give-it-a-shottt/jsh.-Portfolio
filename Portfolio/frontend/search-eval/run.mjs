@@ -38,6 +38,8 @@ try {
   const { NOTES, matchesNote } = await server.ssrLoadModule('/src/portfolio/notes.ts')
   const { rankCases } = await server.ssrLoadModule('/src/portfolio/rank.ts')
   const { CASE_DETAILS } = await server.ssrLoadModule('/src/portfolio/caseDetails.ts')
+  // 본문 검사도 사이트 검색과 같은 글자 규칙(S1 정규화)을 쓴다
+  const { containsAllTerms, normalize } = await server.ssrLoadModule('/src/portfolio/searchText.ts')
 
   const testSet = JSON.parse(readFileSync(join(HERE, 'queries.json'), 'utf8'))
   checkIds(testSet.queries, CASES, NOTES)
@@ -54,8 +56,9 @@ try {
     return [...cases.slice(0, 3), ...notes.slice(0, 3), ...cases.slice(3), ...notes.slice(3)]
   }
 
-  const bodies = buildBodies(CASES, NOTES, CASE_DETAILS)
-  const rows = testSet.queries.map((item) => grade(item, search(item.query), bodies))
+  const bodies = buildBodies(CASES, NOTES, CASE_DETAILS, normalize)
+  const inBody = (id, query) => containsAllTerms(bodies.get(id) ?? '', query)
+  const rows = testSet.queries.map((item) => grade(item, search(item.query), inBody))
   const report = summarize(rows)
 
   printReport(report, rows, loadBase(baseName))
@@ -67,7 +70,7 @@ try {
 // ── 채점 ────────────────────────────────────────────────────────────────
 
 /** 검색어 하나의 점수. relevant 가 비어 있으면 '아무것도 안 나와야 하는' 검색어다 */
-function grade(item, results, bodies) {
+function grade(item, results, inBody) {
   const { relevant } = item
   const ranks = relevant.map((id) => results.indexOf(id) + 1).filter((rank) => rank > 0)
   const firstRank = ranks.length ? Math.min(...ranks) : 0
@@ -84,7 +87,7 @@ function grade(item, results, bodies) {
     reciprocal: firstRank ? 1 / firstRank : 0,
     recall: relevant.length ? (relevant.length - missed.length) / relevant.length : 1,
     // 놓친 정답 중, 검색어 낱말이 전부 본문(상세·배운 것)에는 들어 있던 것 — 본문을 안 뒤져서 놓친 것
-    missedInBody: missed.filter((id) => containsAll(bodies.get(id) ?? '', item.query)),
+    missedInBody: missed.filter((id) => inBody(id, item.query)),
     missed,
   }
 }
@@ -116,7 +119,7 @@ function summarize(rows) {
 // ── 본문 ────────────────────────────────────────────────────────────────
 
 /** 지금 검색이 보지 않는 글까지 합친 '본문' — 사례 상세(문제·해결·결과), 디자인 시안 설명, 노트의 배운 것 */
-function buildBodies(cases, notes, details) {
+function buildBodies(cases, notes, details, normalize) {
   const bodies = new Map()
   for (const item of cases) {
     const detail = details[item.slug]
@@ -128,20 +131,15 @@ function buildBodies(cases, notes, details) {
       const groups = [design.variants, design.screens, design.mobileScreens, design.system, design.story, ...(design.sections ?? []).map((s) => s.items)]
       for (const group of groups) for (const v of group ?? []) parts.push(v.label, v.note)
     }
-    bodies.set(`case:${item.slug}`, parts.join(' ').toLowerCase())
+    bodies.set(`case:${item.slug}`, normalize(parts.join(' ')))
   }
   for (const note of notes) {
     const parts = [note.title, note.summary, note.points.join(' '), note.tags.join(' '), note.keywords]
     parts.push(...note.learned.flatMap((group) => [group.title, ...group.items]))
     for (const p of note.practice ?? []) parts.push(p.caption, p.how)
-    bodies.set(`note:${note.slug}`, parts.join(' ').toLowerCase())
+    bodies.set(`note:${note.slug}`, normalize(parts.join(' ')))
   }
   return bodies
-}
-
-function containsAll(text, query) {
-  const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
-  return words.length > 0 && words.every((word) => text.includes(word))
 }
 
 // ── 출력 · 저장 ─────────────────────────────────────────────────────────

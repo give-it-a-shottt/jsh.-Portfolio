@@ -1,11 +1,11 @@
 {
   "savedAt": "2026-10-26",
   "overall": {
-    "count": 36,
-    "zeroRate": 0.6666666666666666,
-    "hitAtK": 0.3333333333333333,
-    "mrr": 0.3148148148148148,
-    "recall": 0.2948717948717949
+    "count": 39,
+    "zeroRate": 0.6923076923076923,
+    "hitAtK": 0.3076923076923077,
+    "mrr": 0.2905982905982906,
+    "recall": 0.27218934911242604
   },
   "falsePositiveRate": 0,
   "negativeCount": 3,
@@ -68,6 +68,13 @@
     },
     "자연어": {
       "count": 4,
+      "zeroRate": 1,
+      "hitAtK": 0,
+      "mrr": 0,
+      "recall": 0
+    },
+    "표기 차이": {
+      "count": 3,
       "zeroRate": 1,
       "hitAtK": 0,
       "mrr": 0,
@@ -251,6 +258,21 @@
       "recall": 0
     },
     "Q36": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q40": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q41": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q42": {
       "total": 0,
       "firstRank": 0,
       "recall": 0
