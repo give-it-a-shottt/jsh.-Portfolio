@@ -2,6 +2,7 @@ import { useId, useRef, useState, type KeyboardEvent } from 'react'
 import { Highlight, themes } from 'prism-react-renderer'
 import screenshotPlaceholder from './assets/screenshot-placeholder.webp'
 import { CASE_DETAILS, type CodeSample, type TeamProject } from './caseDetails'
+import { CASE_STORIES } from './caseStories'
 import { CASES, type PortfolioCase } from './data'
 import { CheckIcon, ChevronRightIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
@@ -309,7 +310,9 @@ interface EngineeringCaseDetailProps {
 export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailProps) {
   const item = CASES.find((candidate) => candidate.slug === slug)
   if (!item) return null
-  const detail = CASE_DETAILS[slug]
+  // 글(caseStories)과 코드(caseDetails)는 파일이 나뉘어 있다 — 둘 다 있어야 상세를 보여준다
+  const story = CASE_STORIES[slug]
+  const detail = story && CASE_DETAILS[slug] ? { ...story, ...CASE_DETAILS[slug] } : undefined
   const isBack = item.type === 'Back'
 
   return (

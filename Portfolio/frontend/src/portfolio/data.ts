@@ -155,7 +155,7 @@ import dsMoMain from './assets/design/jsh-ds/g-mo-main.webp'
 import dsMoDetail from './assets/design/jsh-ds/g-mo-detail.webp'
 import dsMoEmptyCart from './assets/design/jsh-ds/g-mo-empty-cart.webp'
 import type { Level } from './rank'
-import { containsAllTerms, normalize } from './searchText'
+import { normalize } from './searchText'
 
 // 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
 // 실제로 한 사례만 둔다. 새 사례는 CASES 에, 추천 검색어는 KEYWORDS 에 더한다.
@@ -1011,15 +1011,7 @@ export const KEYWORDS: { label: string; type: CaseType | 'Study' }[] = [
 ]
 
 // ── 검색 ────────────────────────────────────────────────────────────────
-// 사례마다 한 번만 만들어 둔다 — 검색어가 바뀔 때마다 다시 이어 붙이지 않게
-const haystacks = new Map(
-  CASES.map((item) => [item.slug, normalize([item.title, item.description, item.tags.join(' '), item.keywords].join(' '))]),
-)
-
-/** 공백으로 나눈 모든 단어가 제목·설명·태그·검색어 어딘가에 들어 있으면 일치. 띄어쓰기·대소문자·문장부호는 따지지 않는다(searchText.ts) */
-export function matchesQuery(item: PortfolioCase, query: string) {
-  return containsAllTerms(haystacks.get(item.slug) ?? '', query)
-}
+// 검색 결과는 search.ts 에서 찾는다. 여기는 자동완성만 둔다.
 
 export interface Suggestion {
   text: string

@@ -10,7 +10,8 @@
 |---|---|---|---|
 | [T-001](T-001-search-baseline.md) | 검색 베이스라인 — 검색어 3개 중 2개가 0건 (F-007 S0) | [주의] | 2026-10-26 |
 | [T-002](T-002-search-normalize.md) | "디자인시스템"이 0건 — 띄어쓰기·표기 차이 정규화 (F-007 S1) | [통과] | 2026-10-26 |
+| [T-003](T-003-search-index-body.md) | "웨이팅"·"노션으로 복습"이 0건 — 본문 검색·조사 떼기·역색인 (F-007 S2) | [주의] | 2026-10-26 |
 
-💡 Admin_Docs를 도입하기 전의 트러블 사례는 포트폴리오 Front·Back 사례(`portfolio/caseDetails.ts`)에 있어요.
+💡 Admin_Docs를 도입하기 전의 트러블 사례는 포트폴리오 Front·Back 사례(`portfolio/caseStories.ts`)에 있어요.
 
 최종 수정: 2026-10-26

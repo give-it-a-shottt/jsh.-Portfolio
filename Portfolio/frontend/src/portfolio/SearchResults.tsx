@@ -1,12 +1,12 @@
 import screenshotPlaceholder from './assets/screenshot-placeholder.webp'
-import { CASES, KEYWORDS, matchesQuery, type PortfolioCase } from './data'
-import { rankCases } from './rank'
+import { KEYWORDS, type PortfolioCase } from './data'
 import { SearchIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
 import NoteCard from './NoteCard'
 import NoteMeta from './NoteMeta'
-import { appliedCases, matchesNote, noteHref, NOTES, type StudyNote } from './notes'
+import { appliedCases, noteHref, type StudyNote } from './notes'
 import { searchHref, type ResultTab } from './routes'
+import { search } from './search'
 
 const TABS: { tab: ResultTab; label: string }[] = [
   { tab: 'all', label: '전체' },
@@ -167,10 +167,8 @@ interface SearchResultsProps {
 }
 
 export default function SearchResults({ query, tab }: SearchResultsProps) {
-  // 레벨 높은 사례부터 — 기준은 rank.ts
-  const matched = rankCases(CASES.filter((item) => !query || matchesQuery(item, query)))
-  // 노트는 최신순(notes.ts)
-  const matchedNotes = NOTES.filter((note) => !query || matchesNote(note, query))
+  // 사례는 레벨 높은 것부터(rank.ts), 노트는 최신순(notes.ts) — 찾는 규칙은 search.ts
+  const { cases: matched, notes: matchedNotes } = search(query)
   // Front · Back · Design 탭은 그 분야 사례 아래에 같은 분야 노트를 잇는다. Study 탭은 분야 구분 없이 전체
   const casesOf = (tab: ResultTab) => matched.filter((item) => item.type.toLowerCase() === tab)
   const notesOf = (tab: ResultTab) => matchedNotes.filter((note) => note.area.toLowerCase() === tab)

@@ -2,7 +2,7 @@ import { CASES, getSuggestions, type CaseType, type PortfolioCase, type Suggesti
 import { BACK_NOTES } from './noteData/back'
 import { DESIGN_NOTES } from './noteData/design'
 import { FRONT_NOTES } from './noteData/front'
-import { containsAllTerms, normalize } from './searchText'
+import { normalize } from './searchText'
 
 // 공부 노트(Study) — 노션 학습노트를 직접 골라 요약해 옮긴다. 노션 원문 링크는 두지 않는다.
 // 사례(CASES)와 따로 두고, 실제로 화면·코드에 쓴 경우에만 applied 로 사례와 잇는다. 억지로 잇지 않는다.
@@ -86,11 +86,4 @@ export function getAllSuggestions(query: string, limit = 6): Suggestion[] {
   return [...fromCases, ...fromNotes].slice(0, limit)
 }
 
-const haystacks = new Map(
-  NOTES.map((note) => [note.slug, normalize([note.title, note.summary, note.points.join(' '), note.tags.join(' '), note.keywords].join(' '))]),
-)
-
-/** 사례 검색(matchesQuery)과 같은 규칙 — 모든 단어가 어딘가에 들어 있으면 일치 */
-export function matchesNote(note: StudyNote, query: string) {
-  return containsAllTerms(haystacks.get(note.slug) ?? '', query)
-}
+// 노트 검색은 사례와 함께 search.ts 에서 한다(본문까지)

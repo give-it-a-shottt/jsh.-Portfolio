@@ -31,6 +31,6 @@
 
 - 💡 프론트는 **Vite 앱 하나**예요. 프로젝트마다 주소의 `#` 뒤 첫 마디로 나뉘어요. 자세한 내용은 [architecture.md](architecture.md), [D-001](../03_Decisions/D-001-single-vite-hash-routing.md)에 있어요.
 - 앞으로(사용자 구술 정리): remind·PlanForMe 디자인 페이지를 같은 방식으로 추가할 수 있어요. Accio와 마에스트로는 별도 서비스로 분리하고, 이 지도에는 디자인 사례와 링크만 남아요([D-001](../03_Decisions/D-001-single-vite-hash-routing.md)).
-- 사례 데이터: `portfolio/data.ts`(목록), `portfolio/caseDetails.ts`(Front·Back 상세), `portfolio/noteData/`(공부 노트)
+- 사례 데이터: `portfolio/data.ts`(목록), `portfolio/caseStories.ts`(Front·Back 상세 글), `portfolio/caseDetails.ts`(Front·Back 코드), `portfolio/noteData/`(공부 노트)
 
-최종 수정: 2026-10-25 · 관련: D-001, F-001~F-005
+최종 수정: 2026-10-26 · 관련: D-001, F-001~F-005, F-007

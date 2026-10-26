@@ -1,4 +1,5 @@
-// Front·Back 사례 상세 — 문제 → 해결 포인트 → 결과 → 실제 코드. 목록 정보(제목·태그·레벨)는 data.ts 에 있다.
+// Front·Back 사례 상세 — 사용 기술과 실제 코드, 팀 프로젝트 소개. 목록 정보(제목·태그·레벨)는 data.ts,
+// 문제 → 해결 포인트 → 결과 글은 caseStories.ts 에 있다(검색이 본문까지 찾도록 첫 화면에서 받는다).
 // 코드는 따로 복사해 두지 않고 저장소 파일을 원문(?raw)으로 불러와 줄 범위만 잘라 보여준다.
 // 원본 파일을 고쳐 줄이 밀리면 여기 lines 도 같이 고친다.
 // 이 파일은 상세 화면을 열 때만 받는다(PortfolioApp 의 lazy) — 코드 원문이 첫 화면 용량에 들어가지 않는다.
@@ -80,12 +81,6 @@ export interface TeamProject {
 }
 
 export interface CaseDetail {
-  /** 무엇이 문제였나 */
-  problem: string
-  /** 어떻게 풀었나 — 번호 붙은 카드로 보여준다 */
-  points: { title: string; body: string }[]
-  /** 그래서 무엇이 달라졌나 */
-  result?: string
   stack: string[]
   code: CodeSample[]
   team?: TeamProject
@@ -94,27 +89,6 @@ export interface CaseDetail {
 export const CASE_DETAILS: Record<string, CaseDetail> = {
   // ── Front ──────────────────────────────────────────────────────────────
   maestro: {
-    problem:
-      '여행 일정은 짜 두어도 당일에 비가 오거나, 속이 더부룩하거나, 줄이 너무 길면 틀어진다. 그 자리에서 다시 검색하면 늦으니, 상황이 생겼을 때 버튼 하나로 바로 대안을 꺼낼 수 있어야 했다.',
-    points: [
-      {
-        title: '미리 다 찾아 두기',
-        body: '‘지휘 시작’을 누르면 끼니마다 상황 6개의 대안을 한 번에 받아 둔다. 당일에는 서버를 다시 부르지 않고 바로 보여준다.',
-      },
-      {
-        title: '새로고침해도 그대로',
-        body: '만든 악보를 localStorage 에 저장하고 useSyncExternalStore 로 화면에 연결했다. 일정이 바뀌면 예전 악보는 맞지 않으니 비우고, 저장소를 못 쓰는 환경에서도 이번 방문 동안은 동작한다.',
-      },
-      {
-        title: '문장으로 상황 고르기',
-        body: '‘직접 말하기’에 “여기 너무 비싸”처럼 적으면 문장 속 낱말로 상황을 찾는다. ‘비싸’가 ‘비’에 걸리지 않도록 예산부터 보는 순서로 두었다.',
-      },
-      {
-        title: '열린 시트도 주소에',
-        body: '지금 끼니와 열린 상황을 주소(?meal=…&s=…)에 담아, 뒤로가기로 시트를 닫을 수 있게 했다.',
-      },
-    ],
-    result: '당일에는 네트워크를 기다리지 않고 상황 버튼을 누르는 즉시 대안 3곳이 뜬다.',
     stack: ['React', 'TypeScript', 'Tailwind CSS', 'motion', 'FastAPI'],
     code: [
       {
@@ -134,26 +108,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   accio: {
-    problem:
-      '“USB 여러 개 꽂는 거”처럼 상품 이름을 모르는 사람도 원하는 물건을 찾게 하는 쇼핑몰이다. 홈·목록·상세·AI 대화·장바구니·마이페이지·주문 조회·고객센터까지 화면이 많고 반응형도 맞춰야 해서, 화면마다 값을 따로 정하면 금방 어긋났다.',
-    points: [
-      {
-        title: '토큰 밖의 값은 쓸 수 없게',
-        body: 'Tailwind @theme 에 글자 크기·굵기·색·모서리를 토큰으로 정의하고 기본 유틸리티는 지웠다. 문서에 없는 값은 클래스로 쓸 수 없어서 화면 사이 값이 어긋나지 않는다.',
-      },
-      {
-        title: '반응형은 모바일부터',
-        body: '같은 리스트 아이템도 모바일 → 태블릿 → 데스크톱 스케일을 정해 두고 단계별로 키웠다.',
-      },
-      {
-        title: '계산 값은 상태로 두지 않기',
-        body: '장바구니의 결제할 상품·할인·배송비·합계는 따로 저장하지 않고 매번 계산한다. 수량을 바꾸거나 지워도 숫자가 어긋날 틈이 없다.',
-      },
-      {
-        title: '보이지 않는 사용자도',
-        body: '체크박스는 진짜 input 을 숨겨 두고 모양만 그려 키보드·화면 읽기를 살렸고, 주문 단계는 aria-current 로 지금 단계를 알린다.',
-      },
-    ],
     stack: ['React', 'TypeScript', 'Tailwind CSS v4', 'Vite'],
     code: [
       {
@@ -220,30 +174,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     },
   },
   'search-portfolio': {
-    problem:
-      '작은 작업까지 다 실으면 정작 중요한 작업이 묻히고, 몇 개만 고르면 한 일을 다 보여줄 수 없었다. 보는 사람은 대부분 위의 몇 개만 읽는다.',
-    points: [
-      {
-        title: '다 싣고 순서로 말하기',
-        body: '사례마다 화면에 보이지 않는 레벨(1~3)을 매기고, 결과를 레벨 → 최신순으로 정렬한다. 레벨 기준은 코드 주석에 적어 두었다.',
-      },
-      {
-        title: '검색 상태는 주소에',
-        body: '검색어와 탭을 #/search?q=…&tab=… 에 담아, 결과를 링크로 공유하고 뒤로가기로 돌아올 수 있다.',
-      },
-      {
-        title: '필요할 때 받기',
-        body: 'Accio·마에스트로 같은 프로젝트와 이 상세 화면은 lazy 로 나눴다. 프로젝트가 늘어도 포트폴리오 첫 화면은 자기 코드만 받는다.',
-      },
-      {
-        title: '코드는 저장소에서 그대로',
-        body: '상세 화면의 코드는 따로 복사해 두지 않고 저장소 파일 원문을 불러와 줄 범위만 잘라 보여준다. 복사본이 원본과 달라질 일이 없다.',
-      },
-      {
-        title: '키보드로도',
-        body: "어디서든 '/' 를 누르면 검색창으로 가고, 자동완성은 화살표로 고른다.",
-      },
-    ],
     stack: ['React 19', 'TypeScript', 'Tailwind CSS v4', 'motion', 'Vite'],
     code: [
       {
@@ -262,22 +192,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'maestro-wake': {
-    problem:
-      '마에스트로 백엔드는 Render 무료 서버에 있어서 15분 동안 요청이 없으면 잠들고, 다음 첫 요청에 1분쯤 걸린다. 처음 들어온 사람은 버튼을 눌러도 반응이 없어 고장 난 줄 알게 된다.',
-    points: [
-      {
-        title: '들어오자마자 미리 깨우기',
-        body: '마에스트로에 들어오면 /health 를 먼저 불러, 사용자가 일정을 고르는 동안 서버가 깨어나게 했다. 이미 깨우는 중이면 다시 보내지 않는다.',
-      },
-      {
-        title: '늦을 때만 안내',
-        body: '첫 응답 전에 요청이 2.5초를 넘기면 ‘서버를 깨우는 중’ 안내를 띄운다. 한 번 응답을 받은 뒤의 느린 요청은 서버가 잠든 게 아니라서 안내하지 않는다.',
-      },
-      {
-        title: '화면 읽기 프로그램에도',
-        body: '안내 영역은 role="status" 로 두어 화면 읽기 프로그램도 읽어 준다.',
-      },
-    ],
     stack: ['React', 'TypeScript'],
     code: [
       {
@@ -297,26 +211,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'accio-v1': {
-    problem:
-      'Accio 팀 프로젝트(v1)는 서버와 데이터 서버가 닫혀 더 이상 들어가 볼 수 없었다. 다시 만든 버전만 보여주면 팀 프로젝트 당시의 실제 결과물을 확인할 방법이 없었다.',
-    points: [
-      {
-        title: '원본의 목 모드로 빌드',
-        body: '원본 프론트에 들어 있던 목 모드로 빌드해, 서버 없이도 화면이 돈다.',
-      },
-      {
-        title: '하위 경로에 붙이기',
-        body: 'base 를 /accio-v1/ 로 빌드해 포트폴리오 public 아래에 두고, Accio 사례에서 새 탭으로 연다.',
-      },
-      {
-        title: '비밀값은 저장소 밖에',
-        body: '원본 소스는 백엔드·.env 가 섞여 있어 git 에서 빼고 빌드 결과만 커밋했다. 다시 빌드하는 순서는 README 에 남겼다.',
-      },
-      {
-        title: 'Git Bash 경로 변환 함정',
-        body: 'Git Bash 가 /accio-v1/ 을 윈도 경로로 바꿔 버려서 MSYS_NO_PATHCONV=1 을 붙여 빌드한다.',
-      },
-    ],
     stack: ['Vite', 'React'],
     code: [
       {
@@ -329,27 +223,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'planforme-activity-state': {
-    problem:
-      'PlanForMe 는 플랜을 3단계(유형 → 조건 → 계산 결과)로 만든다. 플랜을 등록해 홈으로 간 뒤 다시 +를 누르면 1단계가 아니라 방금 등록한 플랜의 3단계 화면이 그대로 나왔고, 등록 버튼은 회색으로 막혀 있었다. 오류 메시지도 없어 원인이 보이지 않았다.',
-    points: [
-      {
-        title: '원인은 화면 보관',
-        body: 'Next.js 16 은 Cache Components 가 켜져 있으면 떠난 화면을 지우지 않고 React <Activity> 로 숨겨 둔다(최대 3개). step = 3, saving = true 같은 상태가 그대로 남아 있다가 다시 보였다.',
-      },
-      {
-        title: '상태마다 유지·초기화 정하기',
-        body: '‘화면을 떠나면 상태가 사라진다’는 가정을 버렸다. 쓰던 폼은 남기고, 끝난 폼과 열린 시트는 비우는 것으로 상태마다 정했다.',
-      },
-      {
-        title: '끝났을 때는 이벤트에서 직접',
-        body: '등록 성공과 X 닫기 핸들러에서 reset() 으로 단계와 폼을 비운다. 뒤로가기로 잠깐 나갔다 오면 쓰던 내용은 그대로 남는다. Next.js 공식 가이드(Preserving UI state)가 권하는 방식이다.',
-      },
-      {
-        title: '바텀시트는 숨겨질 때 닫기',
-        body: '진행량 입력·재계산 시트는 useLayoutEffect 정리 함수에서 닫는다. 화면이 숨겨질 때 정리 함수가 실행돼, 돌아왔을 때 시트가 열린 채로 남지 않는다.',
-      },
-    ],
-    result: '등록하거나 닫은 뒤에는 항상 1단계부터 시작하고, 작성 중 잠깐 나갔다 온 내용은 그대로 남는다.',
     stack: ['Next.js 16', 'React 19', 'TypeScript'],
     code: [
       {
@@ -371,23 +244,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'planforme-stale-response': {
-    problem:
-      '캘린더에서 다른 날짜를 누르면 새 데이터가 오기 전까지 이전 날짜의 할 일이 그대로 보였다. 잠깐이지만 17일 제목 아래에 16일의 할 일이 떠, 틀린 정보를 보여주는 셈이었다.',
-    points: [
-      {
-        title: '무엇에 대한 결과인지 함께 저장',
-        body: '공통 데이터 훅 useApi 가 마지막 응답만 기억하던 것을, 요청 key(예: tasks-2026-10-17)와 함께 저장하도록 바꿨다.',
-      },
-      {
-        title: 'key 가 다르면 없는 데이터로',
-        body: '지금 key 와 저장된 key 가 다르면 data 를 null 로 보고 로딩 스켈레톤을 보여준다. 늦게 도착한 이전 요청의 응답은 취소 플래그로 버린다.',
-      },
-      {
-        title: '새로고침은 데이터를 유지',
-        body: '같은 key 로 다시 불러오는 reload() 는 기존 목록을 보여 준 채 새로 고친다. 할 일을 체크할 때마다 목록이 깜빡이지 않는다.',
-      },
-    ],
-    result: '날짜를 바꾸면 바로 스켈레톤이 뜨고, 그 날짜의 할 일만 보인다.',
     stack: ['Next.js 16', 'React 19', 'TypeScript'],
     code: [
       {
@@ -411,27 +267,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
 
   // ── Back ───────────────────────────────────────────────────────────────
   'maestro-quota': {
-    problem:
-      '해커톤에서 쓸 수 있는 헤이유미 요청은 하루 70번이었다. 끼니마다 상황 6개(더부룩함·비·기분·웨이팅·예산·피로)의 대안을 상황별로 검색하면 끼니 하나에 6번, 세 끼 일정이면 18번이 나가 일정 몇 개만 만들어도 한도가 끝난다.',
-    points: [
-      {
-        title: '끼니마다 검색은 한 번',
-        body: '그 시각에 여는 곳을 추천순으로 반경 1km, 최대 100곳까지 한 번에 받는다. 요금이 요청 단위라 많이 받아도 값이 같다.',
-      },
-      {
-        title: '상황 조건은 서버에서 판정',
-        body: '상황마다 유미 필터 이름 그대로 조건을 적고, 받은 매장 데이터로 직접 맞는지 본다. 가격처럼 유미에 필터가 없는 조건은 함수(accept)로 따로 적었다.',
-      },
-      {
-        title: '끼니는 동시에',
-        body: '끼니별 계산을 asyncio.gather 로 함께 돌려, 끼니가 늘어도 기다리는 시간은 가장 느린 끼니 하나만큼이다.',
-      },
-      {
-        title: '만든 결과는 다시 부르지 않기',
-        body: '프론트는 받은 악보를 브라우저에 저장해, 새로고침해도 유미를 다시 부르지 않는다.',
-      },
-    ],
-    result: '유미 요청 수가 상황 수와 상관없이 끼니마다 검색 1번(+ 처음 보는 동네 1번)으로 고정됐다.',
     stack: ['Python', 'FastAPI', 'asyncio', 'Pydantic', 'pytest'],
     code: [
       {
@@ -451,27 +286,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'maestro-mock-real': {
-    problem:
-      '키를 받기 전에는 실제 API 로 개발을 시작할 수 없었고, 하루 한도가 작아 개발·테스트에 실제 API 를 쓰기도 아까웠다. 발표 도중 한도를 다 쓰거나 API 가 멈추면 시연이 끊길 위험도 있었다.',
-    points: [
-      {
-        title: '인터페이스 하나, 구현 둘',
-        body: 'YumiClient 를 Protocol 로 정의하고, mock(fixtures JSON)과 real(HTTP)이 같은 메서드를 갖추게 했다. 라우터·서비스는 인터페이스만 보고 짜서, 바꿔 끼워도 고칠 곳이 없다.',
-      },
-      {
-        title: 'YUMI_MODE 하나로 전환',
-        body: 'FastAPI Depends 로 클라이언트를 주입하고 설정값 하나로 mock ↔ real 을 고른다. 공개 사이트는 mock 으로 두어 유미를 한 번도 부르지 않는다.',
-      },
-      {
-        title: 'mock 도 진짜처럼',
-        body: '을지로·성수 가상 매장 29곳으로 거리·필터·추천순까지 흉내 내서, 키 없이도 화면을 끝까지 만들 수 있었다.',
-      },
-      {
-        title: '테스트도 같은 구조로',
-        body: '테스트는 응답이 0.2초 만에 오는 mock 을 dependency_overrides 로 끼워, 실제 네트워크 없이 돈다.',
-      },
-    ],
-    result: '키가 없을 때도, 한도를 다 썼을 때도 환경변수 하나만 바꾸면 서비스가 계속 돈다.',
     stack: ['Python', 'FastAPI', 'Pydantic Settings', 'pytest'],
     code: [
       {
@@ -496,27 +310,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'maestro-owner-sim': {
-    problem:
-      '헤이유미의 실시간 문의(“지금 웨이팅 얼마나 돼요?”)와 예약은 실제 가게 사장님 앱으로 푸시가 간다. 검색은 real 로 확인해야 했지만, 이 기능까지 real 로 돌리면 개발하고 발표하는 동안 실제 가게에 가짜 문의가 쌓인다.',
-    points: [
-      {
-        title: '검색은 진짜, 사장님께 가는 기능은 흉내',
-        body: 'real 클라이언트 안에 시뮬레이터를 하나 두고 문의·예약 메서드만 그쪽으로 넘겼다. 실제 매장 id 가 들어와도 받도록 accept_any_place 옵션을 더했다.',
-      },
-      {
-        title: '흉내라는 걸 숨기지 않기',
-        body: '응답에 simulated=True 를 붙여, 프론트가 체험용 답이라는 걸 알 수 있게 했다.',
-      },
-      {
-        title: '답을 기다리는 롱폴링',
-        body: '문의 결과는 wait 초 동안 답을 기다렸다가 돌려준다. 답이 몇 초 뒤에 오는 것처럼 만들어 대기 → 답변 흐름을 그대로 체험할 수 있다.',
-      },
-      {
-        title: '같은 질문은 다시 묻지 않기',
-        body: '같은 매장·주제에 이미 받은 답이 있으면 새로 묻지 않고, 재사용 표시(reused)와 함께 그 답을 돌려준다.',
-      },
-    ],
-    result: '실제 가게에는 아무것도 보내지 않으면서, 문의 → 대기 → 답변 흐름을 시연에서 그대로 보여줄 수 있었다.',
     stack: ['Python', 'FastAPI', 'asyncio'],
     code: [
       {
@@ -536,30 +329,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'maestro-api-resilience': {
-    problem:
-      '헤이유미 API 를 실제로 불러 보니 추천순 검색은 10초를 넘기기도 했고, 요청마다 남은 한도가 1씩 줄었다. 악보 하나를 만들 때 검색이 여러 개 동시에 나가는데, 실패를 그대로 두면 사용자는 이유 모를 오류만 보게 된다.',
-    points: [
-      {
-        title: '실측으로 정한 타임아웃',
-        body: '느린 검색에 맞춰 타임아웃을 20초로 잡고, 시간 초과는 한 번만 더 시도한 뒤 504 로 알린다.',
-      },
-      {
-        title: '429 는 기다릴 만할 때만',
-        body: 'Retry-After 가 5초 이하면 기다렸다 한 번 더 보내고, 몇 시간짜리(하루 한도 소진)면 기다리지 않고 바로 알린다.',
-      },
-      {
-        title: '캐시와 동시 요청 제한',
-        body: '같은 경로·파라미터 요청은 10분 동안 캐시해 한도를 아끼고, 세마포어로 동시에 나가는 요청을 4개로 묶었다.',
-      },
-      {
-        title: '키는 헤더로, 이상한 데이터는 건너뛰기',
-        body: 'API 키는 주소가 아니라 Authorization 헤더에 실어 로그에 남지 않게 했다. 모양이 다른 매장 하나 때문에 검색 전체가 실패하지 않도록 그 매장만 건너뛴다.',
-      },
-      {
-        title: '오류를 안내 문구로',
-        body: '유미·서비스 예외를 {code, message} 한 모양으로 바꿔, 프론트가 코드별로 안내를 띄운다.',
-      },
-    ],
     stack: ['Python', 'httpx', 'asyncio', 'FastAPI'],
     code: [
       {
@@ -578,22 +347,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'maestro-trust-rank': {
-    problem:
-      '유미 데이터에는 매장마다 폐업 신호, 교차검증 신뢰도(confidence), 정보 최근성(freshness)이 있다. 추천 순서를 그대로 쓰면 폐업이 의심되거나 정보가 오래된 매장이 대안 맨 위에 올라올 수 있었다.',
-    points: [
-      {
-        title: '폐업 신호는 빼기',
-        body: '폐업 가능성 표시나 폐업 신호가 있으면 메인·대안 어디에도 넣지 않는다.',
-      },
-      {
-        title: '의심스러운 곳은 빼지 말고 뒤로',
-        body: '신뢰도 0.6, 최근성 0.5보다 낮으면 뒤로 미룬다. 빼 버리면 상황에 맞는 후보가 모자랄 수 있어서다.',
-      },
-      {
-        title: '원래 순서는 지키기',
-        body: '의심 점수로만 정렬해, 같은 점수끼리는 유미 추천 순서가 그대로 남는다(안정 정렬).',
-      },
-    ],
     stack: ['Python'],
     code: [
       {
@@ -606,27 +359,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'free-tier-infra': {
-    problem:
-      '포트폴리오의 데모는 무료 플랜 위에서 돈다. Render 무료 서버는 15분 동안 요청이 없으면 잠들고, Supabase 무료 DB 는 1주일 동안 쓰지 않으면 일시정지된다. 보는 사람이 언제 들어올지 모르니 그대로 두면 데모가 멈춰 있을 수 있다.',
-    points: [
-      {
-        title: '배포를 코드로',
-        body: 'Render 블루프린트에 서버 설정을 남겨, 그 백엔드 폴더(rootDir)가 바뀔 때만 다시 배포한다. 키 같은 비밀값은 저장소에 두지 않고 대시보드에서 받는다.',
-      },
-      {
-        title: '공개 사이트는 mock 으로',
-        body: '공개 배포는 YUMI_MODE=mock 으로 두어 유미 한도를 쓰지 않고, 확인할 때만 real 로 바꾼다.',
-      },
-      {
-        title: 'DB 는 사흘마다 깨우기',
-        body: 'GitHub Actions 크론이 사흘마다 Accio 백엔드의 /health/db 를 불러 DB 에 SELECT 1 을 보낸다. 잠든 서버가 깨는 시간을 생각해 120초까지 기다리고 두 번 더 시도한다.',
-      },
-      {
-        title: '준비 전에는 조용히 건너뛰기',
-        body: '주소 변수가 없으면 실패하지 않고 건너뛰어, 백엔드를 배포하기 전에도 워크플로가 빨간불을 띄우지 않는다.',
-      },
-    ],
-    result: '마에스트로 서버는 이 블루프린트로 배포했다. DB 깨우기는 Accio 백엔드를 배포하면 바로 켜지도록 준비해 두었다.',
     stack: ['Render', 'GitHub Actions', 'Supabase', 'FastAPI', 'SQLAlchemy'],
     code: [
       {
@@ -651,27 +383,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'planforme-replan-overdue': {
-    problem:
-      'PlanForMe 의 핵심은 할 일을 덜 하거나 더 했을 때 남은 분량을 남은 날짜로 다시 나누는 재계산(Re-plan)이다. 그런데 진행량을 적게 입력하고 “네, 다시 계산해 주세요”를 눌러도 홈의 “밀린 분량이 있어요” 배너가 사라지지 않았다. 다시 나눠 놓고도 여전히 밀렸다고 말하는 셈이었다.',
-    points: [
-      {
-        title: '원인은 지우지 않는 기록',
-        body: '‘밀림’을 오늘 이전 + 미완료인 할 일로 셌다. 재계산은 남은 분량만 다시 나누고 지난 기록은 그대로 두는데(기획 의도), 그 기록이 영원히 밀림으로 남았다.',
-      },
-      {
-        title: '기록 대신 기준 시점을 저장',
-        body: '플랜에 마지막 재계산 시작일(rebased_on)을 두고, 그날 이후의 미완료만 밀림으로 센다. 지난 기록은 지우지 않아 플랜 상세의 수행 기록에는 ‘미완료’로 그대로 남는다.',
-      },
-      {
-        title: '어디서부터 다시 나눌지',
-        body: '오늘 할 일을 이미 끝냈으면 내일부터, 아니면 오늘부터 다시 나눈다. 그 뒤 날짜 중 이미 끝낸 날은 남은 유효 일수에서 뺀다.',
-      },
-      {
-        title: '회귀 테스트로 고정',
-        body: '사흘 전 시작한 강의 플랜이 밀림에 있다가 재계산 후 빠지는지 API 로 확인하는 테스트를 더했다.',
-      },
-    ],
-    result: '재계산을 누르면 배너가 바로 사라지고, 지난 기록은 지워지지 않고 남는다.',
     stack: ['Python', 'FastAPI', 'SQLAlchemy 2', 'pytest'],
     code: [
       {
@@ -701,27 +412,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'planforme-quota-logic': {
-    problem:
-      '총분량과 마감일만 넣으면 하루 할당량을 계산해 주는 게 PlanForMe 의 핵심이다. 하루 3.4강은 들을 수 없으니 올림해야 하고, 쉬는 요일은 빼야 하고, 강의가 하루 180분을 넘으면 종료일을 늘리라고 안내해야 한다. 이 규칙이 화면이나 DB 코드에 섞이면 어디서 틀렸는지 찾기 어렵다.',
-    points: [
-      {
-        title: '규칙은 디자인 단계에서 먼저',
-        body: '피그마에 계산 로직 페이지를 따로 두고 유효 일수 D, 책·강의·일반 공식, 재계산 공식을 예시와 함께 적었다.',
-      },
-      {
-        title: 'DB 없는 순수 함수로',
-        body: 'planner.py 에는 날짜와 숫자만 받는 함수만 둔다. 미리보기·플랜 생성·재계산이 모두 이 함수를 불러, 같은 규칙이 두 군데에 생기지 않는다.',
-      },
-      {
-        title: '나머지는 마지막 날에 적게',
-        body: '올림(총량 ÷ D)씩 앞에서부터 나누고 남는 만큼만 마지막 날에 둔다. 100p 를 3일이면 34/34/32 이고, 0이 배정된 날은 할 일을 만들지 않는다.',
-      },
-      {
-        title: '디자인 예시가 곧 테스트',
-        body: '피그마에 적은 예시(평일 10일 → D=10, 100p/3일 → 34/34/32, 45강·15일 → 하루 3강, 남은 215p/8일 → 27p)를 그대로 pytest 로 옮겼다.',
-      },
-    ],
-    result: '기획서에 적은 계산 예시가 테스트로 계속 확인되고, 화면은 같은 함수의 결과만 보여준다.',
     stack: ['Python', 'pytest', 'FastAPI'],
     code: [
       {
@@ -742,23 +432,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'planforme-api-key': {
-    problem:
-      'PlanForMe 는 혼자 쓰는 앱이라 로그인 대신 API 키와 앱 비밀번호로 잠갔다. 그런데 배포한 뒤 api 주소의 /today 를 브라우저에서 열었더니 키 없이도 할 일 데이터가 나왔다.',
-    points: [
-      {
-        title: '“설정이 없으면 통과”의 함정',
-        body: '로컬 개발을 편하게 하려고 API_KEY 환경 변수가 없으면 검사를 건너뛰게 짰다. 배포된 api 가 이 변수를 읽지 못하자 조용히 전부 열렸다. 변수를 Production 까지 적용하고 다시 배포해 막았다.',
-      },
-      {
-        title: '키는 서버에서만 붙이기',
-        body: '브라우저는 Next.js 의 /api/* 로만 요청하고, 그 라우트 핸들러가 서버에서 X-API-Key 를 붙여 FastAPI 로 넘긴다. 키가 브라우저 코드에 들어가지 않는다.',
-      },
-      {
-        title: '막혀야 할 요청이 막히는지',
-        body: '배포 직후 키 없는 /today 는 401, 일부러 열어 둔 /health 는 200 인지 직접 열어 확인했다.',
-      },
-    ],
-    result: '키 없는 요청은 “API 키가 올바르지 않아요”(401)로 막히고, 앱에서는 그대로 동작한다.',
     stack: ['FastAPI', 'Next.js 16', 'Vercel'],
     code: [
       {
@@ -779,23 +452,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
     ],
   },
   'planforme-kst-today': {
-    problem:
-      'Vercel 서버는 UTC 로 돈다. date.today() 를 그대로 쓰면 한국 시간 오전 0시~9시에는 ‘오늘’이 하루 전 날짜가 되어, 아침에 앱을 열면 어제 할 일이 오늘 할 일로 보인다. 날짜가 전부인 플래너라 배포 전에 미리 막았다.',
-    points: [
-      {
-        title: '백엔드의 오늘은 한 곳에서',
-        body: '모든 ‘오늘’을 timeutil.py 의 today_kst() 로 구하고, Asia/Seoul 기준으로 계산한다. 시간대 데이터가 없는 Windows 에서도 돌도록 tzdata 를 함께 설치했다.',
-      },
-      {
-        title: '프론트도 같은 기준',
-        body: '브라우저의 오늘도 Intl.DateTimeFormat 에 timeZone: Asia/Seoul 을 줘서 구한다. 기기 시간대가 달라도 서버와 같은 날짜를 쓴다.',
-      },
-      {
-        title: 'build 한 날짜가 박히지 않게',
-        body: 'Next 16 은 build 때 클라이언트 컴포넌트도 미리 그려서, 렌더 중에 new Date() 를 쓰면 build 가 막힌다. useSyncExternalStore 의 서버용 값을 null 로 두어 오늘은 브라우저에서만 읽는다.',
-      },
-    ],
-    result: '서버·브라우저 어디서 계산해도 ‘오늘’이 한국 날짜 하나로 맞는다.',
     stack: ['Python', 'zoneinfo', 'Next.js 16', 'React 19'],
     code: [
       {

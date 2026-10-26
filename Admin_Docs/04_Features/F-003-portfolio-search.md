@@ -13,7 +13,7 @@
 - 데이터:
 
 ## 결과 (AI 작성 — 구현 후)
-- 위치: `Portfolio/frontend/src/portfolio/` (SearchHome, SearchResults, rank.ts, data.ts, caseDetails.ts)
+- 위치: `Portfolio/frontend/src/portfolio/` (SearchHome, SearchResults, rank.ts, data.ts, caseStories.ts, caseDetails.ts). 검색 규칙은 search.ts·searchText.ts([F-007](F-007-search-algorithm.md))
 - (리뷰할 때 채워요)
 
 ## 리뷰
@@ -23,4 +23,4 @@
 - (리뷰 후 AI 작성)
 - 답 (사용자 작성)
 
-최종 수정: 2026-10-25 · 관련: D-001
+최종 수정: 2026-10-26 · 관련: D-001, F-007

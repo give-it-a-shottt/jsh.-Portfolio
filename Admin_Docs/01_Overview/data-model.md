@@ -18,9 +18,11 @@
 | 데이터                | 파일                                                    | 핵심 타입                                                                                                                                                  |
 | --------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 사례 목록             | `portfolio/data.ts`                                     | `PortfolioCase { slug, type: Front·Back·Design, level, title, keywords, design?: DesignCase }`                                                             |
-| 사례 상세(Front·Back) | `portfolio/caseDetails.ts`                              | `CaseDetail`, `CodeSample`, `TeamProject`                                                                                                                  |
+| 사례 상세 글(Front·Back) | `portfolio/caseStories.ts`                           | `CaseStory { problem, points, result? }`. 검색이 본문까지 찾도록 첫 화면에서 받아요                                                                        |
+| 사례 상세 코드(Front·Back) | `portfolio/caseDetails.ts`                         | `CaseDetail { stack, code, team? }`, `CodeSample`, `TeamProject`. 상세를 열 때만 받아요                                                                     |
 | 공부 노트             | `portfolio/notes.ts`, `noteData/{front,back,design}.ts` | `StudyNote`. `appliedCases()`로 사례와 연결                                                                                                                |
 | 검색 순위             | `portfolio/rank.ts`                                     | `Level 1~4`, `rankCases()`                                                                                                                                 |
+| 검색                  | `portfolio/search.ts`, `portfolio/searchText.ts`        | `search(query)` → `{ cases, notes }`. 두 글자 조각 역색인 + 정규화·조사 떼기([F-007](../04_Features/F-007-search-algorithm.md))                          |
 | FLASEEK 상품          | `projects/flaseek/data.ts`                              | `Product { id, name, discount, price, original, perPiece?, rating, reviews, tags(≤2), crop, categories[], thickness?/skin?/pressure?/season?, setCount? }` |
 | Accio 상품·AI 응답    | `projects/accio/data/{catalog,detail,aiEngine}.ts`      | 목 데이터                                                                                                                                                  |
 
@@ -41,4 +43,4 @@
 - Accio 백엔드는 실제 테이블로 키워요. AI가 응답하는 AI 이커머스, AI가 실시간으로 추천하는 여행 코스 등을 만드는 게 가장 큰 도전이에요.
 - 그때는 Accio와 마에스트로를 이 레포에서 분리하고, 이 문서에는 링크만 남겨요([D-001](../03_Decisions/D-001-single-vite-hash-routing.md) 예정된 변화).
 
-최종 수정: 2026-10-25 · 관련: F-001, F-002, F-005
+최종 수정: 2026-10-26 · 관련: F-001, F-002, F-005, F-007

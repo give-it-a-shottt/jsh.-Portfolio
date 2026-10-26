@@ -1,5 +1,5 @@
-// 검색 채점기(F-007 S0) — queries.json 의 검색어를 실제 사이트 검색 코드로 돌려 점수를 낸다.
-// 사이트 코드(data.ts · notes.ts)는 이미지·?raw 를 import 하므로 Node 로 바로 못 연다. Vite 로 불러온다.
+// 검색 채점기(F-007 S0) — queries.json 의 검색어를 실제 사이트 검색 코드(search.ts)로 돌려 점수를 낸다.
+// 사이트 코드는 이미지·?raw 를 import 하므로 Node 로 바로 못 연다. Vite 로 불러온다.
 //
 //   npm run search:eval                       점수 보기 (runs/ 에 S0 가 있으면 그것과 비교)
 //   npm run search:eval -- --save S1          점수를 runs/S1.json 에 남기기
@@ -34,12 +34,12 @@ const server = await createServer({
 })
 
 try {
-  const { CASES, matchesQuery } = await server.ssrLoadModule('/src/portfolio/data.ts')
-  const { NOTES, matchesNote } = await server.ssrLoadModule('/src/portfolio/notes.ts')
-  const { rankCases } = await server.ssrLoadModule('/src/portfolio/rank.ts')
+  const { CASES } = await server.ssrLoadModule('/src/portfolio/data.ts')
+  const { NOTES } = await server.ssrLoadModule('/src/portfolio/notes.ts')
+  const { search, INDEX_STATS } = await server.ssrLoadModule('/src/portfolio/search.ts')
   const { CASE_DETAILS } = await server.ssrLoadModule('/src/portfolio/caseDetails.ts')
-  // 본문 검사도 사이트 검색과 같은 글자 규칙(S1 정규화)을 쓴다
-  const { containsAllTerms, normalize } = await server.ssrLoadModule('/src/portfolio/searchText.ts')
+  // 숨은 글 검사도 사이트 검색과 같은 글자 규칙(정규화 · 조사 떼기)을 쓴다
+  const { containsAllWords, normalize } = await server.ssrLoadModule('/src/portfolio/searchText.ts')
 
   const testSet = JSON.parse(readFileSync(join(HERE, 'queries.json'), 'utf8'))
   checkIds(testSet.queries, CASES, NOTES)
@@ -47,20 +47,22 @@ try {
   /**
    * '전체' 탭에서 보이는 순서 그대로 — SearchResults.tsx 를 따라 한다.
    * 사례 3개(NOTES_AFTER) → 노트 묶음 3개(NOTES_IN_MODULE) → 나머지 사례. 나머지 노트는 Study 탭에 있어 맨 뒤로 둔다.
-   * SearchResults 의 규칙이 바뀌면 여기도 고친다(S3 에서 검색 함수를 한 곳으로 모을 때 없앤다).
+   * SearchResults 의 규칙이 바뀌면 여기도 고친다(S3 에서 순위를 점수로 바꿀 때 없앤다).
    */
-  const search = (query) => {
-    const cases = rankCases(CASES.filter((item) => matchesQuery(item, query))).map((item) => `case:${item.slug}`)
-    const notes = NOTES.filter((note) => matchesNote(note, query)).map((note) => `note:${note.slug}`)
+  const visibleOrder = (query) => {
+    const found = search(query)
+    const cases = found.cases.map((item) => `case:${item.slug}`)
+    const notes = found.notes.map((note) => `note:${note.slug}`)
     if (notes.length === 0) return cases
     return [...cases.slice(0, 3), ...notes.slice(0, 3), ...cases.slice(3), ...notes.slice(3)]
   }
 
-  const bodies = buildBodies(CASES, NOTES, CASE_DETAILS, normalize)
-  const inBody = (id, query) => containsAllTerms(bodies.get(id) ?? '', query)
-  const rows = testSet.queries.map((item) => grade(item, search(item.query), inBody))
+  const hidden = buildHidden(CASE_DETAILS, NOTES, normalize)
+  const inHidden = (id, query) => containsAllWords(hidden.get(id) ?? '', query)
+  const rows = testSet.queries.map((item) => grade(item, visibleOrder(item.query), inHidden))
   const report = summarize(rows)
 
+  console.log(`\n색인: 문서 ${INDEX_STATS.docs}개 · 두 글자 조각 ${INDEX_STATS.grams}개`)
   printReport(report, rows, loadBase(baseName))
   if (saveAs) save(saveAs, report, rows)
 } finally {
@@ -70,7 +72,7 @@ try {
 // ── 채점 ────────────────────────────────────────────────────────────────
 
 /** 검색어 하나의 점수. relevant 가 비어 있으면 '아무것도 안 나와야 하는' 검색어다 */
-function grade(item, results, inBody) {
+function grade(item, results, inHidden) {
   const { relevant } = item
   const ranks = relevant.map((id) => results.indexOf(id) + 1).filter((rank) => rank > 0)
   const firstRank = ranks.length ? Math.min(...ranks) : 0
@@ -86,8 +88,8 @@ function grade(item, results, inBody) {
     hit: firstRank > 0 && firstRank <= TOP_K,
     reciprocal: firstRank ? 1 / firstRank : 0,
     recall: relevant.length ? (relevant.length - missed.length) / relevant.length : 1,
-    // 놓친 정답 중, 검색어 낱말이 전부 본문(상세·배운 것)에는 들어 있던 것 — 본문을 안 뒤져서 놓친 것
-    missedInBody: missed.filter((id) => inBody(id, item.query)),
+    // 놓친 정답 중, 검색이 아직 안 보는 글(코드 설명 · 팀 소개 · 노트의 써먹은 곳)에는 낱말이 다 있던 것
+    missedInHidden: missed.filter((id) => inHidden(id, item.query)),
     missed,
   }
 }
@@ -116,30 +118,23 @@ function summarize(rows) {
   }
 }
 
-// ── 본문 ────────────────────────────────────────────────────────────────
+// ── 숨은 글 ─────────────────────────────────────────────────────────────
 
-/** 지금 검색이 보지 않는 글까지 합친 '본문' — 사례 상세(문제·해결·결과), 디자인 시안 설명, 노트의 배운 것 */
-function buildBodies(cases, notes, details, normalize) {
-  const bodies = new Map()
-  for (const item of cases) {
-    const detail = details[item.slug]
-    const design = item.design
-    const parts = [item.title, item.description, item.tags.join(' '), item.keywords]
-    if (detail) parts.push(detail.problem, detail.result ?? '', ...detail.points.flatMap((p) => [p.title, p.body]))
-    if (design) {
-      parts.push(design.problem)
-      const groups = [design.variants, design.screens, design.mobileScreens, design.system, design.story, ...(design.sections ?? []).map((s) => s.items)]
-      for (const group of groups) for (const v of group ?? []) parts.push(v.label, v.note)
+/** 사이트 검색(search.ts)이 아직 보지 않는 글 — 사례의 사용 기술·코드 설명·팀 소개, 노트의 '써먹은 곳' */
+function buildHidden(details, notes, normalize) {
+  const hidden = new Map()
+  for (const [slug, detail] of Object.entries(details)) {
+    const parts = [detail.stack.join(' '), ...detail.code.flatMap((sample) => [sample.label, sample.note])]
+    if (detail.team) {
+      const { team } = detail
+      parts.push(team.name, team.tagline, ...team.highlights.flatMap((h) => [h.title, h.body]), ...team.demos.flatMap((d) => [d.title, d.body]), team.architecture.caption)
     }
-    bodies.set(`case:${item.slug}`, normalize(parts.join(' ')))
+    hidden.set(`case:${slug}`, normalize(parts.join(' ')))
   }
   for (const note of notes) {
-    const parts = [note.title, note.summary, note.points.join(' '), note.tags.join(' '), note.keywords]
-    parts.push(...note.learned.flatMap((group) => [group.title, ...group.items]))
-    for (const p of note.practice ?? []) parts.push(p.caption, p.how)
-    bodies.set(`note:${note.slug}`, normalize(parts.join(' ')))
+    hidden.set(`note:${note.slug}`, normalize((note.applied ?? []).flatMap((a) => [a.learned, a.used]).join(' ')))
   }
-  return bodies
+  return hidden
 }
 
 // ── 출력 · 저장 ─────────────────────────────────────────────────────────
@@ -212,8 +207,8 @@ function printReport(report, rows, base) {
       ? `${row.total}건 (0건이어야 함)`
       : `${row.total}건 · 첫 정답 ${row.firstRank ? `${row.firstRank}위` : '없음'} · 찾은 비율 ${pct(row.recall).trim()}`
     console.log(`${mark} ${row.id.padEnd(4)} [${row.category}] "${row.query}" — ${where}`)
-    if (row.missedInBody.length) console.log(`       본문에만 있어서 놓침: ${row.missedInBody.join(', ')}`)
-    const elsewhere = row.missed.filter((id) => !row.missedInBody.includes(id))
+    if (row.missedInHidden.length) console.log(`       검색이 안 보는 글(코드 설명 등)에만 있어서 놓침: ${row.missedInHidden.join(', ')}`)
+    const elsewhere = row.missed.filter((id) => !row.missedInHidden.includes(id))
     if (elsewhere.length) console.log(`       못 찾음: ${elsewhere.join(', ')}`)
     if (row.negative && row.total) console.log(`       나온 것: ${row.top.join(', ')}${row.total > TOP_K ? ' …' : ''}`)
   }
