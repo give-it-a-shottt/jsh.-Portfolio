@@ -112,6 +112,48 @@ import flOptionA from './assets/design/flaseek/plan-02-option-a.webp'
 import flOptionB from './assets/design/flaseek/plan-03-option-b.webp'
 import flOptionC from './assets/design/flaseek/plan-04-option-c.webp'
 import flComponents from './assets/design/flaseek/system-components.webp'
+import dsCover from './assets/design/jsh-ds/00-cover.webp'
+// 목록 썸네일은 가운데를 잘라 보여줘서, 제목이 있는 왼쪽만 남긴 표지
+import dsThumb from './assets/design/jsh-ds/00-thumb.webp'
+import dsIndex from './assets/design/jsh-ds/00-index.webp'
+import dsNeutral from './assets/design/jsh-ds/a01-color-neutral.webp'
+import dsSemantic from './assets/design/jsh-ds/a01-color-semantic.webp'
+import dsTheme from './assets/design/jsh-ds/a01-color-theme.webp'
+import dsBrandBlue from './assets/design/jsh-ds/a01-color-brand-blue.webp'
+import dsTypePretendard from './assets/design/jsh-ds/a02-type-pretendard.webp'
+import dsTypeNotoSans from './assets/design/jsh-ds/a02-type-noto-sans.webp'
+import dsTypeNotoSerif from './assets/design/jsh-ds/a02-type-noto-serif.webp'
+import dsSpacing from './assets/design/jsh-ds/a03-spacing.webp'
+import dsResolution from './assets/design/jsh-ds/a04-resolution.webp'
+import dsResponsiveDemo from './assets/design/jsh-ds/a04-responsive-demo.webp'
+import dsLayoutGrid from './assets/design/jsh-ds/a05-layout-grid.webp'
+import dsRadiusShadow from './assets/design/jsh-ds/a06-radius-shadow.webp'
+import dsIcon from './assets/design/jsh-ds/a07-icon.webp'
+import dsIconLibrary from './assets/design/jsh-ds/a07-icon-library.webp'
+import dsButton from './assets/design/jsh-ds/b08-button.webp'
+import dsInput from './assets/design/jsh-ds/b09-input.webp'
+import dsSelect from './assets/design/jsh-ds/b10-select.webp'
+import dsFormControl from './assets/design/jsh-ds/b11-form-control.webp'
+import dsBadgeTag from './assets/design/jsh-ds/b12-badge-tag.webp'
+import dsTooltipToast from './assets/design/jsh-ds/b13-tooltip-toast.webp'
+import dsTabAccordion from './assets/design/jsh-ds/c14-tab-accordion.webp'
+import dsPopup from './assets/design/jsh-ds/c15-popup.webp'
+import dsTableList from './assets/design/jsh-ds/c16-table-list.webp'
+import dsPagination from './assets/design/jsh-ds/c17-pagination.webp'
+import dsCard from './assets/design/jsh-ds/c18-card.webp'
+import dsImage from './assets/design/jsh-ds/c19-image.webp'
+import dsGnb from './assets/design/jsh-ds/d20-gnb.webp'
+import dsFooter from './assets/design/jsh-ds/d21-footer.webp'
+import dsDockBar from './assets/design/jsh-ds/d22-dock-bar.webp'
+import dsBillboard from './assets/design/jsh-ds/e23-billboard.webp'
+import dsLineBanner from './assets/design/jsh-ds/e24-line-banner.webp'
+import dsLoadingEmptyError from './assets/design/jsh-ds/f25-loading-empty-error.webp'
+import dsEtc from './assets/design/jsh-ds/f26-etc.webp'
+import dsPcMain from './assets/design/jsh-ds/g-pc-main.webp'
+import dsPc404 from './assets/design/jsh-ds/g-pc-404.webp'
+import dsMoMain from './assets/design/jsh-ds/g-mo-main.webp'
+import dsMoDetail from './assets/design/jsh-ds/g-mo-detail.webp'
+import dsMoEmptyCart from './assets/design/jsh-ds/g-mo-empty-cart.webp'
 import type { Level } from './rank'
 
 // 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
@@ -140,6 +182,15 @@ export interface DesignVariant {
   height?: number
 }
 
+/** 제목을 직접 붙인 화면 묶음 한 칸 — 디자인 시스템처럼 페이지가 많아 분류별로 나눠 보여줄 때 쓴다 */
+export interface DesignSection {
+  title: string
+  description: string
+  items: DesignVariant[]
+  /** 없으면 데스크톱 카드 */
+  device?: 'mobile' | 'desktop'
+}
+
 /**
  * Design 사례 — 같은 화면을 여러 안으로 고친 과정(variants), 또는 앱 전체 화면 구성(screens)과
  * 디자인 시스템(system). 대표 화면은 실제 동작하는 데모로 함께 보여준다(demos/index.ts).
@@ -153,6 +204,8 @@ export interface DesignCase {
   problem: string
   /** 참여 범위와 기여도. 있으면 상단 요약에 '참여' 줄로 보여준다 */
   role?: string
+  /** 분류별 화면 묶음. 있으면 맨 앞 칸부터 순서대로 보여준다 */
+  sections?: DesignSection[]
   /** 케이스 스터디 장표(16:9). 있으면 맨 앞 칸에 보여준다 */
   story?: DesignVariant[]
   /** 같은 화면을 고쳐 나간 시안 */
@@ -220,7 +273,7 @@ export const CASES: PortfolioCase[] = [
     type: 'Front',
     code: 'PROJECT 01',
     date: '2025.11',
-    // 대표 프로젝트 — 전체 결과 맨 위에 둔다
+    // Front 대표 프로젝트 — 맨 위에 둔다. 전체에서는 더 최신인 Design 대표(jsh-design-system) 다음
     level: 4,
     title: 'Accio — AI 자연어 검색 쇼핑몰',
     description:
@@ -486,6 +539,123 @@ export const CASES: PortfolioCase[] = [
     href: '#/case/planforme-kst-today',
   },
   // ── Design ──
+  {
+    slug: 'jsh-design-system',
+    type: 'Design',
+    code: 'DESIGN 08',
+    date: '2026.10',
+    // Design 대표 프로젝트 — Design 탭과 홈 '먼저 보면 좋은 사례' 맨 앞에 둔다
+    level: 4,
+    title: '나만의 디자인 시스템 — 쇼핑몰·서비스·기업 사이트 90%를 덮는 기준',
+    description:
+      '피그마로 만든 개인 디자인 시스템 v0.1. 컬러·타이포·간격·그리드 토큰부터 버튼·팝업·GNB·빌보드·빈 상태까지 26개 페이지로 정리하고, 컴포넌트만으로 PC·모바일 샘플 화면을 조립해 검증.',
+    metrics: [
+      { label: '페이지', value: '27장' },
+      { label: '컴포넌트', value: '149종' },
+      { label: '변수', value: '427개 · 테마 4' },
+    ],
+    tags: ['Figma', '디자인 시스템', 'Web · Mobile UI'],
+    keywords:
+      '디자인 시스템 design system 나만의 개인 토큰 변수 variables 테마 다크모드 컬러 타이포그래피 간격 그리드 반응형 브레이크포인트 라운드 그림자 아이콘 버튼 인풋 셀렉트 체크박스 배지 태그 툴팁 토스트 탭 아코디언 팝업 바텀시트 테이블 페이지네이션 카드 gnb 푸터 독바 빌보드 띠배너 로딩 빈 상태 404 컴포넌트 라이브러리 피그마',
+    image: dsThumb,
+    href: '#/case/jsh-design-system',
+    design: {
+      app: 'My Design System — 쇼핑몰·서비스·기업 사이트 90% 커버를 목표로 한 개인 디자인 시스템 (v0.1 · PC / MO · Pretendard)',
+      problem:
+        '쇼핑몰·서비스·기업 사이트에서 반복되는 화면 부품을 프로젝트마다 새로 정하지 않도록, 값은 모두 변수(토큰)로 묶고 테마 4종·글꼴 3종·라운드 3종을 모드로 바꿔 끼울 수 있게 설계했다. 수업 자료의 컴포넌트 규칙을 기준으로 삼고, 자료가 없는 부분은 국내 서비스 공통 패턴으로 채웠다. FLASEEK 리뉴얼 시안은 이 시스템 위에서 프로젝트 값만 바꿔 만들었다.',
+      sections: [
+        {
+          title: '표지 · 목차',
+          description: 'A 기초부터 G 검증까지 7개 그룹, 27개 페이지의 지도예요.',
+          items: [
+            { label: '표지', image: dsCover, note: 'v0.1 · 2026.10 · PC / MO · Pretendard — 쇼핑몰·서비스·기업 사이트 90% 커버가 목표', width: 1920, height: 1080 },
+            { label: '목차', image: dsIndex, note: '그룹 7개(기초 · 기본 · 조합 · 레이아웃 · 콘텐츠 · 상태 · 검증)와 페이지마다 완료 상태', width: 1920, height: 2455 },
+          ],
+        },
+        {
+          title: 'A. 기초 (토큰)',
+          description: '모든 컴포넌트의 재료예요. 값을 전부 변수로 만들어 모드만 바꾸면 테마·글꼴·라운드가 함께 바뀌어요.',
+          items: [
+            { label: '01 Color · Neutral', image: dsNeutral, note: '순수 그레이 11단계(50~950) + base. 글자·배경·테두리·구분선에 사용', width: 1440, height: 1326 },
+            { label: '01 Color · Semantic', image: dsSemantic, note: '성공·경고·오류·정보 4종. 색마다 배경·아이콘·글자 3단계, 브랜드와 상관없이 고정', width: 1440, height: 939 },
+            { label: '01 Color · Theme', image: dsTheme, note: '같은 토큰 이름에 모드별 값만 다른 테마 4종(Light · Ivory · Dark · Warm Dark)', width: 1440, height: 1094 },
+            { label: '01 Color · Brand Blue', image: dsBrandBlue, note: '브랜드 01 #5B8CFF — 시원하고 친근한 신뢰감. 서비스·핀테크·교육·IT 쇼핑몰용', width: 1440, height: 1863 },
+            { label: '02 Typography · Pretendard', image: dsTypePretendard, note: '폰트 4종(산스·명조·한글 보수형·영문 지오메트릭)과 크기·굵기 스케일', width: 1440, height: 3982 },
+            { label: '02 Typography · Noto Sans KR', image: dsTypeNotoSans, note: '같은 레이어에 Typography 모드만 Noto Sans KR로 바꾼 것', width: 1440, height: 4034 },
+            { label: '02 Typography · Noto Serif KR', image: dsTypeNotoSerif, note: '같은 레이어에 모드만 명조(Noto Serif KR)로 바꾼 것', width: 1440, height: 3967 },
+            { label: '03 Spacing', image: dsSpacing, note: '4는 최소 단위, 8은 주 리듬. 4배수는 전부 토큰이라 값을 직접 입력할 일이 없게', width: 1440, height: 3963 },
+            { label: '04 Resolution', image: dsResolution, note: '시안은 375 · 768 · 1440 세 개만, 나머지 너비는 구간 규칙으로. 기기 이름이 아니라 너비로 나눔', width: 1440, height: 2605 },
+            { label: '04 반응형 데모', image: dsResponsiveDemo, note: '같은 구조에 Responsive 모드만 MO · Tablet · PC — 카드 12개가 2 · 4 · 6단으로', width: 2839, height: 2020 },
+            { label: '05 Layout Grid', image: dsLayoutGrid, note: '컬럼 너비는 정하는 값이 아니라 계산되는 값 — (콘텐츠 − 거터 × (컬럼 수 − 1)) ÷ 컬럼 수', width: 1440, height: 3147 },
+            { label: '06 Radius · Shadow', image: dsRadiusShadow, note: '라운드는 브랜드 성격을 가장 크게 바꾸는 값이라 모드 3개(Default · Sharp · Round). 그림자는 떠 있다는 힌트만', width: 1440, height: 2865 },
+            { label: '07 Icon', image: dsIcon, note: 'Phosphor(MIT) 한 세트 60개 × 5스타일. 직접 그리지 않고 검증된 세트 하나로 선 두께·모서리 통일', width: 1440, height: 3652 },
+            { label: '07 Icon Library', image: dsIconLibrary, note: '아이콘 60개를 스타일 5종으로 모은 라이브러리', width: 2920, height: 960 },
+          ],
+        },
+        {
+          title: 'B. 기본 컴포넌트',
+          description: '버튼·입력·선택처럼 화면 어디에나 들어가는 부품이에요. 크기·상태를 모두 변수에 연결했어요.',
+          items: [
+            { label: '08 Button', image: dsButton, note: '스타일 6 · 사이즈 5 · 상태 6을 변수로 연결 — 테마와 라운드 모드를 바꾸면 버튼 전체가 같이 바뀜', width: 1440, height: 6067 },
+            { label: '09 Input Box', image: dsInput, note: '7가지 타입을 스타일(Line · Filled · Underline) · 라벨 위치 · 모서리 3개 축으로. 높이는 버튼과 같게', width: 1440, height: 4560 },
+            { label: '10 Select Box', image: dsSelect, note: '닫힌 칸은 Input과 같은 규칙, 목록은 PC 드롭다운 · MO 바텀시트, 날짜는 Date Picker', width: 1440, height: 4889 },
+            { label: '11 Form Control', image: dsFormControl, note: '체크박스 · 라디오 · 토글 · 수량. 칸과 글자를 한 덩어리로 눌리게 해 작은 칸도 누르기 쉽게', width: 1440, height: 3752 },
+            { label: '12 Badge · Tag', image: dsBadgeTag, note: '배지 · 칩 · 알림 숫자. 글자·배경·선을 따로 토큰으로 만들어 모든 조합이 대비 4.5 : 1 이상', width: 1440, height: 3288 },
+            { label: '13 Tooltip · Toast', image: dsTooltipToast, note: '같은 말풍선을 Tooltip(잠깐, Dark)과 Bubble(늘 떠 있는 안내, Light) 두 쓰임으로, 알림 Toast까지', width: 1440, height: 3312 },
+          ],
+        },
+        {
+          title: 'C. 조합 컴포넌트',
+          description: '기본 부품을 묶어 만든 탭·팝업·표·카드예요.',
+          items: [
+            { label: '14 Tab · Accordion', image: dsTabAccordion, note: '탭 4종(Line · Chip · Box · Segment)과 접고 펼치는 Accordion. 높이는 버튼과 같은 56 · 48 · 40 · 32', width: 1440, height: 3426 },
+            { label: '15 Popup', image: dsPopup, note: 'Alert · Layer Popup · Bottom Sheet · Full Popup · Drawer와 쓸 때 · 쓰지 말 때', width: 1440, height: 6019 },
+            { label: '16 Table · List', image: dsTableList, note: '정보 표 · 목록 · 게시형 메뉴 · 데이터 표. 가독성이 먼저, 산만한 요소는 빼기', width: 1440, height: 3937 },
+            { label: '17 Pagination · Stepper · Indicator', image: dsPagination, note: '지금 어디쯤인지 알려주는 UI — 페이지 번호 · 더보기, 진행 단계, 슬라이드 위치', width: 1440, height: 3801 },
+            { label: '18 Card · Thumbnail', image: dsCard, note: '상품 · 콘텐츠 카드와 그 안의 이미지. 실무 쇼핑몰 카드 기준', width: 1440, height: 5830 },
+            { label: '19 Image', image: dsImage, note: '이미지 넣는 원칙 6가지, 규격, 누끼 배경, 대체 이미지, 시스템 전용 3D 아이콘 레시피', width: 1440, height: 4518 },
+          ],
+        },
+        {
+          title: 'D · E. 레이아웃 · 콘텐츠 블록',
+          description: '화면의 뼈대가 되는 메뉴·푸터·하단 탭바와, 메인을 채우는 배너예요.',
+          items: [
+            { label: '20 GNB', image: dsGnb, note: '어디서든 맨 위에 붙는 메뉴 줄 — 메인 · 서브 · 검색, PC 3단', width: 1440, height: 4133 },
+            { label: '21 Footer', image: dsFooter, note: '회사 정보 · 약관 · 고객센터. 쇼핑몰 법정 표시 항목을 담아 PC 3타입 × 테마 2', width: 1440, height: 3739 },
+            { label: '22 Dock Bar', image: dsDockBar, note: 'MO 맨 아래 고정 탭 메뉴. 비슷하게 중요한 최상위 메뉴 3~5개', width: 1440, height: 3051 },
+            { label: '23 Billboard', image: dsBillboard, note: '고객과의 첫 만남인 메인 배너 — 5초 안에 각인되도록 목적 3가지부터 정리', width: 1440, height: 5918 },
+            { label: '24 Line Banner', image: dsLineBanner, note: '놓치면 안 되는 혜택 · 공지를 한 줄로 전하는 띠배너 3종', width: 1440, height: 3316 },
+          ],
+        },
+        {
+          title: 'F. 상태 · 기타',
+          description: '내용이 없거나 오는 중이거나 실패했을 때의 화면과, 자주 쓰는 작은 부품이에요.',
+          items: [
+            { label: '25 Loading · Empty · Error', image: dsLoadingEmptyError, note: '스켈레톤 · 결과 없음 · 404. 기다리는 이유와 다음에 할 일을 알려 이탈을 막음', width: 1440, height: 5340 },
+            { label: '26 ETC', image: dsEtc, note: '스크롤바 · 맨 위로 · 별점 · 경로 · 섹션 제목 · 구분선 · 아바타 · 파비콘', width: 1440, height: 3604 },
+          ],
+        },
+        {
+          title: 'G. 검증 · PC 샘플 화면',
+          description: '08~26 컴포넌트 인스턴스만으로 조립한 화면이에요. 원본을 고치면 함께 바뀌는지, 크기·여백·색이 맞는지 확인했어요.',
+          items: [
+            { label: 'PC 메인', image: dsPcMain, note: '띠배너 · GNB · 빌보드 · 상품 카드 · 혜택 배너 · 매거진 카드 · 푸터를 컴포넌트로만 조립', width: 1440, height: 2702 },
+            { label: 'PC 404', image: dsPc404, note: '25 Error 화면에 이전 페이지 · 홈으로 가기 두 갈래', width: 1440, height: 873 },
+          ],
+        },
+        {
+          title: 'G. 검증 · 모바일 샘플 화면',
+          description: '같은 컴포넌트를 375 폭으로 조립한 화면이에요.',
+          device: 'mobile',
+          items: [
+            { label: 'MO 메인', image: dsMoMain, note: '빌보드 · 아이콘 메뉴 · 2열 상품 카드 · 띠배너 · 가로 스크롤 카드 · 독바', width: 375, height: 2510 },
+            { label: 'MO 상품 상세', image: dsMoDetail, note: '가격 · 배송 정보 표 · 탭 · 하단 고정 장바구니/구매하기', width: 375, height: 1333 },
+            { label: 'MO 빈 장바구니', image: dsMoEmptyCart, note: '빈 상태 안내와 쇼핑하러 가기, 아래에 추천 상품 카드', width: 375, height: 981 },
+          ],
+        },
+      ],
+    },
+  },
   {
     slug: 'accio-redesign',
     type: 'Design',

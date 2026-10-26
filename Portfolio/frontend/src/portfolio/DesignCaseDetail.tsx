@@ -293,7 +293,7 @@ interface DesignCaseDetailProps {
   slug: string
 }
 
-// Design 사례 상세 — 문제 정의 → 케이스 스터디 장표 → 시안 비교 또는 화면 구성(가로 나열) → 모바일 화면
+// Design 사례 상세 — 문제 정의 → 분류별 화면 묶음 → 케이스 스터디 장표 → 시안 비교 또는 화면 구성(가로 나열) → 모바일 화면
 // → 디자인 시스템 → 대표 화면 실제 동작. 사례에 없는 칸은 건너뛴다.
 export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
   const item = CASES.find((candidate) => candidate.slug === slug && candidate.design)
@@ -310,7 +310,7 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
     )
   }
 
-  const { app, device, problem, role, story, variants, finalIndex, screens, mobileScreens, system, systemHeading, demo } =
+  const { app, device, problem, role, sections, story, variants, finalIndex, screens, mobileScreens, system, systemHeading, demo } =
     item.design
   const Demo = DESIGN_DEMOS[item.slug]
 
@@ -355,6 +355,17 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
           </p>
         )}
       </header>
+
+      {sections?.map((section, index) => (
+        <ScreenSection
+          key={section.title}
+          id={`section-${index}-title`}
+          title={section.title}
+          description={`${section.description}${OPEN_HINT}`}
+          items={section.items}
+          device={section.device ?? 'desktop'}
+        />
+      ))}
 
       {story && (
         <ScreenSection
