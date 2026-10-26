@@ -66,6 +66,6 @@ MyDesign*.md         디자인 시스템 기준 문서
 | [F-003](04_Features/F-003-portfolio-search.md) | 검색형 포트폴리오   | 백로그    |
 | [F-004](04_Features/F-004-study-notes.md)      | Study 노트          | 백로그    |
 | [F-005](04_Features/F-005-maestro.md)          | 마에스트로          | 백로그    |
-| [F-006](04_Features/F-006-design-system-case.md) | 개인 디자인 시스템 사례 | [주의] 판정 대기 |
+| [F-006](04_Features/F-006-design-system-case.md) | 개인 디자인 시스템 사례 | [주의] 판정 완료 |
 
 최종 수정: 2026-10-26 · 관련: D-001~D-003, F-001~F-006
