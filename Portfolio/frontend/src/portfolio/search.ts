@@ -2,17 +2,39 @@ import { CASE_STORIES } from './caseStories'
 import { CASES, type PortfolioCase } from './data'
 import { NOTES, type StudyNote } from './notes'
 import { rankCases } from './rank'
-import { normalize, queryWords } from './searchText'
+import { isShortLatin, latinWords, normalize, queryWords } from './searchText'
 
-// 사이트 검색(F-007 S2) — 사례·노트를 '문서'로 보고, 두 글자 조각(bigram) 목차로 후보를 좁힌 뒤 글을 확인한다.
-// 본문(사례의 문제·해결·결과, 디자인 시안 설명, 노트의 배운 것)까지 찾는다.
-// 문서가 60여 개라 목차의 속도 이득은 거의 없다. 목차가 S3 랭킹(BM25)의 재료라서 지금 만든다.
+// 사이트 검색(F-007) — 사례·노트를 '문서'로 보고 점수를 매겨 순서를 정한다.
+//   S2  두 글자 조각(bigram) 목차로 후보를 좁힌 뒤 글을 확인한다. 본문까지 찾는다.
+//   S3  BM25 점수 — 낱말이 많이 나올수록, 드문 낱말일수록, 제목에 있을수록 위로. 레벨은 살짝 얹는다.
+
+/** 문서를 나눈 칸. 같은 낱말이라도 어느 칸에 있느냐로 무게가 다르다 */
+type Field = 'title' | 'meta' | 'summary' | 'body'
+
+/** 칸별 무게 — 제목에 있으면 본문의 3배로 친다. 태그·keywords 는 작성자가 고른 말이라 요약보다 무겁다 */
+const FIELD_WEIGHT: Record<Field, number> = { title: 3, meta: 2, summary: 1.5, body: 1 }
+const FIELDS = Object.keys(FIELD_WEIGHT) as Field[]
+
+/** BM25 상수 — 널리 쓰는 기본값. K1 은 같은 낱말이 여러 번 나올 때 점수가 얼마나 더 오를지, B 는 긴 글을 얼마나 깎을지 */
+const K1 = 1.2
+const B = 0.75
+
+/** 레벨 한 단계마다 점수에 곱하는 덤 — 레벨 4 는 ×1.3. 관련도가 비슷할 때만 순서를 바꿀 만큼 작게 둔다 */
+const LEVEL_BOOST = 0.1
+
+/** '전체' 탭 배치 — 사례 몇 개 뒤에 노트 묶음을 끼울지. SearchResults 와 채점기(search-eval)가 같이 쓴다 */
+export const NOTES_AFTER = 3
+export const NOTES_IN_MODULE = 3
 
 interface SearchDoc {
   /** 'case:slug' · 'note:slug' */
   id: string
-  /** 모든 필드를 이어 붙여 정규화한 글(공백·문장부호 없음) — 일치 확인용 */
-  text: string
+  /** 칸마다 정규화한 글(공백·문장부호 없음) */
+  fields: Record<Field, string>
+  /** 칸마다 영어·숫자 낱말 — 짧은 영어 검색어('ai')를 통째로 맞춰 볼 때 쓴다 */
+  words: Record<Field, string[]>
+  /** 노트는 레벨이 없어 1로 둔다 */
+  level: number
 }
 
 /** 디자인 사례의 시안·화면 설명 */
@@ -28,18 +50,39 @@ function designText(item: PortfolioCase) {
   ]
 }
 
-function caseText(item: PortfolioCase) {
-  const story = CASE_STORIES[item.slug]
-  const body = story ? [story.problem, story.result ?? '', ...story.points.flatMap((point) => [point.title, point.body])] : []
-  return [item.title, item.description, item.tags.join(' '), item.keywords, ...body, ...designText(item)].join(' ')
+/** 칸별 원문으로 문서 만들기 — 정규화한 글과 영어 낱말 목록을 함께 만들어 둔다 */
+function makeDoc(id: string, level: number, raw: Record<Field, string>): SearchDoc {
+  const fields = {} as Record<Field, string>
+  const words = {} as Record<Field, string[]>
+  for (const field of FIELDS) {
+    fields[field] = normalize(raw[field])
+    words[field] = latinWords(raw[field])
+  }
+  return { id, level, fields, words }
 }
 
-function noteText(note: StudyNote) {
+function caseDoc(item: PortfolioCase): SearchDoc {
+  const story = CASE_STORIES[item.slug]
+  const body = story ? [story.problem, story.result ?? '', ...story.points.flatMap((point) => [point.title, point.body])] : []
+  return makeDoc(`case:${item.slug}`, item.level, {
+    title: item.title,
+    meta: [item.tags.join(' '), item.keywords].join(' '),
+    summary: item.description,
+    body: [...body, ...designText(item)].join(' '),
+  })
+}
+
+function noteDoc(note: StudyNote): SearchDoc {
   const body = [
     ...note.learned.flatMap((group) => [group.title, ...group.items]),
     ...(note.practice ?? []).flatMap((practice) => [practice.caption, practice.how]),
   ]
-  return [note.title, note.summary, note.points.join(' '), note.tags.join(' '), note.keywords, ...body].join(' ')
+  return makeDoc(`note:${note.slug}`, 1, {
+    title: note.title,
+    meta: [note.tags.join(' '), note.keywords].join(' '),
+    summary: [note.summary, ...note.points].join(' '),
+    body: body.join(' '),
+  })
 }
 
 /** 두 글자씩 겹쳐 자른 조각 — '디자인' → 디자 · 자인. 한 글자면 조각이 없다 */
@@ -49,15 +92,17 @@ function bigrams(text: string) {
   return grams
 }
 
-const DOCS: SearchDoc[] = [
-  ...CASES.map((item) => ({ id: `case:${item.slug}`, text: normalize(caseText(item)) })),
-  ...NOTES.map((note) => ({ id: `note:${note.slug}`, text: normalize(noteText(note)) })),
-]
+const DOCS: SearchDoc[] = [...CASES.map(caseDoc), ...NOTES.map(noteDoc)]
+
+/** 칸별 평균 길이 — BM25 가 '이 글이 평균보다 긴가'를 볼 때 쓴다 */
+const AVG_LENGTH = Object.fromEntries(
+  FIELDS.map((field) => [field, DOCS.reduce((sum, doc) => sum + doc.fields[field].length, 0) / DOCS.length]),
+) as Record<Field, number>
 
 /** 역색인 — 조각마다 그 조각이 들어 있는 문서 번호. 책 뒤의 '찾아보기'와 같다 */
 const INDEX = new Map<string, number[]>()
 DOCS.forEach((doc, docIndex) => {
-  for (const gram of bigrams(doc.text)) {
+  for (const gram of bigrams(FIELDS.map((field) => doc.fields[field]).join(' '))) {
     const postings = INDEX.get(gram)
     if (postings) postings.push(docIndex)
     else INDEX.set(gram, [docIndex])
@@ -68,7 +113,7 @@ const ALL_DOCS = DOCS.map((_, docIndex) => docIndex)
 
 /**
  * 낱말 하나가 들어 있을 수 있는 문서 — 낱말의 조각이 모두 들어 있는 문서만 남긴다(목록 교집합).
- * 조각이 다 있어도 순서가 다를 수 있어서(디자·자인 ↔ 자인디자) 마지막에 글에서 한 번 더 확인한다.
+ * 조각이 다 있어도 순서가 다를 수 있어서(디자·자인 ↔ 자인디자) 칸마다 한 번 더 확인한다.
  */
 function candidates(term: string) {
   const grams = [...bigrams(term)]
@@ -77,31 +122,86 @@ function candidates(term: string) {
   return lists.slice(1).reduce((kept, list) => kept.filter((docIndex) => list.includes(docIndex)), lists[0])
 }
 
-/** 낱말이 들어 있는 문서. 낱말 그대로 또는 조사를 뗀 모양 중 하나라도 글에 있으면 된다 */
+/** 글 안에 term 이 몇 번 나오는지(겹치지 않게) */
+function countIn(text: string, term: string) {
+  let count = 0
+  for (let at = text.indexOf(term); at >= 0; at = text.indexOf(term, at + term.length)) count++
+  return count
+}
+
+/** 문서의 한 칸에 낱말 모양이 몇 번 나오는지. 짧은 영어는 영어 낱말과 통째로 같은 것만 센다('ai' ≠ 'detail') */
+function occurrences(doc: SearchDoc, field: Field, form: string) {
+  return isShortLatin(form) ? doc.words[field].filter((word) => word === form).length : countIn(doc.fields[field], form)
+}
+
+/** 낱말이 들어 있는 문서 → 그 문서에서 찾은 모양. 낱말 그대로를 먼저 보고, 없으면 조사 뗀 모양을 본다 */
 function docsWithWord(forms: string[]) {
-  const found = new Set<number>()
+  const found = new Map<number, string>()
   for (const form of forms) {
-    for (const docIndex of candidates(form)) if (DOCS[docIndex].text.includes(form)) found.add(docIndex)
+    for (const docIndex of candidates(form)) {
+      if (found.has(docIndex)) continue
+      if (FIELDS.some((field) => occurrences(DOCS[docIndex], field, form) > 0)) found.set(docIndex, form)
+    }
   }
   return found
 }
 
-/** 검색어의 낱말이 모두 들어 있는 문서 id(AND). 순서는 아직 없다 — S3 에서 점수로 매긴다 */
-function matchedIds(query: string) {
-  const words = queryWords(query)
-  if (words.length === 0) return new Set<string>()
-  const sets = words.map(docsWithWord)
-  const [first, ...rest] = sets
-  return new Set([...first].filter((docIndex) => rest.every((set) => set.has(docIndex))).map((docIndex) => DOCS[docIndex].id))
+/** 드문 낱말일수록 큰 값(IDF). 모든 문서에 있는 낱말은 0 에 가깝다 */
+function idf(docCount: number) {
+  return Math.log(1 + (DOCS.length - docCount + 0.5) / (docCount + 0.5))
 }
 
-/** 검색 결과 — 사례는 레벨 순(rank.ts), 노트는 최신순(notes.ts). 빈 검색어면 전부 */
+/** 낱말 하나가 문서 하나에 주는 점수(BM25F) — 칸마다 무게를 곱하고 긴 칸은 깎아 합친 뒤, 많이 나와도 점수가 끝없이 오르지 않게 누른다 */
+function wordScore(doc: SearchDoc, form: string, wordIdf: number) {
+  const weighted = FIELDS.reduce((sum, field) => {
+    const lengthRatio = AVG_LENGTH[field] ? doc.fields[field].length / AVG_LENGTH[field] : 0
+    return sum + (FIELD_WEIGHT[field] * occurrences(doc, field, form)) / (1 - B + B * lengthRatio)
+  }, 0)
+  return (wordIdf * weighted * (K1 + 1)) / (weighted + K1)
+}
+
+/**
+ * 결과에 넣으려면 맞아야 하는 낱말 수. 두 개까지는 전부, 세 개부터는 75%(내림).
+ * Elasticsearch 의 minimum_should_match 와 같은 생각이다 — 긴 문장형 검색어는 한두 낱말이 데이터에 없어도 찾게.
+ * 두 낱말을 전부 요구하는 건 '안드로이드 앱'이 '앱' 하나로 아무 앱이나 걸리지 않게 하려고다.
+ */
+function requiredMatches(wordCount: number) {
+  return wordCount <= 2 ? wordCount : Math.floor(wordCount * 0.75)
+}
+
+/** 검색어로 문서 점수 매기기. 결과에 들 문서만 담는다 */
+function scoreDocs(query: string) {
+  const words = queryWords(query)
+  const scores = new Map<string, number>()
+  if (words.length === 0) return scores
+  const matches = words.map(docsWithWord)
+  const idfs = matches.map((found) => idf(found.size))
+  const needed = requiredMatches(words.length)
+  const hit = new Map<number, number>()
+  for (const found of matches) for (const docIndex of found.keys()) hit.set(docIndex, (hit.get(docIndex) ?? 0) + 1)
+  for (const [docIndex, count] of hit) {
+    if (count < needed) continue
+    const doc = DOCS[docIndex]
+    const relevance = matches.reduce((sum, found, i) => {
+      const form = found.get(docIndex)
+      return form ? sum + wordScore(doc, form, idfs[i]) : sum
+    }, 0)
+    scores.set(doc.id, relevance * (1 + LEVEL_BOOST * (doc.level - 1)))
+  }
+  return scores
+}
+
+/** 검색 결과 — 점수 높은 순. 점수가 같으면 사례는 레벨 → 날짜(rank.ts), 노트는 최신순. 빈 검색어면 전부 기본 순서 */
 export function search(query: string) {
   if (!query.trim()) return { cases: rankCases(CASES), notes: NOTES }
-  const ids = matchedIds(query)
+  const scores = scoreDocs(query)
+  const scoreOf = (id: string) => scores.get(id) ?? 0
+  const byScore = <T>(items: T[], id: (item: T) => string) =>
+    items.filter((item) => scores.has(id(item))).sort((a, b) => scoreOf(id(b)) - scoreOf(id(a)))
   return {
-    cases: rankCases(CASES.filter((item) => ids.has(`case:${item.slug}`))),
-    notes: NOTES.filter((note) => ids.has(`note:${note.slug}`)),
+    // rankCases 로 먼저 줄 세운 뒤 점수로 다시 정렬한다 — sort 는 안정 정렬이라 같은 점수면 레벨·날짜 순이 남는다
+    cases: byScore(rankCases(CASES), (item) => `case:${item.slug}`),
+    notes: byScore(NOTES, (note) => `note:${note.slug}`),
   }
 }
 

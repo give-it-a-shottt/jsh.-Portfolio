@@ -36,7 +36,7 @@ const server = await createServer({
 try {
   const { CASES } = await server.ssrLoadModule('/src/portfolio/data.ts')
   const { NOTES } = await server.ssrLoadModule('/src/portfolio/notes.ts')
-  const { search, INDEX_STATS } = await server.ssrLoadModule('/src/portfolio/search.ts')
+  const { search, INDEX_STATS, NOTES_AFTER, NOTES_IN_MODULE } = await server.ssrLoadModule('/src/portfolio/search.ts')
   const { CASE_DETAILS } = await server.ssrLoadModule('/src/portfolio/caseDetails.ts')
   // 숨은 글 검사도 사이트 검색과 같은 글자 규칙(정규화 · 조사 떼기)을 쓴다
   const { containsAllWords, normalize } = await server.ssrLoadModule('/src/portfolio/searchText.ts')
@@ -45,16 +45,20 @@ try {
   checkIds(testSet.queries, CASES, NOTES)
 
   /**
-   * '전체' 탭에서 보이는 순서 그대로 — SearchResults.tsx 를 따라 한다.
-   * 사례 3개(NOTES_AFTER) → 노트 묶음 3개(NOTES_IN_MODULE) → 나머지 사례. 나머지 노트는 Study 탭에 있어 맨 뒤로 둔다.
-   * SearchResults 의 규칙이 바뀌면 여기도 고친다(S3 에서 순위를 점수로 바꿀 때 없앤다).
+   * '전체' 탭에서 보이는 순서 — 사례 NOTES_AFTER 개 → 노트 묶음 NOTES_IN_MODULE 개 → 나머지 사례.
+   * 나머지 노트는 Study 탭에 있어 맨 뒤로 둔다. 배치 값은 SearchResults 와 같은 것(search.ts)을 쓴다.
    */
   const visibleOrder = (query) => {
     const found = search(query)
     const cases = found.cases.map((item) => `case:${item.slug}`)
     const notes = found.notes.map((note) => `note:${note.slug}`)
     if (notes.length === 0) return cases
-    return [...cases.slice(0, 3), ...notes.slice(0, 3), ...cases.slice(3), ...notes.slice(3)]
+    return [
+      ...cases.slice(0, NOTES_AFTER),
+      ...notes.slice(0, NOTES_IN_MODULE),
+      ...cases.slice(NOTES_AFTER),
+      ...notes.slice(NOTES_IN_MODULE),
+    ]
   }
 
   const hidden = buildHidden(CASE_DETAILS, NOTES, normalize)

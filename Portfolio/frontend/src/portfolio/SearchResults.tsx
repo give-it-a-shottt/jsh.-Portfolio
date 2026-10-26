@@ -6,7 +6,8 @@ import NoteCard from './NoteCard'
 import NoteMeta from './NoteMeta'
 import { appliedCases, noteHref, type StudyNote } from './notes'
 import { searchHref, type ResultTab } from './routes'
-import { search } from './search'
+// '전체' 탭에서 사례 몇 개 뒤에 노트 묶음을 끼울지 — 채점기도 같은 값으로 순서를 재서 search.ts 에 둔다
+import { NOTES_AFTER, NOTES_IN_MODULE, search } from './search'
 
 const TABS: { tab: ResultTab; label: string }[] = [
   { tab: 'all', label: '전체' },
@@ -15,10 +16,6 @@ const TABS: { tab: ResultTab; label: string }[] = [
   { tab: 'design', label: 'Design' },
   { tab: 'study', label: 'Study' },
 ]
-
-/** '전체' 탭에서 사례 몇 개 뒤에 노트 묶음을 끼울지 — 사례가 먼저, 노트는 결과 사이 모듈로 */
-const NOTES_AFTER = 3
-const NOTES_IN_MODULE = 3
 
 function KeywordChips({ exclude }: { exclude?: string }) {
   return (

@@ -13,6 +13,19 @@ export function normalize(text: string) {
 }
 
 /**
+ * 글 속의 영어·숫자 낱말(S3) — 'Next.js 16' → next · js · 16.
+ * 짧은 영어 검색어('ai', 'js')는 공백을 지운 글에서 찾으면 'detail' · 'json' 속에도 걸려서, 이 낱말 목록과 통째로 맞춰 본다.
+ */
+export function latinWords(text: string) {
+  return toHalfWidth(text.normalize('NFC')).toLowerCase().match(/[a-z0-9]+/g) ?? []
+}
+
+/** 낱말 목록과 통째로 맞춰 볼 짧은 영어·숫자 검색어 — 세 글자 이하. 'react' 처럼 긴 것은 'reactquery' 속에서 찾아도 괜찮다 */
+export function isShortLatin(word: string) {
+  return /^[a-z0-9]{1,3}$/.test(word)
+}
+
+/**
  * 낱말 끝에 붙는 조사(S2). 긴 것부터 본다 — '으로'를 '로'보다 먼저 봐야 '노션으로'가 '노션'이 된다.
  * 형태소 분석기 대신 짧은 목록만 쓴다. 동사 어미('잠들어서', '느린')는 다루지 않는다.
  */
@@ -25,15 +38,28 @@ function stripJosa(word: string) {
 }
 
 /**
- * 검색어를 공백으로 나눈 낱말마다 [그대로, 조사 뗀 모양]. 문장부호만 있던 낱말은 버린다.
+ * 검색어에서 빼는 군더더기 말(S3) — 문장으로 물을 때 붙는 말이라 어느 사례를 찾는지와 상관없다.
+ * '외부 API 느릴 때 어떻게 했나'에서 '때 · 어떻게 · 했나'를 빼야 남은 낱말로 찾을 수 있다.
+ */
+const STOPWORDS = new Set([
+  '어떻게', '어떤', '무엇', '뭐', '왜', '했나', '했어', '했는지', '했던', '했다', '하는', '하기', '한', '할', '해서',
+  '거', '것', '때', '좀', '관련', '대한', '대해', '만든', '만들었나', '있는', '없는', '방법', '수', '등',
+  '보여줘', '알려줘', '찾아줘',
+])
+
+/**
+ * 검색어를 공백으로 나눈 낱말마다 [그대로, 조사 뗀 모양]. 문장부호만 있던 낱말과 군더더기 말은 버린다.
  * 둘 중 하나만 글에 있어도 그 낱말은 찾은 것으로 본다 — 조사를 잘못 떼도 원래 모양으로 찾을 수 있게.
+ * 전부 군더더기 말이면(예: '방법') 빼지 않고 그대로 찾는다.
  */
 export function queryWords(query: string) {
-  return query
+  const words = query
     .split(/\s+/)
     .map(normalize)
     .filter(Boolean)
     .map((word) => [...new Set([word, stripJosa(word)])])
+  const meaningful = words.filter((forms) => !forms.some((form) => STOPWORDS.has(form)))
+  return meaningful.length > 0 ? meaningful : words
 }
 
 /** 낱말이 전부 글 안에 있으면 일치(AND). 글은 normalize 를 거친 것이어야 한다. 남는 낱말이 없으면(문장부호만 입력) 일치하지 않는다 */
