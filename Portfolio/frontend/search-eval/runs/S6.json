@@ -1,0 +1,531 @@
+{
+  "savedAt": "2026-10-26",
+  "overall": {
+    "count": 39,
+    "zeroRate": 0.02564102564102564,
+    "hitAtK": 0.9487179487179487,
+    "mrr": 0.9358974358974359,
+    "recall": 0.9487179487179487
+  },
+  "heldOut": {
+    "count": 10,
+    "zeroRate": 0.5,
+    "hitAtK": 0.5,
+    "mrr": 0.5,
+    "recall": 0.5
+  },
+  "falsePositiveRate": 0,
+  "negativeCount": 6,
+  "categories": {
+    "기본": {
+      "count": 7,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "여러 단어": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "띄어쓰기": {
+      "count": 4,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "조사": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "유사어": {
+      "count": 4,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 0.875,
+      "recall": 1
+    },
+    "한영 오타": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "자모 오타": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "본문": {
+      "count": 5,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "자연어": {
+      "count": 4,
+      "zeroRate": 0.25,
+      "hitAtK": 0.5,
+      "mrr": 0.5,
+      "recall": 0.5
+    },
+    "표기 차이": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    }
+  },
+  "suggest": {
+    "count": 19,
+    "zeroRate": 0,
+    "hitRate": 1,
+    "mrr": 1,
+    "heldOut": {
+      "count": 8,
+      "zeroRate": 0,
+      "hitRate": 1,
+      "mrr": 1
+    },
+    "categories": {
+      "앞부분": {
+        "count": 3,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      },
+      "중간 일치": {
+        "count": 2,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      },
+      "영문": {
+        "count": 2,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      },
+      "띄어쓰기": {
+        "count": 2,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      },
+      "조합 중": {
+        "count": 3,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      },
+      "초성": {
+        "count": 4,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      },
+      "한영 자판": {
+        "count": 3,
+        "zeroRate": 0,
+        "hitRate": 1,
+        "mrr": 1
+      }
+    }
+  },
+  "related": {
+    "고정 키워드": {
+      "queries": 43,
+      "count": 5,
+      "valid": 1,
+      "related": 0.24186046511627904,
+      "novel": 0.9348837209302324
+    },
+    "결과 태그": {
+      "queries": 43,
+      "count": 4.325581395348837,
+      "valid": 1,
+      "related": 1,
+      "novel": 0.7476744186046513
+    }
+  },
+  "didYouMean": {
+    "zero": 12,
+    "suggested": 1,
+    "helps": 1,
+    "rows": [
+      {
+        "id": "Q34",
+        "query": "서버가 잠들어서 느린 문제",
+        "negative": false,
+        "suggestion": "서버가 느린 문제",
+        "helps": true
+      },
+      {
+        "id": "H01",
+        "query": "도커",
+        "negative": false,
+        "suggestion": null,
+        "helps": false
+      },
+      {
+        "id": "H02",
+        "query": "레디스",
+        "negative": false,
+        "suggestion": null,
+        "helps": false
+      },
+      {
+        "id": "H03",
+        "query": "깃허브 액션",
+        "negative": false,
+        "suggestion": null,
+        "helps": false
+      },
+      {
+        "id": "H04",
+        "query": "슈퍼베이스",
+        "negative": false,
+        "suggestion": null,
+        "helps": false
+      },
+      {
+        "id": "H08",
+        "query": "시간대 버그",
+        "negative": false,
+        "suggestion": null,
+        "helps": false
+      },
+      {
+        "id": "Q37",
+        "query": "블록체인",
+        "negative": true,
+        "suggestion": null,
+        "helps": false
+      },
+      {
+        "id": "Q38",
+        "query": "쿠버네티스",
+        "negative": true,
+        "suggestion": null,
+        "helps": false
+      },
+      {
+        "id": "Q39",
+        "query": "안드로이드 앱",
+        "negative": true,
+        "suggestion": null,
+        "helps": false
+      },
+      {
+        "id": "Q44",
+        "query": "유니티",
+        "negative": true,
+        "suggestion": null,
+        "helps": false
+      },
+      {
+        "id": "Q45",
+        "query": "스프링 부트",
+        "negative": true,
+        "suggestion": null,
+        "helps": false
+      },
+      {
+        "id": "Q46",
+        "query": "코틀린",
+        "negative": true,
+        "suggestion": null,
+        "helps": false
+      }
+    ]
+  },
+  "perQuery": {
+    "Q01": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q02": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q03": {
+      "total": 3,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q04": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q05": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q06": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q07": {
+      "total": 5,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q08": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q09": {
+      "total": 5,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q10": {
+      "total": 3,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q11": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q12": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q13": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q14": {
+      "total": 4,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q15": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q16": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q17": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q18": {
+      "total": 33,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q19": {
+      "total": 4,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q20": {
+      "total": 4,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q21": {
+      "total": 3,
+      "firstRank": 2,
+      "recall": 1
+    },
+    "Q22": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q23": {
+      "total": 6,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q24": {
+      "total": 10,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q25": {
+      "total": 9,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q26": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q27": {
+      "total": 10,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q28": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q29": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q30": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q31": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q32": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q33": {
+      "total": 4,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q34": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q35": {
+      "total": 3,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q36": {
+      "total": 1,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q40": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q41": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q42": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "H01": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "H02": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "H03": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "H04": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "H05": {
+      "total": 5,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "H06": {
+      "total": 12,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "H07": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "H08": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "H09": {
+      "total": 12,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "H10": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q37": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q38": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q39": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q44": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q45": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q46": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    }
+  }
+}

@@ -72,10 +72,22 @@ try {
   const suggestRows = suggestSet.inputs.map((item) => gradeSuggest(item, getAllSuggestions(item.input).map((s) => s.text)))
   report.suggest = summarizeSuggest(suggestRows)
 
+  // 추천 검색어(S6) — 예전 방식(고정 키워드 5개)과 새 방식(결과 태그)을 같은 검색어로 나란히 잰다
+  const { KEYWORDS } = await server.ssrLoadModule('/src/portfolio/data.ts')
+  const { relatedSearches, didYouMean } = await server.ssrLoadModule('/src/portfolio/related.ts')
+  const idsOf = (found) => new Set([...found.cases.map((c) => `case:${c.slug}`), ...found.notes.map((n) => `note:${n.slug}`)])
+  const methods = {
+    '고정 키워드': (query) => KEYWORDS.filter(({ label }) => label !== query).slice(0, 5).map(({ label }) => label),
+    '결과 태그': (query, found) => relatedSearches(query, found.cases, found.notes),
+  }
+  report.related = gradeRelated(testSet.queries, methods, search, idsOf)
+  report.didYouMean = gradeDidYouMean(testSet.queries, search, didYouMean, idsOf)
+
   const base = loadBase(baseName)
   console.log(`\n색인: 문서 ${INDEX_STATS.docs}개 · 두 글자 조각 ${INDEX_STATS.grams}개`)
   printReport(report, rows, base)
   printSuggest(report.suggest, suggestRows, base?.suggest)
+  printRelated(report.related, report.didYouMean)
   if (saveAs) save(saveAs, report, rows)
 } finally {
   await server.close()
@@ -176,6 +188,57 @@ function printSuggest(summary, rows, base) {
   if (missed.length) console.log(verbose ? '\n친 글자별' : '\n못 맞힌 자동완성')
   for (const row of missed) {
     console.log(`${row.hit ? 'O' : 'X'} ${row.id} [${row.category}] "${row.input}" → 기대 "${row.expect}" — ${row.hit ? `${row.rank}번째` : `없음 (제안 ${row.shown.length}개)`}`)
+  }
+}
+
+// ── 추천 검색어 ─────────────────────────────────────────────────────────
+
+/**
+ * 결과가 있는 검색어마다 추천 검색어를 받아, 추천 하나하나를 다시 검색해 본다.
+ *   유효: 눌렀을 때 결과가 1건 이상 / 관련: 지금 결과와 겹치는 게 있음 / 새로움: 지금 결과에 없던 것이 나옴
+ */
+function gradeRelated(queries, methods, search, idsOf) {
+  const out = {}
+  const withResults = queries.filter((q) => idsOf(search(q.query)).size > 0)
+  for (const [name, pick] of Object.entries(methods)) {
+    const per = withResults.map((q) => {
+      const found = search(q.query)
+      const current = idsOf(found)
+      const terms = pick(q.query, found)
+      const checks = terms.map((term) => {
+        const next = idsOf(search(term))
+        return { valid: next.size > 0, related: [...next].some((id) => current.has(id)), novel: [...next].some((id) => !current.has(id)) }
+      })
+      const share = (key) => (checks.length ? checks.filter((c) => c[key]).length / checks.length : 0)
+      return { count: terms.length, valid: share('valid'), related: share('related'), novel: share('novel') }
+    })
+    const avg = (key) => per.reduce((sum, row) => sum + row[key], 0) / per.length
+    out[name] = { queries: per.length, count: avg('count'), valid: avg('valid'), related: avg('related'), novel: avg('novel') }
+  }
+  return out
+}
+
+/** 0건인 검색어 중 '혹시 이걸 찾으셨나요?'를 받은 것, 그리고 그 제안이 정답을 찾아 주는지 */
+function gradeDidYouMean(queries, search, didYouMean, idsOf) {
+  const zero = queries.filter((q) => idsOf(search(q.query)).size === 0)
+  const rows = zero.map((q) => {
+    const suggestion = didYouMean(q.query)
+    const found = suggestion ? idsOf(search(suggestion)) : new Set()
+    return { id: q.id, query: q.query, negative: q.relevant.length === 0, suggestion, helps: q.relevant.some((id) => found.has(id)) }
+  })
+  return { zero: rows.length, suggested: rows.filter((r) => r.suggestion).length, helps: rows.filter((r) => r.helps).length, rows }
+}
+
+function printRelated(related, dym) {
+  console.log('\n추천 검색어 채점 — 결과가 있는 검색어마다 추천을 다시 검색해 봄')
+  console.log('─'.repeat(64))
+  console.log(`${padWide('방식', 12)} 검색어  추천 수   유효   관련  새로움`)
+  for (const [name, m] of Object.entries(related)) {
+    console.log(`${padWide(name, 12)} ${String(m.queries).padStart(6)}  ${m.count.toFixed(1).padStart(6)}  ${pct(m.valid)}  ${pct(m.related)}  ${pct(m.novel)}`)
+  }
+  console.log(`\n'혹시 이걸 찾으셨나요?' — 0건 검색어 ${dym.zero}개 중 제안 ${dym.suggested}개, 그중 정답을 찾아 준 것 ${dym.helps}개`)
+  for (const row of dym.rows) {
+    console.log(`  ${row.id.padEnd(4)} "${row.query}"${row.negative ? ' (없어야 함)' : ''} → ${row.suggestion ? `"${row.suggestion}"${row.helps ? ' · 정답 찾음' : ''}` : '제안 없음'}`)
   }
 }
 

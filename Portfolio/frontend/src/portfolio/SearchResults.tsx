@@ -8,6 +8,7 @@ import { appliedCases, noteHref, type StudyNote } from './notes'
 import { searchHref, type ResultTab } from './routes'
 // '전체' 탭에서 사례 몇 개 뒤에 노트 묶음을 끼울지 — 채점기도 같은 값으로 순서를 재서 search.ts 에 둔다
 import { NOTES_AFTER, NOTES_IN_MODULE, search } from './search'
+import { didYouMean, relatedSearches } from './related'
 
 const TABS: { tab: ResultTab; label: string }[] = [
   { tab: 'all', label: '전체' },
@@ -178,7 +179,11 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
   }
   const results = tab === 'all' || tab === 'study' ? matched : casesOf(tab)
   const areaNotes = tab === 'all' || tab === 'study' ? [] : notesOf(tab)
-  const related = KEYWORDS.filter(({ label }) => label !== query).slice(0, 5)
+  // 관련 검색어는 지금 결과의 태그에서 고른다(related.ts). 검색어가 없거나 고를 태그가 없으면 추천 키워드
+  const fromResults = query ? relatedSearches(query, matched, matchedNotes) : []
+  const related = fromResults.length > 0 ? fromResults : KEYWORDS.filter(({ label }) => label !== query).slice(0, 5).map(({ label }) => label)
+  // 어느 탭에도 결과가 없을 때만 — 결과가 있는 낱말만 남긴 검색어를 권한다
+  const suggestion = query && counts.all === 0 ? didYouMean(query) : null
   const isStudy = tab === 'study'
   // 노트 묶음은 '전체' 탭에서만. 사례가 적으면 목록 끝에, 사례가 없으면 빈 안내 대신 노트를 보여준다
   const showModule = tab === 'all' && matchedNotes.length > 0
@@ -238,6 +243,14 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
                     ? `'${query}'에 대한 사례가 아직 없어요.`
                     : '아직 등록된 사례가 없어요.'}
               </h2>
+              {suggestion && (
+                <p className="text-15 break-keep text-sub">
+                  혹시 이걸 찾으셨나요?{' '}
+                  <a href={searchHref(suggestion, tab)} className="font-semibold text-portfolio underline-offset-4 hover:underline">
+                    {suggestion}
+                  </a>
+                </p>
+              )}
               <p className="text-14 text-sub">다른 키워드로 검색하거나 아래 키워드를 눌러보세요.</p>
               <div className="mt-4">
                 <KeywordChips exclude={query} />
@@ -298,7 +311,7 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
               관련 검색어
             </h2>
             <ul className="mt-3 flex flex-col">
-              {related.map(({ label }) => (
+              {related.map((label) => (
                 <li key={label}>
                   <a href={searchHref(label)} className="flex items-center gap-3 py-2 text-14 text-sub hover:text-main">
                     <SearchIcon size={14} className="text-icon-disabled" />
