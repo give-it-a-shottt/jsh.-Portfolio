@@ -1,5 +1,5 @@
 {
-  "about": "검색 시험지(F-007). relevant 는 '이게 나와야 한다'는 정답 목록이고 맨 앞이 가장 기대하는 것. 비어 있으면 아무것도 안 나와야 하는 검색어. stage 는 이 검색어를 고칠 것으로 보는 단계. memo 는 사람이 읽는 설명.",
+  "about": "검색 시험지(F-007). relevant 는 '이게 나와야 한다'는 정답 목록이고 맨 앞이 가장 기대하는 것. 비어 있으면 아무것도 안 나와야 하는 검색어. stage 는 이 검색어를 고칠 것으로 보는 단계. memo 는 사람이 읽는 설명. heldOut 은 규칙을 다 만든 뒤에 정한 검색어로, 전체 점수에서 빼고 따로 잰다(시험지에 맞춘 규칙인지 확인용).",
   "queries": [
     { "id": "Q01", "category": "기본", "stage": "S0", "query": "해커톤", "relevant": ["case:maestro"] },
     { "id": "Q02", "category": "기본", "stage": "S0", "query": "디자인 시스템", "relevant": ["case:jsh-design-system", "case:accio-redesign", "case:gameprobe", "case:remind", "case:flaseek-renewal", "case:accio"] },
@@ -50,8 +50,22 @@
     { "id": "Q41", "category": "표기 차이", "stage": "S1", "query": "ＰｌａｎＦｏｒＭｅ", "relevant": ["case:planforme", "case:planforme-replan-overdue", "case:planforme-activity-state", "case:planforme-quota-logic", "case:planforme-stale-response", "case:planforme-api-key", "case:planforme-kst-today"], "memo": "전각 영문" },
     { "id": "Q42", "category": "표기 차이", "stage": "S1", "query": "react-query", "relevant": ["note:fe-tanstack-query"], "memo": "하이픈(데이터는 react query)" },
 
+    { "id": "H01", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "도커", "relevant": ["note:be-docker-postgres"], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "H02", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "레디스", "relevant": ["note:be-sse-redis-ratelimit"], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "H03", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "깃허브 액션", "relevant": ["case:free-tier-infra"], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "H04", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "슈퍼베이스", "relevant": ["case:free-tier-infra"], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "H05", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "photoshop 마스크", "relevant": ["note:ps-compose-mask-blend", "note:ps-brush-invitation", "note:ps-split-thumbnail"], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "H06", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "algoritm", "relevant": ["note:algo-lru-cache", "note:algo-delivery-box", "note:algo-rotate-brackets", "note:algo-feature-deploy", "note:algo-rollcake", "note:algo-sliding-window-discount", "note:algo-monotonic-stack", "note:algo-heap-hotel", "note:algo-bfs-gamemap-network", "note:algo-queue-truck-process", "note:algo-stack-brackets-tasks", "note:algo-hash-openchat-report"], "memo": "오타. S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "H07", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "디쟈인 시스템", "relevant": ["case:jsh-design-system", "case:accio-redesign", "case:gameprobe", "case:remind", "case:flaseek-renewal", "case:accio"], "memo": "오타. S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "H08", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "시간대 버그", "relevant": ["case:planforme-kst-today"], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "H09", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "rjator", "relevant": ["case:search-portfolio", "case:accio"], "memo": "검색을 영문 자판으로. S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "H10", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "mongodb 집계", "relevant": ["note:mongo-aggregation-1", "note:mongo-aggregation-2"], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+
     { "id": "Q37", "category": "없어야 함", "stage": "S0", "query": "블록체인", "relevant": [] },
     { "id": "Q38", "category": "없어야 함", "stage": "S0", "query": "쿠버네티스", "relevant": [] },
-    { "id": "Q39", "category": "없어야 함", "stage": "S0", "query": "안드로이드 앱", "relevant": [] }
+    { "id": "Q39", "category": "없어야 함", "stage": "S0", "query": "안드로이드 앱", "relevant": [] },
+    { "id": "Q44", "category": "없어야 함", "stage": "S4", "query": "유니티", "relevant": [], "memo": "오타 고치기가 엉뚱한 말로 바꾸지 않는지. S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "Q45", "category": "없어야 함", "stage": "S4", "query": "스프링 부트", "relevant": [], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "Q46", "category": "없어야 함", "stage": "S4", "query": "코틀린", "relevant": [], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" }
   ]
 }

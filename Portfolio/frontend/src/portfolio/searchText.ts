@@ -20,6 +20,11 @@ export function latinWords(text: string) {
   return toHalfWidth(text.normalize('NFC')).toLowerCase().match(/[a-z0-9]+/g) ?? []
 }
 
+/** 글 속의 모든 낱말(한글·영문·숫자) — 오타를 고칠 때 비교할 '이 사이트에 있는 말' 목록을 만든다(S4) */
+export function plainWords(text: string) {
+  return toHalfWidth(text.normalize('NFC')).toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []
+}
+
 /** 낱말 목록과 통째로 맞춰 볼 짧은 영어·숫자 검색어 — 세 글자 이하. 'react' 처럼 긴 것은 'reactquery' 속에서 찾아도 괜찮다 */
 export function isShortLatin(word: string) {
   return /^[a-z0-9]{1,3}$/.test(word)
@@ -32,7 +37,7 @@ export function isShortLatin(word: string) {
 const JOSA = ['에서는', '으로는', '에서', '으로', '에게', '까지', '부터', '처럼', '보다', '하고', '이랑', '랑', '의', '을', '를', '이', '가', '은', '는', '에', '로', '와', '과', '도', '만']
 
 /** 조사를 뗀 모양. 남는 부분이 두 글자보다 짧으면 떼지 않는다 — '회의'의 '의', '속도'의 '도'를 떼면 뜻이 사라진다 */
-function stripJosa(word: string) {
+export function stripJosa(word: string) {
   const josa = JOSA.find((ending) => word.endsWith(ending) && [...word].length - [...ending].length >= 2)
   return josa ? word.slice(0, -josa.length) : word
 }
@@ -47,23 +52,29 @@ const STOPWORDS = new Set([
   '보여줘', '알려줘', '찾아줘',
 ])
 
+export interface QueryWord {
+  /** 사람이 친 그대로 — 한영 자판 변환은 대소문자(Shift)까지 봐야 해서 남겨 둔다 */
+  raw: string
+  /** 찾아볼 모양들 — [그대로, 조사 뗀 모양]. 하나만 글에 있어도 그 낱말은 찾은 것으로 본다 */
+  forms: string[]
+}
+
 /**
- * 검색어를 공백으로 나눈 낱말마다 [그대로, 조사 뗀 모양]. 문장부호만 있던 낱말과 군더더기 말은 버린다.
- * 둘 중 하나만 글에 있어도 그 낱말은 찾은 것으로 본다 — 조사를 잘못 떼도 원래 모양으로 찾을 수 있게.
- * 전부 군더더기 말이면(예: '방법') 빼지 않고 그대로 찾는다.
+ * 검색어를 공백으로 나눈 낱말들. 문장부호만 있던 낱말과 군더더기 말은 버린다.
+ * 조사를 잘못 떼도 원래 모양으로 찾을 수 있게 두 모양을 다 둔다. 전부 군더더기 말이면(예: '방법') 빼지 않고 그대로 찾는다.
  */
-export function queryWords(query: string) {
+export function queryWords(query: string): QueryWord[] {
   const words = query
     .split(/\s+/)
-    .map(normalize)
-    .filter(Boolean)
-    .map((word) => [...new Set([word, stripJosa(word)])])
-  const meaningful = words.filter((forms) => !forms.some((form) => STOPWORDS.has(form)))
+    .map((raw) => ({ raw, word: normalize(raw) }))
+    .filter(({ word }) => word)
+    .map(({ raw, word }) => ({ raw, forms: [...new Set([word, stripJosa(word)])] }))
+  const meaningful = words.filter(({ forms }) => !forms.some((form) => STOPWORDS.has(form)))
   return meaningful.length > 0 ? meaningful : words
 }
 
 /** 낱말이 전부 글 안에 있으면 일치(AND). 글은 normalize 를 거친 것이어야 한다. 남는 낱말이 없으면(문장부호만 입력) 일치하지 않는다 */
 export function containsAllWords(normalizedText: string, query: string) {
   const words = queryWords(query)
-  return words.length > 0 && words.every((forms) => forms.some((form) => normalizedText.includes(form)))
+  return words.length > 0 && words.every(({ forms }) => forms.some((form) => normalizedText.includes(form)))
 }

@@ -2,11 +2,14 @@ import { CASE_STORIES } from './caseStories'
 import { CASES, type PortfolioCase } from './data'
 import { NOTES, type StudyNote } from './notes'
 import { rankCases } from './rank'
-import { isShortLatin, latinWords, normalize, queryWords } from './searchText'
+import { editDistance, hangulToKeys, keysToHangul, toJamo } from './hangul'
+import { isShortLatin, latinWords, normalize, plainWords, queryWords, stripJosa, type QueryWord } from './searchText'
+import { isSynonymTerm, synonymsOf } from './synonyms'
 
 // 사이트 검색(F-007) — 사례·노트를 '문서'로 보고 점수를 매겨 순서를 정한다.
 //   S2  두 글자 조각(bigram) 목차로 후보를 좁힌 뒤 글을 확인한다. 본문까지 찾는다.
 //   S3  BM25 점수 — 낱말이 많이 나올수록, 드문 낱말일수록, 제목에 있을수록 위로. 레벨은 살짝 얹는다.
+//   S4  같은 뜻의 말(동의어)로도 찾고, 아무것도 안 나오는 낱말은 한영 자판 오타 → 자모 편집거리 순으로 고쳐 본다.
 
 /** 문서를 나눈 칸. 같은 낱말이라도 어느 칸에 있느냐로 무게가 다르다 */
 type Field = 'title' | 'meta' | 'summary' | 'body'
@@ -33,6 +36,8 @@ interface SearchDoc {
   fields: Record<Field, string>
   /** 칸마다 영어·숫자 낱말 — 짧은 영어 검색어('ai')를 통째로 맞춰 볼 때 쓴다 */
   words: Record<Field, string[]>
+  /** 이 문서에 나오는 낱말(조사 뗀 모양) — 오타를 고칠 때 비교할 말 목록의 재료 */
+  terms: Set<string>
   /** 노트는 레벨이 없어 1로 둔다 */
   level: number
 }
@@ -54,11 +59,13 @@ function designText(item: PortfolioCase) {
 function makeDoc(id: string, level: number, raw: Record<Field, string>): SearchDoc {
   const fields = {} as Record<Field, string>
   const words = {} as Record<Field, string[]>
+  const terms = new Set<string>()
   for (const field of FIELDS) {
     fields[field] = normalize(raw[field])
     words[field] = latinWords(raw[field])
+    for (const word of plainWords(raw[field])) terms.add(stripJosa(word))
   }
-  return { id, level, fields, words }
+  return { id, level, fields, words, terms }
 }
 
 function caseDoc(item: PortfolioCase): SearchDoc {
@@ -66,7 +73,8 @@ function caseDoc(item: PortfolioCase): SearchDoc {
   const body = story ? [story.problem, story.result ?? '', ...story.points.flatMap((point) => [point.title, point.body])] : []
   return makeDoc(`case:${item.slug}`, item.level, {
     title: item.title,
-    meta: [item.tags.join(' '), item.keywords].join(' '),
+    // 분야(Front · Back · Design)도 메타에 둔다 — '프론트'가 동의어 'front' 로 Front 사례에 걸리게(S4)
+    meta: [item.type, item.tags.join(' '), item.keywords].join(' '),
     summary: item.description,
     body: [...body, ...designText(item)].join(' '),
   })
@@ -79,7 +87,7 @@ function noteDoc(note: StudyNote): SearchDoc {
   ]
   return makeDoc(`note:${note.slug}`, 1, {
     title: note.title,
-    meta: [note.tags.join(' '), note.keywords].join(' '),
+    meta: [note.area, note.tags.join(' '), note.keywords].join(' '),
     summary: [note.summary, ...note.points].join(' '),
     body: body.join(' '),
   })
@@ -169,12 +177,104 @@ function requiredMatches(wordCount: number) {
   return wordCount <= 2 ? wordCount : Math.floor(wordCount * 0.75)
 }
 
+/** 이 사이트 글에 나오는 낱말 → 몇 문서에 나오는지. 오타를 고칠 때 이 목록에서 가장 가까운 말을 고른다 */
+const VOCAB = new Map<string, number>()
+for (const doc of DOCS) for (const term of doc.terms) if ([...term].length >= 2) VOCAB.set(term, (VOCAB.get(term) ?? 0) + 1)
+
+/** 자모로 푼 낱말 목록 — 처음 오타를 고칠 때 한 번만 만든다(대부분의 검색은 오타가 없다) */
+let vocabJamo: { term: string; jamo: string[]; docCount: number }[] | null = null
+
+/**
+ * 고쳐도 되는 거리 — 자모(영문은 글자) 수가 적으면 한 글자만 바꿔도 다른 말이 돼서 고치지 않는다.
+ * 4~9개는 1, 10개부터는 2. 영문은 5글자부터 고친다('ai' → 'ui' 같은 일을 막으려고).
+ */
+function allowedDistance(jamo: string[], latin: boolean) {
+  if (jamo.length < (latin ? 5 : 4)) return 0
+  return jamo.length >= 10 ? 2 : 1
+}
+
+/** 사이트에 있는 말 중 자모 편집거리가 가장 가까운 것. 거리가 같으면 여러 문서에 나오는 말 → 짧은 말 */
+function closestTerm(word: string) {
+  const latin = /^[a-z0-9]+$/.test(word)
+  const jamo = toJamo(word)
+  const limit = allowedDistance(jamo, latin)
+  if (limit === 0) return null
+  vocabJamo ??= [...VOCAB].map(([term, docCount]) => ({ term, jamo: toJamo(term), docCount }))
+  let best: { term: string; distance: number; docCount: number } | null = null
+  for (const entry of vocabJamo) {
+    if (/^[a-z0-9]+$/.test(entry.term) !== latin) continue
+    const distance = editDistance(jamo, entry.jamo, limit)
+    if (distance === 0 || distance > limit) continue
+    const better =
+      !best ||
+      distance < best.distance ||
+      (distance === best.distance && (entry.docCount > best.docCount || (entry.docCount === best.docCount && entry.term.length < best.term.length)))
+    if (better) best = { term: entry.term, distance, docCount: entry.docCount }
+  }
+  return best?.term ?? null
+}
+
+/** 모양들에 동의어를 더한다 — [그대로, 조사 뗀 모양, 같은 뜻의 말…] 순서. 앞의 모양이 먼저 맞춰진다 */
+function withSynonyms(forms: string[]) {
+  return [...new Set([...forms, ...forms.flatMap(synonymsOf)])]
+}
+
+/** 띄어 쓴 두 낱말이 붙이면 사전의 말이면 하나로 합친다 — '레이트 리밋' → '레이트리밋' */
+function joinSynonymPairs(words: QueryWord[]) {
+  const joined: QueryWord[] = []
+  for (let i = 0; i < words.length; i++) {
+    const next = words[i + 1]
+    const pair = next && words[i].forms.flatMap((a) => next.forms.map((b) => a + b)).find(isSynonymTerm)
+    if (pair) {
+      joined.push({ raw: `${words[i].raw} ${next.raw}`, forms: [pair] })
+      i++
+    } else {
+      joined.push(words[i])
+    }
+  }
+  return joined
+}
+
+/** 고쳐서 찾은 낱말 — 결과 화면에 "'플랜포미'(으)로 찾은 결과"로 알린다 */
+export interface Correction {
+  from: string
+  to: string
+}
+
+/**
+ * 낱말 하나를 찾는다. 아무 문서에도 없으면 차례로 고쳐 본다.
+ *   1) 한영 자판 오타 — 'vmffosvhal' → '플랜포미', 'ㅁㅊㅊㅑㅐ' → 'accio'
+ *   2) 자모 편집거리 — '마에스트르' → '마에스트로'
+ * 고친 말로도 없으면 빈 결과다. 원래 말로 찾히면 고치지 않는다 — 맞게 친 말을 바꾸지 않으려고.
+ */
+function findWord(word: QueryWord) {
+  const found = docsWithWord(withSynonyms(word.forms))
+  if (found.size > 0) return { found }
+  const keyboard = keysToHangul(word.raw) ?? hangulToKeys(word.raw)
+  if (keyboard) {
+    const forms = withSynonyms([...new Set([normalize(keyboard), stripJosa(normalize(keyboard))])])
+    const fixed = docsWithWord(forms)
+    if (fixed.size > 0) return { found: fixed, correction: { from: word.raw, to: keyboard } }
+  }
+  const closest = closestTerm(word.forms[word.forms.length - 1])
+  if (closest) {
+    const fixed = docsWithWord(withSynonyms([closest]))
+    if (fixed.size > 0) return { found: fixed, correction: { from: word.raw, to: closest } }
+  }
+  return { found }
+}
+
 /** 검색어로 문서 점수 매기기. 결과에 들 문서만 담는다 */
 function scoreDocs(query: string) {
-  const words = queryWords(query)
+  const words = joinSynonymPairs(queryWords(query))
   const scores = new Map<string, number>()
-  if (words.length === 0) return scores
-  const matches = words.map(docsWithWord)
+  const corrections: Correction[] = []
+  if (words.length === 0) return { scores, corrections }
+  const matches = words.map((word) => {
+    const { found, correction } = findWord(word)
+    if (correction) corrections.push(correction)
+    return found
+  })
   const idfs = matches.map((found) => idf(found.size))
   const needed = requiredMatches(words.length)
   const hit = new Map<number, number>()
@@ -188,13 +288,16 @@ function scoreDocs(query: string) {
     }, 0)
     scores.set(doc.id, relevance * (1 + LEVEL_BOOST * (doc.level - 1)))
   }
-  return scores
+  return { scores, corrections }
 }
 
-/** 검색 결과 — 점수 높은 순. 점수가 같으면 사례는 레벨 → 날짜(rank.ts), 노트는 최신순. 빈 검색어면 전부 기본 순서 */
-export function search(query: string) {
-  if (!query.trim()) return { cases: rankCases(CASES), notes: NOTES }
-  const scores = scoreDocs(query)
+/**
+ * 검색 결과 — 점수 높은 순. 점수가 같으면 사례는 레벨 → 날짜(rank.ts), 노트는 최신순. 빈 검색어면 전부 기본 순서.
+ * corrections 는 오타를 고쳐서 찾은 낱말들이다(결과 화면 안내용).
+ */
+export function search(query: string): { cases: PortfolioCase[]; notes: StudyNote[]; corrections: Correction[] } {
+  if (!query.trim()) return { cases: rankCases(CASES), notes: NOTES, corrections: [] }
+  const { scores, corrections } = scoreDocs(query)
   const scoreOf = (id: string) => scores.get(id) ?? 0
   const byScore = <T>(items: T[], id: (item: T) => string) =>
     items.filter((item) => scores.has(id(item))).sort((a, b) => scoreOf(id(b)) - scoreOf(id(a)))
@@ -202,6 +305,7 @@ export function search(query: string) {
     // rankCases 로 먼저 줄 세운 뒤 점수로 다시 정렬한다 — sort 는 안정 정렬이라 같은 점수면 레벨·날짜 순이 남는다
     cases: byScore(rankCases(CASES), (item) => `case:${item.slug}`),
     notes: byScore(NOTES, (note) => `note:${note.slug}`),
+    corrections,
   }
 }
 

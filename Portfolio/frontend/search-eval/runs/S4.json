@@ -1,0 +1,368 @@
+{
+  "savedAt": "2026-10-26",
+  "overall": {
+    "count": 39,
+    "zeroRate": 0.02564102564102564,
+    "hitAtK": 0.9487179487179487,
+    "mrr": 0.9358974358974359,
+    "recall": 0.9487179487179487
+  },
+  "heldOut": {
+    "count": 10,
+    "zeroRate": 0.5,
+    "hitAtK": 0.5,
+    "mrr": 0.5,
+    "recall": 0.5
+  },
+  "falsePositiveRate": 0,
+  "negativeCount": 6,
+  "categories": {
+    "기본": {
+      "count": 7,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "여러 단어": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "띄어쓰기": {
+      "count": 4,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "조사": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "유사어": {
+      "count": 4,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 0.875,
+      "recall": 1
+    },
+    "한영 오타": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "자모 오타": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "본문": {
+      "count": 5,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    },
+    "자연어": {
+      "count": 4,
+      "zeroRate": 0.25,
+      "hitAtK": 0.5,
+      "mrr": 0.5,
+      "recall": 0.5
+    },
+    "표기 차이": {
+      "count": 3,
+      "zeroRate": 0,
+      "hitAtK": 1,
+      "mrr": 1,
+      "recall": 1
+    }
+  },
+  "perQuery": {
+    "Q01": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q02": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q03": {
+      "total": 3,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q04": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q05": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q06": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q07": {
+      "total": 5,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q08": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q09": {
+      "total": 5,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q10": {
+      "total": 3,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q11": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q12": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q13": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q14": {
+      "total": 4,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q15": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q16": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q17": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q18": {
+      "total": 33,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q19": {
+      "total": 4,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q20": {
+      "total": 4,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q21": {
+      "total": 3,
+      "firstRank": 2,
+      "recall": 1
+    },
+    "Q22": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q23": {
+      "total": 6,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q24": {
+      "total": 10,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q25": {
+      "total": 9,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q26": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q27": {
+      "total": 10,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q28": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q29": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q30": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q31": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q32": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q33": {
+      "total": 4,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q34": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q35": {
+      "total": 3,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q36": {
+      "total": 1,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "Q40": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q41": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q42": {
+      "total": 1,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "H01": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "H02": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "H03": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "H04": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "H05": {
+      "total": 5,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "H06": {
+      "total": 12,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "H07": {
+      "total": 7,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "H08": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 0
+    },
+    "H09": {
+      "total": 12,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "H10": {
+      "total": 2,
+      "firstRank": 1,
+      "recall": 1
+    },
+    "Q37": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q38": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q39": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q44": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q45": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    },
+    "Q46": {
+      "total": 0,
+      "firstRank": 0,
+      "recall": 1
+    }
+  }
+}

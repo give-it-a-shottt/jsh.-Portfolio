@@ -85,6 +85,7 @@ function grade(item, results, inHidden) {
     id: item.id,
     query: item.query,
     category: item.category,
+    heldOut: Boolean(item.heldOut),
     negative: relevant.length === 0,
     total: results.length,
     top: results.slice(0, TOP_K),
@@ -99,7 +100,9 @@ function grade(item, results, inHidden) {
 }
 
 function summarize(rows) {
-  const positive = rows.filter((row) => !row.negative)
+  // 처음 보는 검색어(heldOut)는 전체 점수에서 뺀다 — 단계끼리 같은 시험지로 비교하고, 규칙이 시험지에만 맞춰졌는지는 따로 본다
+  const positive = rows.filter((row) => !row.negative && !row.heldOut)
+  const heldOut = rows.filter((row) => !row.negative && row.heldOut)
   const negative = rows.filter((row) => row.negative)
   const avg = (list, pick) => (list.length ? list.reduce((sum, row) => sum + pick(row), 0) / list.length : 0)
   const metrics = (list) => ({
@@ -115,6 +118,7 @@ function summarize(rows) {
   }
   return {
     overall: metrics(positive),
+    heldOut: heldOut.length ? metrics(heldOut) : undefined,
     // 정답이 없어야 하는 검색어에서 뭔가 나온 비율 — 낮을수록 좋다
     falsePositiveRate: avg(negative, (row) => (row.total > 0 ? 1 : 0)),
     negativeCount: negative.length,
@@ -196,6 +200,11 @@ function printReport(report, rows, base) {
   console.log(`MRR            ${num(overall.mrr)}${delta(overall.mrr, b?.mrr, false)}   1이면 정답이 늘 1위`)
   console.log(`찾은 비율       ${pct(overall.recall)}${delta(overall.recall, b?.recall, true)}   정답 중 결과에 나온 몫`)
   console.log(`엉뚱한 결과     ${pct(report.falsePositiveRate)}${delta(report.falsePositiveRate, base?.falsePositiveRate, true, true)}   정답 없어야 하는데 뭔가 나온 비율`)
+  if (report.heldOut) {
+    const h = report.heldOut
+    const hb = base?.heldOut
+    console.log(`\n처음 보는 검색어 ${h.count}개(전체 점수에서 뺌) — 상위 ${TOP_K} 적중률 ${pct(h.hitAtK).trim()}${delta(h.hitAtK, hb?.hitAtK, true)} · 0건 비율 ${pct(h.zeroRate).trim()}${delta(h.zeroRate, hb?.zeroRate, true, true)} · MRR ${num(h.mrr)}`)
+  }
 
   console.log(`\n${padWide('유형별', 12)} 개수   0건 상위${TOP_K}   MRR 찾은 비율`)
   for (const [name, m] of Object.entries(report.categories)) {
