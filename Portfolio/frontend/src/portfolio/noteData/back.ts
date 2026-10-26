@@ -1,8 +1,94 @@
 import type { StudyNote } from '../notes'
 
-// Back 공부 노트 — 노션 학습노트 > 학습 폴더 > 백엔드 · MySQL · MongoDB, AI와 학습(서버 쪽). 구버전·개발 환경 노트는 싣지 않는다
+// Back 공부 노트 — 노션 학습노트 > 학습 폴더 > 백엔드 · MySQL · MongoDB, AI와 학습(서버 쪽), 알고리즘. 구버전·개발 환경 노트는 싣지 않는다
 export const BACK_NOTES: StudyNote[] = [
   // ── AI와 학습 (미니 인프런 · Nightly 풀스택) ──
+  {
+    slug: 'be-sse-redis-ratelimit',
+    area: 'Back',
+    course: 'Nightly 풀스택',
+    lesson: 'M3',
+    date: '2026.10.26',
+    title: 'AI 코칭 스트리밍 — SSE · Redis Rate Limiting · 워커',
+    summary: 'AI 를 부르기 전에 모든 워커가 같이 보는 Redis 에서 INCR + EXPIRE 로 1분 3회를 세어 넘으면 429 로 끊고, 통과하면 async 제너레이터의 yield 와 StreamingResponse(SSE) 로 글자를 만들어지는 대로 흘려보낸다.',
+    points: [
+      '파이썬 dict 로 세면 안 되는 이유는 속도가 아니라 공유 — 워커는 메모리를 나누지 않는 별개 프로세스다',
+      '검문은 AI 호출 전, StreamingResponse 를 만들기 전 — 스트리밍이 시작되면 200 이 이미 나가 상태 코드를 못 바꾼다',
+      'INCR 과 EXPIRE 를 따로 보내면 그 사이 장애로 TTL 없는 키가 남아 영구 차단된다 → 파이프라인 + EXPIRE NX',
+    ],
+    learned: [
+      {
+        title: '비동기와 워커',
+        items: [
+          'async def 안의 time.sleep · requests 는 이벤트 루프를 얼려 그 워커의 다른 요청까지 멈춘다 (실습: 세 유저 0.9초 → 0.9 · 1.8 · 2.7초)',
+          'FastAPI 는 def 엔드포인트를 스레드 풀에서 돌려 루프를 지킨다',
+          '워커는 코어 수에서 시작 — 워커마다 커넥션 풀이 따로라 DB 연결 수가 곱해진다',
+        ],
+      },
+      {
+        title: '바로잡은 것',
+        items: [
+          '"동기로 짜면 다른 유저는 접속조차 못 한다" 는 FastAPI 에선 반만 맞다 — def 는 스레드 풀에서 돈다',
+          '프론트에서 read() 조각마다 바로 나누면 이벤트가 중간에 잘려 글자가 사라진다 → 빈 줄(이벤트 끝) 기준으로 버퍼에 모은다',
+          '글자 수는 토큰 수가 아니다 — 실서비스는 AI 응답의 usage 값을 기록한다',
+          '첫 글자까지의 시간은 TTFB 가 아니라 TTFT',
+        ],
+      },
+      {
+        title: '설계',
+        items: [
+          'SSE 는 서버 → 브라우저 단방향이라 AI 답변에 맞고, JWT 헤더와 POST 가 필요해 EventSource 대신 fetch + ReadableStream',
+          '고정 윈도우는 경계에서 몰아 쓰면 한도의 2배까지 통과한다 — 정확도가 돈과 직결되면 슬라이딩 윈도우 · 토큰 버킷',
+          '스트리밍 내내 DB 세션을 붙잡으니 마지막 사용량 기록은 새 세션으로 짧게 쓴다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'Redis', 'SSE', '비동기'],
+    keywords: 'sse server sent events streaming streamingresponse redis rate limiting incr expire 429 async await event loop worker uvicorn gunicorn fastapi nightly m3 ttft token bucket',
+  },
+  {
+    slug: 'be-fastapi-postgres',
+    area: 'Back',
+    course: '미니 인프런',
+    lesson: '7회차',
+    date: '2026.10.23',
+    title: 'FastAPI 와 Postgres 연결 — 접속 주소 · 커넥션 풀 · commit',
+    summary: '밖에서 DB 에 붙으려면 사용자 · 비밀번호 · 주소 · 포트 · DB 이름과 드라이버가 필요하다. engine 은 연결 보관함(풀)을 두고 돌려 쓰고, commit 없이 with 가 끝나면 SQLAlchemy 가 ROLLBACK 을 보낸다.',
+    points: [
+      '주소는 "그 이름표를 알아듣는 쪽이 누구냐" 로 고른다 — 노트북의 uvicorn 은 localhost:5433, 같은 compose 의 컨테이너는 db:5432',
+      'INSERT 가 에러 없이 사라졌다 — 로그 끝의 ROLLBACK 을 보고 commit 누락을 찾았다',
+      'engine 은 서버를 켤 때 한 번 — 요청마다 만들면 연결 비용을 계속 치른다',
+    ],
+    learned: [
+      {
+        title: '역할 나누기',
+        items: [
+          'SQLAlchemy 는 파이썬 → SQL 번역가, psycopg 는 DB 와 실제로 연결을 맺는 드라이버',
+          'DB 행은 튜플이라 이름표가 없다 → mappings() 로 열 이름을 붙여 JSON 으로 돌려준다',
+          'psql 은 문장마다 자동 commit, SQLAlchemy connect() 는 트랜잭션을 자동으로 열고 확정은 내가 한다',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '"Docker 안에 있으니 db 를 쓴다" 고 생각했다 → 컨테이너 밖 uvicorn 은 db 라는 이름을 모른다',
+          '인사말 로그가 첫 요청에만 찍힌 걸 echo 탓으로 봤다 → 풀에서 이미 연결된 통로를 다시 빌려 쓴 것이었다',
+          'GENERATED ALWAYS 인 id 에 값을 직접 넣어 INSERT 가 실패했다 → id 는 DB 에 맡긴다',
+          'ROLLBACK 해도 identity 번호는 돌아오지 않아 id 에 빈 번호가 생긴다 — id 는 순번이 아니라 이름표',
+        ],
+      },
+      {
+        title: '다음에 쓸 것',
+        items: [
+          'engine.begin() — 끝까지 성공하면 자동 COMMIT, 예외가 나면 ROLLBACK',
+          '값은 f-string 이 아니라 :id 파라미터로 넘긴다 — SQL 인젝션 방지',
+          '접속 URL 은 코드가 아니라 환경변수(DATABASE_URL)로 뺀다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'PostgreSQL', 'SQLAlchemy'],
+    keywords: 'fastapi postgres postgresql sqlalchemy psycopg engine connection pool commit rollback transaction docker compose localhost mini inflearn 미니 인프런 identity mappings',
+  },
   {
     slug: 'be-webhook-hmac',
     area: 'Back',
@@ -322,6 +408,462 @@ export const BACK_NOTES: StudyNote[] = [
     ],
     tags: ['백엔드', 'HTTP', '네트워크'],
     keywords: 'http request response method get post status code 404 500 header body json curl',
+  },
+  // ── 알고리즘 (프로그래머스 코테 풀이) — 문제 풀이 대신 무엇을 떠올려야 풀리는지와 막힌 곳을 정리 ──
+  {
+    slug: 'algo-lru-cache',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '12번',
+    date: '2026.10.26',
+    title: 'LRU 캐시 — [1차] 캐시',
+    summary: '캐시 바구니를 직접 유지하며 최근에 쓴 것은 한쪽, 가장 오래 안 쓴 것은 반대쪽 끝에 둔다. Hit 이면 빼서 최근 쪽에 다시 넣고, Miss 인데 꽉 찼으면 가장 오래된 것을 버린다.',
+    points: [
+      'LRU 는 들어온 순서가 아니라 마지막으로 쓴 시점이 기준 — Hit 때 갱신을 빼면 FIFO 가 된다',
+      'deque 풀이는 in · remove 가 캐시 크기만큼 돌아 O(N × C) — C ≤ 30 이라 충분하다',
+      'C 가 크면 OrderedDict(해시 + 이중 연결 리스트)로 조회 · 이동 · 삭제를 모두 O(1)',
+    ],
+    learned: [
+      {
+        title: 'OrderedDict',
+        items: [
+          'move_to_end(key) 로 최근으로, popitem(last=False) 로 가장 오래된 것을 꺼낸다',
+          'dict 도 3.7부터 넣은 순서를 기억하지만, 키를 앞뒤로 옮기는 연산은 없다',
+          'deque(maxlen=C) 는 꽉 차면 반대쪽이 자동으로 밀려나고, 0 이면 아무것도 담기지 않는다',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '직전 C개 요청을 슬라이싱으로 보려 했다 → 캐시는 "최근에 쓴 서로 다른 C개" 라 [1, 2, 2, 2, 1] 에서 틀린다',
+          'set 으로 정리하려 했다 → 순서가 없어 누가 가장 오래됐는지 알 수 없다',
+          '꽉 찬 조건을 < 로 썼다 → 숫자를 넣어 읽으면 "아직 자리 있다" 는 뜻이라 >=',
+          '"O(N) + O(N) = O(N)" 이라고 설명했다 → 반복 안의 비용은 더하지 않고 곱해서 O(N × C)',
+        ],
+      },
+      {
+        title: '실무로 옮기면',
+        items: [
+          'functools.lru_cache, Redis allkeys-lru 는 용량 기준으로 밀어낸다',
+          'TanStack Query gcTime, Redis EXPIRE 는 시간 기준(TTL) — 다른 교체 정책이다',
+        ],
+      },
+    ],
+    tags: ['알고리즘', '캐시', 'Python'],
+    keywords: 'algorithm lru cache deque ordereddict kakao 카카오 캐시 hit miss ttl eviction 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-delivery-box',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '11번',
+    date: '2026.10.22',
+    title: '스택 시뮬레이션 — 택배상자',
+    summary: '메인 벨트의 상자를 일단 보조 벨트(스택)에 넣고, 맨 위가 지금 실을 상자인 동안 while 로 연속해서 꺼낸다. idx 는 "지금 찾는 순서" 이자 "실은 개수" 라 그대로 답이 된다.',
+    points: [
+      'for 안의 while 이어도 O(N) — 상자마다 push 1번, pop 최대 1번이라 전체 2N 이하',
+      '실을 상자가 이미 나왔는데(order[idx] <= box) 맨 위가 아니면 밑에 깔린 것 → 거기서 끝',
+      '바로 실을 수 있는 상자도 일단 넣으면 분기 없이 한 경로로 처리된다',
+    ],
+    learned: [
+      {
+        title: '판단 기준',
+        items: [
+          '중첩 반복은 "바깥 한 번마다" 가 아니라 "전체 통틀어" 몇 번 도는지로 센다',
+          '스택 하나로 만들 수 있는 순서는 312 패턴이 없는 순열뿐이다 (길이 1~7 전부 실행해 확인)',
+          '보류했다가 연쇄 처리하는 흐름은 같아도, 아무 번호나 꺼내야 하면 스택이 아니라 dict 나 힙',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          'order[idx] <= box 를 "order 가 크다" 로 반대로 읽었다 → 변수 뜻을 말로 먼저 바꾼다',
+          '조기 종료를 append 앞에 두면 [1, 2, 3] 이 0 — 꺼낼 수 있는 걸 다 꺼낸 뒤에 판단한다',
+          '"for 는 한 번만 돈다" 는 바깥만 설명한 것 — 핵심은 push · pop 총횟수였다',
+        ],
+      },
+    ],
+    tags: ['알고리즘', '스택', 'Python'],
+    keywords: 'algorithm stack simulation 택배상자 amortized 분할 상환 stack sortable permutation 312 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-rotate-brackets',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '10번',
+    date: '2026.10.20',
+    title: '스택 · for–else — 괄호 회전하기',
+    summary: '회전은 s[i:] + s[:i], 짝 검증은 스택이다. 닫는 괄호를 키로 둔 dict 로 "닫는 괄호인가 · 내 짝인가" 를 O(1) 에 보고, 빈 스택에서 실패한 경우를 성공으로 세지 않도록 완주했을 때만 센다.',
+    points: [
+      '개수만 세면 ([)] 처럼 순서가 엇갈린 경우를 못 잡는다 → 가장 최근에 열린 것을 기억하는 스택',
+      '"빈 스택" 은 성공의 증거가 아니다 — 빈 스택에서 break 해도 스택은 비어 있다 → for–else',
+      'stack 은 회전마다 새로, pair · count 는 루프 밖 — "반복마다 새로 시작하나, 계속 쌓이나"',
+    ],
+    learned: [
+      {
+        title: '문법',
+        items: [
+          'for–else 의 else 는 break 없이 끝났을 때만 실행된다',
+          'and 는 앞이 거짓이면 뒤를 안 본다 — stack and stack[-1] 순서가 IndexError 를 막는다',
+          '검증을 함수로 분리하면 return False 로 바로 나와 for–else 가 필요 없다',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          'ch == "(" or "[" 는 항상 참 — 1번 문제의 실수가 다시 나왔다. 여러 값 비교는 in',
+          's[:i] + s[i:] 는 원래 문자열 그대로 → 앞을 떼어 뒤로 붙인다',
+          '반례로 든 "][]" 는 홀수 길이라 버그를 재현하지 못했다 → 짝수 반례 "[](){}" 에서 3 대신 6',
+        ],
+      },
+      {
+        title: '실무로 옮기면',
+        items: ['에디터 괄호 검사는 True/False 가 아니라 오류 위치가 필요하다 — 스택에 (괄호, 인덱스) 를 넣는다'],
+      },
+    ],
+    tags: ['알고리즘', '스택', 'Python'],
+    keywords: 'algorithm stack bracket rotation for else 괄호 회전하기 dict short circuit 단축 평가 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-feature-deploy',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '9번',
+    date: '2026.10.19',
+    title: '완료 시점 계산 — 기능개발',
+    summary: '하루씩 시뮬레이션하지 않고 기능마다 남은 일수를 올림 나눗셈으로 먼저 구한다. 앞에서부터 기준일 이하인 기능은 같은 배포로 묶고, 더 오래 걸리는 기능을 만나면 확정 → 기준 갱신 → 1부터 다시 센다.',
+    points: [
+      '같은 날 끝난 기능도 함께 배포된다 — < 가 아니라 <=',
+      '큰 값을 만났을 때 세 줄 세트: append(확정) → max_day 갱신 → count = 1',
+      '정수 올림 -(-a // b) 는 실수 나눗셈을 거치지 않아 부동소수점 오차가 없다',
+    ],
+    learned: [
+      {
+        title: '다른 풀이',
+        items: [
+          'deque 로 맨 앞을 꺼내고 기준 이하인 것을 while 로 함께 꺼내면 마지막 묶음 처리가 필요 없다',
+          '결과 리스트의 마지막 칸을 진행 중인 묶음으로 쓰면 루프 밖 append 가 사라진다',
+          'zip 은 길이가 다르면 짧은 쪽에서 조용히 멈춘다 — 3.10+ 은 strict=True',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '기준보다 큰 값을 만나도 count += 1 을 해 두 배포가 한 덩어리가 됐다',
+          '루프가 끝난 뒤 마지막 묶음 append 를 빠뜨렸다',
+          '설명할 때 "기준보다 작은 값" 이라고 해 경계(<=)가 틀렸다',
+        ],
+      },
+    ],
+    tags: ['알고리즘', '큐', 'Python'],
+    keywords: 'algorithm queue deque ceil 기능개발 배포 완료 시점 zip 올림 나눗셈 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-rollcake',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '8번',
+    date: '2026.10.18',
+    title: '경계 이동 · 증분 갱신 — 롤케이크 자르기',
+    summary: '칼을 한 칸씩 옮기며 왼쪽 set 에는 넣기만, 오른쪽 Counter 에서는 빼다가 0이 되면 종류에서 지운다. 매번 전체를 다시 세지 않으니 100만 개도 O(N) 이다.',
+    points: [
+      '넣기만 하는 쪽은 set, 빼기도 하는 쪽은 개수를 아는 Counter',
+      'Counter 는 값이 0이어도 키가 남아 len 에 잡힌다 → del 하거나 종류 수 변수를 따로 둔다',
+      '왼쪽 종류는 늘기만, 오른쪽은 줄기만 — 왼쪽이 커지면 바로 끝낼 수 있다',
+    ],
+    learned: [
+      {
+        title: '다른 풀이',
+        items: [
+          '앞에서 한 번, 뒤에서 한 번 종류 수 배열을 미리 만들고 경계마다 비교 — 빼는 연산이 없어 실수가 적다',
+          '단조성이 있으면 같아지는 구간은 한 덩어리 → 이분 탐색 후보',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '(10⁶)² 을 10¹⁰ 으로 계산했다 → 지수는 곱해서 10¹²',
+          '큐를 먼저 떠올렸지만 큐는 종류 수를 바로 알려주지 않는다',
+          '왼쪽 dict, 오른쪽 set 으로 반대로 짝지었다 → 빼는 쪽에 set 을 쓰면 하나만 빠져도 종류가 통째로 사라진다',
+        ],
+      },
+      {
+        title: '실무로 옮기면',
+        items: ['접속 · 종료 이벤트마다 접속자 수를 갱신하는 실시간 집계 — 전체를 다시 세지 않는다'],
+      },
+    ],
+    tags: ['알고리즘', '해시', 'Python'],
+    keywords: 'algorithm counter set incremental prefix suffix 롤케이크 자르기 경계 이동 증분 갱신 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-sliding-window-discount',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '7번',
+    date: '2026.10.18',
+    title: '고정 길이 슬라이딩 윈도우 — 할인 행사',
+    summary: '시작일마다 10일 치를 잘라 Counter 로 세고 목표 dict 와 == 로 통째 비교한다. 길이 N 에서 길이 K 구간은 N − K + 1 개라 range 끝값에 +1 이 필요하다.',
+    points: [
+      'range 가 세는 건 날짜가 아니라 시작일의 개수 — 10일 치를 자르는 건 슬라이싱의 몫',
+      '연산 어림은 (반복 횟수) × (한 번에 하는 일) — 10만 × 10 = 100만',
+      '창을 한 칸 밀 때 들어오는 1개는 더하고 나가는 1개는 빼면 창이 커져도 O(N)',
+    ],
+    learned: [
+      {
+        title: 'Counter',
+        items: [
+          '없는 키를 조회하면 KeyError 대신 0',
+          'dict 와 == 로 키 · 값이 모두 같은지 한 번에 비교한다',
+          'dict(zip(want, number)) 로 두 리스트를 짝지은 dict',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '10만 × 10만을 백만으로 계산했다 → 실제 100억. 지수로 적어서 곱한다',
+          'enumerate 가 1부터 센다고 착각해 수량이 한 칸 밀렸다',
+          'range(len - 10) 이면 길이 10 입력에서 한 번도 검사하지 않는다 → N − K + 1',
+          '비교 자리에 = 를 써서 목표 dict 를 덮어썼다',
+        ],
+      },
+    ],
+    tags: ['알고리즘', '슬라이딩 윈도우', '해시'],
+    keywords: 'algorithm sliding window counter dict 할인 행사 off by one range 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-monotonic-stack',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '6번',
+    date: '2026.10.15',
+    title: '단조 스택 — 뒤에 있는 큰 수 찾기',
+    summary: '스택을 "나보다 큰 수를 기다리는 인덱스 대기실" 로 쓴다. 새 수가 맨 위보다 크면 while 로 꺼내며 그 자리에 답을 적고, 각 인덱스는 한 번 들어가고 한 번 나오므로 100만 개도 O(N) 이다.',
+    points: [
+      '값이 아니라 인덱스를 넣는다 — 답을 원래 자리에 적어야 해서',
+      'for 안의 while 이어도 O(N) — 원소마다 push 1번, pop 최대 1번',
+      '같은 값은 더 큰 수가 아니다 — 앞에서 돌면 <, 뒤에서 돌면 <=',
+    ],
+    learned: [
+      {
+        title: '변형',
+        items: [
+          '뒤에 있는 작은 수는 부등호만 바꿔 단조 증가 스택',
+          '"몇 칸 뒤" 를 물으면 answer[prev] = i - prev',
+          '구간 길이 k 의 최댓값은 단조 덱으로 O(N) — 최근 5분 최대 응답 시간 같은 집계',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          'while 조건 부등호를 반대로 봤다 → "지금 온 숫자가 더 클 때 꺼낸다" 를 말로 먼저 쓴다',
+          '함정 고르기에서 pop(0) 을 골랐지만 진짜 함정은 동점에 <= 를 쓰는 것이었다 ([3, 3, 5])',
+        ],
+      },
+    ],
+    tags: ['알고리즘', '스택', 'Python'],
+    keywords: 'algorithm monotonic stack next greater element 뒤에 있는 큰 수 단조 스택 deque sliding window amortized 분할 상환 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-heap-hotel',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '5번',
+    date: '2026.10.15',
+    title: '최소 힙 — 호텔 대실',
+    summary: '최소 객실 수는 동시에 겹치는 예약 수의 최댓값이다. 시작 시각으로 정렬하고, 사용 중인 방의 비는 시각을 최소 힙에 두어 가장 빨리 비는 방 하나만 확인한다.',
+    points: [
+      '청소 10분은 끝 시각에 미리 더해 비교를 "시작 >= 비는 시각" 하나로 만든다',
+      '같은 답을 그리디 · 스위핑 · 힙 세 방법으로 풀고 무작위 입력으로 결과를 맞춰 봤다',
+      'k번째 방을 여는 순간 예약 k개가 동시에 겹친다 — 그래서 그리디가 최적이다',
+    ],
+    learned: [
+      {
+        title: '방법 비교',
+        items: [
+          '방별로 채우기 O(N²), 시작 순간마다 겹침 세기 O(N²), 최소 힙 O(N log N)',
+          '힙은 삽입 · 삭제가 O(log N), 정렬된 리스트는 삽입이 O(N)',
+          'heapreplace 는 반드시 rooms[0] <= start 를 확인한 뒤에 — 안 그러면 쓰는 방을 빼 버린다',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '첫 예약의 끝과만 비교했다 → 넣을 때마다 기준을 갱신 (예제는 통과, 무작위 3만 개 중 1만 2천여 개 오답)',
+          '구간끼리 겹치는지로 세서 과대 계산했다 → 각 예약의 "시작 순간" 에 쓰는 방 수로 센다',
+          '< 를 써서 청소가 끝나는 그 분에 방을 못 줬다 → <=',
+        ],
+      },
+      {
+        title: '실무로 옮기면',
+        items: [
+          '회의실 · 좌석 예약에서 필요한 방 수, 커넥션 풀 크기 산정',
+          '메모리 할당기가 반납된 블록을 재사용할지 새로 할당할지 판단하는 구조와 같다',
+        ],
+      },
+    ],
+    tags: ['알고리즘', '힙', '그리디'],
+    keywords: 'algorithm heap heapq priority queue greedy sweeping 호텔 대실 회의실 meeting rooms interval 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-bfs-gamemap-network',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '4번',
+    date: '2026.10.15',
+    title: 'BFS · DFS — 게임 맵 최단거리 · 네트워크',
+    summary: '이동 비용이 모두 같고 최단거리를 물으면 BFS 다. 가까운 곳부터 한 겹씩 퍼지므로 처음 도착한 거리가 곧 최단이고, 연결 묶음 개수는 탐색을 새로 시작한 횟수다.',
+    points: [
+      '꺼내는 위치 하나가 방식을 바꾼다 — popleft 면 BFS, pop 이면 DFS',
+      '방문 표시는 큐에 넣는 순간 — 꺼낼 때 찍으면 같은 칸이 중복으로 들어간다 (빈 맵에서 약 2배)',
+      '"손으로 풀 때 무엇을 기억했나" 가 곧 자료구조 선택이다',
+    ],
+    learned: [
+      {
+        title: '패턴',
+        items: [
+          '상하좌우는 방향 배열 + for 하나, 범위 체크는 0 <= nr < n 한 곳에서',
+          '네트워크는 미방문 컴퓨터에서 탐색을 새로 시작할 때 +1',
+          '재귀 DFS 는 파이썬 재귀 한도(기본 1000)를 조심한다',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '최단거리를 DFS 로 구해 반례에서 9 대신 11 — 먼 길이 먼저 도장을 찍었다',
+          '방문 표시 없이 탐색해 같은 칸을 오가며 끝나지 않았다',
+          '대칭이라 cur+1 부터만 봤더니 연결 0–2, 1–2 에서 묶음이 2로 나왔다 → 이웃은 항상 전체를 본다',
+        ],
+      },
+      {
+        title: '실무로 옮기면',
+        items: [
+          '지도 · 게임 UI 최단 경로. 이동 비용이 다르면 다익스트라',
+          '친구 그룹 · 서비스 의존성 묶음. 연결이 계속 추가되면 Union-Find',
+        ],
+      },
+    ],
+    tags: ['알고리즘', 'BFS', '그래프'],
+    keywords: 'algorithm bfs dfs graph 게임 맵 최단거리 네트워크 visited 연결 요소 union find dijkstra 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-queue-truck-process',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '3번',
+    date: '2026.10.15',
+    title: '큐 — 다리를 지나는 트럭 · 프로세스',
+    summary: '들어온 순서대로 처리하면 큐(deque)다. 한 초 안의 순서(시간 → 내리기 → 올리기)를 정하고, 꺼냈다 다시 넣어도 누구인지 알 수 있게 (우선순위, 원래 위치) 로 묶는다.',
+    points: [
+      'list.pop(0) 은 O(N), deque.popleft() 는 O(1)',
+      '다리 무게는 매번 sum() 대신 변수로 더하고 빼서 숨은 반복을 없앤다',
+      '트럭을 못 올리는 구간은 다음 하차 시각으로 시간을 점프해 최악 약 1억 번 → O(N)',
+    ],
+    learned: [
+      {
+        title: '시간 초과 어림',
+        items: [
+          '제약의 최대 N 으로 반복 횟수를 곱하고, 파이썬은 1초에 약 1천만 번으로 잡는다',
+          'max · sum · in · pop(0) · index 도 한 줄짜리 반복으로 센다',
+          'N 이 ~1,000 이면 2중 반복, ~10만이면 반복 1개 + 정렬까지',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '나갈 시간 비교 방향을 반대로 써 트럭이 일찍 빠졌다 → 나갈 시간 == 지금',
+          '올리기를 먼저 해서 같은 초의 빈자리를 못 썼다 → 내리기 먼저',
+          '"남은 것의 max 와 다르면 뒤로" 는 [3, 1] 에서 무한루프 → "남은 max 가 더 크면"',
+        ],
+      },
+      {
+        title: '실무로 옮기면',
+        items: ['토스트 알림 대기열, 작업 큐', '우선순위 작업은 매번 max 대신 힙(heapq)으로 O(log N)'],
+      },
+    ],
+    tags: ['알고리즘', '큐', 'Python'],
+    keywords: 'algorithm queue deque fifo 다리를 지나는 트럭 프로세스 우선순위 시간 초과 시간복잡도 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-stack-brackets-tasks',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '2번',
+    date: '2026.10.15',
+    title: '스택 — 올바른 괄호 · 과제 진행하기',
+    summary: '가장 최근 것부터 처리해야 하면 스택이다. 괄호는 맨 위가 ( 이고 지금이 ) 일 때만 짝을 지우고, 멈춘 과제는 [이름, 남은 시간] 으로 쌓았다가 빈 시간 동안 while 로 최근 것부터 이어서 한다.',
+    points: [
+      '짝 조건은 "다르면" 이 아니라 "맨 위 ( 그리고 지금 )" — 방향을 봐야 ")(" 를 잡는다',
+      '괄호가 한 종류면 숫자 하나로 충분하고, 중간에 음수가 되면 바로 실패',
+      '빈 시간에 멈춘 과제를 여러 개 끝낼 수 있어서 if 가 아니라 while',
+    ],
+    learned: [
+      {
+        title: '정렬과 시각',
+        items: [
+          '"hh:mm" 은 분으로 바꿔 계산하고 시작 시각 기준으로 정렬한다',
+          'sorted(key=x[1]) 은 NameError — key 에는 값이 아니라 함수(lambda x: x[1])를 넘긴다',
+          'sorted() 는 새 리스트, .sort() 는 원본을 바꾸고 None 을 돌려준다',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '작업시간으로 정렬했다 → 과제는 시작 시각에 시작하므로 기준은 start',
+          '스택에 남은 시간만 넣어 꺼냈을 때 이름이 없었다 → [이름, 남은 시간]',
+          '빈 시간에 하나만 꺼내 [c, b, d, a] 가 나왔다 → while 로 반복해 [c, b, a, d]',
+        ],
+      },
+      {
+        title: '실무로 옮기면',
+        items: [
+          '에디터 · 린터의 태그 짝 검사, Undo 히스토리',
+          '선점형 작업 스케줄러 — 재시작돼도 이어가려면 진행 상태를 DB 나 Redis 에 저장한다',
+        ],
+      },
+    ],
+    tags: ['알고리즘', '스택', 'Python'],
+    keywords: 'algorithm stack lifo 올바른 괄호 과제 진행하기 sorted lambda 코테 코딩테스트 프로그래머스',
+  },
+  {
+    slug: 'algo-hash-openchat-report',
+    area: 'Back',
+    course: '알고리즘',
+    lesson: '1번',
+    date: '2026.10.15',
+    title: '해시 — 오픈채팅방 · 신고 결과 받기',
+    summary: '키로 값을 바로 찾는 dict 와 중복을 알아서 지우는 set 으로 기록을 집계한다. 마지막 상태가 과거 출력에도 반영되면 끝까지 한 번 훑어 상태를 확정한 뒤, 두 번째 순회로 출력을 만든다.',
+    points: [
+      '리스트 탐색은 O(N), dict 조회는 평균 O(1) — 조회가 반복될수록 차이가 커진다',
+      '"나중 닉네임이 예전 메시지에도 반영" → 1번째 순회로 확정, 2번째 순회로 출력',
+      '"같은 신고는 한 번만" → 피신고자별 신고자 set',
+    ],
+    learned: [
+      {
+        title: '자료구조',
+        items: [
+          '빈 set 은 set(), {} 는 빈 dict',
+          '없는 키에 add 하면 KeyError → 미리 초기화하거나 defaultdict(set)',
+          '이름 → 위치 dict 를 만들어 두면 매번 index() 로 찾는 숨은 반복이 사라진다',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          'x == "Enter" or "Change" 는 항상 참 — 비어 있지 않은 문자열이 True 라서. x in ("Enter", "Change") 로 쓴다',
+          'reported[b] = a 는 덮어쓰기라 마지막 신고자만 남았다 → set 에 add',
+          '한 번 순회하며 바로 메시지를 만들면 이후 닉네임 변경을 알 수 없다',
+        ],
+      },
+      {
+        title: '실무로 옮기면',
+        items: [
+          '채팅 메시지에는 닉네임이 아니라 user_id 를 저장하고, 그릴 때 최신 닉네임을 붙인다',
+          '중복 신고는 DB 에서 (신고자, 피신고자) UNIQUE 로 막는다',
+        ],
+      },
+    ],
+    tags: ['알고리즘', '해시', 'Python'],
+    keywords: 'algorithm hash dict set defaultdict 오픈채팅방 신고 결과 받기 kakao 카카오 중복 제거 코테 코딩테스트 프로그래머스',
   },
   // ── 백엔드 강의 (Flask 30강) ──
   {

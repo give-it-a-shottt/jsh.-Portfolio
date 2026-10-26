@@ -56,6 +56,7 @@ MyDesign*.md         디자인 시스템 기준 문서
 | [D-001](03_Decisions/D-001-single-vite-hash-routing.md) | Vite 앱 하나 + 해시 라우팅 + lazy | 확인 완료 · Accio·마에스트로 분리 예정 |
 | [D-002](03_Decisions/D-002-mock-real-client.md)         | 외부 API mock ↔ real 교체 구조    | 확인 필요                              |
 | [D-003](03_Decisions/D-003-accio-v1-static-build.md)    | 팀 원본은 정적 빌드만 보존        | 확인 필요                              |
+| [D-004](03_Decisions/D-004-notion-notes-semi-auto.md) | 노션 노트는 터미널 한마디로 반자동 옮기기 | 확인 완료 |
 
 ### 기능
 
@@ -68,4 +69,4 @@ MyDesign*.md         디자인 시스템 기준 문서
 | [F-005](04_Features/F-005-maestro.md)          | 마에스트로          | 백로그    |
 | [F-006](04_Features/F-006-design-system-case.md) | 개인 디자인 시스템 사례 | [주의] 판정 완료 |
 
-최종 수정: 2026-10-26 · 관련: D-001~D-003, F-001~F-006
+최종 수정: 2026-10-26 · 관련: D-001~D-004, F-001~F-006

@@ -1,0 +1,61 @@
+{
+  "about": "노션 → Study 노트 옮긴 기록. 앱에서 읽지 않는다. notion-notes-sync 스킬이 새 페이지를 찾을 때 쓴다. 키는 노션 page id(32자리).",
+  "roots": {
+    "3f3df951bf8080928cfcc5c56486ceb9": "학습",
+    "2c9df951bf808018bf9dd5f35eed7436": "포토샵 / 일러스트"
+  },
+  "containers": {
+    "3f4df951bf80800c8907e62da6c588bf": "알고리즘",
+    "3f6df951bf8080b99181d2356eb81eaf": "학습한 내용(제미나이)",
+    "3fadf951bf80801bb3a8ef117b311ca3": "학습한 내용(클로드)",
+    "3b1df951bf808040aa04f9c18e4f469f": "알아두면 좋은 디자인 지식"
+  },
+  "migrated": {
+    "3bedf951bf8080379bd4df7ce656d4fe": "design-figma-hierarchy",
+    "3e1df951bf8080e8be85ee38ff0b4c8b": "design-ecommerce-terms",
+    "3f0df951bf8080ea9430c9f678a9a054": "design-motion-basics",
+    "3f8df951bf8080afa261f2adf7d3f053": "design-basics-communication",
+    "3fadf951bf808150ad90dc11c5ffed39": "ps-tone-color",
+    "3fadf951bf80813e9537c3c408aed7c5": "ps-compose-mask-blend",
+    "3fadf951bf8080e0aa2ee1766d3ef424": "ps-layout-brand",
+    "3fddf951bf808093a2d6da7dff1210af": "ps-diagonal-banner",
+    "3fedf951bf8080c5905eca109b9d26d9": "ps-brush-invitation",
+    "3ffdf951bf80807da77bc62cb7e5848a": "ps-split-thumbnail",
+    "401df951bf8080c39091fde2d6f69604": "ps-product-banner-cardnews",
+    "3fadf951bf808038b396d65a097f513d": "be-http-basics",
+    "3fbdf951bf8080448922ee6fd742f83d": "be-routing-json",
+    "3fddf951bf8080518c67fb1a903277a1": "fe-cors-usestate",
+    "3fedf951bf808043b4bcd46e6b8b0697": "be-why-database",
+    "3ffdf951bf808016b031c20deb94ec60": "be-docker-postgres",
+    "400df951bf8080afa0ebefe667836df0": "be-sql-courses-table",
+    "3fddf951bf8080aebc85dcb5f4394755": "be-nightly-setup",
+    "3fedf951bf8080f4ad8be501eeb78753": "be-layered-user-api",
+    "3ffdf951bf808009a18ed24d2a234211": "fe-tanstack-query",
+    "400df951bf80809abc3dc05f5cdc0e60": "be-auth-jwt",
+    "401df951bf8080bfacb7cb3e362367b9": "be-webhook-hmac",
+    "402df951bf8080f996c8da2ebbd32a9e": "be-fastapi-postgres",
+    "405df951bf8080d28917d7d0d19fbbde": "be-sse-redis-ratelimit",
+    "3f4df951bf8080b386d6ea387d6549c6": "algo-hash-openchat-report",
+    "3f5df951bf8080d0943bf46bf8e85ebf": "algo-stack-brackets-tasks",
+    "3f6df951bf80806c9e9bdf5434eec14d": "algo-queue-truck-process",
+    "3f7df951bf808096986fc7f52bbe4d05": "algo-bfs-gamemap-network",
+    "3f9df951bf8080619c24f6f2b768d434": "algo-heap-hotel",
+    "3f9df951bf808035b721fd3fcd915765": "algo-monotonic-stack",
+    "3fbdf951bf8080a59931d8702a6b31a2": "algo-sliding-window-discount",
+    "3fddf951bf8080a1a5a1c96ec8d1d8fa": "algo-rollcake",
+    "3fedf951bf80805d9c5fd910ba87c24b": "algo-feature-deploy",
+    "3fedf951bf808060a8f5d4146af9c5d3": "algo-rotate-brackets",
+    "400df951bf8080a8938ec82e63182f9d": "algo-delivery-box",
+    "405df951bf8080f3b0eae3e0ca6d70ee": "algo-lru-cache"
+  },
+  "skipped": {
+    "3efdf951bf8080beb779ecde4838b7ce": "포토샵 1. — 6강 이후 요약본에 합쳐진 앞 회차 초안",
+    "3f0df951bf8080b6a520d09c38f3aa24": "포토샵 2. — 6강 이후 요약본에 합쳐진 앞 회차 초안",
+    "3f3df951bf808002ad47dbe48a173071": "포토샵 3. — 6강 이후 요약본에 합쳐진 앞 회차 초안",
+    "3f9df951bf8080de831bda99710fecbf": "포토샵 5. — 6강 이후 요약본에 합쳐진 앞 회차 초안",
+    "3fddf951bf80816bb7e6e8bab74c2210": "번외 - 개발 환경 세팅 (콘다·uv) — 개발 환경 노트는 싣지 않음",
+    "3f7df951bf80803ea411fbe2e2ef19d1": "제미나이 1. (구버전) — 미니 인프런 노트로 대체",
+    "3f9df951bf80801b9d09ed68cd05b0ef": "제미나이 2. (구버전) — 미니 인프런 노트로 대체",
+    "3fadf951bf8080e19066ff99b1e40651": "제미나이 3. (구버전) — 미니 인프런 노트로 대체"
+  }
+}
