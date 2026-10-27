@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { useReducedMotion } from 'motion/react'
 import { CASES, type DesignVariant } from './data'
-import { ChevronRightIcon, CloseIcon } from '../shared/icons'
+import { ChevronRightIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
 import CaseNotes from './CaseNotes'
+import Lightbox from './Lightbox'
 import { DESIGN_DEMOS } from './demos'
 import { searchHref } from './routes'
 
@@ -26,124 +26,6 @@ const CARD_GAP = 24
 
 /** 카드를 누르면 크게 볼 수 있다고 알려 준다 — 데스크톱 카드는 윗부분만 보여서 특히 필요하다 */
 const OPEN_HINT = ' 누르면 크게 볼 수 있어요.'
-
-interface LightboxProps {
-  /** 어느 목록인지 — 화면 읽기 프로그램에 함께 읽어 준다 */
-  title: string
-  items: DesignVariant[]
-  index: number
-  onIndex: (index: number) => void
-  onClose: () => void
-}
-
-/**
- * 화면 한 장을 어두운 배경 위에 크게 띄운다. 좌우 화살표·키보드 ←→·옆으로 밀기로 같은 목록 안을 넘기고,
- * Esc·배경·닫기 버튼으로 닫는다. 세로로 긴 화면은 안에서 위아래로 스크롤한다.
- */
-function Lightbox({ title, items, index, onIndex, onClose }: LightboxProps) {
-  const closeRef = useRef<HTMLButtonElement>(null)
-  const touchStartX = useRef<number | null>(null)
-  const item = items[index]
-  const hasPrev = index > 0
-  const hasNext = index < items.length - 1
-
-  // 열린 동안 뒤 화면을 멈추고, 닫으면 누른 카드로 포커스를 돌려준다
-  useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null
-    const { overflow } = document.body.style
-    document.body.style.overflow = 'hidden'
-    closeRef.current?.focus()
-    return () => {
-      document.body.style.overflow = overflow
-      opener?.focus()
-    }
-  }, [])
-
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
-      else if (event.key === 'ArrowLeft' && hasPrev) onIndex(index - 1)
-      else if (event.key === 'ArrowRight' && hasNext) onIndex(index + 1)
-      else return
-      event.preventDefault()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [index, hasPrev, hasNext, onIndex, onClose])
-
-  const onTouchEnd = (clientX: number) => {
-    if (touchStartX.current === null) return
-    const delta = clientX - touchStartX.current
-    touchStartX.current = null
-    if (delta > 60 && hasPrev) onIndex(index - 1)
-    else if (delta < -60 && hasNext) onIndex(index + 1)
-  }
-
-  const arrow = (direction: 'prev' | 'next') => (
-    <button
-      type="button"
-      onClick={() => onIndex(direction === 'prev' ? index - 1 : index + 1)}
-      aria-label={`${direction === 'prev' ? '이전' : '다음'} 화면`}
-      className={`absolute top-1/2 z-10 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-black shadow-lg hover:bg-white ${
-        direction === 'prev' ? 'left-3 sm:left-6' : 'right-3 sm:right-6'
-      }`}
-    >
-      <ChevronRightIcon size={22} className={direction === 'prev' ? 'rotate-180' : undefined} />
-    </button>
-  )
-
-  // 화면 전체를 덮어야 해서 body 에 바로 그린다 — 위쪽 요소에 transform 이 있어도 fixed 가 어긋나지 않게
-  return createPortal(
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label={`${title} 크게 보기`}
-      className="fixed inset-0 z-50 flex flex-col bg-black/90 backdrop-blur-sm"
-      onTouchStart={(event) => (touchStartX.current = event.touches[0].clientX)}
-      onTouchEnd={(event) => onTouchEnd(event.changedTouches[0].clientX)}
-    >
-      <div className="flex shrink-0 items-center justify-between gap-4 px-4 py-3 text-white sm:px-6">
-        <p className="min-w-0 truncate text-14">
-          <span className="font-semibold">{item.label}</span>
-          <span className="ml-2 text-white/70">
-            {index + 1} / {items.length}
-          </span>
-        </p>
-        <button
-          ref={closeRef}
-          type="button"
-          onClick={onClose}
-          aria-label="닫기"
-          className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-white/15"
-        >
-          <CloseIcon size={22} />
-        </button>
-      </div>
-
-      <div className="relative min-h-0 flex-1">
-        {/* 바깥(어두운 곳)을 누르면 닫는다. 화면을 바꾸면 맨 위부터 보이게 key 로 새로 그린다 */}
-        <div key={index} onClick={onClose} className="h-full overflow-y-auto overscroll-contain px-4 pb-6 sm:px-20">
-          <div className="flex min-h-full items-center justify-center">
-            <img
-              src={item.image}
-              alt={`${item.label} 화면`}
-              width={item.width ?? 400}
-              height={item.height ?? 860}
-              onClick={(event) => event.stopPropagation()}
-              className="h-auto w-auto max-w-full rounded-sm bg-white"
-              style={{ maxWidth: `min(100%, ${item.width ?? 400}px)` }}
-            />
-          </div>
-        </div>
-        {hasPrev && arrow('prev')}
-        {hasNext && arrow('next')}
-      </div>
-
-      <p className="shrink-0 px-4 pb-4 text-center text-13 break-keep text-white/80 sm:px-6">{item.note}</p>
-    </div>,
-    document.body,
-  )
-}
 
 interface ScreenSectionProps {
   id: string
@@ -261,7 +143,14 @@ function ScreenSection({ id, title, description, items, device = 'mobile', final
         })}
       </ol>
       {openIndex !== null && (
-        <Lightbox title={title} items={items} index={openIndex} onIndex={setOpenIndex} onClose={closeLightbox} />
+        <Lightbox
+          title={title}
+          // 크기를 안 적은 화면은 400×860 휴대폰 시안으로 본다(DesignVariant)
+          items={items.map((item) => ({ ...item, width: item.width ?? 400, height: item.height ?? 860 }))}
+          index={openIndex}
+          onIndex={setOpenIndex}
+          onClose={closeLightbox}
+        />
       )}
     </section>
   )

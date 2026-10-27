@@ -1,8 +1,10 @@
+import { useCallback, useState } from 'react'
 import { useReducedMotion } from 'motion/react'
 import { ChevronRightIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
 import NoteMeta from './NoteMeta'
-import { appliedCases, noteHref, NOTES } from './notes'
+import Lightbox from './Lightbox'
+import { appliedCases, noteHref, NOTES, type StudyPractice } from './notes'
 import { searchHref } from './routes'
 
 const STUDY_LIST_HREF = searchHref('', 'study')
@@ -18,12 +20,67 @@ function BackLink() {
   )
 }
 
+interface ImageGalleryProps {
+  id: string
+  title: string
+  description: string
+  items: StudyPractice[]
+}
+
+/** 이미지 카드 목록 — 누르면 라이트박스로 크게 띄우고 같은 목록 안을 넘겨 본다(Design 사례와 같은 뷰어) */
+function ImageGallery({ id, title, description, items }: ImageGalleryProps) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const closeLightbox = useCallback(() => setOpenIndex(null), [])
+  const titleId = `${id}-title`
+  return (
+    <section id={id} aria-labelledby={titleId} className="mt-12 scroll-mt-6">
+      <h2 id={titleId} className="text-20 font-semibold text-main">
+        {title}
+      </h2>
+      <p className="mt-1 text-14 text-sub">{description}</p>
+      <ul className={`mt-4 grid gap-4 ${items.length > 1 ? 'sm:grid-cols-2 lg:grid-cols-3' : ''}`}>
+        {items.map(({ image, caption, how }, index) => (
+          <li key={caption} className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => setOpenIndex(index)}
+              aria-label={`${caption} 크게 보기`}
+              className="block cursor-zoom-in overflow-hidden rounded-thumb border border-regular bg-regular"
+            >
+              <img
+                src={image}
+                alt={caption}
+                loading="lazy"
+                // 한 장뿐이면(가로로 긴 배너 등) 자르지 않고 그대로
+                className={items.length > 1 ? 'aspect-4/3 w-full object-cover' : 'h-auto w-full'}
+              />
+            </button>
+            <div className="flex flex-col gap-0.5 px-1">
+              <p className="text-14 font-medium break-keep text-main">{caption}</p>
+              <p className="text-12 break-keep text-sub-weak">{how}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      {openIndex !== null && (
+        <Lightbox
+          title={title}
+          items={items.map(({ image, caption, how }) => ({ label: caption, image, note: how }))}
+          index={openIndex}
+          onIndex={setOpenIndex}
+          onClose={closeLightbox}
+        />
+      )}
+    </section>
+  )
+}
+
 interface StudyDetailProps {
   slug: string
 }
 
 /**
- * 공부 노트 상세 — 핵심 요약 → 배운 것 → 실습 결과물(있을 때) → 써먹은 곳(실제로 쓴 사례가 있을 때).
+ * 공부 노트 상세 — 핵심 요약 → 배운 것 → 실습 결과물 · 참고 예시(있을 때) → 써먹은 곳(실제로 쓴 사례가 있을 때).
  * 데스크톱은 8 + 4 단으로 오른쪽에 목차와 같은 강의의 노트가 따라 내려온다.
  */
 export default function StudyDetail({ slug }: StudyDetailProps) {
@@ -45,6 +102,7 @@ export default function StudyDetail({ slug }: StudyDetailProps) {
 
   const applied = appliedCases(note)
   const practice = note.practice ?? []
+  const examples = note.examples ?? []
   // NOTES 는 최신순 — 이전 노트는 더 오래된 쪽
   const older = NOTES[index + 1]
   const newer = NOTES[index - 1]
@@ -53,6 +111,7 @@ export default function StudyDetail({ slug }: StudyDetailProps) {
     { id: 'note-summary', label: '핵심 요약' },
     ...(note.learned.length > 0 ? [{ id: 'note-learned', label: '배운 것' }] : []),
     ...(practice.length > 0 ? [{ id: 'note-practice', label: '내 실습 결과물' }] : []),
+    ...(examples.length > 0 ? [{ id: 'note-examples', label: '참고 예시' }] : []),
     ...(applied.length > 0 ? [{ id: 'note-applied', label: '써먹은 곳' }] : []),
   ]
   // 해시 라우팅이라 '#아이디' 링크 대신 스크롤로 옮긴다
@@ -116,31 +175,21 @@ export default function StudyDetail({ slug }: StudyDetailProps) {
           )}
 
           {practice.length > 0 && (
-            <section id="note-practice" aria-labelledby="note-practice-title" className="mt-12 scroll-mt-6">
-              <h2 id="note-practice-title" className="text-20 font-semibold text-main">
-                내 실습 결과물
-              </h2>
-              <p className="mt-1 text-14 text-sub">직접 만든 결과물이에요. 누르면 원본 크기로 열려요.</p>
-              <ul className={`mt-4 grid gap-4 ${practice.length > 1 ? 'sm:grid-cols-2 lg:grid-cols-3' : ''}`}>
-                {practice.map(({ image, caption, how }) => (
-                  <li key={caption} className="flex flex-col gap-2">
-                    <a href={image} target="_blank" rel="noopener" className="block overflow-hidden rounded-thumb border border-regular bg-regular">
-                      <img
-                        src={image}
-                        alt={caption}
-                        loading="lazy"
-                        // 한 장뿐이면(가로로 긴 배너 등) 자르지 않고 그대로
-                        className={practice.length > 1 ? 'aspect-4/3 w-full object-cover' : 'h-auto w-full'}
-                      />
-                    </a>
-                    <div className="flex flex-col gap-0.5 px-1">
-                      <p className="text-14 font-medium break-keep text-main">{caption}</p>
-                      <p className="text-12 break-keep text-sub-weak">{how}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <ImageGallery
+              id="note-practice"
+              title="내 실습 결과물"
+              description="직접 만든 결과물이에요. 누르면 크게 볼 수 있어요."
+              items={practice}
+            />
+          )}
+
+          {examples.length > 0 && (
+            <ImageGallery
+              id="note-examples"
+              title="참고 예시"
+              description="강의 미션을 같은 재료로 풀어 본 예시예요. 직접 만든 결과물은 아니에요."
+              items={examples}
+            />
           )}
 
           {applied.length > 0 && (

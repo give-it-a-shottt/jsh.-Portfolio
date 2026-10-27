@@ -1,6 +1,13 @@
 import bannerSale from '../assets/study/banner-sale.webp'
 import cardNews from '../assets/study/card-news.webp'
 import invitation from '../assets/study/invitation.webp'
+import missionSplit from '../assets/study/mission-1-split.webp'
+import missionStory from '../assets/study/mission-2-story.webp'
+import missionLeft from '../assets/study/mission-3-left.webp'
+import missionSerif from '../assets/study/mission-4-serif.webp'
+import missionGreen from '../assets/study/mission-5-green.webp'
+import missionRoast from '../assets/study/mission-6-roast.webp'
+import missionBakery from '../assets/study/mission-7-bakery.webp'
 import productBanner from '../assets/study/product-banner.webp'
 import splitNewyork from '../assets/study/split-newyork.webp'
 import composeBlending from '../assets/study/compose-blending.webp'
@@ -348,6 +355,16 @@ export const DESIGN_NOTES: StudyNote[] = [
     practice: [
       { image: flowerFeed, caption: '꽃 구독 피드 3장 "MONTHLY BLOOM"', how: '표지 위아래 분할 · 찢어진 종이 프레임 · 흐린 배경 위 쿠폰 카드' },
       { image: flowerOverlay, caption: '구도 연습 — 오버레이', how: '좌우 분할을 노렸지만 사진 전체 위에 글을 얹은 오버레이가 됨' },
+    ],
+    // 같은 재료로 변수 하나만 바꾼 미션 예시 — 직접 만든 게 아니라서 실습 결과물과 따로 싣는다(사용자 요청)
+    examples: [
+      { image: missionSplit, caption: '미션 1 · 좌우 분할 (사진 6 : 글 4)', how: '찢어진 종이를 세로로 세워 사진 칸과 글 칸의 경계로' },
+      { image: missionStory, caption: '미션 2 · 4:5 → 9:16 스토리', how: '늘어난 570px 대부분을 사진에, 맨 위 250px 은 안전 영역으로 비움' },
+      { image: missionLeft, caption: '미션 3 · 가운데 → 왼쪽 정렬', how: '모든 요소를 x 120px 한 선에, 흰 글자 뒤 옅은 그라디언트로 명도 대비' },
+      { image: missionSerif, caption: '미션 4 · 장체 고딕 → 세리프', how: '제목을 세리프로, 부제 자간을 넓혀 우아한 인상으로' },
+      { image: missionGreen, caption: '미션 5 · 강조색 연어색 → 딥그린', how: '사진 속 잎에서 뽑은 #4E6A55 하나를 세 장 모두에' },
+      { image: missionRoast, caption: '미션 6 · 원두 구독 MONTHLY ROAST', how: '공통 규칙 3개를 새 브랜드로 — 캐러멜 강조색 · 크림 종이 · 커피 사진' },
+      { image: missionBakery, caption: '미션 7 · 베이커리 1주년', how: '관심 → 정보 → 행동 순서, 7–9AM 을 가장 큰 숫자로' },
     ],
     tags: ['포토샵', '피드', '구도', '통일감'],
     keywords: 'photoshop instagram feed series torn paper clipping mask gaussian blur layer mask gradient type on path canvas size guide layout 오버레이 분할 프레임 속 프레임 명도 대비 위계 통일감 꽃 구독',

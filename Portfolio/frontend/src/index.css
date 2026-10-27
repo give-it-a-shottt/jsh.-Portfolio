@@ -237,6 +237,12 @@
   }
 }
 
+/* 어두운 배경(라이트박스) 위 스크롤바 — 트랙은 투명, 막대만 얇고 옅게. 더 내려볼 게 있다는 표시는 남긴다 */
+@utility scrollbar-dark {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.22) transparent;
+}
+
 @layer base {
   html {
     font-family: var(--font-sans);

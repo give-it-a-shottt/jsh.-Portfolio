@@ -5,7 +5,7 @@ import { FRONT_NOTES } from './noteData/front'
 
 // 공부 노트(Study) — 노션 학습노트를 직접 골라 요약해 옮긴다. 노션 원문 링크는 두지 않는다.
 // 사례(CASES)와 따로 두고, 실제로 화면·코드에 쓴 경우에만 applied 로 사례와 잇는다. 억지로 잇지 않는다.
-// 실습 이미지는 직접 만든 결과물만 싣는다(AI 로 만든 예시 이미지는 뺀다).
+// 실습 이미지(practice)는 직접 만든 결과물만 싣는다. 직접 만들지 않은 예시는 사용자가 원할 때만 examples 칸에 따로 싣는다.
 // 노트 내용은 분야별로 noteData/*.ts 에 있다. 나중에는 노션 동기화(real-backend 로드맵)로 채운다.
 
 /** 노트에 올린 실습 결과물 한 장 */
@@ -44,6 +44,8 @@ export interface StudyNote {
   learned: { title: string; items: string[] }[]
   /** 없으면 상세의 '실습 결과물' 칸을 숨긴다 */
   practice?: StudyPractice[]
+  /** 직접 만들지 않은 참고 예시(강의 미션 예시 등). '실습 결과물'과 섞지 않고 따로 보여준다. 없으면 칸을 숨긴다 */
+  examples?: StudyPractice[]
   /** 없으면 '써먹은 곳' 칸을 숨긴다 */
   applied?: StudyApplied[]
   tags: string[]
