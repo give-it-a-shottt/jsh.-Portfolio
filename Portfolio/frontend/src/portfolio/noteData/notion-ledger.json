@@ -46,7 +46,9 @@
     "3fedf951bf80805d9c5fd910ba87c24b": "algo-feature-deploy",
     "3fedf951bf808060a8f5d4146af9c5d3": "algo-rotate-brackets",
     "400df951bf8080a8938ec82e63182f9d": "algo-delivery-box",
-    "405df951bf8080f3b0eae3e0ca6d70ee": "algo-lru-cache"
+    "405df951bf8080f3b0eae3e0ca6d70ee": "algo-lru-cache",
+    "405df951bf808071813fee2d748a5cc8": "fe-search-algorithm",
+    "406df951bf80806e9f5eefb8883c238c": "ps-flower-feed"
   },
   "skipped": {
     "3efdf951bf8080beb779ecde4838b7ce": "포토샵 1. — 6강 이후 요약본에 합쳐진 앞 회차 초안",

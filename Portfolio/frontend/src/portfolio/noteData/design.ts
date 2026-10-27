@@ -4,6 +4,8 @@ import invitation from '../assets/study/invitation.webp'
 import productBanner from '../assets/study/product-banner.webp'
 import splitNewyork from '../assets/study/split-newyork.webp'
 import composeBlending from '../assets/study/compose-blending.webp'
+import flowerFeed from '../assets/study/flower-feed.webp'
+import flowerOverlay from '../assets/study/flower-overlay.webp'
 import composeClipping from '../assets/study/compose-clipping.webp'
 import composePolaroid from '../assets/study/compose-polaroid.webp'
 import toneMorning from '../assets/study/tone-morning.webp'
@@ -303,6 +305,52 @@ export const DESIGN_NOTES: StudyNote[] = [
     ],
     tags: ['포토샵', '배너', '카드뉴스', '템플릿'],
     keywords: 'photoshop banner card news artboard object selection live corners polygon 템플릿',
+  },
+  {
+    slug: 'ps-flower-feed',
+    area: 'Design',
+    course: '포토샵 / 일러스트',
+    lesson: '13강',
+    date: '2026.10.27',
+    title: '꽃 구독 피드 3장 + 구도 연습 — 찢어진 종이 · 프레임 속 프레임 · 흐림 배경',
+    summary: '피드 3장은 같은 사진 · 연어색 강조색 하나 · 종이 질감을 반복해 한 세트로 묶고, 사진을 흐리게 하면 뒤로 물러나 글이 앞으로 나온다. 사진 위 글자는 색보다 명도 대비가 가독성을 정한다.',
+    points: [
+      '따로 올려도 한 세트로 보이게 하는 공통 규칙 3개 — 강조색 하나 · 같은 사진 반복 · 같은 질감',
+      '같은 사진을 흐리게 깔면 통일감과 위계를 한 번에 — 사진은 뒤로 물러나고 30% 가 먼저 보인다',
+      '분할 구도는 가독성을 지키는 구도이기도 하다 — 글 뒤 배경이 일정해져 어디서나 똑같이 읽힌다',
+    ],
+    learned: [
+      {
+        title: '세트로 묶기 (원본 3장)',
+        items: [
+          '1장 표지는 위 사진 · 아래 종이로 나눈 분할, 2장은 찢어진 종이 틈으로 사진을 보여 주는 프레임 속 프레임',
+          '글자 위계는 크기만이 아니라 색(연어색 → 회색)과 굵기로도 만든다',
+          '레이어 마스크에 흑백 그라디언트로 사진 위쪽을 흰 배경에 페이드, 곡선 문구는 원 패스 위에 글자를 얹는다',
+        ],
+      },
+      {
+        title: '기법',
+        items: [
+          '클리핑 마스크(Ctrl+Alt+G) — 종이 사이 영역 모양 안에서만 사진이 보이게',
+          '가우시안 블러로 사진을 흐려 배경으로 물리고, 둥근 사각형 카드 하나에 쿠폰 정보를 모은다',
+          'Canvas Size(Ctrl+Alt+C)는 요소는 그대로 두고 캔버스만, New Guide Layout 은 열 · 여백 안내선을 한 번에',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것 (구도 연습)',
+        items: [
+          '좌우 분할(사진 6 : 글 4) 미션이었는데 사진이 캔버스를 다 덮어 결과적으로 오버레이 구도가 됐다',
+          '흰 부제가 잘 안 읽힌 이유 — 배경도 밝은 분홍이라 명도 차이가 거의 없었다',
+          '글자색 · 곡선 문구까지 같이 바뀌어 구도 때문에 달라진 점을 따로 볼 수 없었다 → 연습은 한 번에 변수 하나만',
+        ],
+      },
+    ],
+    practice: [
+      { image: flowerFeed, caption: '꽃 구독 피드 3장 "MONTHLY BLOOM"', how: '표지 위아래 분할 · 찢어진 종이 프레임 · 흐린 배경 위 쿠폰 카드' },
+      { image: flowerOverlay, caption: '구도 연습 — 오버레이', how: '좌우 분할을 노렸지만 사진 전체 위에 글을 얹은 오버레이가 됨' },
+    ],
+    tags: ['포토샵', '피드', '구도', '통일감'],
+    keywords: 'photoshop instagram feed series torn paper clipping mask gaussian blur layer mask gradient type on path canvas size guide layout 오버레이 분할 프레임 속 프레임 명도 대비 위계 통일감 꽃 구독',
   },
   {
     slug: 'design-basics-communication',
