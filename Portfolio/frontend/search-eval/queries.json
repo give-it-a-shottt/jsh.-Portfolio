@@ -63,7 +63,7 @@
 
     { "id": "Q37", "category": "없어야 함", "stage": "S0", "query": "블록체인", "relevant": [] },
     { "id": "Q38", "category": "없어야 함", "stage": "S0", "query": "쿠버네티스", "relevant": [] },
-    { "id": "Q39", "category": "없어야 함", "stage": "S0", "query": "안드로이드 앱", "relevant": [] },
+    { "id": "Q39", "category": "없어야 함", "stage": "S0", "query": "스위프트 앱", "relevant": [], "memo": "처음엔 안드로이드 앱이었다. 2026-10-27 검색 공부 노트(fe-search-algorithm)에 그 말이 실제로 들어가 정답이 바뀌어서, 사이트에 없는 말로 바꿈(데이터에서 직접 확인)" },
     { "id": "Q44", "category": "없어야 함", "stage": "S4", "query": "유니티", "relevant": [], "memo": "오타 고치기가 엉뚱한 말로 바꾸지 않는지. S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
     { "id": "Q45", "category": "없어야 함", "stage": "S4", "query": "스프링 부트", "relevant": [], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
     { "id": "Q46", "category": "없어야 함", "stage": "S4", "query": "코틀린", "relevant": [], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" }

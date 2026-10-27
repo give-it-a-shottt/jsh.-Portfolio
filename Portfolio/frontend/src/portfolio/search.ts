@@ -241,25 +241,36 @@ export interface Correction {
   to: string
 }
 
+/** 원래 낱말이 이 수 이하의 문서에만 있으면 '드문 말'로 보고 고쳐 볼 후보로 삼는다 */
+const RARE_DOCS = 2
+/** 드문 말을 고치려면, 고친 말이 원래 말보다 이 배수 이상 많은 문서에 있어야 한다 */
+const MORE_COMMON = 3
+
 /**
- * 낱말 하나를 찾는다. 아무 문서에도 없으면 차례로 고쳐 본다.
+ * 낱말 하나를 찾는다. 0건이거나 드문 말(1~2개 문서)이면 차례로 고쳐 본다.
  *   1) 한영 자판 오타 — 'vmffosvhal' → '플랜포미', 'ㅁㅊㅊㅑㅐ' → 'accio'
  *   2) 자모 편집거리 — '마에스트르' → '마에스트로'
- * 고친 말로도 없으면 빈 결과다. 원래 말로 찾히면 고치지 않는다 — 맞게 친 말을 바꾸지 않으려고.
+ * 0건이면 고친 말이 1개 문서에만 있어도 바꾼다. 드문 말은 두 조건을 다 채울 때만 바꾼다(T-008).
+ *   - 검색어가 친 그대로 그 글들에 적혀 있다 — 오타를 예시로 적어 둔 글('vmffosvhal → 플랜포미')일 가능성이 크다.
+ *     조사·어미를 뗀 모양으로만 걸렸다면('밀리는' → '밀리면' 속 '밀리') 활용된 진짜 말이라 고치지 않는다.
+ *   - 고친 말이 훨씬 흔하다(3배 이상) — 맞춤법 교정기가 '더 흔한 쪽'을 고르는 것과 같은 생각
  */
 function findWord(word: QueryWord) {
   const found = docsWithWord(withSynonyms(word.forms))
-  if (found.size > 0) return { found }
+  if (found.size > RARE_DOCS) return { found }
+  const typedAsIs = [...found.values()].every((form) => form === word.forms[0])
+  const isMoreCommon = (fixed: Map<number, string>) =>
+    fixed.size > 0 && (found.size === 0 || (typedAsIs && fixed.size >= found.size * MORE_COMMON))
   const keyboard = keysToHangul(word.raw) ?? hangulToKeys(word.raw)
   if (keyboard) {
     const forms = withSynonyms([...new Set([normalize(keyboard), stripJosa(normalize(keyboard))])])
     const fixed = docsWithWord(forms)
-    if (fixed.size > 0) return { found: fixed, correction: { from: word.raw, to: keyboard } }
+    if (isMoreCommon(fixed)) return { found: fixed, correction: { from: word.raw, to: keyboard } }
   }
   const closest = closestTerm(word.forms[word.forms.length - 1])
   if (closest) {
     const fixed = docsWithWord(withSynonyms([closest]))
-    if (fixed.size > 0) return { found: fixed, correction: { from: word.raw, to: closest } }
+    if (isMoreCommon(fixed)) return { found: fixed, correction: { from: word.raw, to: closest } }
   }
   return { found }
 }

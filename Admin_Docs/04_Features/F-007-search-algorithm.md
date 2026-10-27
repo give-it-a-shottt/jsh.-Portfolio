@@ -37,6 +37,8 @@
 
 💡 다시 재기: `cd Portfolio/frontend && npm run search:eval` (단계별 점수는 `search-eval/runs/`)
 
+💡 2026-10-27: 검색 공부 노트를 올리자 노트 속 예시 오타 때문에 점수가 95% → 90%로 떨어졌어요. "드문 말도 흔한 쪽으로 고치기"로 다시 95%가 됐어요(`runs/S6b.json`, [T-008](../05_Troubleshooting/T-008-search-typo-in-data.md)).
+
 ## 결과 (AI 작성 — 구현 후)
 
 ### S0 측정 도구 (2026-10-26)
