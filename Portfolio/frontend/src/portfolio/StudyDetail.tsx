@@ -69,6 +69,8 @@ function ImageGallery({ id, title, description, items }: ImageGalleryProps) {
           index={openIndex}
           onIndex={setOpenIndex}
           onClose={closeLightbox}
+          // 포토샵 작업물은 구도가 핵심이라 통째로 보여 주고, 디테일은 눌러서 확대
+          mode="fit"
         />
       )}
     </section>
