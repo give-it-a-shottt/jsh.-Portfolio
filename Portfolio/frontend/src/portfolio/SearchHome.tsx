@@ -15,11 +15,13 @@ const RECENT_NOTES = NOTES.slice(0, 3)
 
 interface SearchHomeProps {
   onSearch: (query: string) => void
+  /** 인트로의 자기소개 영상을 다시 튼다 */
+  onReplayIntro: () => void
 }
 
 // 검색 홈 — 구글처럼 가운데 검색창 하나, 스크롤하면 대표 사례 카드. 인트로가 걷히면 위에서부터 차례로 떠오른다.
 // 제목은 확장(C) 스케일 C-2 → C-3 → 시안의 40px.
-export default function SearchHome({ onSearch }: SearchHomeProps) {
+export default function SearchHome({ onSearch, onReplayIntro }: SearchHomeProps) {
   const reduceMotion = useReducedMotion()
   const rise = (order: number) =>
     reduceMotion
@@ -48,6 +50,13 @@ export default function SearchHome({ onSearch }: SearchHomeProps) {
             Portfolio Search
           </span>
           <span className="text-13 text-sub-weak">문제 해결 사례 아카이브</span>
+          <button
+            type="button"
+            onClick={onReplayIntro}
+            className="text-13 font-medium text-portfolio hover:underline underline-offset-4"
+          >
+            <span aria-hidden="true">▶</span> 자기소개 영상 (1분)
+          </button>
         </motion.p>
         <motion.h1 {...rise(1)} className="mt-4 text-28 font-semibold break-keep text-main sm:text-32 lg:text-40">
           어떤 문제가 궁금하세요?

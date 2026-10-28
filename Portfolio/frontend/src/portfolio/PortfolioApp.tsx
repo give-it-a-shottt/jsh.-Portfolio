@@ -1,10 +1,10 @@
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useState } from 'react'
-import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { CASES } from './data'
 import DesignCaseDetail from './DesignCaseDetail'
 import { EASE_OUT } from './motion'
 import PortfolioHeader from './PortfolioHeader'
-import IntroMotion from './IntroMotion'
+import IntroVideo from './IntroVideo'
 import { goTo, readTab, searchHref, type ResultTab } from './routes'
 import { SEARCH_INPUT_ID } from './SearchBox'
 import SearchHome from './SearchHome'
@@ -46,6 +46,8 @@ interface PortfolioAppProps {
 export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppProps) {
   // 결과·상세 주소로 바로 들어온 경우에는 인트로를 보여주지 않는다
   const [introPlaying, setIntroPlaying] = useState(() => path === '/' && shouldPlayIntro())
+  /** 홈의 '다시 보기'로 연 인트로 — 시작 화면 없이 바로 튼다 */
+  const [replay, setReplay] = useState(false)
   const query = params.get('q') ?? ''
   const tab = readTab(params.get('tab'))
   const isResults = path === '/search'
@@ -55,6 +57,11 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
   const finishIntro = useCallback(() => {
     markIntroSeen()
     setIntroPlaying(false)
+  }, [])
+
+  const replayIntro = useCallback(() => {
+    setReplay(true)
+    setIntroPlaying(true)
   }, [])
 
   const search = useCallback((nextQuery: string) => goTo(searchHref(nextQuery)), [])
@@ -82,8 +89,7 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
   }, [introPlaying])
 
   return (
-    // 인트로 출력의 'jsh.' 와 헤더 로고가 같은 layoutId 로 이어지도록 한 그룹에 둔다
-    <LayoutGroup>
+    <>
       <AnimatePresence>
         {introPlaying && (
           <motion.div
@@ -92,7 +98,7 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
             transition={{ duration: 0.5, ease: EASE_OUT }}
             className="fixed inset-0 z-30 overflow-y-auto"
           >
-            <IntroMotion onDone={finishIntro} />
+            <IntroVideo onDone={finishIntro} autoStart={replay} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -117,10 +123,10 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
           ) : isResults ? (
             <SearchResults query={query} tab={tab} />
           ) : (
-            <SearchHome onSearch={search} />
+            <SearchHome onSearch={search} onReplayIntro={replayIntro} />
           )}
         </div>
       )}
-    </LayoutGroup>
+    </>
   )
 }

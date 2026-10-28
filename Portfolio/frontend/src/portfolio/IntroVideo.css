@@ -1,0 +1,121 @@
+/* 첫 방문 인트로(IntroVideo.tsx). 영상(1904×1080)을 화면 높이·너비 안에 맞춰 가운데 둔다.
+   이 화면만의 어두운 색이라 포트폴리오 토큰 대신 여기서 정의한다. */
+.ivid {
+  --i-bg: #0d1117;
+  --i-panel: #161b22;
+  --i-line: #30363d;
+  --i-fg: #e6edf3;
+  --i-muted: #7d8590;
+  --i-accent: #39d353;
+  --i-accent-soft: #26a641;
+  --i-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  position: fixed;
+  inset: 0;
+  background: var(--i-bg);
+  display: grid;
+  place-items: center;
+  padding: 72px max(16px, env(safe-area-inset-left, 0px));
+}
+
+/* 건너뛰기 버튼(아래 72px) 자리를 남기고, 화면 높이에 맞춰 너비를 정한다 */
+.ivid__stage {
+  position: relative;
+  width: min(100%, 1280px, calc((100svh - 144px) * 1904 / 1080));
+  aspect-ratio: 1904 / 1080;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--i-panel);
+  border: 1px solid var(--i-line);
+}
+
+.ivid__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+.ivid__video:focus-visible { outline: 2px solid var(--i-accent); outline-offset: -2px; }
+
+/* 시작 전 — 영상 첫 장면을 어둡게 깔고 그 위에 시작 버튼 */
+.ivid__gate {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(13, 17, 23, 0.78);
+  backdrop-filter: blur(6px);
+}
+.ivid__logo {
+  font: 700 clamp(32px, 5vw, 56px) var(--i-mono);
+  color: var(--i-fg);
+}
+.ivid__lead {
+  font: 500 clamp(14px, 1.6vw, 18px) var(--font-sans, system-ui, sans-serif);
+  color: var(--i-muted);
+  word-break: keep-all;
+}
+.ivid__actions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ivid__play {
+  font: 700 16px var(--font-sans, system-ui, sans-serif);
+  color: #0d1117;
+  background: var(--i-accent);
+  border: 0;
+  border-radius: 10px;
+  padding: 14px 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.ivid__play:hover { background: #56e36d; transform: translateY(-1px); }
+.ivid__play:focus-visible { outline: 2px solid var(--i-fg); outline-offset: 3px; }
+
+.ivid__skip {
+  font: 600 14px var(--font-sans, system-ui, sans-serif);
+  color: var(--i-fg);
+  background: transparent;
+  border: 1px solid var(--i-line);
+  border-radius: 10px;
+  padding: 13px 20px;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, padding 0.2s ease, font-size 0.2s ease;
+}
+.ivid__skip:hover { border-color: var(--i-accent-soft); }
+.ivid__skip:focus-visible { outline: 2px solid var(--i-accent); outline-offset: 2px; }
+
+/* 재생 중에는 오른쪽 아래에 작게 */
+.ivid__skip--corner {
+  position: absolute;
+  right: calc(24px + env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  font-size: 13px;
+  color: var(--i-muted);
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+.ivid__skip--corner:hover { color: var(--i-fg); }
+
+/* 멈췄을 때 — 크고 밝게 */
+.ivid__skip--corner.loud {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0d1117;
+  background: var(--i-accent);
+  border-color: var(--i-accent);
+  padding: 12px 22px;
+  border-radius: 10px;
+  box-shadow: 0 0 24px rgba(57, 211, 83, 0.35);
+}
+.ivid__skip--corner.loud:hover { background: #56e36d; }
