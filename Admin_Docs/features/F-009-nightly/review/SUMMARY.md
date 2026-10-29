@@ -51,7 +51,7 @@
 |---|---|---|---|
 | 1 | 수용 | `Object.hasOwn`으로 자기 키만 찾고, 없으면 기본 답을 보여 줘요. | Playwright: `?q=constructor` · `toString` · `__proto__` → 페이지 오류 0, 기본 답 표시 |
 | 2 | 수용 | `data.ts`에 `stagePercent`를 두고, 점수 · 비율 · 총 수면을 `SCORE` · `LAST_NIGHT` · `duration(SLEEP_TOTAL_MINUTES)`에서 꺼내 써요. | tsc · lint 통과, 화면 숫자 그대로 |
-| 3 | 거절 · 사용자 결정 | 한 번 `nt-sub`로 밝혔다가 되돌렸어요. 위계를 낮추려고 일부러 sub-weak를 쓴 자리라, 사용자가 화면을 보고 정해요. | 시안 색(weak) 그대로 |
+| 3 | 거절 · 사용자 결정 | 한 번 `nt-sub`로 밝혔다가 되돌렸어요. 위계를 낮추려고 일부러 sub-weak를 쓴 자리라 시안 그대로 둬요(사용자 결정). | 시안 색(weak) 그대로 |
 | 4 | 거절 · 사용자 결정 | placeholder는 일부러 낮춘 색이라 시안(disabled)으로 되돌렸어요. | 시안 색 그대로 |
 | 5 | 수용 | `overview/screens.md` · `architecture.md` · `design-link.md` · `START_HERE.md` · `REVIEW_LOG.md` · feature.md를 갱신했어요. | 문서 확인 |
 | + | [제안] 중 바로 반영 | 모바일 메뉴를 Esc로 닫으면 포커스가 메뉴 버튼으로 돌아가요(R5). 숫자 `60_000` · `240`에 이름을 붙였어요(R1). | Playwright: Esc 뒤 포커스 '메뉴 열기' |
