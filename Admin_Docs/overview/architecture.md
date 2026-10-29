@@ -13,7 +13,8 @@
    │    ├─ MaestroApp ─ lazy ── fetch ──▶ 마에스트로 API (Render, FastAPI)
    │    │                                   └─ YumiClient: mock(JSON) | real(헤이유미 API)
    │    ├─ AccioApp   ─ lazy (목 데이터만)       Accio API (FastAPI+SQLAlchemy, /health 뿐)
-   │    └─ FlaseekApp ─ lazy (정적 데이터만)
+   │    ├─ FlaseekApp ─ lazy (정적 데이터만)
+   │    └─ TechlearnApp ─ lazy (목업 데이터, 수강신청은 api.ts 가 서버 흉내)
    └─ /accio-v1/  팀 원본 정적 빌드 (App.tsx 를 거치지 않음)
 ```
 
@@ -33,9 +34,10 @@ Portfolio/frontend/src/
 └─ projects/
    ├─ accio/     (ai, data, home, my, pages, seller, ui, hooks, utils)
    ├─ maestro/   (api.ts, store.ts, screens/, types.ts)
-   └─ flaseek/   (FlaseekApp, routes, store, data, layout, ui, BeforeAfterSlider, pages/)
+   ├─ flaseek/   (FlaseekApp, routes, store, data, layout, ui, BeforeAfterSlider, pages/)
+   └─ techlearn/ (TechlearnApp, routes, data(홈), lectures(강의 8개), store, api, hooks, components, enroll, screens/)
 ```
-- 상태 관리 패턴: 라이브러리 없이 `useSyncExternalStore`와 모듈 단위 작은 스토어를 써요(`flaseek/store.ts`, `maestro/store.ts`).
+- 상태 관리 패턴: 라이브러리 없이 `useSyncExternalStore`와 모듈 단위 작은 스토어를 써요(`flaseek/store.ts`, `maestro/store.ts`, `techlearn/store.ts`).
 
 ### 백엔드
 ```

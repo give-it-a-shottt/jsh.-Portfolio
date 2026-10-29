@@ -15,6 +15,7 @@
 ## 결과 (AI 작성 — 구현 후)
 - 위치: `Portfolio/frontend/src/portfolio/` (SearchHome, SearchResults, rank.ts, data.ts, caseStories.ts, caseDetails.ts). 검색 규칙은 search.ts·searchText.ts([F-007](../F-007-search-algorithm/feature.md))
 - (리뷰할 때 채워요)
+- 2026-10-29 홈 리뉴얼(피그마 jsh 01 Home): 바탕 흰색, 헤더 72 높이 · 아래 구분선 · 1200 폭, 소개 문구 변경, 추천 키워드 → '진행 중인 프로젝트' 칩(techlearn · ACCIO · Nightly · 마에스트로), 아래 카드 두 칸 → '최근 기록'(분야마다 중요도 1위 사례 1개 + 최신 노트 2개), 푸터(GitHub) 추가. 자기소개 영상 버튼과 헤더 메뉴 모양은 그대로 뒀어요(사용자 확인). 리뷰는 [F-008 리뷰](../F-008-techlearn/review/SUMMARY.md)에 함께 있어요.
 
 ## 리뷰
 - (리뷰 전)

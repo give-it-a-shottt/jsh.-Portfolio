@@ -1009,4 +1009,16 @@ export const KEYWORDS: { label: string; type: CaseType | 'Study' }[] = [
   { label: '자사몰 리뉴얼', type: 'Design' },
 ]
 
+/**
+ * 홈 '진행 중인 프로젝트' 칩 — 마에스트로처럼 사이트 안에 만든 화면으로 보낸다.
+ * 아직 화면이 없는 프로젝트(Nightly)는 href 없이 이름만 보여 준다. 화면이 생기면 href 를 더한다.
+ * 피그마 주소는 공개 사이트에 넣지 않는다.
+ */
+export const PROJECTS: { name: string; summary: string; href?: string }[] = [
+  { name: 'techlearn', summary: '강의 플랫폼', href: '#/techlearn' },
+  { name: 'ACCIO', summary: 'AI 검색 쇼핑몰', href: '#/accio' },
+  { name: 'Nightly', summary: '수면 코칭 커머스' },
+  { name: '마에스트로', summary: '맛집 추천 MCP', href: '#/maestro' },
+]
+
 // 검색은 search.ts, 자동완성은 suggest.ts 에서 한다.

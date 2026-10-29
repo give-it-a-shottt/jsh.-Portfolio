@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { CASES } from './data'
 import DesignCaseDetail from './DesignCaseDetail'
 import { EASE_OUT } from './motion'
+import PortfolioFooter from './PortfolioFooter'
 import PortfolioHeader from './PortfolioHeader'
 import IntroVideo from './IntroVideo'
 import { goTo, readTab, searchHref, type ResultTab } from './routes'
@@ -125,6 +126,7 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
           ) : (
             <SearchHome onSearch={search} onReplayIntro={replayIntro} />
           )}
+          <PortfolioFooter />
         </div>
       )}
     </>

@@ -41,6 +41,9 @@
   --text-20: 20px;
   --text-20--line-height: 1.4;
   --text-20--letter-spacing: -0.025em;
+  --text-22: 22px;
+  --text-22--line-height: 1.4;
+  --text-22--letter-spacing: -0.025em;
   --text-24: 24px;
   --text-24--line-height: 1.4;
   --text-24--letter-spacing: -0.025em;
@@ -126,6 +129,31 @@
   --color-flaseek-pink: #fa78a8;
   --color-flaseek-pink-soft: #fff4f8;
 
+  /*
+   * techlearn(강의 플랫폼 시안 · 디자인 네이비) — tl- 접두어. 포인트는 네이비 하나, 할인가만 빨강.
+   * 바탕은 tl-bg(옅은 파랑) 위에 흰 카드, 어두운 프로모션 판은 tl-dark.
+   */
+  --color-tl: #1e3a8a;
+  --color-tl-ink: #171c21;
+  --color-tl-sub: #3b404b;
+  /* 강의 목록·상세의 본문 글자와 보조 글자 — 홈보다 살짝 푸른 회색 */
+  --color-tl-body: #434a57;
+  --color-tl-muted: #6b7385;
+  --color-tl-weak: #6b707c;
+  --color-tl-bg: #eff4fb;
+  --color-tl-bg-alt: #f6f9ff;
+  --color-tl-chip: #eaeef5;
+  --color-tl-line: #e4e8ef;
+  --color-tl-dark: #2c3136;
+  --color-tl-on-dark: #e3e2e3;
+  --color-tl-sale: #ba1a1a;
+  --color-tl-hot: #93000a;
+  --color-tl-hot-soft: #ffdad6;
+  --color-tl-lavender: #a5b4fc;
+  --color-tl-indigo-soft: #c7d2fe;
+  --color-tl-indigo-ink: #0b1330;
+  --color-tl-step: #4f6bd8;
+
   /* Neutral — icon (text-icon-main …) */
   --color-icon-main: #2a2a37;
   --color-icon-sub: #545461;
@@ -145,6 +173,9 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
+  /* techlearn — 태그·할인 배지 2, 해시태그 칩 6 */
+  --radius-tl-tag: 2px;
+  --radius-tl-chip: 6px;
 
   /* Accio 그림자 — #2A2A37 기반으로 아주 약하게. 1 카드·입력창 / 2 hover·떠 있는 버튼 / 3 플로팅 AI·포커스 / 4 모달 */
   --shadow-accio-1: 0 1px 2px rgb(42 42 55 / 0.06);
@@ -174,7 +205,8 @@
   --border-color-regular: #e4ddd0;
   --border-color-black: #1c1a16;
 
-  --background-color-default: #fffdf8;
+  /* 바탕만 순백 — 피그마 01 Home 리뉴얼(2026-10-29). 글자·선·옅은 배경은 아이보리 톤 그대로 */
+  --background-color-default: #ffffff;
   --background-color-light: #f8f4ec;
   --background-color-regular: #f0ebe1;
   --background-color-main: #1c1a16;

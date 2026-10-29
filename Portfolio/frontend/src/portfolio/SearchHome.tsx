@@ -1,17 +1,55 @@
 import { motion, useReducedMotion } from 'motion/react'
-import { CASES, KEYWORDS, TYPE_DOT_CLASS } from './data'
+import { CASES, PROJECTS, TYPE_DOT_CLASS, type CaseType } from './data'
 import { EASE_OUT } from './motion'
-import NoteCard from './NoteCard'
-import { NOTES } from './notes'
+import { NOTES, noteHref } from './notes'
 import { rankCases } from './rank'
-import RecordCard from './RecordCard'
-import { searchHref } from './routes'
+import { searchHref, type ResultTab } from './routes'
 import SearchBox from './SearchBox'
 
-// 홈 아래 카드 — 날짜가 월 단위라 최신순은 거의 다 같아서, 중요도 순(rank.ts)으로 6개를 고른다
-const FEATURED = rankCases(CASES).slice(0, 6)
-// 그 아래 공부 노트 — 노트는 날짜가 일 단위라 최신순(notes.ts) 그대로 3개
-const RECENT_NOTES = NOTES.slice(0, 3)
+interface RecentRow {
+  key: string
+  kind: '사례' | '공부'
+  href?: string
+  date: string
+  /** 날짜 옆 출처 — 사례는 서비스 이름(없으면 첫 태그), 노트는 강의 묶음 */
+  source: string
+  title: string
+}
+
+const KIND_BADGE_CLASS: Record<RecentRow['kind'], string> = {
+  사례: 'bg-portfolio-soft text-portfolio',
+  공부: 'bg-study-soft text-study-strong',
+}
+
+const RECENT_PER_AREA = 3
+const AREAS: CaseType[] = ['Design', 'Front', 'Back']
+
+// 홈 '최근 기록' — 분야마다 3줄. 사례는 날짜가 월 단위라 최신순으로 섞으면 노트에 밀려서,
+// 중요도 1위(rank.ts) 사례 하나를 맨 위에 두고 나머지를 최신 노트로 채운다. 노트가 모자라면 사례로 채운다.
+const RECENT = AREAS.map((area) => {
+  const cases = rankCases(CASES.filter((item) => item.type === area))
+  const notes = NOTES.filter((note) => note.area === area)
+  const noteCount = Math.min(notes.length, RECENT_PER_AREA - 1)
+  const rows: RecentRow[] = [
+    ...cases.slice(0, RECENT_PER_AREA - noteCount).map((item) => ({
+      key: item.slug,
+      kind: '사례' as const,
+      href: item.href,
+      date: item.date,
+      source: item.design?.app.split(' — ')[0] ?? item.tags[0],
+      title: item.title,
+    })),
+    ...notes.slice(0, noteCount).map((note) => ({
+      key: note.slug,
+      kind: '공부' as const,
+      href: noteHref(note.slug),
+      date: note.date,
+      source: note.course,
+      title: note.title,
+    })),
+  ]
+  return { area, total: cases.length + notes.length, rows }
+})
 
 interface SearchHomeProps {
   onSearch: (query: string) => void
@@ -19,7 +57,7 @@ interface SearchHomeProps {
   onReplayIntro: () => void
 }
 
-// 검색 홈 — 구글처럼 가운데 검색창 하나, 스크롤하면 대표 사례 카드. 인트로가 걷히면 위에서부터 차례로 떠오른다.
+// 검색 홈 — 구글처럼 가운데 검색창 하나, 스크롤하면 분야별 최근 기록. 인트로가 걷히면 위에서부터 차례로 떠오른다.
 // 제목은 확장(C) 스케일 C-2 → C-3 → 시안의 40px.
 export default function SearchHome({ onSearch, onReplayIntro }: SearchHomeProps) {
   const reduceMotion = useReducedMotion()
@@ -49,7 +87,7 @@ export default function SearchHome({ onSearch, onReplayIntro }: SearchHomeProps)
           <span lang="en" className="rounded-full border border-regular px-3 py-1 text-13 font-medium tracking-normal text-sub">
             Portfolio Search
           </span>
-          <span className="text-13 text-sub-weak">문제 해결 사례 아카이브</span>
+          <span className="text-13 text-sub-weak">문제 해결 사례 · 공부 기록 아카이브</span>
           <button
             type="button"
             onClick={onReplayIntro}
@@ -61,77 +99,107 @@ export default function SearchHome({ onSearch, onReplayIntro }: SearchHomeProps)
         <motion.h1 {...rise(1)} className="mt-4 text-28 font-semibold break-keep text-main sm:text-32 lg:text-40">
           어떤 문제가 궁금하세요?
         </motion.h1>
-        <motion.p {...rise(2)} className="mt-4 text-16 break-keep text-sub sm:text-18">
-          실제 업무에서 마주칠 문제를 가상으로 만들고, 어떻게 해결했는지 기록했습니다.
+        <motion.p {...rise(2)} className="mt-3 text-16 break-keep text-sub sm:text-18">
+          실제 업무에서 마주칠 문제를 풀고, 그 과정에서 공부한 내용까지 함께 기록했습니다.
         </motion.p>
 
-        {/* 자동완성 목록이 아래 키워드 칩 위로 펼쳐지도록 쌓임 순서를 올린다 */}
+        {/* 자동완성 목록이 아래 프로젝트 칩 위로 펼쳐지도록 쌓임 순서를 올린다 */}
         <motion.div {...rise(3)} className="relative z-10 mt-10 w-full text-left">
           <SearchBox size="lg" glow onSearch={onSearch} />
         </motion.div>
 
         <motion.div {...rise(4)} className="mt-8 flex flex-col items-center gap-3">
-          <p className="text-13 font-medium text-sub-weak">추천 키워드</p>
-          <ul className="flex flex-wrap justify-center gap-2">
-            {KEYWORDS.map(({ label, type }) => (
-              <li key={label}>
-                <a
-                  href={searchHref(label)}
-                  className="flex items-center gap-2 rounded-full border border-regular bg-default px-4 py-2 text-14 font-medium text-main hover:border-black hover:bg-light"
-                >
-                  <span aria-hidden="true" className={`size-1.5 rounded-full ${TYPE_DOT_CLASS[type]}`} />
-                  {label}
-                  <span className="sr-only">({type})</span>
-                </a>
-              </li>
-            ))}
+          <h2 id="projects-title" className="text-13 font-medium text-sub-weak">
+            진행 중인 프로젝트
+          </h2>
+          {/* 칩 4개가 PC 한 줄에 들어가게 위 720 폭보다 넓게 연다 */}
+          <ul aria-labelledby="projects-title" className="flex flex-wrap justify-center gap-2 lg:w-200">
+            {PROJECTS.map(({ name, summary, href }) => {
+              const chip = (
+                <>
+                  {/* 초록 점 = 진행 중 */}
+                  <span aria-hidden="true" className="size-1.5 rounded-full bg-status-success" />
+                  <span className="font-medium text-main">{name}</span>
+                  <span className="text-sub-weak">{summary}</span>
+                </>
+              )
+              const chipClass = 'flex items-center gap-2 rounded-full border border-regular bg-default px-4 py-2 text-14'
+              return (
+                <li key={name}>
+                  {href ? (
+                    <a href={href} className={`${chipClass} hover:border-black hover:bg-light`}>
+                      {chip}
+                    </a>
+                  ) : (
+                    // 아직 화면이 없는 프로젝트 — 누르지 않는 이름표
+                    <span className={chipClass}>
+                      {chip}
+                      <span className="sr-only">(화면 준비 중)</span>
+                    </span>
+                  )}
+                </li>
+              )
+            })}
           </ul>
         </motion.div>
       </div>
 
-      {/* 첫 화면은 검색창만 보이게 충분히 띄운다. 12컬럼 4+4+4 → 태블릿 2단 → 모바일 1단 */}
-      <section aria-labelledby="featured-title" className="mt-30 w-full max-w-300">
+      {/* 분야별 최근 기록 — 12컬럼 4+4+4 → 모바일 1단 */}
+      <section aria-labelledby="recent-title" className="mt-20 w-full max-w-300">
         <motion.div {...reveal(0)} className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-          <div className="flex flex-col gap-1">
-            <h2 id="featured-title" className="text-24 font-semibold text-main">
-              먼저 보면 좋은 사례
+          <div className="flex flex-col gap-3">
+            <h2 id="recent-title" className="text-24 font-semibold text-main sm:text-28">
+              최근 기록
             </h2>
-            <p className="text-14 break-keep text-sub">결과가 분명한 작업부터 6개를 골랐어요.</p>
+            <p className="text-15 break-keep text-sub">분야별로 최신 글 3개씩 모았어요. 사례와 공부 노트가 함께 있어요.</p>
           </div>
-          <a href={searchHref()} className="text-14 font-medium text-portfolio hover:underline underline-offset-4">
-            전체 사례 보기 →
+          <a href={searchHref()} className="text-14 font-medium text-sub hover:text-main hover:underline underline-offset-4">
+            전체 보기 →
           </a>
         </motion.div>
-        <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
-          {FEATURED.map((item, i) => (
-            <motion.li key={item.slug} {...reveal(i % 3)}>
-              <RecordCard item={item} />
-            </motion.li>
+        <div className="mt-7 grid grid-cols-1 gap-x-6 gap-y-12 md:grid-cols-3">
+          {RECENT.map(({ area, total, rows }, i) => (
+            <motion.section key={area} aria-labelledby={`recent-${area}`} {...reveal(i)}>
+              <div className="flex items-center justify-between border-b border-black pb-4">
+                <h3 id={`recent-${area}`} className="flex items-center gap-2">
+                  <span aria-hidden="true" className={`size-2 rounded-full ${TYPE_DOT_CLASS[area]}`} />
+                  <span lang="en" className="text-18 font-semibold text-main">
+                    {area}
+                  </span>
+                  <span className="text-14 text-sub-weak">
+                    {total}
+                    <span className="sr-only">개</span>
+                  </span>
+                </h3>
+                <a
+                  href={searchHref('', area.toLowerCase() as ResultTab)}
+                  className="text-14 font-medium text-sub hover:text-main hover:underline underline-offset-4"
+                >
+                  더보기 →<span className="sr-only"> ({area} 전체)</span>
+                </a>
+              </div>
+              <ul>
+                {rows.map((row) => (
+                  <li key={row.key} className="border-b border-light">
+                    <a href={row.href} className="group flex flex-col gap-2 py-5">
+                      <p className="flex items-center gap-2 text-12 text-sub-weak">
+                        <span className={`rounded-badge px-1.5 py-px font-medium ${KIND_BADGE_CLASS[row.kind]}`}>
+                          {row.kind}
+                        </span>
+                        <span className="truncate">
+                          {row.date} · {row.source}
+                        </span>
+                      </p>
+                      <h4 className="line-clamp-2 text-16 font-semibold break-keep text-main group-hover:text-portfolio">
+                        {row.title}
+                      </h4>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </motion.section>
           ))}
-        </ul>
-      </section>
-
-      {/* 사례와 섞지 않고 아래에 따로 — 사례가 먼저 읽히게 한다 */}
-      <section aria-labelledby="recent-notes-title" className="mt-20 w-full max-w-300">
-        <motion.div {...reveal(0)} className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-          <div className="flex flex-col gap-1">
-            <h2 id="recent-notes-title" className="flex items-center gap-2 text-24 font-semibold text-main">
-              <span aria-hidden="true" className="size-2 rounded-full bg-study" />
-              최근 공부 노트
-            </h2>
-            <p className="text-14 break-keep text-sub">강의를 들으며 정리한 노트예요. 실제로 써먹은 곳이 있으면 함께 적었어요.</p>
-          </div>
-          <a href={searchHref('', 'study')} className="text-14 font-medium text-portfolio hover:underline underline-offset-4">
-            모든 노트 보기 →
-          </a>
-        </motion.div>
-        <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
-          {RECENT_NOTES.map((note, i) => (
-            <motion.li key={note.slug} {...reveal(i)}>
-              <NoteCard note={note} />
-            </motion.li>
-          ))}
-        </ul>
+        </div>
       </section>
     </main>
   )

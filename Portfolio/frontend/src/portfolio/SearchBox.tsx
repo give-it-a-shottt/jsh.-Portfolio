@@ -17,7 +17,7 @@ const SIZE = {
     clear: 'size-8',
     dropdown: 'top-18',
     option: 'px-4 text-16',
-    placeholder: '문제, 기술, 키워드로 검색해보세요',
+    placeholder: '문제, 기술, 공부한 내용을 검색해 보세요',
   },
   // 결과 헤더: 48px 알약 (버튼이 바와 동심원이 되도록 오른쪽 6px)
   md: {

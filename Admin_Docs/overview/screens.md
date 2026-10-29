@@ -12,10 +12,10 @@
            │ 검색 홈 → 검색 결과(탭) → 사례 상세 / 노트 상세 │
            └──────┬─────────┬──────────┬────────────┘
                   │ 실행해 보기 링크
-     ┌────────────┼─────────┼──────────┬──────────────┐
-  마에스트로     Accio      FLASEEK     Accio v1 원본
-  #/maestro    #/accio    #/flaseek   /accio-v1/
-  (해커톤)     (팀→리디자인) (리뉴얼 시안) (팀 원본 정적 빌드)
+     ┌────────────┼─────────┼──────────┬──────────────┬─────────────┐
+  마에스트로     Accio      FLASEEK     Accio v1 원본    techlearn
+  #/maestro    #/accio    #/flaseek   /accio-v1/      #/techlearn
+  (해커톤)     (팀→리디자인) (리뉴얼 시안) (팀 원본 정적 빌드) (강의 플랫폼 시안)
      │            │
   마에스트로 API  Accio API (지금은 헬스 체크만)
 ```
@@ -46,6 +46,7 @@
 | 마에스트로 | `#/maestro/…` | 틀어진 일정의 플랜 B를 짜 주는 서비스 (YUMITHON 2026) | 마에스트로 API(헤이유미 API 중계, mock/real) | `src/projects/maestro/`, `backend/maestro/` |
 | Accio | `#/accio/…` | AI 자연어 검색 쇼핑몰. 팀 프로젝트를 Figma 리디자인으로 다시 만든 화면 | 프론트만 동작(목 데이터). 백엔드는 뼈대 | `src/projects/accio/`, `backend/accio/` |
 | FLASEEK | `#/flaseek/…` | 보정속옷·압박스타킹 자사몰 리뉴얼 시안. 메인·리스트·상세·로그인 | 없음(정적 데이터, 이번 방문 동안만 상태 유지) | `src/projects/flaseek/` |
+| techlearn | `#/techlearn/…` | 강의 플랫폼 시안. 홈 → 강의 목록 → 상세 → 포인트 수강신청 ([F-008](../features/F-008-techlearn/feature.md)) | 없음(목업 데이터, 포인트·수강 기록은 이번 방문 동안만) | `src/projects/techlearn/` |
 | Accio v1 | `/accio-v1/` | 팀 프로젝트 원본 프론트를 정적 빌드로 보존. 목 모드로만 동작 | 없음 | `public/accio-v1/` (빌드 결과만) |
 
 - 💡 프론트는 **Vite 앱 하나**예요. 프로젝트마다 주소의 `#` 뒤 첫 마디로 나뉘어요. 자세한 내용은 [architecture.md](architecture.md), [D-001](../decisions/D-001-single-vite-hash-routing.md)에 있어요.
@@ -67,3 +68,14 @@
 - (빈 템플릿) IA·유저플로우는 planning-advisory-panel 결과가 생기면 옮겨 와요.
 
 최종 수정: 2026-10-29 · 관련: D-001, F-001~F-005, F-007
+
+### techlearn 흐름
+```
+홈 #/techlearn  (히어로 검색 · 분야 · 인기 강좌 · 로드맵 · 후기)
+ └─ 검색 / 강의 탐색 / 카드 ──▶ 강의 목록 #/techlearn/courses?tab=&q=
+                                  └─ 강의 카드 ──▶ 강의 상세 #/techlearn/course/{id}
+                                                   └─ 수강신청 하기 ──▶ 확인 모달 ──▶ 처리 중 ──▶ 토스트(201·400·409·500)
+```
+- 홈의 인기 강좌(원화 가격)는 홍보용 카드라 강의 목록으로 보내요. 포인트로 신청하는 강의는 목록의 8개예요.
+- 아직 없는 화면(내 강의 09, 장바구니 05, 결제 07, 로그인 06, 404·500 10·11)은 다음 단계예요. '내 강의로 이동'은 지금 강의 목록으로 가요.
+
