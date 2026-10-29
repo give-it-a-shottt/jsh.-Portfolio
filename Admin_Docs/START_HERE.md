@@ -11,7 +11,7 @@
 
 **지금 상태**
 
-- 공개 중: 검색형 포트폴리오, 마에스트로, Accio 리디자인, FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn 강의 플랫폼 시안(핵심 흐름)
+- 공개 중: 검색형 포트폴리오, 마에스트로, Accio 리디자인, FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn 강의 플랫폼 시안(핵심 흐름), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
 - 리뷰: F-001·F-006 리뷰와 판정 완료([주의]). F-007은 리뷰 전, F-002~F-005는 백로그예요.
 
 **읽는 순서** (면접 전에는 이것만 읽어도 돼요)
@@ -19,7 +19,7 @@
 1. 이 문서
 2. [overview/architecture.md](overview/architecture.md) — 화면 → 서버 → DB 흐름
 3. [overview/screens.md](overview/screens.md) — 무엇이 어디 있고, 화면이 어떻게 이어지는지
-4. [features](features/) 최신 3개 — F-008, F-007, F-006
+4. [features](features/) 최신 3개 — F-009, F-008, F-007
 
 **폴더 역할**
 
@@ -88,5 +88,6 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-006](features/F-006-design-system-case/feature.md) | 개인 디자인 시스템 사례 | [주의] 판정 완료 |
 | [F-007](features/F-007-search-algorithm/feature.md) | 검색 알고리즘 개선 (S0~S6) | 리뷰 전 |
 | [F-008](features/F-008-techlearn/feature.md) | techlearn 강의 플랫폼 시안 (홈 → 목록 → 상세 → 수강신청) | [주의] 판정 완료 |
+| [F-009](features/F-009-nightly/feature.md) | Nightly 수면 코칭 시안 (홈 · 수면 대시보드 · AI 코치) | [주의] 판정 완료 |
 
-최종 수정: 2026-10-29 · 관련: D-001~D-004, F-001~F-008
+최종 수정: 2026-10-30 · 관련: D-001~D-004, F-001~F-009

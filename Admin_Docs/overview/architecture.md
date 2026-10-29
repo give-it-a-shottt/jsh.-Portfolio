@@ -35,7 +35,8 @@ Portfolio/frontend/src/
    ├─ accio/     (ai, data, home, my, pages, seller, ui, hooks, utils)
    ├─ maestro/   (api.ts, store.ts, screens/, types.ts)
    ├─ flaseek/   (FlaseekApp, routes, store, data, layout, ui, BeforeAfterSlider, pages/)
-   └─ techlearn/ (TechlearnApp, routes, data(홈), lectures(강의 8개), store, api, hooks, components, enroll, screens/)
+   ├─ techlearn/ (TechlearnApp, routes, data(홈), lectures(강의 8개), store, api, hooks, components, enroll, screens/)
+   └─ nightly/   (NightlyApp, routes, data, hooks(코치 대화 흉내), components, screens/)
 ```
 - 상태 관리 패턴: 라이브러리 없이 `useSyncExternalStore`와 모듈 단위 작은 스토어를 써요(`flaseek/store.ts`, `maestro/store.ts`, `techlearn/store.ts`).
 

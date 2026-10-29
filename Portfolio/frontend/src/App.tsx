@@ -4,6 +4,7 @@ import { ACCIO_BASE, LEGACY_ROUTES } from "./projects/accio/routes";
 import { MAESTRO_BASE } from "./projects/maestro/routes";
 import { FLASEEK_BASE } from "./projects/flaseek/routes";
 import { TECHLEARN_BASE } from "./projects/techlearn/routes";
+import { NIGHTLY_BASE } from "./projects/nightly/routes";
 import useHashRoute from "./shared/hooks/useHashRoute";
 
 // 프로젝트는 들어갈 때 코드를 받는다 — 프로젝트가 늘어도 포트폴리오 첫 화면은 자기 코드만 받는다.
@@ -12,6 +13,7 @@ const AccioApp = lazy(() => import("./projects/accio/AccioApp"));
 const MaestroApp = lazy(() => import("./projects/maestro/MaestroApp"));
 const FlaseekApp = lazy(() => import("./projects/flaseek/FlaseekApp"));
 const TechlearnApp = lazy(() => import("./projects/techlearn/TechlearnApp"));
+const NightlyApp = lazy(() => import("./projects/nightly/NightlyApp"));
 
 /** '/accio', '/accio/list' 처럼 base 아래 경로면 base 뒤 경로('/', '/list')를, 아니면 null */
 function subPath(path: string, base: string) {
@@ -60,6 +62,14 @@ function App() {
     return (
       <Suspense fallback={null}>
         <TechlearnApp path={techlearnPath} params={params} />
+      </Suspense>
+    );
+
+  const nightlyPath = subPath(path, NIGHTLY_BASE);
+  if (nightlyPath)
+    return (
+      <Suspense fallback={null}>
+        <NightlyApp path={nightlyPath} params={params} />
       </Suspense>
     );
 

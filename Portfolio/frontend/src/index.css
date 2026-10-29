@@ -154,6 +154,46 @@
   --color-tl-indigo-ink: #0b1330;
   --color-tl-step: #4f6bd8;
 
+  /*
+   * Nightly(AI 수면 코칭 시안 · 피그마 「AI 수면」 Design) — nt- 접두어. 어두운 바탕 위에 반투명 유리 카드를 얹는다.
+   * 글자는 main · sub · weak 3단계, 포인트는 파랑(primary) 하나. 깨어 있음 · 할인만 노랑(warning), 거절만 빨강(danger).
+   * AI 표시(아바타 · 내 말풍선 · 보내기)는 시안대로 인디고~보라 그라데이션을 쓴다.
+   */
+  --color-nt-bg: #111115;
+  --color-nt-bg-light: #18181d;
+  --color-nt-main: #f2f2f5;
+  --color-nt-sub: #bdbdc7;
+  --color-nt-weak: #9a9aa6;
+  --color-nt-disabled: #666670;
+  --color-nt-ink: #111111;
+  --color-nt-primary: #2563eb;
+  --color-nt-primary-strong: #1d4ed8;
+  --color-nt-primary-text: #8ab0fa;
+  --color-nt-primary-soft: #8ab0fa24;
+  --color-nt-secondary: #bdbdc7;
+  --color-nt-secondary-text: #d4d4dc;
+  --color-nt-success: #e6e6ec;
+  --color-nt-warning: #fcd34d;
+  --color-nt-warning-soft: #fcd34d1f;
+  --color-nt-danger: #fca5a5;
+  --color-nt-danger-soft: #fca5a51f;
+  /* 유리 — subtle < default < soft(배지 · 상태) < elevated(헤더 · 강조 판) < highlight(카드 안 칸) */
+  --color-nt-glass-subtle: #ffffff0a;
+  --color-nt-glass: #ffffff0f;
+  --color-nt-glass-soft: #ffffff14;
+  --color-nt-glass-elevated: #ffffff17;
+  --color-nt-glass-highlight: #ffffff24;
+  --color-nt-glass-pressed: #0000003d;
+  --color-nt-line-light: #ffffff14;
+  --color-nt-line: #ffffff24;
+  --color-nt-line-highlight: #ffffff52;
+  --color-nt-line-active: #ffffff7a;
+  --color-nt-indigo: #6366f1;
+  --color-nt-indigo-strong: #4f46e5;
+  --color-nt-ai: #818cf8;
+  --color-nt-violet: #8b5cf6;
+  --color-nt-lilac: #a78bfa;
+
   /* Neutral — icon (text-icon-main …) */
   --color-icon-main: #2a2a37;
   --color-icon-sub: #545461;
@@ -188,6 +228,14 @@
   --shadow-flaseek-2: 0 2px 4px rgb(42 42 55 / 0.08);
   --shadow-flaseek-3: 0 4px 8px rgb(42 42 55 / 0.1);
   --shadow-flaseek-4: 0 6px 12px rgb(42 42 55 / 0.12);
+
+  /* Nightly 그림자 — glass 유리 카드 · cta 파란 버튼 빛 · mark 로고·아이콘 상자. 윗변 반사광은 inset-shadow-nt-specular */
+  --shadow-nt-glass: 0 6px 16px -4px #ffffff1a, 0 8px 32px 0 #07070a66;
+  --shadow-nt-cta: 0 8px 24px -4px #2563eb47;
+  --shadow-nt-mark: 0 4px 12px 0 #00000047;
+  --inset-shadow-nt-specular: inset 0 1px 0 #ffffff33;
+  --inset-shadow-nt-button: inset 0 1px 0 #ffffff40;
+  --inset-shadow-nt-mark: inset 0 1px 0 #ffffff38;
 }
 
 /*
