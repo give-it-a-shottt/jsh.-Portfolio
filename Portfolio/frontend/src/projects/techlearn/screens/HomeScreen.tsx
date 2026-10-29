@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import heroImage from '../assets/hero-msa.jpg'
 import arrowLeft from '../assets/icon-arrow-left-sm.svg'
 import arrowRightSm from '../assets/icon-arrow-right-sm.svg'
@@ -386,25 +386,72 @@ const AVATAR_TONE: Record<Review['tone'], string> = {
   gray: 'bg-tl-on-dark text-tl-ink',
 }
 
+// 후기 슬라이더 — 브라우저 스크롤바 대신 점 표시(지금 위치는 긴 막대). 점과 화살표는 카드 한 장씩 옮긴다.
+// 넓은 화면은 카드가 거의 다 보여 끝까지 조금만 밀리므로, 점 개수는 실제로 멈출 수 있는 자리 수만큼만 둔다.
 function Reviews() {
-  const scroll = (direction: 1 | -1) => {
-    document.getElementById('tl-reviews')?.scrollBy({ left: direction * 396, behavior: 'smooth' })
+  const listRef = useRef<HTMLUListElement>(null)
+  const [active, setActive] = useState(0)
+  const [stops, setStops] = useState(REVIEWS.length)
+
+  /** 카드 한 장 + 사이 간격, 끝까지 밀 수 있는 거리 — 카드 폭이 화면마다 달라서 그때그때 잰다 */
+  const measure = () => {
+    const list = listRef.current
+    const card = list?.querySelector('li')
+    if (!list || !card) return null
+    const step = card.offsetWidth + parseFloat(getComputedStyle(list).columnGap || '0')
+    return { list, step, max: list.scrollWidth - list.clientWidth }
   }
+
+  // 화면 폭이 바뀌면 멈출 수 있는 자리 수를 다시 센다. 다 보이면(max 0) 점을 숨긴다
+  useEffect(() => {
+    const list = listRef.current
+    if (!list) return
+    const update = () => {
+      const m = measure()
+      if (!m) return
+      const extra = m.max % m.step > 2 ? 1 : 0
+      setStops(m.max <= 2 ? 1 : Math.min(REVIEWS.length, Math.floor(m.max / m.step) + 1 + extra))
+    }
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(list)
+    return () => observer.disconnect()
+  }, [])
+
+  const goTo = (index: number) => {
+    const m = measure()
+    if (!m) return
+    const next = Math.max(0, Math.min(stops - 1, index))
+    m.list.scrollTo({ left: Math.min(next * m.step, m.max), behavior: 'smooth' })
+  }
+
+  // 끝까지 밀었으면 마지막 점을 켠다
+  const onScroll = () => {
+    const m = measure()
+    if (!m) return
+    const atEnd = m.list.scrollLeft >= m.max - 2
+    setActive(atEnd ? stops - 1 : Math.min(stops - 1, Math.round(m.list.scrollLeft / m.step)))
+  }
+
   return (
     <section aria-labelledby="tl-reviews-title" className="bg-tl-bg-alt px-4 py-8 sm:px-10 sm:py-12">
       <div className="mx-auto flex max-w-300 flex-col gap-6 sm:px-8">
         <div className="flex items-end justify-between">
           <SectionTitle eyebrow="Success Stories" title="수강생 생생 리뷰 & 취업 성공기" id="tl-reviews-title" />
           <div className="hidden gap-1 sm:flex">
-            <button type="button" aria-label="이전 후기" onClick={() => scroll(-1)} className="flex size-10 items-center justify-center rounded-xs bg-tl-bg hover:bg-tl-line">
+            <button type="button" aria-label="이전 후기" onClick={() => goTo(active - 1)} className="flex size-10 items-center justify-center rounded-xs bg-tl-bg hover:bg-tl-line">
               <img src={arrowLeft} alt="" width={13.33} height={13.33} />
             </button>
-            <button type="button" aria-label="다음 후기" onClick={() => scroll(1)} className="flex size-10 items-center justify-center rounded-xs bg-tl-bg hover:bg-tl-line">
+            <button type="button" aria-label="다음 후기" onClick={() => goTo(active + 1)} className="flex size-10 items-center justify-center rounded-xs bg-tl-bg hover:bg-tl-line">
               <img src={arrowRightSm} alt="" width={13.33} height={13.33} />
             </button>
           </div>
         </div>
-        <ul id="tl-reviews" className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:px-0">
+        <ul
+          ref={listRef}
+          onScroll={onScroll}
+          className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+        >
           {REVIEWS.map((review) => (
             <li
               key={review.name}
@@ -431,6 +478,20 @@ function Reviews() {
             </li>
           ))}
         </ul>
+        {stops > 1 && (
+          <div className="flex items-center justify-center gap-2">
+            {Array.from({ length: stops }, (_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`${i + 1}번째 후기 보기`}
+                aria-current={active === i ? 'true' : undefined}
+                onClick={() => goTo(i)}
+                className={`h-2 rounded-full transition-[width,background-color] duration-300 motion-reduce:transition-none ${active === i ? 'w-8 bg-tl' : 'w-2 bg-tl-weak/40 hover:bg-tl-weak'}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )
