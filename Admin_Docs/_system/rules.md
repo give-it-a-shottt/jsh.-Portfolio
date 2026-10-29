@@ -39,14 +39,28 @@
 
 | 작업 | 리뷰 |
 |---|---|
-| 기능 추가·변경 | R1~R6, 화면이 바뀌면 R7 |
-| 버그 수정·설정값·문구 | R1, R5, R6 |
-| 리팩터링 | R1, R2, R5 (동작이 그대로인지 테스트로 확인) |
-| 패키지 추가·업그레이드 | R3 |
+| 기능 추가·변경 | R1~R4, 화면이 바뀌면 R5 |
+| 버그 수정·설정값·문구 | R1, R3, R4 |
+| 리팩터링 | R1, R3 (동작이 그대로인지 테스트로 확인) |
+| 패키지 추가·업그레이드 | R2 |
 | 문서만 (Admin_Docs, README, 주석) | 리뷰 없음, 민감 정보만 확인 |
 
 - 여러 종류가 섞이면 해당하는 리뷰어를 합쳐요. 판정 결과는 사용자에게 한 줄로 알려요.
 - 리뷰 없음인 작업은 문서 갱신·리뷰·판정 단계를 건너뛰고, 민감 정보 확인 결과만 한 줄로 알려요.
+
+### 리뷰어 5인과 리뷰 패킷 (2026-10-29부터, 이전은 7인)
+| 리뷰어 | 담당 모델 | 체크리스트 |
+|---|---|---|
+| R1 구조·가독성 | Sonnet | [R1](reviewers/R1-structure-readability.md) |
+| R2 보안·성능 | Opus | [R2](reviewers/R2-security-performance.md) |
+| R3 예외 처리·테스트 | Sonnet | [R3](reviewers/R3-errors-tests.md) |
+| R4 설계 의도·API 계약 | Sonnet | [R4](reviewers/R4-intent-api.md) |
+| R5 디자인·접근성 | Sonnet | [R5](reviewers/R5-design-a11y.md) |
+
+- 메인이 리뷰 패킷(작업 요약 · 바뀐 파일과 diff · 설계 의도 · 관련 overview · D-00X 요약 · 테스트를 한 번 돌린 결과)을 만들어 넘겨요. 리뷰어는 레포 전체를 뒤지지 않고, 테스트를 다시 돌리지 않아요. 패킷은 파일로 남기지 않아요.
+- 리뷰어마다 서브에이전트 하나, 다른 리뷰어 결과는 보지 않아요. 가장 가벼운 모델(Haiku)은 쓰지 않아요. 지정 모델을 못 쓰면 SUMMARY에 적어요.
+- 결과는 항목마다 한 줄 "항목 → 확인한 위치 → 결과"로 짧게 써요.
+- 이미 끝난 기능의 review/R1~R7.md는 예전 7인 번호 그대로 둬요.
 
 ### 민감 정보 금지 목록
 - API 키·토큰·비밀번호와 `.env` 파일의 값. 예를 들어 "환경변수 `YUMI_API_KEY` 사용"처럼 이름만 써요.
@@ -61,7 +75,7 @@
 
 ### 번호와 파일 이름
 - 결정 `decisions/D-00X-영문-제목.md` (결정 1개 = 파일 1개)
-- 기능 `features/F-00X-영문-제목/feature.md`, 리뷰 `features/F-00X-영문-제목/review/R1.md ~ R7.md, SUMMARY.md`
+- 기능 `features/F-00X-영문-제목/feature.md`, 리뷰 `features/F-00X-영문-제목/review/R1.md ~ R5.md, SUMMARY.md` (2026-10-29 이전 기록은 R1~R7)
 - 기능의 후속 수정 리뷰는 `review/fix-0N-제목/`에 따로 둬요(예: F-001 fix-01-sprite).
 - 트러블 `troubleshooting/T-00X-영문-제목.md`, 목록은 [INDEX.md](../troubleshooting/INDEX.md)
 - 리뷰 기록 [features/REVIEW_LOG.md](../features/REVIEW_LOG.md)

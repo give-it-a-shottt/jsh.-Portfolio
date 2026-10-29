@@ -58,7 +58,7 @@ Admin_Docs/          이 문서들
   decisions/         D-00X (결정 1개 = 파일 1개)
   features/          REVIEW_LOG.md, F-00X-제목/ (feature.md + review/)
   troubleshooting/   INDEX.md, T-00X
-  _system/           rules · glossary · reviewers/R1~R7
+  _system/           rules · glossary · reviewers/R1~R5
 Portfolio/frontend/  Vite 앱 하나 (portfolio/, projects/{accio,maestro,flaseek}/, public/accio-v1/)
 Portfolio/backend/   maestro/, accio/ (FastAPI)
 Portfolio/external/  PlanForMe 사례 코드 사본 (범위 밖)
