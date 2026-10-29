@@ -87,6 +87,6 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-005](features/F-005-maestro/feature.md) | 마에스트로 | 백로그 |
 | [F-006](features/F-006-design-system-case/feature.md) | 개인 디자인 시스템 사례 | [주의] 판정 완료 |
 | [F-007](features/F-007-search-algorithm/feature.md) | 검색 알고리즘 개선 (S0~S6) | 리뷰 전 |
-| [F-008](features/F-008-techlearn/feature.md) | techlearn 강의 플랫폼 시안 (홈 → 목록 → 상세 → 수강신청) | [주의] 리뷰 완료 · 최종 판정 문장 대기 |
+| [F-008](features/F-008-techlearn/feature.md) | techlearn 강의 플랫폼 시안 (홈 → 목록 → 상세 → 수강신청) | [주의] 판정 완료 |
 
 최종 수정: 2026-10-29 · 관련: D-001~D-004, F-001~F-008
