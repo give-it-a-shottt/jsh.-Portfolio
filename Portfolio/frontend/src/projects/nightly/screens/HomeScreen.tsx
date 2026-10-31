@@ -1,25 +1,19 @@
-import dbIcon from '../assets/h-db.svg'
 import serverIcon from '../assets/h-server.svg'
 import shieldIcon from '../assets/h-shield.svg'
 import sparklesIcon from '../assets/h-sparkles.svg'
 import ticketIcon from '../assets/h-ticket.svg'
 import watchIcon from '../assets/h-watch.svg'
-import zapIcon from '../assets/h-zap.svg'
-import mShieldIcon from '../assets/m-shield.svg'
-import mSparklesIcon from '../assets/m-sparkles-20.svg'
-import mTicketIcon from '../assets/m-ticket.svg'
-import mWatchIcon from '../assets/m-watch.svg'
 import chevIcon from '../assets/s-chev.svg'
-import { Badge, CELL, Footer, GHOST_BUTTON, GLASS, GLASS_ELEVATED, GLASS_SUBTLE, Header, Mark, PRIMARY_BUTTON, ScoreRing, StatusPulse } from '../components'
-import { duration, LAST_NIGHT, SCORE, STAGES } from '../data'
+import { Ambient, Badge, Footer, GHOST_BUTTON, GLASS, GLASS_ELEVATED, GLASS_SUBTLE, Header, PRIMARY_BUTTON, ScoreRing, STAT, StatusPulse } from '../components'
+import { duration, LAST_NIGHT, SCORE, STAGES, type Stage } from '../data'
 import { nightlyHref } from '../routes'
 
 // 01 랜딩 & 헬스체크 — 히어로(소개 + 어젯밤 점수 · 백엔드 연결 상태) → 기능 4개 → 가입 안내
 
 const HEALTH = [
-  { label: 'API', short: 'API', icon: zapIcon, value: '32ms', shortValue: '32ms' },
-  { label: 'PostgreSQL', short: 'DB', icon: dbIcon, value: 'connected', shortValue: 'OK' },
-  { label: 'Redis', short: 'Redis', icon: dbIcon, value: 'connected', shortValue: 'OK' },
+  { label: 'API', short: 'API', value: '32ms', shortValue: '32ms' },
+  { label: 'PostgreSQL', short: 'DB', value: 'connected', shortValue: 'OK' },
+  { label: 'Redis', short: 'Redis', value: 'connected', shortValue: 'OK' },
 ]
 
 // 수면 데이터 · AI 코치만 이 시안 안에 화면이 있어서 누를 수 있다
@@ -30,7 +24,6 @@ const FEATURES = [
     desc: '기상 직후 기기가 HMAC 서명과 멱등성 키로 안전하게 전송해요.',
     short: 'HMAC 서명·멱등성 키로 안전하게 전송',
     icon: watchIcon,
-    mobileIcon: mWatchIcon,
     href: nightlyHref('/sleep'),
   },
   {
@@ -39,7 +32,6 @@ const FEATURES = [
     desc: '어젯밤 깊은 잠·REM 비율을 읽고 한 글자씩 실시간 코칭해요.',
     short: '한 글자씩 실시간 코칭',
     icon: sparklesIcon,
-    mobileIcon: mSparklesIcon,
     href: nightlyHref('/coach'),
   },
   {
@@ -48,7 +40,6 @@ const FEATURES = [
     desc: '500명이 동시에 눌러도 정확히 100장만 발급돼요.',
     short: '정확히 100장만 발급',
     icon: ticketIcon,
-    mobileIcon: mTicketIcon,
   },
   {
     step: '04 · M9',
@@ -56,12 +47,14 @@ const FEATURES = [
     desc: '관리자는 50대 기기 상태를 새로고침 없이 지켜봐요.',
     short: '50대 상태를 새로고침 없이',
     icon: shieldIcon,
-    mobileIcon: mShieldIcon,
   },
 ]
 
 /** 모바일 시안은 막대 없이 깊은 잠 · 깨어 있음 숫자에만 단계 색을 입힌다 */
-const MOBILE_TONE: Partial<Record<string, string>> = { deep: 'max-lg:text-nt-primary-text', awake: 'max-lg:text-nt-warning' }
+const MOBILE_TONE: Partial<Record<Stage, string>> = { deep: 'max-lg:text-nt-primary-text', awake: 'max-lg:text-nt-secondary-text' }
+
+/** 홈 미리보기의 깨어 있음 막대는 그래프와 달리 회색이다(시안) */
+const previewBar = (stage: Stage) => (stage === 'awake' ? 'bg-nt-weak' : STAGES[stage].bar)
 
 /** 단계 막대 길이 — 4시간(240분)을 꽉 찬 길이로 본다(시안 막대 비율) */
 const BAR_FULL_MINUTES = 240
@@ -86,12 +79,13 @@ function SleepScorePreview() {
             <div key={stage} className="flex flex-col gap-1">
               <div className="flex justify-between text-12 font-medium">
                 <dt className="text-nt-sub">{STAGES[stage].label}</dt>
-                <dd className={`tracking-normal text-nt-main ${MOBILE_TONE[stage] ?? ''}`}>
-                  {duration(minutes)}
-                </dd>
+                <dd className={`tracking-normal text-nt-main ${MOBILE_TONE[stage] ?? ''}`}>{duration(minutes)}</dd>
               </div>
-              <div aria-hidden="true" className="hidden h-1.5 overflow-hidden rounded-full bg-nt-glass-highlight lg:block">
-                <div className={`h-full rounded-full ${STAGES[stage].bar}`} style={{ width: barWidth(minutes) }} />
+              <div
+                aria-hidden="true"
+                className="relative hidden h-1.5 rounded-full border border-nt-edge bg-linear-to-b from-white/10 to-white/3 lg:block"
+              >
+                <div className={`absolute -inset-y-px -left-px rounded-[3px] ${previewBar(stage)}`} style={{ width: barWidth(minutes) }} />
               </div>
             </div>
           ))}
@@ -109,13 +103,12 @@ function HealthCheck() {
           <img src={serverIcon} alt="" width={16} height={16} className="size-3.5 lg:size-4" />
           백엔드 연결 상태
         </h2>
-        <StatusPulse>200 OK</StatusPulse>
+        <StatusPulse tone="muted">200 OK</StatusPulse>
       </div>
       <dl className="flex gap-2">
-        {HEALTH.map(({ label, short, icon, value, shortValue }) => (
-          <div key={label} className={`flex flex-1 flex-col gap-1 p-3 ${CELL}`}>
-            <dt className="flex items-center gap-1.5 text-12 font-medium tracking-normal text-nt-sub">
-              <img src={icon} alt="" width={13} height={13} className="hidden lg:block" />
+        {HEALTH.map(({ label, short, value, shortValue }) => (
+          <div key={label} className={STAT}>
+            <dt className="text-12 font-medium tracking-normal text-nt-sub">
               <span className="hidden lg:inline">{label}</span>
               <span className="lg:hidden">{short}</span>
             </dt>
@@ -131,19 +124,23 @@ function HealthCheck() {
 }
 
 function FeatureCard({ feature }: { feature: (typeof FEATURES)[number] }) {
-  const { step, title, desc, short, icon, mobileIcon, href } = feature
+  const { step, title, desc, short, icon, href } = feature
   const body = (
     <>
-      {/* PC — 세로 카드 */}
+      {/* PC — 세로 카드. 아이콘은 상자 없이 44 칸 가운데에 둔다 */}
       <span className="hidden flex-col gap-2 lg:flex">
-        <Mark icon={icon} size="size-11" iconSize={22} rounded="rounded-md" />
+        <span aria-hidden="true" className="flex size-11 items-center justify-center">
+          <img src={icon} alt="" width={22} height={22} />
+        </span>
         <span className="mt-2 text-12 font-medium tracking-normal text-nt-weak">{step}</span>
         <span className="text-20 font-semibold text-nt-main">{title}</span>
         <span className="text-14 text-nt-sub">{desc}</span>
       </span>
       {/* 모바일 — 가로 줄 + 꺾쇠 */}
       <span className="flex items-center gap-3 lg:hidden">
-        <Mark icon={mobileIcon} size="size-10" iconSize={20} rounded="rounded-md" />
+        <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center">
+          <img src={icon} alt="" width={20} height={20} />
+        </span>
         <span className="flex flex-1 flex-col gap-0.5">
           <span className="text-16 font-semibold text-nt-main">{title}</span>
           <span className="text-12 font-medium text-nt-sub">{short}</span>
@@ -154,7 +151,7 @@ function FeatureCard({ feature }: { feature: (typeof FEATURES)[number] }) {
   )
   const className = `block p-4 lg:flex-1 lg:p-6 ${GLASS}`
   return href ? (
-    <a href={href} className={`${className} transition-colors hover:border-nt-line-highlight`}>
+    <a href={href} className={`${className} transition-[filter] hover:brightness-125`}>
       {body}
     </a>
   ) : (
@@ -164,7 +161,14 @@ function FeatureCard({ feature }: { feature: (typeof FEATURES)[number] }) {
 
 export default function HomeScreen() {
   return (
-    <div className="min-h-screen bg-nt-bg text-nt-main">
+    <div className="relative isolate min-h-screen bg-nt-bg text-nt-main">
+      <Ambient
+        glows={[
+          { size: 880, x: -240, y: -200 },
+          { size: 940, x: 250, y: -120 },
+          { size: 860, x: 290, y: -120 },
+        ]}
+      />
       <Header variant="guest" />
       <main className="mx-auto flex max-w-300 flex-col gap-10 px-5 pt-6 pb-16 lg:gap-24 xl:px-0 lg:pt-18 lg:pb-24">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-12">

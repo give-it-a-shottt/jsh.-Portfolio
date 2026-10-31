@@ -1,8 +1,12 @@
 import { useRef, useState, type ReactNode } from 'react'
 import bellIcon from './assets/bell.svg'
 import githubIcon from './assets/github.svg'
+import glow860 from './assets/glow-860.svg'
+import glow880 from './assets/glow-880.svg'
+import glow940 from './assets/glow-940.svg'
 import mobileRight from './assets/m-header-right.svg'
 import moonIcon from './assets/moon.svg'
+import pulseMutedDot from './assets/pulse-muted.svg'
 import pulseDot from './assets/pulse.svg'
 import ringBgSm from './assets/h-ring-bg.svg'
 import ringFgSm from './assets/h-ring-fg.svg'
@@ -15,24 +19,57 @@ import tabSparkles from './assets/tab-sparkles.svg'
 import tabUser from './assets/tab-user.svg'
 import { nightlyHref } from './routes'
 
-// Nightly 공통 조각 — 유리 카드 클래스 · 로고 · 상태 표시 · 배지 · 버튼 · 헤더 · 푸터 · 점수 링 · 모바일 탭 바
+// Nightly 공통 조각 — 유리 클래스 · 빛 번짐 · 로고 · 상태 표시 · 배지 · 버튼 · 헤더 · 푸터 · 점수 링 · 모바일 탭 바
 
-/** 유리 카드 3단계 (시안 Glass/Default · Subtle · Elevated) */
-export const GLASS =
-  'rounded-card border border-nt-line bg-nt-glass shadow-nt-glass inset-shadow-nt-specular backdrop-blur-[8px]'
-export const GLASS_SUBTLE = 'rounded-card border border-nt-line bg-nt-glass-subtle backdrop-blur-[6px]'
-export const GLASS_ELEVATED =
-  'rounded-card border border-nt-line-highlight bg-nt-glass-elevated shadow-nt-glass inset-shadow-nt-specular backdrop-blur-[12px]'
-/** 카드 안의 작은 칸(헬스 체크 · 요약 숫자 · 기기 상태) */
-export const CELL = 'rounded-md border border-nt-line-light bg-nt-glass-highlight'
+/** 유리 테두리 — 윗변이 가장 밝고 아랫변, 옆 순서로 옅어진다 */
+const EDGE = 'border border-nt-edge border-t-nt-edge-top border-b-nt-edge-bottom'
 
-/** 반짝이는 유리 아이콘 상자 — 로고 · 기능 카드 · 단계 카드 */
+/** 유리 카드 3단계 (시안 Glass/Default · Subtle · Elevated). 바탕은 위 12% → 아래 3% 흰빛 */
+export const GLASS = `rounded-card ${EDGE} bg-linear-to-b from-white/12 to-white/3 shadow-nt-glass inset-shadow-nt-specular backdrop-blur-[8px]`
+export const GLASS_SUBTLE = `rounded-card ${EDGE} bg-linear-to-b from-white/10 to-white/3 backdrop-blur-[6px]`
+export const GLASS_ELEVATED = `rounded-card ${EDGE} bg-linear-to-b from-white/12 to-white/3 shadow-nt-glass inset-shadow-nt-specular backdrop-blur-[12px]`
+/** 카드 안 조작 요소(칩 · 추천 질문 · 말풍선 · 날짜 이동)의 얇은 유리. 라운드는 쓰는 곳에서 붙인다 */
+export const GLASS_CONTROL = `${EDGE} bg-linear-to-b from-white/10 to-white/3`
+/** 헤더(PC · 모바일 코치)의 유리 막 */
+export const GLASS_BAR =
+  'border-b border-nt-edge-bottom bg-linear-to-b from-white/12 to-white/3 shadow-nt-glass inset-shadow-nt-specular backdrop-blur-[12px]'
+
+/** 카드 안 숫자 묶음 — 박스 대신 세로 구분선으로 나눈다(시안 수정안 '중첩 박스 정리') */
+export const STAT = 'flex flex-1 flex-col gap-1 py-1 not-first:border-l not-first:border-nt-line-light not-first:pl-4'
+
+const GLOWS = { 860: glow860, 880: glow880, 940: glow940 }
+
+/**
+ * 바탕의 흰 빛 번짐(시안 Ambient Orb · Light). 위치는 1440 시안 프레임 기준 그림 왼쪽 위 좌표.
+ * 부모에 relative isolate 를 두면 내용 뒤(-z-10)에 깔린다.
+ */
+export function Ambient({ glows }: { glows: { size: keyof typeof GLOWS; x: number; y: number }[] }) {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="relative mx-auto h-full max-w-360">
+        {glows.map(({ size, x, y }) => (
+          <img
+            key={`${x}-${y}`}
+            src={GLOWS[size]}
+            alt=""
+            width={size}
+            height={size}
+            className="absolute max-w-none"
+            style={{ left: x, top: y }}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** 반짝이는 유리 상자 — 로고 · AI 아바타 · 보내기 버튼 */
+export const MARK =
+  'flex shrink-0 items-center justify-center border border-white/35 bg-linear-to-b from-white/16 to-white/4 shadow-nt-mark inset-shadow-nt-mark backdrop-blur-[6px]'
+
 export function Mark({ icon, size, iconSize, rounded = 'rounded-sm' }: { icon: string; size: string; iconSize: number; rounded?: string }) {
   return (
-    <span
-      aria-hidden="true"
-      className={`flex shrink-0 items-center justify-center border border-white/35 bg-linear-to-b from-white/16 to-white/4 shadow-nt-mark inset-shadow-nt-mark backdrop-blur-[6px] ${size} ${rounded}`}
-    >
+    <span aria-hidden="true" className={`${MARK} ${size} ${rounded}`}>
       <img src={icon} alt="" width={iconSize} height={iconSize} />
     </span>
   )
@@ -49,25 +86,34 @@ export function Logo() {
   )
 }
 
-/** 초록 점 대신 빛나는 흰 점 + 짧은 상태 글자 (API Online · 200 OK · 동기화 시각) */
-export function StatusPulse({ children }: { children: ReactNode }) {
+const PULSE_TONE = {
+  /** 헤더 — 바탕 없이 초록 점 + 초록 글자 */
+  plain: { box: '', dot: pulseDot, text: 'text-nt-success' },
+  /** 카드 · 머리말 — 옅은 초록 바탕 */
+  soft: { box: 'bg-nt-success-soft', dot: pulseDot, text: 'text-nt-success' },
+  /** 응답 코드처럼 덜 중요한 상태 — 회색 점 + 옅은 글자 */
+  muted: { box: 'bg-nt-success-soft', dot: pulseMutedDot, text: 'text-nt-weak' },
+}
+
+/** 빛나는 점 + 짧은 상태 글자 (API Online · 200 OK · 동기화 시각) */
+export function StatusPulse({ tone = 'soft', children }: { tone?: keyof typeof PULSE_TONE; children: ReactNode }) {
+  const { box, dot, text } = PULSE_TONE[tone]
   return (
-    <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-nt-glass-soft py-1.5 pr-3 pl-2.5">
+    <span className={`inline-flex shrink-0 items-center gap-2 rounded-full py-1.5 pr-3 pl-2.5 ${box}`}>
       <span aria-hidden="true" className="relative size-2">
-        <img src={pulseDot} alt="" width={28} height={28} className="absolute -inset-2.5 max-w-none" />
+        <img src={dot} alt="" width={28} height={28} className="absolute -inset-2.5 max-w-none" />
       </span>
-      <span className="text-12 font-medium tracking-normal text-nt-success">{children}</span>
+      <span className={`text-12 font-medium tracking-normal ${text}`}>{children}</span>
     </span>
   )
 }
 
 const BADGE_TONE = {
-  success: 'bg-nt-glass-soft text-nt-success',
+  success: 'bg-nt-success-soft text-nt-success',
   primary: 'bg-nt-primary-soft text-nt-primary-text',
-  secondary: 'bg-nt-glass-soft text-nt-secondary-text',
-  warning: 'bg-nt-warning-soft text-nt-warning',
+  secondary: 'bg-nt-secondary-soft text-nt-secondary-text',
   danger: 'bg-nt-danger-soft text-nt-danger',
-  muted: 'bg-nt-glass-highlight text-nt-sub',
+  muted: 'bg-nt-glass-muted text-nt-sub',
 }
 
 export function Badge({ tone = 'success', children }: { tone?: keyof typeof BADGE_TONE; children: ReactNode }) {
@@ -78,9 +124,9 @@ export function Badge({ tone = 'success', children }: { tone?: keyof typeof BADG
   )
 }
 
-/** 파란 그라데이션 주 버튼 — 페이지 이동이라 <a> 로 둔다 */
+/** 파란 주 버튼(인디고 빛) — 페이지 이동이라 <a> 로 둔다 */
 export const PRIMARY_BUTTON =
-  'flex h-12 items-center justify-center rounded-sm bg-linear-160 from-nt-primary from-15% to-nt-primary-strong to-85% px-6 text-16 font-semibold text-nt-main shadow-nt-cta inset-shadow-nt-button transition-[filter] hover:brightness-110'
+  'flex h-12 items-center justify-center rounded-sm bg-nt-cta px-6 text-16 font-semibold text-nt-main shadow-nt-cta inset-shadow-nt-button transition-[filter] hover:brightness-110'
 export const GHOST_BUTTON =
   'flex h-12 items-center justify-center rounded-sm border border-nt-line bg-white/5 px-6 text-16 font-semibold text-nt-main backdrop-blur-[4px] transition-colors hover:bg-white/10'
 
@@ -122,7 +168,7 @@ export function Header({ variant, active }: { variant: 'guest' | 'member'; activ
   const menuButton = useRef<HTMLButtonElement>(null)
   return (
     <header
-      className="sticky top-0 z-20 border-b border-nt-line bg-nt-glass-elevated shadow-nt-glass inset-shadow-nt-specular backdrop-blur-[12px]"
+      className={`sticky top-0 z-20 ${GLASS_BAR}`}
       onKeyDown={(e) => {
         if (e.key !== 'Escape' || !menuOpen) return
         // 닫은 뒤 키보드 사용자가 제자리(메뉴 버튼)에서 이어 가게 한다
@@ -143,7 +189,7 @@ export function Header({ variant, active }: { variant: 'guest' | 'member'; activ
         </div>
 
         <div className="hidden items-center gap-4 lg:flex">
-          <StatusPulse>API Online</StatusPulse>
+          <StatusPulse tone="plain">API Online</StatusPulse>
           {variant === 'guest' ? (
             <>
               <a href={nightlyHref('/sleep')} className="flex h-10 items-center px-4 text-14 font-medium text-nt-primary-text hover:underline">
@@ -159,11 +205,8 @@ export function Header({ variant, active }: { variant: 'guest' | 'member'; activ
           ) : (
             <>
               <img src={bellIcon} alt="" width={20} height={20} />
-              <span className="flex items-center gap-2 rounded-full border border-nt-line bg-nt-glass-highlight py-1 pr-3 pl-1">
-                <span
-                  aria-hidden="true"
-                  className="flex size-7 items-center justify-center rounded-full bg-linear-135 from-nt-primary-text from-15% to-nt-secondary to-85% text-12 font-semibold text-nt-ink"
-                >
+              <span className={`flex items-center gap-2 rounded-full py-1 pr-3 pl-1 ${GLASS_CONTROL}`}>
+                <span aria-hidden="true" className={`${MARK} size-7 rounded-full text-12 font-semibold text-nt-mark`}>
                   밤
                 </span>
                 <span className="text-14 font-medium text-nt-main">김나잇</span>

@@ -10,12 +10,25 @@ import moon12Icon from '../assets/s-moon-12.svg'
 import moon16Icon from '../assets/s-moon-16.svg'
 import shield14Icon from '../assets/s-shield-14.svg'
 import sparkles16Icon from '../assets/s-sparkles-16.svg'
-import sparklesWhiteIcon from '../assets/s-sparkles-white.svg'
 import sunIcon from '../assets/s-sun.svg'
 import wavesIcon from '../assets/s-waves.svg'
 import wifiIcon from '../assets/s-wifi.svg'
-import watchIcon from '../assets/m-watch.svg'
-import { Badge, CELL, Footer, GLASS, GLASS_ELEVATED, GLASS_SUBTLE, Header, Mark, PRIMARY_BUTTON, ScoreRing, StatusPulse, TabBar } from '../components'
+import watchIcon from '../assets/h-watch.svg'
+import {
+  Ambient,
+  Badge,
+  Footer,
+  GLASS,
+  GLASS_CONTROL,
+  GLASS_ELEVATED,
+  GLASS_SUBTLE,
+  Header,
+  PRIMARY_BUTTON,
+  ScoreRing,
+  STAT,
+  StatusPulse,
+  TabBar,
+} from '../components'
 import {
   DASHBOARD_CHIPS,
   duration,
@@ -40,12 +53,11 @@ const SUMMARY = [
   { label: '평균 심박', icon: heartIcon, value: '58bpm' },
 ]
 
-// 얕은 잠 아이콘만 시안에서 반짝이는 상자 없이 옅은 바탕에 놓인다
-const STAGE_ICON: Record<Stage, { icon: string; plain?: boolean }> = {
-  deep: { icon: wavesIcon },
-  rem: { icon: sparkles16Icon },
-  light: { icon: moon16Icon, plain: true },
-  awake: { icon: sunIcon },
+const STAGE_ICON: Record<Stage, string> = {
+  deep: wavesIcon,
+  rem: sparkles16Icon,
+  light: moon16Icon,
+  awake: sunIcon,
 }
 
 const DEVICE_ROWS = [
@@ -78,7 +90,7 @@ function PageHead() {
       </div>
       <div className="flex items-center gap-3">
         <StatusPulse>Nightly Band · 07:02 동기화</StatusPulse>
-        <DateNav className="hidden rounded-sm border border-nt-line bg-nt-glass-subtle py-1.5 pr-3 pl-2 lg:flex" />
+        <DateNav className={`hidden rounded-sm py-1.5 pr-3 pl-2 lg:flex ${GLASS_CONTROL}`} />
       </div>
     </div>
   )
@@ -102,7 +114,7 @@ function DateNav({ className }: { className: string }) {
 
 function ScoreCard() {
   return (
-    <section aria-labelledby="nt-sleep-score" className={`flex flex-col gap-5 p-5 lg:w-96 lg:shrink-0 lg:p-7 ${GLASS}`}>
+    <section aria-labelledby="nt-sleep-score" className={`flex flex-col gap-5 p-5 lg:w-96 lg:shrink-0 lg:justify-center lg:p-7 xl:w-108 ${GLASS}`}>
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <p lang="en" className="hidden text-13 font-medium text-nt-primary-text lg:block">
@@ -122,7 +134,7 @@ function ScoreCard() {
       </div>
       <dl className="flex gap-2">
         {SUMMARY.map(({ label, icon, value }) => (
-          <div key={label} className={`flex flex-1 flex-col gap-1 p-3 ${CELL}`}>
+          <div key={label} className={STAT}>
             <dt className="flex items-center gap-1 text-11 font-medium text-nt-weak">
               <img src={icon} alt="" width={12} height={12} />
               {label}
@@ -139,17 +151,13 @@ function StageCards() {
   return (
     <ul aria-label="단계별 수면 시간" className="grid grid-cols-2 gap-3 lg:flex lg:gap-4">
       {LAST_NIGHT.map(({ stage, minutes, percent }) => {
-        const { icon, plain } = STAGE_ICON[stage]
         return (
           <li key={stage} className={`flex flex-col gap-1.5 p-4 lg:flex-1 lg:p-5 ${GLASS_SUBTLE}`}>
             <div className="mb-1.5 flex items-center justify-between">
-              {plain ? (
-                <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-sm bg-nt-glass-highlight">
-                  <img src={icon} alt="" width={16} height={16} />
-                </span>
-              ) : (
-                <Mark icon={icon} size="size-8" iconSize={16} />
-              )}
+              {/* 아이콘은 상자 없이 32 칸 가운데에 둔다 */}
+              <span aria-hidden="true" className="flex size-8 items-center justify-center">
+                <img src={STAGE_ICON[stage]} alt="" width={16} height={16} />
+              </span>
               <span className={`text-14 font-medium tracking-normal ${STAGES[stage].text}`}>{percent}%</span>
             </div>
             <span className="text-12 font-medium text-nt-sub">{STAGES[stage].label}</span>
@@ -229,7 +237,7 @@ function Hypnogram() {
 function WeeklyTrend() {
   const label = WEEKLY.map(({ day, score }) => `${day} ${score}점`).join(', ')
   return (
-    <section aria-labelledby="nt-weekly-title" className={`flex flex-col gap-4 p-5 lg:col-span-2 lg:p-6 xl:flex-1 ${GLASS}`}>
+    <section aria-labelledby="nt-weekly-title" className={`flex flex-col gap-4 p-5 lg:col-span-2 lg:justify-center lg:p-6 xl:flex-1 ${GLASS}`}>
       <div className="flex items-center justify-between">
         <h2 id="nt-weekly-title" className="text-18 font-semibold text-nt-main lg:text-20">
           최근 7일<span className="hidden lg:inline"> 수면 점수</span>
@@ -247,7 +255,7 @@ function WeeklyTrend() {
               {/* 50점을 바닥으로 두고 1점에 3px — 시안 막대 높이 그대로 */}
               <span
                 className={`w-full rounded-t-[6px] rounded-b-[2px] ${
-                  today ? 'bg-linear-to-b from-nt-lilac to-nt-indigo' : 'bg-nt-primary-soft'
+                  today ? 'bg-linear-to-b from-nt-mist to-nt-cta' : 'bg-nt-primary-soft'
                 }`}
                 style={{ height: (score - 50) * 3 }}
               />
@@ -278,7 +286,7 @@ function DeviceCard() {
             { label: '배터리', icon: batteryIcon, value: '76%' },
             { label: '신호', icon: wifiIcon, value: '강함' },
           ].map(({ label, icon, value }) => (
-            <div key={label} className={`flex flex-1 flex-col gap-1 p-3.5 ${CELL}`}>
+            <div key={label} className={STAT}>
               <dt className="flex items-center gap-1.5 text-12 font-medium text-nt-weak">
                 <img src={icon} alt="" width={14} height={14} />
                 {label}
@@ -300,7 +308,7 @@ function DeviceCard() {
 
       {/* 모바일은 기기를 한 줄로 줄이고 동기화 기록은 뺀다(시안 04-M) */}
       <section aria-label="연결된 기기" className={`flex items-center gap-3 p-4 lg:hidden ${GLASS}`}>
-        <span aria-hidden="true" className="flex size-10 items-center justify-center rounded-md bg-nt-glass-highlight">
+        <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center">
           <img src={watchIcon} alt="" width={20} height={20} />
         </span>
         <div className="flex flex-1 flex-col gap-0.5">
@@ -342,31 +350,23 @@ function SyncLog() {
 function CoachCta() {
   return (
     <section aria-labelledby="nt-coach-cta" className={`flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:gap-6 lg:p-7 ${GLASS_ELEVATED}`}>
-      <div className="flex items-center gap-3 lg:flex-1 lg:gap-6">
-        <span
-          aria-hidden="true"
-          className="flex size-8 shrink-0 items-center justify-center rounded-md bg-linear-135 from-nt-ai from-15% to-nt-violet to-85% lg:size-14 lg:rounded-card"
-        >
-          <img src={sparklesWhiteIcon} alt="" width={26} height={26} className="size-4 lg:size-6.5" />
-        </span>
-        <div className="flex flex-col gap-2">
-          <h2 id="nt-coach-cta" className="text-14 font-medium text-nt-main lg:text-18 lg:font-semibold">
-            <span className="hidden lg:inline">깊은 잠 비율이 좋아요. 그런데 새벽 4시쯤 두 번 깼어요.</span>
-            <span className="lg:hidden">새벽 4시쯤 두 번 깼어요. 이유를 물어볼까요?</span>
-          </h2>
-          <ul className="hidden gap-2 lg:flex">
-            {DASHBOARD_CHIPS.map(({ label, question }) => (
-              <li key={label}>
-                <a
-                  href={nightlyHref('/coach', { q: question })}
-                  className="flex rounded-full border border-nt-line bg-nt-glass-highlight px-3 py-1.5 text-12 font-medium text-nt-sub transition-colors hover:text-nt-main"
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="flex flex-col gap-2 lg:flex-1">
+        <h2 id="nt-coach-cta" className="text-14 font-medium text-nt-main lg:text-18 lg:font-semibold">
+          <span className="hidden lg:inline">깊은 잠 비율이 좋아요. 그런데 새벽 4시쯤 두 번 깼어요.</span>
+          <span className="lg:hidden">새벽 4시쯤 두 번 깼어요. 이유를 물어볼까요?</span>
+        </h2>
+        <ul className="hidden gap-2 lg:flex">
+          {DASHBOARD_CHIPS.map(({ label, question }) => (
+            <li key={label}>
+              <a
+                href={nightlyHref('/coach', { q: question })}
+                className={`flex rounded-full px-3 py-1.5 text-12 font-medium text-nt-sub transition-colors hover:text-nt-main ${GLASS_CONTROL}`}
+              >
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
       <a href={nightlyHref('/coach')} className={PRIMARY_BUTTON}>
         AI 코치에게 물어보기
@@ -377,12 +377,19 @@ function CoachCta() {
 
 export default function SleepScreen() {
   return (
-    <div className="min-h-screen bg-nt-bg text-nt-main">
+    <div className="relative isolate min-h-screen bg-nt-bg text-nt-main">
+      <Ambient
+        glows={[
+          { size: 880, x: -240, y: -200 },
+          { size: 860, x: 760, y: -60 },
+          { size: 940, x: 384, y: 657 },
+        ]}
+      />
       <Header variant="member" active="sleep" />
       {/* 모바일은 아래 떠 있는 탭 바(64 + 여백 16)에 가리지 않게 아래 여백을 넉넉히 둔다 */}
       <main className="mx-auto flex max-w-300 flex-col gap-4 px-5 pt-5 pb-28 lg:gap-6 xl:px-0 lg:pt-10 lg:pb-24">
         <PageHead />
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:gap-6">
           <ScoreCard />
           <div className="flex flex-1 flex-col gap-4 lg:gap-6">
             <StageCards />
@@ -390,7 +397,7 @@ export default function SleepScreen() {
           </div>
         </div>
         {/* 1024~1279 폭에서는 7일 점수를 한 줄 전체로, 기기 · 동기화 기록을 그 아래 두 칸으로 놓는다 */}
-        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6 xl:flex xl:flex-row">
+        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:gap-6 xl:flex xl:flex-row">
           <WeeklyTrend />
           <DeviceCard />
           <SyncLog />

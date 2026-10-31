@@ -1,4 +1,4 @@
-// Nightly 시안의 가짜 데이터 — 서버 없이 화면만 보여 준다. 숫자는 피그마 「AI 수면」 Design 시안 그대로.
+// Nightly 시안의 가짜 데이터 — 서버 없이 화면만 보여 준다. 숫자는 피그마 「AI 수면」 Liquid Glass 수정안 그대로.
 
 export type Stage = 'deep' | 'rem' | 'light' | 'awake'
 
@@ -7,7 +7,7 @@ export const STAGES: Record<Stage, { label: string; bar: string; text: string }>
   deep: { label: '깊은 잠', bar: 'bg-nt-primary', text: 'text-nt-primary-text' },
   rem: { label: 'REM', bar: 'bg-nt-secondary', text: 'text-nt-secondary-text' },
   light: { label: '얕은 잠', bar: 'bg-nt-primary-text', text: 'text-nt-sub' },
-  awake: { label: '깨어 있음', bar: 'bg-nt-warning', text: 'text-nt-warning' },
+  awake: { label: '깨어 있음', bar: 'bg-nt-secondary-text', text: 'text-nt-secondary-text' },
 }
 
 /** 그래프 위에서 아래로 놓이는 순서 */
