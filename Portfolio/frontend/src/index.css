@@ -113,11 +113,36 @@
   --color-study-soft: #eef0fe;
   --color-study-strong: #4f46e5;
 
-  /* 마에스트로(해커톤 프로젝트) — 다른 프로젝트 색과 섞이지 않게 maestro- 접두어를 붙인다 */
-  --color-maestro: #8855ff;
-  --color-maestro-dim: #181a1d80;
-  --font-maestro-opus: "Lora", serif;
-  --font-maestro-quote: "Noto Serif KR", serif;
+  /*
+   * 마에스트로 리뉴얼(피그마 「마에스트로」 변수 Maestro Renewal / Color · 브랜드 02 Lavender) — mr- 접두어.
+   * 버튼 · 선택은 mr-primary(600), 지도 핀은 mr-pin(700). 앰버(mr-now)는 '지금' 마커에만, 늘 #111 2px 테두리와 함께.
+   * 글자는 MyDesign 기본(main #111 · sub #424242 · weak #757575)이라 포트폴리오 회색과 값이 달라 따로 둔다.
+   */
+  --color-mr-primary: #6555ce;
+  --color-mr-primary-hover: #594bb8;
+  --color-mr-primary-pressed: #443890;
+  --color-mr-primary-soft: #f5f3ff;
+  --color-mr-pin: #594bb8;
+  --color-mr-now: #f9ab24;
+  --color-mr-screen: #f2f1f9;
+  --color-mr-surface: #dcd9f2;
+  --color-mr-main: #111111;
+  --color-mr-sub: #424242;
+  --color-mr-weak: #757575;
+  --color-mr-disabled: #9e9e9e;
+  --color-mr-fill: #f5f5f5;
+  --color-mr-line: #eeeeee;
+  --color-mr-line-regular: #e0e0e0;
+  --color-mr-line-strong: #bdbdbd;
+  --color-mr-dim: #11111166;
+  --color-mr-green: #1b7a3a;
+  --color-mr-green-soft: #e8f5ec;
+  --color-mr-red: #c62828;
+  --color-mr-red-soft: #fdecec;
+  --color-mr-navy: #253a75;
+  --color-mr-navy-soft: #e9ecf5;
+  --color-mr-black: #212121;
+  --color-mr-black-soft: #f2f2f2;
 
   /*
    * FLASEEK 리뉴얼 시안 — 핑크는 역할이 셋: 흰 글자를 얹는 버튼은 flaseek, 장식·배지는 flaseek-pink,
@@ -211,6 +236,9 @@
   /* techlearn — 태그·할인 배지 2, 해시태그 칩 6 */
   --radius-tl-tag: 2px;
   --radius-tl-chip: 6px;
+  /* 마에스트로 — 칩 · 배지 6, 시트 윗변 20 */
+  --radius-mr-chip: 6px;
+  --radius-mr-sheet: 20px;
 
   /* Accio 그림자 — #2A2A37 기반으로 아주 약하게. 1 카드·입력창 / 2 hover·떠 있는 버튼 / 3 플로팅 AI·포커스 / 4 모달 */
   --shadow-accio-1: 0 1px 2px rgb(42 42 55 / 0.06);
@@ -232,6 +260,11 @@
   --inset-shadow-nt-specular: inset 0 1px 0 #ffffff1f;
   --inset-shadow-nt-button: inset 0 1px 0 #ffffff40;
   --inset-shadow-nt-mark: inset 0 1px 0 #ffffff38;
+
+  /* 마에스트로 그림자 — 1 핀 · 선택된 세그먼트 / sheet 결과 시트 윗변 / panel PC 상세 패널 */
+  --shadow-mr-1: 0 1px 2px rgb(33 33 33 / 0.06);
+  --shadow-mr-sheet: 0 -6px 12px rgb(33 33 33 / 0.12);
+  --shadow-mr-panel: 0 6px 12px rgb(33 33 33 / 0.12);
 }
 
 /*
@@ -301,6 +334,16 @@
 @keyframes accio-caret {
   50% {
     opacity: 0;
+  }
+}
+
+/* 마에스트로 — 자리 물어보기 대기 막대(끝을 모르는 진행). 움직임 줄이기면 멈춘 막대로 둔다 */
+@keyframes mr-indeterminate {
+  from {
+    left: -120px;
+  }
+  to {
+    left: 100%;
   }
 }
 

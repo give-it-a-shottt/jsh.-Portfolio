@@ -67,12 +67,22 @@ class NearestStation(YumiModel):
     walk_min: int
 
 
+class HoursSegment(YumiModel):
+    """하루 영업을 브레이크로 나눈 한 구간. close 가 open 보다 이르면 다음 날 새벽에 닫는다."""
+
+    open: str
+    close: str
+    last_order: str | None = None
+
+
 class BusinessHours(YumiModel):
     day: str  # mon … sun
     open: str | None = None
     close: str | None = None
     closed: bool = False
     last_order: str | None = None
+    # 2026-11-01 실제 응답: 브레이크가 있으면 segments 가 여러 개로 온다 (없으면 open~close 하나)
+    segments: Annotated[list[HoursSegment], _none_to(list), Field(default_factory=list)]
 
 
 class Reputation(YumiModel):
@@ -88,11 +98,14 @@ class Place(YumiModel):
     # core 등급
     id: str
     name: str
+    category: str | None = None  # restaurant / cafe / bar
     category_label: str | None = None
     location: LatLng
     address: Address | None = None
     confidence: float = 0
     possibly_closed: bool = False
+    source_count: int = 0  # 같은 곳으로 확인된 지도 소스 수 — "지도 앱 3곳에 다 나와요"
+    last_seen_at: datetime | None = None  # 유미가 마지막으로 확인한 때 — 근거의 날짜
     distance_m: int | None = None  # nearby 검색에서만 온다
     # contact_hours 등급
     phone: str | None = None
@@ -110,6 +123,7 @@ class Place(YumiModel):
     menu_summary: MenuSummary | None = None
     nearest_station: NearestStation | None = None
     # edge 등급 — serviceAttributes 안쪽 키는 snake_case(venue_subtype …) 그대로 온다
+    recommended_for: Strings  # solo_dining, date, group_dining …
     service_attributes: Attributes
     atmosphere: Strings
     atmosphere_scores: Scores

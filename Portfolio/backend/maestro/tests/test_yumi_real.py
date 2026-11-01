@@ -154,3 +154,17 @@ def test_daily_quota_is_not_waited_for():
 
     assert exc.value.status_code == 429
     assert len(fake.requests) == 1  # 몇 시간을 기다리거나 다시 보내지 않는다
+
+
+@pytest.mark.parametrize(
+    "response",
+    [
+        httpx.Response(200, text="<html>점검 중</html>"),
+        httpx.Response(200, json={"success": True}),
+        httpx.Response(200, json={"success": True, "data": {"items": []}}),
+    ],
+)
+def test_unexpected_body_is_a_yumi_error(response):
+    """봉투 모양이 달라도 500 이 아니라 YumiError — 결과 화면이 저장본으로 대신할 수 있게."""
+    with pytest.raises(YumiError):
+        asyncio.run(client(FakeYumi([response])).search_nearby(nearby()))

@@ -18,7 +18,6 @@ import appRoutes from '../App.tsx?raw'
 import designTokens from '../index.css?raw'
 import maestroApi from '../projects/maestro/api.ts?raw'
 import maestroComponents from '../projects/maestro/components.tsx?raw'
-import maestroLiveScreen from '../projects/maestro/screens/LiveScreen.tsx?raw'
 import maestroStore from '../projects/maestro/store.ts?raw'
 import rankSource from './rank.ts?raw'
 import frontendReadme from '../../README.md?raw'
@@ -89,21 +88,21 @@ export interface CaseDetail {
 export const CASE_DETAILS: Record<string, CaseDetail> = {
   // ── Front ──────────────────────────────────────────────────────────────
   maestro: {
-    stack: ['React', 'TypeScript', 'Tailwind CSS', 'motion', 'FastAPI'],
+    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Zustand', 'Leaflet', 'motion', 'FastAPI'],
     code: [
       {
         label: 'store.ts',
         path: 'Portfolio/frontend/src/projects/maestro/store.ts',
         source: maestroStore,
-        lines: [18, 58],
-        note: '외부 저장소 + useSyncExternalStore 로 상태 라이브러리 없이 화면을 묶었다. 저장에 실패해도 화면은 계속 쓸 수 있게 try/catch 로 감쌌다.',
+        lines: [41, 84],
+        note: '결과 목록 · 지도 핀 · PC 상세 패널 · 자리 물어보기의 다음 후보가 Zustand 스토어 하나의 결과를 본다. 같은 조건이면 다시 부르지 않고, 늦게 온 응답은 조건(key)을 비교해 버린다. localStorage 에는 마지막 동네만 남긴다(partialize).',
       },
       {
-        label: 'LiveScreen.tsx',
-        path: 'Portfolio/frontend/src/projects/maestro/screens/LiveScreen.tsx',
-        source: maestroLiveScreen,
-        lines: [12, 25],
-        note: '목록 순서가 곧 우선순위다. 예산(‘비싸’)을 비(‘비’)보다 먼저 검사해 잘못 걸리는 경우를 막았다.',
+        label: 'components.tsx',
+        path: 'Portfolio/frontend/src/projects/maestro/components.tsx',
+        source: maestroComponents,
+        lines: [134, 177],
+        note: '영업시간 막대 — 축을 10:00~02:00 으로 고정해 3곳을 같은 눈으로 비교한다. 마커는 첫 카드만 움직이고, 같은 정보를 글자로 주므로 막대는 읽지 않는다(aria-hidden).',
       },
     ],
   },
@@ -198,14 +197,14 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
         label: 'api.ts',
         path: 'Portfolio/frontend/src/projects/maestro/api.ts',
         source: maestroApi,
-        lines: [15, 73],
+        lines: [16, 74],
         note: "서버 상태를 'unknown → waking → awake' 셋으로 두고, 첫 응답을 받으면 awake 로 굳힌다. 그 뒤로는 타이머를 걸지 않는다.",
       },
       {
         label: 'components.tsx',
         path: 'Portfolio/frontend/src/projects/maestro/components.tsx',
         source: maestroComponents,
-        lines: [20, 33],
+        lines: [40, 53],
         note: '안내 문구가 없을 때도 role="status" 영역은 남겨 두어, 문구가 생기는 순간 읽힌다.',
       },
     ],

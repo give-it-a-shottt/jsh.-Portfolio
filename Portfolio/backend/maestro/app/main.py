@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import get_settings
 from app.core.errors import register_error_handlers
 from app.health.router import router as health_router
+from app.picks.router import router as picks_router
 from app.places.router import router as places_router
 from app.regions.router import router as regions_router
 from app.score.router import router as score_router
@@ -24,6 +25,7 @@ def create_app() -> FastAPI:
     app.include_router(regions_router)
     app.include_router(score_router)
     app.include_router(places_router)
+    app.include_router(picks_router)
     register_error_handlers(app)
     return app
 

@@ -1,5 +1,5 @@
 import accioHome from './assets/home.png'
-import maestroLive from './assets/maestro.jpg'
+import maestroLive from './assets/maestro.webp'
 import stayLoginV1 from './assets/design/stay-login/v1.png'
 import stayLoginV2 from './assets/design/stay-login/v2.png'
 import stayLoginV3 from './assets/design/stay-login/v3.png'
@@ -112,6 +112,34 @@ import flOptionA from './assets/design/flaseek/plan-02-option-a.webp'
 import flOptionB from './assets/design/flaseek/plan-03-option-b.webp'
 import flOptionC from './assets/design/flaseek/plan-04-option-c.webp'
 import flComponents from './assets/design/flaseek/system-components.webp'
+import mrPlanIa from './assets/design/maestro/plan-01-ia.webp'
+import mrPlanSpec from './assets/design/maestro/plan-02-spec.webp'
+import mrFlowA from './assets/design/maestro/plan-03-flow-a.webp'
+import mrFlowB from './assets/design/maestro/plan-04-flow-b.webp'
+import mrFlowC from './assets/design/maestro/plan-05-flow-c.webp'
+import mrFlowD from './assets/design/maestro/plan-06-flow-d.webp'
+import mrMoHome from './assets/design/maestro/mo-01-home.webp'
+import mrMoResult from './assets/design/maestro/mo-02-result.webp'
+import mrMoTable from './assets/design/maestro/mo-03-table.webp'
+import mrMoDetail from './assets/design/maestro/mo-04-detail.webp'
+import mrMoSeatAsk from './assets/design/maestro/mo-05-seat-ask.webp'
+import mrMoSeatWait from './assets/design/maestro/mo-06-seat-wait.webp'
+import mrMoSeatOk from './assets/design/maestro/mo-07-seat-ok.webp'
+import mrMoSeatFull from './assets/design/maestro/mo-08-seat-full.webp'
+import mrPcHome from './assets/design/maestro/pc-01-home.webp'
+import mrPcResult from './assets/design/maestro/pc-02-result.webp'
+import mrPcDetail from './assets/design/maestro/pc-03-detail.webp'
+import mrEmpty from './assets/design/maestro/state-01-empty.webp'
+import mrError from './assets/design/maestro/state-02-error.webp'
+import mrLoading from './assets/design/maestro/state-03-loading.webp'
+import mrVoteModal from './assets/design/maestro/vote-01-modal.webp'
+import mrVoteBallot from './assets/design/maestro/vote-02-ballot.webp'
+import mrVoteClosed from './assets/design/maestro/vote-03-closed.webp'
+import mrOverview from './assets/design/maestro/system-01-overview.webp'
+import mrBrand from './assets/design/maestro/system-02-brand.webp'
+import mrContrast from './assets/design/maestro/system-03-contrast.webp'
+import mrSignature from './assets/design/maestro/system-04-signature.webp'
+import mrComponents from './assets/design/maestro/system-05-components.webp'
 import dsCover from './assets/design/jsh-ds/00-cover.webp'
 // 목록 썸네일은 가운데를 잘라 보여줘서, 제목이 있는 왼쪽만 남긴 표지
 import dsThumb from './assets/design/jsh-ds/00-thumb.webp'
@@ -253,17 +281,19 @@ export const CASES: PortfolioCase[] = [
     slug: 'maestro',
     type: 'Front',
     code: 'PROJECT 02',
-    date: '2026.10',
+    date: '2026.11',
     level: 3,
-    title: '마에스트로 — 틀어진 일정의 플랜 B 지휘자',
+    title: '마에스트로 — 지금 열린 식당 3곳을 근거와 함께',
     description:
-      '짜둔 서울 일정의 끼니마다 "속이 더부룩해", "비 와" 같은 상황별 대안 식당을 미리 붙여두고, 당일 버튼 하나로 꺼내 쓰는 모바일 웹. YUMITHON 해커톤 출품작.',
+      '낯선 서울 동네에서 동네·상황만 고르면 지금 열려 있는 식당 3곳을 지도와 영업시간 막대, 날짜 붙은 근거로 비교해 주는 모바일 웹. 결과는 Zustand 스토어 하나에 두고 목록·지도·상세·자리 물어보기가 함께 쓴다. YUMITHON 해커톤에 출품하려고 했던 앱을 리뉴얼.',
     metrics: [
-      { label: '유미 요청', value: '끼니당 1번' },
-      { label: '상황', value: '6개 × 대안 3곳' },
+      { label: '첫 후보까지', value: '1탭' },
+      { label: '유미 검색', value: '동네당 6시간에 1번' },
+      { label: '실패하면', value: '저장본 400곳' },
     ],
-    tags: ['React', 'FastAPI', '헤이유미 API'],
-    keywords: '마에스트로 maestro 해커톤 yumithon 헤이유미 맛집 일정 플랜B 대안 식당 fastapi 백엔드',
+    tags: ['React', 'Zustand', 'Leaflet', 'FastAPI'],
+    keywords:
+      '마에스트로 maestro 리뉴얼 해커톤 yumithon 헤이유미 맛집 식당 추천 지금 영업 영업시간 막대 지도 leaflet zustand 전역 상태 persist 을지로 성수 익선동 연남 자리 물어보기 롱폴링 fastapi 백엔드',
     image: maestroLive,
     href: '#/case/maestro',
     links: [{ label: '실제 화면 보기', href: '#/maestro' }],
@@ -657,6 +687,102 @@ export const CASES: PortfolioCase[] = [
     },
   },
   {
+    slug: 'maestro-redesign',
+    type: 'Design',
+    code: 'DESIGN 09',
+    date: '2026.11',
+    level: 3,
+    title: '마에스트로 리뉴얼 — 지금 열려 있고 믿을 만한 식당 3곳',
+    description:
+      '해커톤 출품하려고 했던 일정 기반 플랜 B 앱을 다시 설계. 낯선 서울 동네에서 지금 열린 식당 3곳을 같은 축의 영업시간 막대와 날짜가 붙은 근거로 비교하게 하고, IA·유저 플로우부터 디자인 시스템, 모바일·PC·상태·투표 화면까지 피그마로 그리고 구현.',
+    metrics: [
+      { label: '첫 후보까지', value: '약 11탭 → 1탭' },
+      { label: '화면', value: '모바일 14 · PC 3' },
+      { label: '버튼 대비', value: '4.38 → 5.61' },
+    ],
+    tags: ['Figma', '리뉴얼', 'Mobile · Web UI'],
+    keywords:
+      '마에스트로 maestro 리뉴얼 리디자인 맛집 식당 추천 지금 영업 영업시간 막대 now bar 근거 헤이유미 을지로 성수 익선동 연남 자리 물어보기 투표 함께 고르기 ia 명세표 유저플로우 디자인 시스템 라벤더 명도 대비 피그마 반응형',
+    image: mrPcHome,
+    href: '#/case/maestro-redesign',
+    links: [{ label: '실제 화면 보기', href: '#/maestro' }],
+    design: {
+      app: '마에스트로 — 낯선 서울 동네에서 지금 갈 식당 3곳을 근거와 함께 골라 주는 모바일 웹 (해커톤 출품하려고 했던 앱의 리뉴얼)',
+      problem:
+        '예전 화면은 대안 식당 하나를 보려면 일정부터 다 입력해야 해서 약 11탭이 걸렸고, 대안은 가로 캐러셀에 숨어 비교가 안 됐다. 믿을 만한 이유는 노포·교차검증 같은 뜻 모를 태그로만 보였고, 보라 버튼 위 흰 글자 대비는 4.38 : 1이었으며 빈·오류 상태와 PC 화면도 없었다. 그래서 헤이유미 식당 데이터만 남기고 목적부터 다시 정해, 홈에서 한 번만 누르면 지금 열린 3곳을 같은 축의 영업시간 막대와 날짜 붙은 근거로 비교하게 했다.',
+      role: '개인 작업 · 기여도 100%',
+      sections: [
+        {
+          title: '기획 — IA · 유저 플로우',
+          description: '예전 화면을 분석한 뒤 정보 구조와 명세표, 네 가지 사용 흐름을 먼저 정했어요.',
+          items: [
+            { label: 'IA 구조도', image: mrPlanIa, note: '홈 · 결과 · 식당 상세 · 투표 4개 영역. 일정 입력·악보 보기는 지우고 당일 모드·변주 결과·실시간 문의는 합침', width: 1448, height: 1248 },
+            { label: 'IA 명세표', image: mrPlanSpec, note: '화면 ID마다 구성 요소·이동 경로·예전 화면 대응·상태(변경 / 추가 / 구현 2차)를 한 줄로', width: 1808, height: 1244 },
+            { label: '플로우 A · 지금 갈 곳 찾기', image: mrFlowA, note: '홈에서 [3곳 찾기] 한 번. 열린 곳이 3곳 이상 · 1~2곳 · 0곳일 때 갈라지는 길까지', width: 2400, height: 896 },
+            { label: '플로우 B · 자리 물어보고 가기', image: mrFlowB, note: '영업 상태에 따라 버튼이 달라지고, 응답은 가능 · 제한 · 불가 · 응답 없음 4갈래', width: 2400, height: 860 },
+            { label: '플로우 C · 비교하고 함께 고르기', image: mrFlowC, note: '표로 비교한 뒤 혼자 정하거나 투표 링크로 함께 고르기', width: 2400, height: 707 },
+            { label: '플로우 D · 투표하기', image: mrFlowD, note: '링크로 들어온 상대가 한 표를 던지고, 만료된 링크는 투표 종료 화면으로', width: 1948, height: 726 },
+          ],
+        },
+        {
+          title: '모바일 화면',
+          description: '홈에서 자리 물어보기까지, 주 흐름을 375 폭으로 그린 화면이에요.',
+          device: 'mobile',
+          items: [
+            { label: '홈', image: mrMoHome, note: '지금 시각의 끼니가 기본으로 잡혀 있고, 동네·상황 칩을 고른 뒤 [3곳 찾기] 한 번', width: 375, height: 812 },
+            { label: '결과', image: mrMoResult, note: '위는 이니셜 핀 지도, 아래 시트에 카드 3장. 10시~02시 같은 축의 영업시간 막대와 앰버 "지금" 마커로 비교', width: 375, height: 812 },
+            { label: '표로 비교', image: mrMoTable, note: '탭만 바꿔 지금·거리·웨이팅·가격대·분위기·근거를 3열로. 열마다 [여기로]', width: 375, height: 812 },
+            { label: '식당 상세', image: mrMoDetail, note: '별점 대신 "믿을 이유"를 날짜 붙은 체크리스트로. 아래에 [길 찾기] · [자리 물어보기]', width: 375, height: 1128 },
+            { label: '자리 물어보기', image: mrMoSeatAsk, note: '인원과 지금 바로 / 30분 뒤를 고르는 바텀시트. 시연용 mock 응답이라고 미리 알려 줌', width: 375, height: 812 },
+            { label: '응답 기다리기', image: mrMoSeatWait, note: '사장님께 묻는 중 — 진행 막대와 [그만 묻기]', width: 375, height: 812 },
+            { label: '응답 · 가능', image: mrMoSeatOk, note: '"2명, 지금 바로 앉을 수 있대요" — [길 찾기]가 주 버튼으로 바뀜', width: 375, height: 812 },
+            { label: '응답 · 불가', image: mrMoSeatFull, note: '토스트로 알리고 다음 후보의 상세로 바로 넘김', width: 375, height: 812 },
+          ],
+        },
+        {
+          title: 'PC 화면',
+          description: '같은 흐름을 1440 폭으로 옮긴 화면이에요. 결과는 목록 4칸 + 지도 8칸이에요.',
+          items: [
+            { label: '홈', image: mrPcHome, note: '가운데 6칸에 모바일과 같은 순서의 폼 하나', width: 1440, height: 900 },
+            { label: '결과', image: mrPcResult, note: '왼쪽 목록에 카드 3장, 오른쪽 지도에 이니셜 핀', width: 1440, height: 900 },
+            { label: '식당 상세', image: mrPcDetail, note: '목록은 그대로 두고 지도 위 오른쪽 패널로 열어 다른 후보와 오가기 쉽게', width: 1440, height: 987 },
+          ],
+        },
+        {
+          title: '상태 화면',
+          description: '빈 결과·불러오기 실패·로딩처럼 놓치기 쉬운 상태를 따로 그렸어요.',
+          device: 'mobile',
+          items: [
+            { label: '지금 열린 곳 없음', image: mrEmpty, note: '빈 화면 대신 빨리 여는 3곳과 "17:00 열어요" 배지', width: 375, height: 812 },
+            { label: '불러오기 실패', image: mrError, note: '"후보를 불러오지 못했어요" + [다시 시도]. 고른 조건은 그대로', width: 375, height: 812 },
+            { label: '로딩', image: mrLoading, note: '따로 화면을 두지 않고 카드 자리에 스켈레톤', width: 375, height: 812 },
+          ],
+        },
+        {
+          title: '함께 고르기 · 투표 (구현 2차)',
+          description: '디자인은 이번에 끝내고 구현은 다음 버전으로 미룬 화면이에요.',
+          device: 'mobile',
+          items: [
+            { label: '함께 고르기', image: mrVoteModal, note: '표로 비교에서 투표 링크를 만들고 내 표를 먼저 정하는 모달', width: 375, height: 812 },
+            { label: '투표하기', image: mrVoteBallot, note: '링크를 받은 친구가 보낸 사람의 조건과 후보 3곳을 보고 한 표', width: 375, height: 812 },
+            { label: '투표 종료', image: mrVoteClosed, note: '최종 결과 한 곳과 [식당 보러 가기]', width: 375, height: 812 },
+          ],
+        },
+        {
+          title: '디자인 시스템',
+          description: '개인 디자인 시스템 위에 브랜드 색과 이 서비스에만 필요한 컴포넌트만 더했어요.',
+          items: [
+            { label: '개요', image: mrOverview, note: '브리프와 모드 선택(Light · Lavender · Pretendard · Card UI), 한 서비스에서 하나로 통일한 컴포넌트, 이 프로젝트만의 원칙', width: 1166, height: 1600 },
+            { label: '브랜드 · Lavender', image: mrBrand, note: 'main #7D6AFB · accent #F9AB24 스케일과 의미 토큰. 앰버는 "지금" 마커에만', width: 1426, height: 2400 },
+            { label: '대비 — 세 묶음', image: mrContrast, note: '반드시 맞춘 것 · 일부러 낮춘 것 · 쓰는 곳을 막은 것. 확정 4색은 그대로 두고 쓰는 곳을 제한', width: 1440, height: 1962 },
+            { label: '시그니처 컴포넌트', image: mrSignature, note: '영업시간 막대 · 이니셜 지도 핀 · 근거 블록 · 결과 카드 — 시스템에 없어 새로 만든 것과 그 이유', width: 1085, height: 1600 },
+            { label: 'UI 컴포넌트', image: mrComponents, note: 'GNB · 조건 칩 · 배지 · 버튼 · 바텀시트 · 빈 상태 · 스켈레톤 · 토스트 · 표 · 팝업', width: 1440, height: 3265 },
+          ],
+        },
+      ],
+    },
+  },
+  {
     slug: 'accio-redesign',
     type: 'Design',
     code: 'DESIGN 06',
@@ -994,7 +1120,7 @@ export const CASES: PortfolioCase[] = [
 ]
 
 export const KEYWORDS: { label: string; type: CaseType | 'Study' }[] = [
-  { label: '해커톤', type: 'Front' },
+  { label: '맛집 추천', type: 'Front' },
   { label: '요청 한도', type: 'Back' },
   { label: '외부 API', type: 'Back' },
   { label: '디자인 시스템', type: 'Design' },

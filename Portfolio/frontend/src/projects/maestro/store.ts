@@ -1,81 +1,84 @@
-import { useSyncExternalStore } from 'react'
-import type { Score } from './types'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { ApiError, getPicks } from './api'
+import type { Query } from './routes'
+import type { DongKey, Picks } from './types'
 
-/** 일정 입력의 끼니 한 줄 — '토 12:00 · 을지로 · 2명' */
-export interface PlanMeal {
-  id: string
-  date: string // 2026-10-17
-  time: string // 12:00
-  dong: string
-  people: number
-}
+// 마에스트로 전역 상태 (Zustand).
+// 결과 목록 · 지도 핀 · PC 상세 패널 · 자리 물어보기의 '다음 후보'가 같은 결과를 본다.
+// 화면마다 따로 부르면 서로 다른 응답을 볼 수 있어서, 결과는 여기 한 곳에만 두고 같은 조건이면 다시 부르지 않는다.
+// 조건(시각 · 동네 · 상황)은 주소에 두고, 여기에는 주소에 둘 필요 없는 것만 둔다.
+
+type Result =
+  | { key: string; status: 'loading' }
+  | { key: string; status: 'ready'; data: Picks }
+  | { key: string; status: 'error'; message: string }
 
 interface MaestroState {
-  meals: PlanMeal[]
-  score: Score | null
+  /** 마지막에 고른 동네 — 다음 방문의 기본값. 이것만 localStorage 에 남긴다 */
+  lastDong: DongKey
+  /** 결과 — 조건(key)이 같으면 상세에 갔다 와도 다시 부르지 않는다 */
+  result: Result | null
+  /** 지도 핀 ↔ 카드 강조 */
+  selectedId: string | null
+  /** 결과 시트 — 목록 / 표로 비교 */
+  view: 'list' | 'table'
+  /** 화면 아래 토스트 한 줄 */
+  toast: string | null
+
+  setLastDong: (dong: DongKey) => void
+  loadPicks: (query: Query, options?: { force?: boolean }) => Promise<void>
+  select: (id: string | null) => void
+  setView: (view: 'list' | 'table') => void
+  showToast: (message: string) => void
 }
 
-const STORAGE_KEY = 'maestro-plan-v1'
-// 해커톤 날(10.17 토) 을지로 → 성수 — 피그마 시안의 예시 일정
-const SAMPLE_MEALS: PlanMeal[] = [
-  { id: 'm1', date: '2026-10-17', time: '12:00', dong: '을지로', people: 2 },
-  { id: 'm2', date: '2026-10-17', time: '15:30', dong: '을지로', people: 2 },
-  { id: 'm3', date: '2026-10-17', time: '18:00', dong: '성수', people: 2 },
-]
+export const queryKey = (query: Query) => `${query.t}|${query.dong}|${query.s.join(',')}`
 
-// 만든 악보를 저장해 두면 새로고침해도 유미를 다시 부르지 않는다(하루 한도가 작다).
-// 저장소를 못 쓰는 환경이면 이번 방문 동안만 기억한다.
-function load(): MaestroState {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved) return JSON.parse(saved) as MaestroState
-  } catch {
-    // 저장소를 못 쓰면 예시 일정으로 시작한다
-  }
-  return { meals: SAMPLE_MEALS, score: null }
-}
+const TOAST_MS = 3000
+let toastTimer: ReturnType<typeof setTimeout> | undefined
 
-let state = load()
-const listeners = new Set<() => void>()
+export const useMaestro = create<MaestroState>()(
+  persist(
+    (set, get) => ({
+      lastDong: 'euljiro', // 첫 방문은 을지로
+      result: null,
+      selectedId: null,
+      view: 'list',
+      toast: null,
 
-function update(next: Partial<MaestroState>) {
-  state = { ...state, ...next }
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-  } catch {
-    // 저장하지 못해도 화면은 그대로 쓸 수 있다
-  }
-  listeners.forEach((listener) => listener())
-}
+      setLastDong: (lastDong) => set({ lastDong }),
 
-function subscribe(listener: () => void) {
-  listeners.add(listener)
-  return () => listeners.delete(listener)
-}
+      loadPicks: async (query, { force = false } = {}) => {
+        const key = queryKey(query)
+        const current = get().result
+        // 같은 조건을 이미 받았거나 받는 중이면 다시 부르지 않는다 (다시 시도만 force)
+        if (!force && current?.key === key && current.status !== 'error') return
+        set({ result: { key, status: 'loading' }, selectedId: null })
+        try {
+          const data = await getPicks(query)
+          // 그사이 조건이 바뀌었으면 늦게 온 응답은 버린다
+          if (get().result?.key === key) set({ result: { key, status: 'ready', data } })
+        } catch (error) {
+          const message = error instanceof ApiError ? error.message : '후보를 불러오지 못했어요'
+          if (get().result?.key === key) set({ result: { key, status: 'error', message } })
+        }
+      },
 
-export function useMaestro() {
-  return useSyncExternalStore(subscribe, () => state)
-}
+      select: (selectedId) => set({ selectedId }),
+      setView: (view) => set({ view }),
 
-/** 끼니를 시간순으로 둔다 */
-function sorted(meals: PlanMeal[]) {
-  return [...meals].sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`))
-}
-
-export function saveMeal(meal: PlanMeal) {
-  const others = state.meals.filter((m) => m.id !== meal.id)
-  // 일정이 바뀌면 예전 악보는 맞지 않으니 비운다
-  update({ meals: sorted([...others, meal]), score: null })
-}
-
-export function removeMeal(id: string) {
-  update({ meals: state.meals.filter((m) => m.id !== id), score: null })
-}
-
-export function saveScore(score: Score) {
-  update({ score })
-}
-
-export function newMealId() {
-  return `m${Date.now().toString(36)}`
-}
+      showToast: (toast) => {
+        clearTimeout(toastTimer)
+        set({ toast })
+        toastTimer = setTimeout(() => set({ toast: null }), TOAST_MS)
+      },
+    }),
+    {
+      name: 'maestro-v2',
+      // 저장소를 못 쓰는 환경(사생활 보호 모드 등)이면 zustand 가 조용히 메모리로만 쓴다
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ lastDong: state.lastDong }),
+    },
+  ),
+)

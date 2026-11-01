@@ -13,9 +13,9 @@ services:
     envVars:
       - key: ENVIRONMENT
         value: production
-      # 공개 사이트는 mock (유미 호출 0회). 발표·확인 때만 대시보드에서 real 로 바꾼다
+      # real: 실제 유미 데이터(동네마다 6시간에 1번 검색). 유미가 실패하면 저장본(snapshot.json)으로 대신 보여준다
       - key: YUMI_MODE
-        value: mock
+        value: real
       # 아래 둘은 처음 만들 때 대시보드가 값을 물어본다 (저장소에는 값을 두지 않는다)
       - key: YUMI_API_KEY
         sync: false

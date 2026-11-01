@@ -43,7 +43,7 @@
 | 서비스 | 주소 | 무엇 | 서버 | 코드 |
 |---|---|---|---|---|
 | 포트폴리오 | `#/`, `#/search?q=`, `#/case/{slug}`, `#/study/{slug}` | 검색형 포트폴리오. 사례·노트 데이터는 코드 안의 정적 데이터 | 없음 | `Portfolio/frontend/src/portfolio/` |
-| 마에스트로 | `#/maestro/…` | 틀어진 일정의 플랜 B를 짜 주는 서비스 (YUMITHON 2026) | 마에스트로 API(헤이유미 API 중계, mock/real) | `src/projects/maestro/`, `backend/maestro/` |
+| 마에스트로 | `#/maestro/…` | 낯선 서울 동네에서 지금 열린 식당 3곳을 근거와 함께 골라 주는 서비스 (F-010 리뉴얼) | 마에스트로 API(헤이유미 API 중계, mock/real) | `src/projects/maestro/`, `backend/maestro/` |
 | Accio | `#/accio/…` | AI 자연어 검색 쇼핑몰. 팀 프로젝트를 Figma 리디자인으로 다시 만든 화면 | 프론트만 동작(목 데이터). 백엔드는 뼈대 | `src/projects/accio/`, `backend/accio/` |
 | FLASEEK | `#/flaseek/…` | 보정속옷·압박스타킹 자사몰 리뉴얼 시안. 메인·리스트·상세·로그인 | 없음(정적 데이터, 이번 방문 동안만 상태 유지) | `src/projects/flaseek/` |
 | techlearn | `#/techlearn/…` | 강의 플랫폼 시안. 홈 → 강의 목록 → 상세 → 포인트 수강신청 ([F-008](../features/F-008-techlearn/feature.md)) | 없음(목업 데이터, 포인트·수강 기록은 이번 방문 동안만) | `src/projects/techlearn/` |
@@ -65,10 +65,22 @@
 - 라우팅: `FlaseekApp.tsx`가 `path`로 화면을 고르고, `params.toString()`을 `key`로 줘서 조건이 바뀌면 화면 상태를 처음부터 다시 시작해요.
 - 피그마 기준 폭: PC 1440 · MO 390. 반응형 한 벌로 구현했어요.
 
-### 포트폴리오 · Accio · 마에스트로 화면별 흐름
+### 포트폴리오 · Accio 화면별 흐름
 - (빈 템플릿) IA·유저플로우는 planning-advisory-panel 결과가 생기면 옮겨 와요.
 
-최종 수정: 2026-10-29 · 관련: D-001, F-001~F-005, F-007
+### 마에스트로 흐름 (F-010)
+```
+홈 #/maestro  (시연 시각 · 동네 칩 4 · 상황 칩 6)
+ └─ [3곳 찾기] ──▶ 결과 #/maestro/picks?t=&dong=&s=   (지도 + 카드 3 / 탭: 목록 · 표로 비교)
+                    ├─ 열린 곳 0 → 빈 상태(빨리 여는 3곳) · 실패 → 오류 + 다시 시도 · 로딩 → 스켈레톤
+                    └─ 카드 · 핀 · [여기로] ──▶ 식당 상세 #/maestro/place/{id}?…  (PC: 결과 위 오른쪽 패널)
+                                                 ├─ [길 찾기] ──▶ 카카오맵
+                                                 └─ [자리 물어보기] ──▶ 시트(인원 · 지금/30분 뒤) ──▶ 답 4종
+```
+- IA · 유저플로우 원본은 레포 루트 `maestro-design.md`(0-4 · 0-5)와 피그마예요. 투표(VOT)는 구현 2차라 표로 비교의 [함께 고르기]는 누르지 않는 버튼이에요.
+- 조건은 주소에 있어서 새로고침 · 뒤로 가기에도 남아요. 1024px 이상은 PC 배치예요.
+
+최종 수정: 2026-11-01 · 관련: D-001, F-001~F-005, F-007, F-010
 
 ### techlearn 흐름
 ```

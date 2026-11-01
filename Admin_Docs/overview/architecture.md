@@ -11,7 +11,7 @@
    ├─ App.tsx  주소(#/...)를 보고 어느 앱을 띄울지 고름
    │    ├─ PortfolioApp (처음부터 받음)
    │    ├─ MaestroApp ─ lazy ── fetch ──▶ 마에스트로 API (Render, FastAPI)
-   │    │                                   └─ YumiClient: mock(JSON) | real(헤이유미 API)
+   │    │                                   └─ YumiClient: mock(JSON) | real(헤이유미 API, 실패하면 저장본 snapshot.json)
    │    ├─ AccioApp   ─ lazy (목 데이터만)       Accio API (FastAPI+SQLAlchemy, /health 뿐)
    │    ├─ FlaseekApp ─ lazy (정적 데이터만)
    │    └─ TechlearnApp ─ lazy (목업 데이터, 수강신청은 api.ts 가 서버 흉내)
@@ -33,20 +33,21 @@ Portfolio/frontend/src/
 ├─ portfolio/                     검색형 포트폴리오 (data.ts, caseStories.ts, caseDetails.ts, notes.ts, rank.ts, search.ts, Search*, *Detail)
 └─ projects/
    ├─ accio/     (ai, data, home, my, pages, seller, ui, hooks, utils)
-   ├─ maestro/   (api.ts, store.ts, screens/, types.ts)
+   ├─ maestro/   (MaestroApp, routes, api, store(Zustand), hooks, components, MapView(Leaflet), format, styles, types, icons/, screens/)
    ├─ flaseek/   (FlaseekApp, routes, store, data, layout, ui, BeforeAfterSlider, pages/)
    ├─ techlearn/ (TechlearnApp, routes, data(홈), lectures(강의 8개), store, api, hooks, components, enroll, screens/)
    └─ nightly/   (NightlyApp, routes, data, hooks(코치 대화 흉내), components, screens/)
 ```
-- 상태 관리 패턴: 라이브러리 없이 `useSyncExternalStore`와 모듈 단위 작은 스토어를 써요(`flaseek/store.ts`, `maestro/store.ts`, `techlearn/store.ts`).
+- 상태 관리 패턴: 라이브러리 없이 `useSyncExternalStore`와 모듈 단위 작은 스토어를 써요(`flaseek/store.ts`, `techlearn/store.ts`). 마에스트로만 Zustand(`maestro/store.ts`, persist로 마지막 동네만 저장)를 써요(F-010, 사용자 결정).
 
 ### 백엔드
 ```
 Portfolio/backend/maestro/app/
-├─ main.py         create_app(): CORS → 라우터 4개 → 에러 핸들러
+├─ main.py         create_app(): CORS → 라우터 5개 → 에러 핸들러
 ├─ core/           config(환경변수), errors({"detail":{code,message}} 통일), schemas(CamelModel)
-├─ health/ regions/ places/ score/   라우터 (score 는 service.py 에 로직 분리)
-└─ yumi/           YumiClient 인터페이스 + mock.py / real.py, deps.py(YUMI_MODE 로 교체)
+├─ picks/          새 화면용 라우터 + service(후보 고르기 · 6시간 캐시 · 저장본) · hours · conditions · schemas
+├─ health/ regions/ places/ score/   라우터 (regions · score · places는 예전 화면용, places의 live-status만 새 화면도 씀)
+└─ yumi/           YumiClient 인터페이스 + mock.py / real.py, deps.py(YUMI_MODE 로 교체), fixtures/snapshot.json(실제 데이터 400곳)
 Portfolio/backend/accio/app/  main.py, core/(config, db: async SQLAlchemy 엔진), health/
 ```
 - 의존 방향: 라우터 → (service) → `YumiClient`(Depends 주입). 라우터는 클라이언트 구현을 몰라요([D-002](../decisions/D-002-mock-real-client.md)).
@@ -56,4 +57,4 @@ Portfolio/backend/accio/app/  main.py, core/(config, db: async SQLAlchemy 엔진
 - 프론트: `cd Portfolio/frontend && npm install && npm run dev`. 검사는 `npm run build`(tsc + vite), `npm run lint`
 - 마에스트로 API: `cd Portfolio/backend/maestro && uv sync && uv run fastapi dev app/main.py --port 8001` (`.env.example`을 복사해서 써요. 기본은 mock)
 
-최종 수정: 2026-10-26 · 관련: D-001, D-002, D-003, F-007
+최종 수정: 2026-11-01 · 관련: D-001, D-002, D-003, F-007, F-010

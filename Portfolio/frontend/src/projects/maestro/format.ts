@@ -1,124 +1,89 @@
-import gukbapPhoto from './assets/photo-gukbap.jpg'
-import jukPhoto from './assets/photo-juk.jpg'
-import lightMealPhoto from './assets/photo-light-meal.jpg'
-import type { MealKind, Place, Score } from './types'
+import type { Condition, PlaceCard, Status } from './types'
 
-const WEEKDAY_KO = ['일', '월', '화', '수', '목', '금', '토']
-const WEEKDAY_EN = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
-const DAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+const KST_CLOCK = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
 
-function toDate(date: string) {
-  // '2026-10-17' 을 현지 날짜로 (UTC 로 읽으면 하루 어긋날 수 있다)
-  const [y, m, d] = date.slice(0, 10).split('-').map(Number)
-  return new Date(y, m - 1, d)
+/** 지금 한국 시각 'HH:MM' — 서버도 한국 시간으로 영업 여부를 본다 */
+export const nowClock = (date = new Date()) => KST_CLOCK.format(date)
+
+/** '1240' → '12:40' */
+export const clockOf = (t: string) => `${t.slice(0, 2)}:${t.slice(2)}`
+
+/** 시각 → 끼니. 점심과 저녁 사이(14:30~17:00)는 오후로 본다 */
+export function mealOf(clock: string) {
+  const [h, m] = clock.split(':').map(Number)
+  const minutes = h * 60 + m
+  if (minutes < 5 * 60) return '늦은 밤'
+  if (minutes < 10 * 60 + 30) return '아침'
+  if (minutes < 14 * 60 + 30) return '점심'
+  if (minutes < 17 * 60) return '오후'
+  if (minutes < 21 * 60 + 30) return '저녁'
+  return '늦은 밤'
 }
 
-/** '토' */
-export function weekdayKo(date: string) {
-  return WEEKDAY_KO[toDate(date).getDay()]
+/** 축 10:00 ~ 다음 날 02:00 위에서의 위치(%) — 새벽 시각은 전날 밤으로 본다 */
+export const AXIS_START = 10 * 60
+export const AXIS_END = 26 * 60
+export function axisPercent(minutes: number) {
+  const m = minutes < AXIS_START - 4 * 60 ? minutes + 1440 : minutes
+  return Math.min(100, Math.max(0, ((m - AXIS_START) / (AXIS_END - AXIS_START)) * 100))
 }
 
-/** 'SCORE · 10.17 SAT' 의 '10.17 SAT' */
-export function scoreDate(date: string) {
-  const day = toDate(date)
-  const mm = String(day.getMonth() + 1).padStart(2, '0')
-  const dd = String(day.getDate()).padStart(2, '0')
-  return `${mm}.${dd} ${WEEKDAY_EN[day.getDay()]}`
+export function minutesOf(clock: string) {
+  const [h, m] = clock.split(':').map(Number)
+  return h * 60 + m
 }
 
-/** 'Op. 1017' — 일정 날짜로 붙이는 작품 번호 */
-export function opusNumber(date: string) {
-  return `Op. ${scoreDate(date).slice(0, 5).replace('.', '')}`
+/** '을지로3가 3분' */
+export function stationShort(place: PlaceCard) {
+  return place.station ? `${place.station.station} ${place.station.walkMin}분` : null
 }
 
-/** '10.17' */
-export function shortDate(date: string) {
-  return scoreDate(date).slice(0, 5)
+/** '을지로3가역에서 걸어서 3분' */
+export function stationLong(place: PlaceCard) {
+  if (!place.station) return null
+  const name = place.station.station.endsWith('역') ? place.station.station : `${place.station.station}역`
+  return `${name}에서 걸어서 ${place.station.walkMin}분`
 }
 
-export const KIND_LABEL: Record<MealKind, string> = {
-  breakfast: 'BREAKFAST',
-  lunch: 'LUNCH',
-  cafe: 'CAFE',
-  dinner: 'DINNER',
-  late_night: 'LATE NIGHT',
+/** 9000 → '9천 원', 23000 → '2만 3천 원' */
+export function wonShort(won: number) {
+  const thousands = Math.round(won / 1000)
+  const man = Math.floor(thousands / 10)
+  const chun = thousands % 10
+  if (!man) return `${chun}천 원`
+  return chun ? `${man}만 ${chun}천 원` : `${man}만 원`
 }
 
-/** '1만원대' */
-export function priceBand(place: Place) {
-  const avg = place.price?.avg
-  if (!avg) return null
-  if (avg < 10_000) return '1만원 미만'
-  return `${Math.floor(avg / 10_000)}만원대`
+/** 상세의 가격대 — '1인 1만 원 안쪽' */
+export function priceText(avg: number | null) {
+  if (avg === null) return '정보 없음'
+  if (avg <= 10_000) return '1인 1만 원 안쪽'
+  return `1인 평균 ${wonShort(avg)}`
 }
 
-/** 검색 중심에서 걸어서 몇 분 (분속 70m) */
-export function walkText(place: Place) {
-  if (place.distanceM == null) return null
-  return `도보 ${Math.max(1, Math.round(place.distanceM / 70))}분`
+export const waitingShort = (place: PlaceCard) => (place.waitingExpected ? '있을 수도' : '거의 없음')
+
+/** 상태 배지 색 — 영업 중 초록 · 마감 임박 빨강 · 나중에 엶 / 영업 끝 회색 */
+export function badgeTone(status: Status) {
+  if (status.kind === 'open') return 'green'
+  if (status.kind === 'closing') return 'red'
+  return 'black'
 }
 
-export function openText(place: Place) {
-  const open = place.openNow?.open
-  if (open === true) return '영업 중'
-  if (open === false) return '지금은 영업 전'
-  return null
+/** 카카오맵 길 찾기 — 앱이 있으면 앱으로, 없으면(PC 포함) 웹으로 열린다 */
+export function directionsUrl(place: PlaceCard) {
+  return `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${place.location.lat},${place.location.lng}`
 }
 
-/** 그날 마감 시각 (영업시간이 없으면 null) */
-export function closingTime(place: Place, date: string) {
-  const day = DAY_KEYS[toDate(date).getDay()]
-  const hours = place.businessHours.find((h) => h.day === day)
-  if (!hours) return null
-  if (hours.closed) return '휴무'
-  return hours.close ? `${hours.close} 마감` : null
+/** 조건 키 → 칩 글자 (서버가 정한 라벨) */
+export const conditionLabels = (conditions: Condition[]) => new Map(conditions.map((c) => [c.key, c.label]))
+
+/** 받침이 있으면 '은', 없으면 '는' — '을지백탄뼈구이는', '을지 칼국수집은'. 한글로 끝나지 않으면 '은(는)' */
+export function topic(word: string) {
+  const code = word.charCodeAt(word.length - 1) - 0xac00
+  if (code < 0 || code > 11171) return '은(는)'
+  return code % 28 ? '은' : '는'
 }
 
-export function parkingText(place: Place) {
-  const attrs = place.serviceAttributes
-  if (attrs.parking === false) return '불가'
-  if (attrs.parking !== true) return '정보 없음'
-  const types: Record<string, string> = { onsite: '가능', valet: '발렛 가능', partner: '제휴 주차', nearby: '근처 주차장' }
-  return types[String(attrs.parking_type)] ?? '가능'
-}
-
-export function stationText(place: Place) {
-  const station = place.nearestStation
-  return station ? `${station.station}역 도보 ${station.walkMin}분` : null
-}
-
-/** '국밥 · 1만원대 · 도보 4분 · 영업 중' 처럼 있는 정보만 이어 붙인다 */
-export function joinInfo(...parts: (string | null | undefined)[]) {
-  return parts.filter(Boolean).join(' · ')
-}
-
-/** 검증 배지 — 유미 reputation·legacy 근거가 있을 때만 붙인다 */
-export function trustBadges(place: Place) {
-  const badges: string[] = []
-  if (place.legacy) badges.push('노포')
-  if (place.reputation?.crossSourceConfirmed) badges.push('교차검증')
-  if (place.reputation?.recentlyActive) badges.push('최근 활동')
-  return badges
-}
-
-export function waitingExpected(place: Place) {
-  return place.serviceAttributes.waiting_expected === true
-}
-
-// 실제 매장 사진은 유미 media 등급(8토큰)이라 받지 않는다 — 음식 종류에 맞는 예시 사진을 쓴다
-export function examplePhoto(place: Place | null) {
-  if (!place) return lightMealPhoto
-  const text = [place.name, place.categoryLabel, ...(place.menuSummary?.items ?? [])].join(' ')
-  if (/죽|샐러드|포케|비건|차$|찻집/.test(text)) return jukPhoto
-  const subtype = String(place.serviceAttributes.venue_subtype ?? '')
-  if (['gukbap_soup', 'noodles', 'jjigae', 'korean', 'korean_bbq'].includes(subtype)) return gukbapPhoto
-  return lightMealPhoto
-}
-
-/** 지금 연주 중인 끼니 — 아직 끝나지 않은(시작 90분 안) 첫 끼니, 다 지났으면 마지막 */
-export function currentMealIndex(score: Score) {
-  const now = Date.now()
-  const index = score.meals.findIndex((meal) => now < new Date(meal.at).getTime() + 90 * 60_000)
-  return index === -1 ? score.meals.length - 1 : index
-}
-
+/** 메뉴 이름 앞의 '[녹진한 치즈와 매콤한 매력]' 같은 꾸밈말은 뺀다 */
+export const menuName = (item: string) => item.replace(/\[[^\]]*\]\s*/g, '').trim() || item

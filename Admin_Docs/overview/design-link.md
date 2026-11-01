@@ -13,7 +13,7 @@
 | FLASEEK 리뉴얼 시안 | ❓ |
 | Accio 리디자인 | ❓ |
 | 개인 디자인 시스템 (jsh-ds) | ❓ |
-| 마에스트로 | ❓ |
+| 마에스트로 (F-010 리뉴얼) | 피그마 「마에스트로」 파일 · 「Screens — 리뉴얼」(화면) · 「Design System — 리뉴얼」(시스템) · Page 1 「리뉴얼 기획」(IA · 플로우) (주소는 공개 문서에 적지 않아요) — 색은 `index.css`의 `mr-*` 토큰 |
 | techlearn 강의 플랫폼 | 피그마 「techlearn 디자인」 파일 · 「디자인 · 네이비」 페이지 (주소는 공개 문서에 적지 않아요) — 색은 `index.css`의 `tl-*` 토큰 |
 | Nightly 수면 코칭 | 피그마 「AI 수면」 파일 · 「Design · Liquid Glass」 페이지의 'PC · Liquid Glass · 수정안' 01 · 04 · 05 (2026-10-31부터, 주소는 공개 문서에 적지 않아요). 모바일은 수정안이 없어 기존 모바일 배치에 수정안 색 · 유리 스타일을 맞췄어요 — 색은 `index.css`의 `nt-*` 토큰(피그마 변수 값 그대로) |
 | 포트폴리오 홈 리뉴얼 | 피그마 「jsh」 파일 · 「01 Home — Light 리뉴얼」 프레임 (주소는 공개 문서에 적지 않아요) |
@@ -23,6 +23,7 @@
 |---|---|
 | 공통 디자인 시스템 기준 | [MyDesign.md](../../MyDesign.md) |
 | 이커머스 기준 (FLASEEK 상품 카드 등) | [MyDesign(E-commerce).md](<../../MyDesign(E-commerce).md>) |
+| 마에스트로 리뉴얼 (브리프 · IA · 대비 판정 ①②③ · 시스템 밖 결정) | [maestro-design.md](../../maestro-design.md) |
 | 토큰 코드 (Tailwind 4 `@theme`, 포트폴리오 Ivory `[data-theme="ivory"]`) | [index.css](../../Portfolio/frontend/src/index.css) |
 | 시안 캡처 이미지 (프로젝트별 폴더) | [portfolio/assets/design/](../../Portfolio/frontend/src/portfolio/assets/design/) |
 | FLASEEK 디자인 근거(진단·3안 비교·대비) | [data.ts](../../Portfolio/frontend/src/portfolio/data.ts)의 `flaseek-renewal` 사례 |
@@ -49,7 +50,23 @@
 | ❓ | [DetailPage.tsx](../../Portfolio/frontend/src/projects/flaseek/pages/DetailPage.tsx) `Gallery`·`TypeSelects`·`Accordion` | 접힘·펼침 |
 | ❓ | [MainPage.tsx](../../Portfolio/frontend/src/projects/flaseek/pages/MainPage.tsx) `SectionTitle` | – |
 
-### 컴포넌트 매칭 — 포트폴리오 · Accio · 마에스트로
+### 컴포넌트 매칭 — 포트폴리오 · Accio
 - (빈 템플릿) 해당 기능을 리뷰할 때 채워요.
 
-최종 수정: 2026-10-29 · 관련: F-001, F-006
+### 컴포넌트 매칭 — 마에스트로 (F-010, 파일은 `src/projects/maestro/`)
+| 피그마 컴포넌트 | 코드 | 구현한 상태 |
+|---|---|---|
+| GNB Sub MO · GNB PC | `components.tsx` `GnbSub` · `GnbPc` | – |
+| Tag (조건 칩) | `components.tsx` `Tag` | 기본 · 선택(check 아이콘) |
+| Badge (영업 중 · 마감 임박 · 확인) | `components.tsx` `Badge` | Green · Red · Navy, S · M |
+| Now Bar (영업시간 막대) | `components.tsx` `NowBar` | 영업 · 브레이크 · 라스트오더 · 지금 마커(첫 카드만 이동) |
+| Result Card | `components.tsx` `ResultCard` | 기본 · 강조(핀 선택) |
+| Segment (목록 · 표로 비교, 지금 / 30분 뒤) | `components.tsx` `Segment` | 기본 · 선택 |
+| Evidence Block (믿을 이유) | `components.tsx` `EvidenceBlock` | – |
+| Map Pin | `MapView.tsx` `pinIcon` | 기본 · 선택 |
+| Bottom Button Bar | `components.tsx` `BottomBar` | 영업 중 · 마감(비활성) |
+| Bottom Sheet (자리 물어보기) | `screens/SeatSheet.tsx` | 입력 · 기다림 · 답(가능 · 제한 · 불가 · 응답 없음) · 오류 |
+| Empty · Error · Skeleton · Toast | `components.tsx` `EmptyState` · `ErrorInline` · `SkeletonCards` · `Toast` | – |
+| Data Table (표로 비교) | `screens/ResultScreen.tsx` `CompareTable` | – |
+
+최종 수정: 2026-11-01 · 관련: F-001, F-006, F-010

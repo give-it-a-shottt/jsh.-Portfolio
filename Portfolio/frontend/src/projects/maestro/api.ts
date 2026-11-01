@@ -1,4 +1,5 @@
-import type { LiveStatus, Place, Score } from './types'
+import type { PlaceDetail, Picks, SeatAnswer } from './types'
+import type { Query } from './routes'
 
 // 유미 API 키는 백엔드에만 있다. 프론트는 마에스트로 백엔드만 부른다.
 const API_URL: string = import.meta.env.VITE_MAESTRO_API_URL ?? 'http://localhost:8001'
@@ -61,7 +62,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json() as Promise<T>
 }
 
-/** 서버를 미리 깨운다 — 사용자가 일정을 고르는 동안 깨어나도록 마에스트로에 들어오자마자 부른다 */
+/** 서버를 미리 깨운다 — 사용자가 동네 · 상황을 고르는 동안 깨어나도록 마에스트로에 들어오자마자 부른다 */
 let waking: Promise<unknown> | null = null
 export function wakeServer() {
   if (serverState === 'awake' || waking) return
@@ -72,30 +73,32 @@ export function wakeServer() {
     })
 }
 
-export interface MealRequest {
-  at: string // 2026-10-17T12:00
-  dong: string
-  people: number
-  mainPlaceId?: string
+/** 화면 주소의 조건 → API 쿼리. 시각은 'now' 또는 '12:40' */
+function search(query: Query) {
+  const params = new URLSearchParams({ at: query.t === 'now' ? 'now' : `${query.t.slice(0, 2)}:${query.t.slice(2)}` })
+  query.s.forEach((key) => params.append('s', key))
+  return params.toString()
 }
 
-/** 지휘 시작 — 끼니별 메인과 상황별 대안을 한 번에 만든다 */
-export function createScore(meals: MealRequest[]) {
-  return request<Score>('/api/score', { method: 'POST', body: JSON.stringify({ meals }) })
+/** [3곳 찾기] — 후보 3곳과 결과 화면 상태. 홈의 '지금 N곳이 열려 있어요'도 조건 없이 이걸로 센다 */
+export function getPicks(query: Query) {
+  return request<Picks>(`/api/picks?dong=${query.dong}&${search(query)}`)
 }
 
-export function getPlace(id: string) {
-  return request<Place>(`/api/places/${encodeURIComponent(id)}`)
+/** 식당 상세 — 결과를 찾을 때 받아 둔 데이터에서 꺼내서 유미를 다시 부르지 않는다 */
+export function getPlace(id: string, query: Query) {
+  return request<PlaceDetail>(`/api/picks/${query.dong}/places/${encodeURIComponent(id)}?${search(query)}`)
 }
 
-/** 실시간 문의 — 백엔드는 실제 사장님께 보내지 않고 체험용으로 답한다(simulated) */
-export function askWaitTime(placeId: string) {
-  return request<LiveStatus>(`/api/places/${encodeURIComponent(placeId)}/live-status`, {
+/** 자리 물어보기 — 실제 사장님께 보내지 않고 식당마다 정해 둔 답을 흉내 낸다(simulated) */
+export function askSeat(placeId: string, people: number, when: 'now' | '30min') {
+  return request<SeatAnswer>(`/api/picks/places/${encodeURIComponent(placeId)}/seat-ask`, {
     method: 'POST',
-    body: JSON.stringify({ kind: 'wait', topic: 'wait', question: '지금 웨이팅 얼마나 돼요?' }),
+    body: JSON.stringify({ people, when }),
   })
 }
 
-export function waitForAnswer(queryId: string) {
-  return request<LiveStatus>(`/api/live-status/${encodeURIComponent(queryId)}?wait=10`)
+/** 답을 최대 wait 초 기다린다(롱폴링) */
+export function waitForSeat(queryId: string, wait = 10) {
+  return request<SeatAnswer>(`/api/live-status/${encodeURIComponent(queryId)}?wait=${wait}`)
 }

@@ -1,60 +1,101 @@
-// 마에스트로 백엔드(Portfolio/backend/maestro) 응답 모양 — camelCase 로 온다
+// 마에스트로 백엔드(Portfolio/backend/maestro/app/picks) 응답 모양 — camelCase 로 온다
 
-export type SituationKey = 'stuffy' | 'rain' | 'mood' | 'waiting' | 'budget' | 'tired'
-export type MealKind = 'breakfast' | 'lunch' | 'cafe' | 'dinner' | 'late_night'
+export type DongKey = 'euljiro' | 'seongsu' | 'ikseon' | 'yeonnam'
+export type ConditionKey = 'rain' | 'solo' | 'quiet' | 'nowait' | 'light' | 'budget'
+export type StatusKind = 'open' | 'closing' | 'opens' | 'closed'
+export type Source = 'live' | 'snapshot'
 
-export interface Situation {
-  key: SituationKey
-  emoji: string
+export interface LatLng {
+  lat: number
+  lng: number
+}
+
+export interface Dong {
+  key: DongKey
   label: string
-  reason: string
+  center: LatLng
 }
 
-export interface BusinessHours {
-  day: string // mon … sun
-  open: string | null
-  close: string | null
-  closed: boolean
+export interface Condition {
+  key: ConditionKey
+  label: string
 }
 
-export interface Place {
+export interface Status {
+  kind: StatusKind
+  /** 상태 배지 — '영업 중', '40분 남음', '17:00 열어요' */
+  label: string
+  /** 카드의 '다음 변화 시점' 한 줄 */
+  nextChange: string
+  /** 표로 비교의 '지금' 칸 — '21시까지' */
+  short: string
+}
+
+export interface Hours {
+  /** 그날 0시부터 몇 분. 새벽 마감이면 1440 을 넘는다 */
+  segments: { start: number; end: number }[]
+  lastOrder: number | null
+}
+
+export interface Evidence {
+  line: string
+  checkedOn: string | null
+  sourceCount: number
+  items: string[]
+}
+
+export interface PlaceCard {
   id: string
   name: string
+  initial: string
   categoryLabel: string | null
-  location: { lat: number; lng: number }
-  address: { road: string | null } | null
+  location: LatLng
   distanceM: number | null
-  phone: string | null
-  yumiReservable: boolean
-  businessHours: BusinessHours[]
-  openNow: { open: boolean | null } | null
-  price: { level: number | null; avg: number | null } | null
-  menuSummary: { count: number; items: string[] } | null
-  nearestStation: { station: string; walkMin: number } | null
-  serviceAttributes: Record<string, unknown>
-  atmosphere: string[]
+  station: { station: string; walkMin: number } | null
+  priceAvg: number | null
   aiSummary: string | null
-  reputation: { crossSourceConfirmed: boolean; recentlyActive: boolean; regularsFavorite: boolean } | null
-  legacy: unknown
+  waitingExpected: boolean
+  atmosphere: string[]
 }
 
-export interface MealScore {
-  at: string // 2026-10-17T12:00:00
-  kind: MealKind
-  dong: string
-  people: number
-  main: Place | null
-  variations: Record<SituationKey, Place[]>
+export interface Pick {
+  place: PlaceCard
+  status: Status
+  hours: Hours
+  evidence: Evidence
+  matched: ConditionKey[]
+  unmatched: ConditionKey[]
 }
 
-export interface Score {
-  situations: Situation[]
-  meals: MealScore[]
+export interface Picks {
+  dong: Dong
+  /** 실제로 찾은 시각 'HH:MM' */
+  at: string
+  /** '지금'에 열린 곳이 모자라 시연 시각으로 바꿨으면 원래 시각 */
+  switchedFrom: string | null
+  source: Source
+  /** ok: 3곳 다 맞음 / few: 조건 맞는 곳이 3곳 미만 / none: 열린 곳 없음 */
+  state: 'ok' | 'few' | 'none'
+  openCount: number
+  picks: Pick[]
+  relax: { key: ConditionKey; label: string; more: number }[]
+  conditions: Condition[]
 }
 
-export interface LiveStatus {
+export interface PlaceDetail {
+  dong: Dong
+  at: string
+  source: Source
+  pick: Pick
+  phone: string | null
+  menu: string[]
+  hoursText: string
+}
+
+/** 자리 물어보기 답 — pending 이면 다시 묻는다 */
+export interface SeatAnswer {
   queryId: string
-  status: string // pending → available / limited / unavailable / soon / not_offered / no_response
+  status: 'pending' | 'available' | 'limited' | 'unavailable' | 'no_response'
   note: string | null
   simulated: boolean
 }

@@ -32,11 +32,11 @@
 ### 2) 화면 상태 (메모리, 새로고침 시 초기화)
 
 - FLASEEK `store.ts`: 장바구니 수(시작값 2), 찜(`Set<id>`), 토스트(3초 뒤 닫힘). 모두 `useSyncExternalStore` 기반이에요.
-- 마에스트로 `store.ts`: 화면 간 공유 상태
+- 마에스트로 `store.ts`(Zustand): 후보 3곳 결과(조건 key로 구분) · 핀 선택 · 목록/표 탭 · 토스트. `persist`로 **마지막 동네만** localStorage(`maestro-v2`)에 남아요. 조건(시각 · 동네 · 상황)은 주소에 있어요.
 
 ### 3) 백엔드 모델
 
-- 마에스트로: DB가 없어요. `yumi/models.py`의 Pydantic 모델(`Region`, `Place`, `LiveStatus`, `Reservation` 등)이 헤이유미 응답을 camelCase로 감싸요. mock은 `yumi/fixtures/{places,regions}.json`을 써요.
+- 마에스트로: DB가 없어요. `yumi/models.py`의 Pydantic 모델(`Region`, `Place`, `LiveStatus`, `Reservation` 등)이 헤이유미 응답을 camelCase로 감싸요. mock은 `yumi/fixtures/{places,regions}.json`을 써요. real이 실패하면(한도 · 장애 · 시간 초과) `yumi/fixtures/snapshot.json`(실제 데이터 400곳)으로 대신 보여 주고, 성공한 검색은 동네별로 6시간 메모리에 캐시하고, 실패한 동네는 10분 동안 저장본으로 바로 가요(F-010). 서버가 잠들면 캐시는 사라져요.
 - Accio: `core/db.py`에 async SQLAlchemy 엔진과 `get_db`만 있어요(접속 정보는 환경변수 `DATABASE_URL`). **테이블·마이그레이션은 아직 없어요.**
 
 ### 앞으로의 계획 (사용자 확인)
@@ -44,4 +44,4 @@
 - Accio 백엔드는 실제 테이블로 키워요. AI가 응답하는 AI 이커머스, AI가 실시간으로 추천하는 여행 코스 등을 만드는 게 가장 큰 도전이에요.
 - 그때는 Accio와 마에스트로를 이 레포에서 분리하고, 이 문서에는 링크만 남겨요([D-001](../decisions/D-001-single-vite-hash-routing.md) 예정된 변화).
 
-최종 수정: 2026-10-26 · 관련: F-001, F-002, F-005, F-007
+최종 수정: 2026-11-01 · 관련: F-001, F-002, F-005, F-007, F-010

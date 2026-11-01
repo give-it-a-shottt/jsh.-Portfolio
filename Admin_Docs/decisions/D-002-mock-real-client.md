@@ -6,7 +6,7 @@
 왜: 키가 없어도 개발할 수 있고, 공개 사이트에서는 실제 사장님께 문의·예약 알림이 가지 않아요. 하루 호출 한도도 아낄 수 있어요.
 
 ## 개발자 상세
-- 근거: `backend/maestro/app/yumi/deps.py` `get_yumi_client()`, `render.yaml` 주석("공개 사이트는 mock (유미 호출 0회)"), README Back 사례("API 키 없이도 도는 mock ↔ real 클라이언트 교체 구조")
+- 근거: `backend/maestro/app/yumi/deps.py` `get_yumi_client()`, README Back 사례("API 키 없이도 도는 mock ↔ real 클라이언트 교체 구조"). `render.yaml`은 2026-11-01부터 real이에요(F-010).
 
 | 후보 | 장점 | 단점 |
 |---|---|---|
@@ -14,7 +14,8 @@
 | B. real만 두고 테스트에서 HTTP 모킹 | 코드 한 벌 | 키 없이 데모 불가, 공개 사이트에서 실제 호출 |
 | C. 프론트에서 가짜 데이터 | 서버 불필요 | 백엔드 구조를 보여 줄 수 없음 |
 
+- F-010 추가(2026-11-01): 저장본으로 대신할 수 있는 리뉴얼 화면(`/api/picks`)은 같은 `deps.py`의 `get_live_yumi_client()`로 받아요. 유미를 실제로 부를 수 없으면(mock 모드 · 키 없음) `None`이고 저장본(`snapshot.json`)을 써요. real인데 키가 비어 있으면 `get_yumi_client()`도 mock으로 내려가 502를 막아요. 모드를 고르는 곳은 여전히 `deps.py` 한 곳이고, 라우터는 구현을 몰라요(F-010 R4 지적을 고치면서 맞춤).
 - 결과로 생기는 제약: `YumiClient`의 메서드 시그니처를 두 구현이 똑같이 따라야 해요. fixture(`yumi/fixtures/*.json`)를 실제 응답 모양에 맞춰 관리해야 해요.
 - 바꿔야 하는 조건: 실제 서비스로 운영해서 mock이 필요 없어질 때
 
-최종 수정: 2026-10-25 · 관련: F-005
+최종 수정: 2026-11-01 · 관련: F-005, F-010

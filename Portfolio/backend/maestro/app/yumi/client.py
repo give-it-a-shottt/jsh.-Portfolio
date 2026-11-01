@@ -83,6 +83,10 @@ class YumiClient(Protocol):
         """문의 결과. wait 초 동안 답을 기다렸다가 돌려준다 (롱폴링, 최대 25)."""
         ...
 
+    async def simulate_seat_ask(self, place_id: str, topic: str) -> LiveStatus:
+        """체험용 자리 묻기 — 실제 사장님께 보내지 않고 식당마다 고정된 답을 흉내 낸다. 결과는 get_live_status."""
+        ...
+
     async def request_reservation(self, request: ReservationRequest) -> Reservation:
         """예약 요청. 파트너가 아니면 NotAvailable."""
         ...

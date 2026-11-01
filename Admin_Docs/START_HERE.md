@@ -11,15 +11,15 @@
 
 **지금 상태**
 
-- 공개 중: 검색형 포트폴리오, 마에스트로, Accio 리디자인, FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn 강의 플랫폼 시안(핵심 흐름), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
-- 리뷰: F-001·F-006 리뷰와 판정 완료([주의]). F-007은 리뷰 전, F-002~F-005는 백로그예요.
+- 공개 중: 검색형 포트폴리오, 마에스트로(리뉴얼), Accio 리디자인, FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn 강의 플랫폼 시안(핵심 흐름), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
+- 리뷰: F-001·F-006·F-008·F-009 판정 완료([주의]). F-010은 판정 완료([주의]), F-007은 리뷰 전, F-002~F-005는 백로그예요.
 
 **읽는 순서** (면접 전에는 이것만 읽어도 돼요)
 
 1. 이 문서
 2. [overview/architecture.md](overview/architecture.md) — 화면 → 서버 → DB 흐름
 3. [overview/screens.md](overview/screens.md) — 무엇이 어디 있고, 화면이 어떻게 이어지는지
-4. [features](features/) 최신 3개 — F-009, F-008, F-007
+4. [features](features/) 최신 3개 — F-010, F-009, F-008
 
 **폴더 역할**
 
@@ -35,7 +35,7 @@
 
 ### 기술 스택
 
-- Frontend: React 19, TypeScript, Vite, Tailwind CSS 4, Motion
+- Frontend: React 19, TypeScript, Vite, Tailwind CSS 4, Motion, (마에스트로) Zustand · Leaflet
 - Backend: Python, FastAPI, uv, pytest, Ruff, (Accio) SQLAlchemy async
 - Infra(검수 범위 밖): Vercel(프론트), Render(마에스트로 API), Supabase(Accio DB), GitHub Actions(DB 깨우기)
 
@@ -47,6 +47,7 @@ npm run build && npm run lint                            # 검사
 npm run search:eval                                      # 검색 채점 (F-007)
 cd Portfolio/backend/maestro && uv sync && uv run fastapi dev app/main.py --port 8001
 uv run pytest                                            # 백엔드 테스트
+# Git Bash에서 uv trampoline 오류가 나면: uv run python -m uvicorn app.main:app --port 8001 / uv run python -m pytest
 ```
 
 ### 폴더 지도
@@ -89,5 +90,6 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-007](features/F-007-search-algorithm/feature.md) | 검색 알고리즘 개선 (S0~S6) | 리뷰 전 |
 | [F-008](features/F-008-techlearn/feature.md) | techlearn 강의 플랫폼 시안 (홈 → 목록 → 상세 → 수강신청) | [주의] 판정 완료 |
 | [F-009](features/F-009-nightly/feature.md) | Nightly 수면 코칭 시안 (홈 · 수면 대시보드 · AI 코치) | [주의] 판정 완료 |
+| [F-010](features/F-010-maestro-renewal/feature.md) | 마에스트로 리뉴얼 (지금 열린 식당 3곳 · Zustand · 유미 real + 저장본) | [주의] 판정 완료 |
 
-최종 수정: 2026-10-30 · 관련: D-001~D-004, F-001~F-009
+최종 수정: 2026-11-01 · 관련: D-001~D-004, F-001~F-010

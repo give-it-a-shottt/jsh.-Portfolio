@@ -110,7 +110,11 @@ class RealYumiClient:
             raise NotFound(path)
         if response.status_code >= 400:
             raise YumiError(response.status_code, response.text[:200])
-        data = response.json()["data"]
+        try:
+            data = response.json()["data"]
+        except (ValueError, KeyError, TypeError) as error:
+            # 봉투 모양이 달라도 500 이 아니라 유미 오류로 — 결과 화면은 저장본으로 대신한다
+            raise YumiError(502, "유미 응답 모양이 예상과 달라요") from error
         self._cache[key] = (time.monotonic(), data)
         return data
 
@@ -129,6 +133,8 @@ class RealYumiClient:
         }
         params |= {name: _encode(value) for name, value in query.filters.items()}
         data = await self._get("/api/v1/places/nearby", params)
+        if not isinstance(data, list):
+            raise YumiError(502, "유미 응답 모양이 예상과 달라요")
         return [place for raw in data if (place := _parse_place(raw))]
 
     async def get_place(self, place_id: str) -> Place:
@@ -153,6 +159,9 @@ class RealYumiClient:
 
     async def get_live_status(self, query_id: str, wait: int = 0) -> LiveStatus:
         return await self._owner.get_live_status(query_id, wait)
+
+    async def simulate_seat_ask(self, place_id: str, topic: str) -> LiveStatus:
+        return await self._owner.simulate_seat_ask(place_id, topic)
 
     async def request_reservation(self, request: ReservationRequest) -> Reservation:
         return await self._owner.request_reservation(request)

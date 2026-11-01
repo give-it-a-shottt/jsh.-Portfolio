@@ -21,6 +21,9 @@ from app.yumi.models import (
 
 FIXTURES = Path(__file__).parent / "fixtures"
 KST = timezone(timedelta(hours=9))
+# 로그인 없는 공개 API 라 문의 기록이 끝없이 쌓이지 않게 — 오래된 것부터 지운다
+QUERY_TTL_SECONDS = 10 * 60
+MAX_QUERIES = 1000
 
 
 @lru_cache
@@ -34,6 +37,19 @@ MOCK_ANSWERS: dict[LiveStatusKind, tuple[str, str]] = {
     "seats": ("available", "바로 앉으실 수 있어요"),
     "item": ("available", "오늘 준비돼 있어요"),
 }
+
+# 리뉴얼 '자리 물어보기' — 시연할 때마다 같은 결과가 나오게 식당마다 답 하나를 고정한다
+SEAT_ANSWERS: list[tuple[str, str | None]] = [
+    ("available", "바로 앉으실 수 있어요"),
+    ("limited", "바 자리만 있어요"),
+    ("unavailable", "지금은 자리가 없어요"),
+    ("no_response", None),
+]
+
+
+def seat_answer(place_id: str) -> tuple[str, str | None]:
+    """매장 id 로 정한 고정 답 — hash() 는 실행마다 달라서 글자 코드 합을 쓴다."""
+    return SEAT_ANSWERS[sum(map(ord, place_id)) % len(SEAT_ANSWERS)]
 
 
 class MockYumiClient:
@@ -52,6 +68,7 @@ class MockYumiClient:
         self.accept_any_place = accept_any_place
         self._queries: dict[str, tuple[float, LiveStatus]] = {}
         self._reservations: dict[str, tuple[float, Reservation]] = {}
+        self._fixed_answers: dict[str, tuple[str, str | None]] = {}
 
     async def resolve_region(self, dong: str) -> list[Region]:
         return [
@@ -129,13 +146,39 @@ class MockYumiClient:
             status="pending",
             simulated=True,
         )
-        self._queries[query.query_id] = (time.monotonic(), query)
+        self._remember(query)
         return query
+
+    async def simulate_seat_ask(self, place_id: str, topic: str) -> LiveStatus:
+        """체험용 자리 묻기 — 파트너인지 따지지 않고 어느 식당이든 흉내 낸 답을 준다 (simulated=True)."""
+        query = LiveStatus(
+            query_id=f"mock-q-{uuid.uuid4().hex[:8]}",
+            place_id=place_id,
+            kind="seats",
+            topic=topic,
+            status="pending",
+            simulated=True,
+        )
+        self._remember(query)
+        self._fixed_answers[query.query_id] = seat_answer(place_id)
+        return query
+
+    def _remember(self, query: LiveStatus) -> None:
+        now = time.monotonic()
+        for query_id, (created, _) in list(self._queries.items()):
+            if now - created >= QUERY_TTL_SECONDS or len(self._queries) >= MAX_QUERIES:
+                del self._queries[query_id]
+                self._fixed_answers.pop(query_id, None)
+            else:
+                break  # dict 는 넣은 순서라 여기서부터는 더 새것뿐이다
+        self._queries[query.query_id] = (now, query)
 
     def _settle_query(self, created: float, query: LiveStatus) -> LiveStatus:
         if not self._answered(created) or query.status != "pending":
             return query
-        status, note = MOCK_ANSWERS[query.kind]
+        status, note = (
+            self._fixed_answers.get(query.query_id) or MOCK_ANSWERS[query.kind]
+        )
         settled = query.model_copy(
             update={"status": status, "note": note, "verified_at": datetime.now(KST)}
         )
