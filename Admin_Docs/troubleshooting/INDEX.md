@@ -16,7 +16,11 @@
 | [T-006](T-006-search-autocomplete.md) | "디장"·"ㄷㅈㅇ"에 자동완성이 안 뜸 — 자모 앞부분·초성·굵게 표시 (F-007 S5) | [통과] | 2026-10-26 |
 | [T-007](T-007-search-related.md) | 관련 검색어가 늘 같은 5개 — 결과 태그 추천·혹시 이걸 찾으셨나요 (F-007 S6) | [통과] | 2026-10-26 |
 | [T-008](T-008-search-typo-in-data.md) | 오타가 데이터에 한 번 적히자 오타 고치기가 멈춤 — 드문 말도 흔한 쪽으로 (F-007) | [통과] | 2026-10-27 |
+| [T-009](T-009-figma-mcp-disconnect.md) | 피그마 MCP가 큰 요청에서 끊김 — 한 장씩, 끊기면 한 번 더 (F-010) | [주의] | 2026-11-01 |
+| [T-010](T-010-yumi-burst-limit.md) | 유미 "Rate limit exceeded" — 하루 한도 말고 짧은 구간 10요청 한도 (F-010) | [통과] | 2026-11-01 |
+| [T-011](T-011-uv-trampoline.md) | Git Bash에서 `uv run pytest`가 안 됨 — uv trampoline 오류 (F-010) | [통과] | 2026-11-01 |
+| [T-012](T-012-test-read-env-key.md) | 테스트가 로컬 `.env`의 실제 키를 읽어 유미를 한 번 부름 (F-010) | [통과] | 2026-11-01 |
 
 💡 Admin_Docs를 도입하기 전의 트러블 사례는 포트폴리오 Front·Back 사례(`portfolio/caseStories.ts`)에 있어요.
 
-최종 수정: 2026-10-26
+최종 수정: 2026-11-01
