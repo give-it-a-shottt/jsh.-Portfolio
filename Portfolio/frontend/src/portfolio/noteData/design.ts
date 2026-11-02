@@ -18,6 +18,16 @@ import composePolaroid from '../assets/study/compose-polaroid.webp'
 import toneMorning from '../assets/study/tone-morning.webp'
 import toneOriginal from '../assets/study/tone-original.webp'
 import toneSunset from '../assets/study/tone-sunset.webp'
+import titleJoker from '../assets/study/title-joker.webp'
+import titleJokerPurple from '../assets/study/title-joker-1-purple.webp'
+import titleJokerRed from '../assets/study/title-joker-2-red.webp'
+import titleJokerGlitch from '../assets/study/title-joker-3-glitch.webp'
+import titleJokerInk from '../assets/study/title-joker-4-ink.webp'
+import titleLongShadow from '../assets/study/title-long-shadow.webp'
+import titleLongShadowNavy from '../assets/study/title-long-shadow-1-navy.webp'
+import titleLongShadowCoral from '../assets/study/title-long-shadow-2-coral.webp'
+import titleLongShadowNeon from '../assets/study/title-long-shadow-3-neon.webp'
+import titleLongShadowMustard from '../assets/study/title-long-shadow-4-mustard.webp'
 import type { StudyNote } from '../notes'
 
 // Design 공부 노트 — 노션 학습노트 > 학습 폴더 > 포토샵 / 일러스트 (6강 이후는 앞 회차 초안을 합친 요약본이라 1~3·5번은 싣지 않는다)
@@ -312,6 +322,64 @@ export const DESIGN_NOTES: StudyNote[] = [
     ],
     tags: ['포토샵', '배너', '카드뉴스', '템플릿'],
     keywords: 'photoshop banner card news artboard object selection live corners polygon 템플릿',
+  },
+  {
+    slug: 'ps-long-shadow-joker',
+    area: 'Design',
+    course: '포토샵 / 일러스트',
+    lesson: '14강',
+    date: '2026.11.02',
+    title: '분위기 타이틀 2종 — 긴 그림자 · 레이어 마스크 질감 · 연기 합성',
+    summary: '타이틀의 분위기는 글자 모양보다 주변에 무엇을 더하고(그림자 · 획 · 내부 그림자) 무엇을 깎아내느냐(마스크 질감)로 만든다. 긴 그림자는 같은 레이어를 1px씩 밀어 쌓는 반복이다.',
+    points: [
+      '긴 그림자는 그룹을 45° 돌려 놓고 Alt+↓ 로 100번 이상 쌓는다 — 색은 검정이 아니라 바탕색에서 뽑은 아주 어두운 색',
+      '거친 질감은 지우는 게 아니라 레이어 마스크로 가린다 — 원본 글자가 살아 있어서 되돌릴 수 있다',
+      '검은 배경 연기는 Screen, 흰 배경 소스는 Multiply 로 배경을 뺀다',
+    ],
+    learned: [
+      {
+        title: '긴 그림자',
+        items: [
+          '방향키는 상하좌우로만 밀어서, 돌려 놓고 아래로 쌓은 뒤 회전을 되돌려야 45° 대각선이 된다',
+          '그림자 끝에 "전경색 → 투명" 그레이디언트 마스크를 주면 화면 끝에서 딱 잘린 느낌 없이 배경에 녹는다',
+          'Stroke 3px + Inner Shadow 로 평평한 글자가 한 칸 눌린 듯한 입체감을 얻는다',
+          '그림자는 한 방향 · 한 각도 · 한 색 — 각도를 섞으면 광원이 여러 개처럼 보인다',
+        ],
+      },
+      {
+        title: '마스크 질감 · 연기',
+        items: [
+          '마스크는 흰색 = 보임, 검정 = 가림, 회색 = 그 밝기만큼 반투명',
+          '거친 털 브러시는 문지르지 말고 톡톡 찍는다 — 드래그하면 줄 자국이 남는다',
+          '균열 질감 이미지를 마스크 안에 붙여 넣고 레벨로 회색을 흰색 쪽으로 밀면 균열 선만 뚫린다',
+          '흰색 → 은은한 연두 그레이디언트 오버레이로 완전한 흰색보다 차갑고 불안한 분위기',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          'Alt+방향키를 눌렀는데 복제 대신 자간만 바뀌었다 → 문자 툴이 선택돼 있었다. 복제는 Move Tool(V) 상태에서만',
+          '질감을 글자 전체에 고르게 깎으면 오히려 깔끔해 보인다 → 모서리 · 아래쪽에 몰아야 부서지는 중 같은 이야기가 생긴다',
+        ],
+      },
+    ],
+    practice: [
+      { image: titleLongShadow, caption: '긴 그림자 타이포 "긴그림자"', how: '45° 회전 그룹을 1px씩 100번 이상 복제, 바탕 녹색에서 뽑은 그림자색 + Stroke · Inner Shadow' },
+      { image: titleJoker, caption: '조커 분위기 타이틀', how: '균열 질감을 문자 레이어 마스크에 넣고 레벨로 다듬기, 흰색 → 연두 그레이디언트, 아래에 연기' },
+    ],
+    // 같은 원리로 색 · 방향 · 분위기만 바꾼 AI 버전 — 직접 만든 게 아니라서 실습 결과물과 따로 싣는다(사용자 요청)
+    examples: [
+      { image: titleLongShadowNavy, caption: '긴 그림자 v1 · 레트로 네이비', how: '남색 바탕 · 크림 글자 · 빨강 내부 그림자 + 노이즈 2~3% 로 빈티지 인쇄 느낌' },
+      { image: titleLongShadowCoral, caption: '긴 그림자 v2 · 플랫 코랄', how: '그림자를 흐리지 않고 화면 끝까지, 불투명도 50~60% 의 플랫 스타일' },
+      { image: titleLongShadowNeon, caption: '긴 그림자 v3 · 네온 외곽선', how: '글자 Fill 0% 로 Stroke 만 남기고, 그림자에 핑크 → 보라 그레이디언트' },
+      { image: titleLongShadowMustard, caption: '긴 그림자 v4 · 머스터드 135°', how: '그룹을 반대로 돌려 그림자 방향을 왼쪽 아래로' },
+      { image: titleJokerPurple, caption: '조커 v1 · 보라 · 초록', how: '연기 2장을 Screen 으로 겹치고 각각 Color Overlay, 글자에 Outer Glow' },
+      { image: titleJokerRed, caption: '조커 v2 · 핏빛 연기', how: '빨간 연기 + 균열 틈 아래 레이어에 빨강 · Gaussian Blur 로 붉은 빛' },
+      { image: titleJokerGlitch, caption: '조커 v3 · 글리치', how: '글자 3장을 R · G · B 채널만 켜서 좌우로 몇 px 씩 밀기 + 가로 슬라이스 어긋남' },
+      { image: titleJokerInk, caption: '조커 v4 · 종이 · 잉크', how: '밝은 바탕으로 반전, 흰 배경 연기 소스를 Multiply 로' },
+    ],
+    tags: ['포토샵', '타이포그래피', '레이어 마스크', '합성'],
+    keywords: 'photoshop long shadow typography title stroke inner shadow gradient overlay layer mask texture legacy brushes rough round bristle lasso levels threshold generate image smoke screen multiply 긴 그림자 조커 균열 연기 타이틀',
   },
   {
     slug: 'ps-flower-feed',

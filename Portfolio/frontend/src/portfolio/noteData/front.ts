@@ -302,6 +302,49 @@ export const FRONT_NOTES: StudyNote[] = [
   },
   // ── AI와 학습 (미니 인프런 · Nightly 풀스택) ──
   {
+    slug: 'fe-ssr-getserversideprops',
+    area: 'Front',
+    course: '미니 인프런',
+    lesson: '11회차',
+    date: '2026.11.02',
+    title: '강의 목록 SSR — getServerSideProps · Ctrl+U vs Elements',
+    summary: 'CSR 은 서버가 빈 틀을 보내고 브라우저가 useEffect 로 채워서, Ctrl+U(서버 원본)에는 강의 제목이 없다. SSR 은 Next.js 서버가 데이터를 먼저 받아 props 로 넘기고, 내용이 다 찬 HTML 을 보낸다.',
+    points: [
+      'Elements 에 있다고 서버가 보낸 HTML 에 있었던 건 아니다 — 검색 로봇과 링크 미리보기는 Ctrl+U 와 같은 것만 본다',
+      'FastAPI 를 끄니 fetch 가 ECONNREFUSED 로 514ms 만에 실패하고 페이지 전체가 500 — 그 500 은 Next.js 가 보낸 것',
+      '검색에 나와야 하는 공개 페이지는 SSR, 로그인 후 개인 화면은 CSR 로도 충분하다',
+    ],
+    learned: [
+      {
+        title: 'SSR',
+        items: [
+          '순서가 핵심 — 데이터 받기 → HTML 만들기 → 보내기. 바뀌면 빈 목록으로 HTML 이 나간다',
+          'return { props: { courses } } 를 Next.js 가 열어서 넘기고, Courses({ courses }) 가 같은 이름으로 꺼낸다',
+          'Pages Router 는 컴포넌트가 브라우저에서도 실행돼서 서버 전용 일을 getServerSideProps 로 떼어 둔다 — App Router 는 컴포넌트 안에서 바로 await',
+          'SSR HTML 은 처음엔 그림일 뿐, 브라우저가 같은 컴포넌트를 한 번 더 실행해 동작을 연결한다(하이드레이션)',
+        ],
+      },
+      {
+        title: '실패를 읽는 법',
+        items: [
+          'ECONNREFUSED 는 그 포트에 아무도 없어 바로 거절, 타임아웃은 대답이 없어 기다리다 포기',
+          '꺼진 서버는 상태 코드를 못 보낸다 — 상태 코드는 응답이 있어야 생긴다',
+          'fetch 는 연결 실패에만 에러를 던진다 — 404 · 500 응답은 res.ok 를 따로 봐야 한다',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          'CSR 페이지의 Elements 에도 제목이 없을 거라 예측했다 → li 4개가 있었다. 브라우저 안의 React 가 setCourses 뒤에 넣었다',
+          'FastAPI 를 끄면 "빈 배열에 map 해서" 에러가 날 거라 했다 → [].map 은 [] 를 돌려줄 뿐, 실제로는 fetch 줄에서 터졌다',
+          '서버가 HTML 을 만드는 일을 "번들"이라고 했다 → 렌더링이다. 번들은 빌드 때 JS 를 묶는 작업',
+        ],
+      },
+    ],
+    tags: ['프론트엔드', 'Next.js', 'SSR', 'React'],
+    keywords: 'ssr csr getserversideprops next.js pages router app router props hydration view source ctrl+u elements seo useeffect econnrefused fetch failed timeout ssg isr getstaticprops revalidate 미니 인프런',
+  },
+  {
     slug: 'fe-tanstack-query',
     area: 'Front',
     course: 'Nightly 풀스택',

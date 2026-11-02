@@ -4,6 +4,189 @@ import type { StudyNote } from "../notes";
 export const BACK_NOTES: StudyNote[] = [
   // ── AI와 학습 (미니 인프런 · Nightly 풀스택) ──
   {
+    slug: "be-path-param-404",
+    area: "Back",
+    course: "미니 인프런",
+    lesson: "10회차",
+    date: "2026.11.02",
+    title: "강의 상세 API — 경로 파라미터 · 422 · 404",
+    summary:
+      "하나를 가리킬 때는 /courses/{id}, 목록에 거는 조건은 ? 로 쓴다. 경로 파라미터는 타입 표시로 입구에서 검사되고, DB 가 None 을 주면 return 전에 404 로 거른다.",
+    points: [
+      "999번이 없으면 /courses/999 는 404, ?id=999 는 200 과 빈 목록 — 주소가 가리키는 자원이 다르다",
+      "abc 는 int 로 못 바꿔 422 — 서버 로그에 SQL 줄이 없어서 DB 까지 안 간 걸 확인했다",
+      "404 처리를 빼면 None 이 응답 명단 검사까지 가서 500 이 났다",
+    ],
+    learned: [
+      {
+        title: "주소와 입구 검사",
+        items: [
+          "경로는 무엇을 가리키나, 쿼리는 목록에 거는 조건(필터 · 정렬 · 검색)",
+          "주소 속 값은 원래 글자다 — course_id: int 표시를 보고 FastAPI 가 정수로 바꾸고, 못 바꾸면 함수를 실행하지 않는다",
+          "Path(gt=0) 를 주면 0 이하도 입구에서 422 — int 만으로는 0, -5 가 DB 까지 간다",
+          "고정 주소(/courses/popular)는 동적 주소({course_id})보다 위에 둔다 — 아래 있으면 popular 가 course_id 로 잡혀 422",
+        ],
+      },
+      {
+        title: "조회와 응답",
+        items: [
+          "session.get(Course, id) 는 기본 키로 하나만 찾고, 없으면 None — 실제 SQL 은 WHERE courses.id = %(pk_1)s",
+          "값은 SQL 문장에 붙이지 않고 따로 보낸다(바인딩) — 이어 붙이면 입력이 명령으로 실행되는 SQL 인젝션",
+          "없을 때 return {\"detail\": ...} 은 200 으로 나가 프론트가 성공으로 착각한다 → raise HTTPException(404)",
+        ],
+      },
+      {
+        title: "막힌 것 · 바로잡은 것",
+        items: [
+          "\"파라미터로 정확히 요청하니까\" ?id=3 을 골랐다 → 둘 다 3 을 정확히 전달한다. 차이는 주소가 가리키는 것",
+          "\"?id=3 이면 데이터가 전부 넘어온다\"고 섞어 말했다 → 주소 모양과 DB 에서 가져오는 양은 별개, 양은 WHERE 가 정한다",
+          "빈칸에 id = 3 을 넣었다 → 고정 숫자면 /courses/5 도 항상 3번. 요청마다 바뀌는 course_id 를 넣어야 한다",
+          "TS-007 원인을 \"DB 가 찾다가 실패\"라고 적었다 → DB 는 0개를 에러 없이 돌려줬고, 에러는 응답 단계에서 났다",
+        ],
+      },
+    ],
+    tags: ["백엔드", "FastAPI", "REST", "에러 처리"],
+    keywords:
+      "fastapi path parameter query parameter rest 404 422 httpexception session.get sqlalchemy sql injection binding prepared statement route order path gt responsevalidationerror model_attributes_type 미니 인프런",
+  },
+  {
+    slug: "be-pydantic-response-model",
+    area: "Back",
+    course: "미니 인프런",
+    lesson: "9회차",
+    date: "2026.11.01",
+    title: "Pydantic 응답 모델 — 내보낼 칸은 명단으로",
+    summary:
+      "FastAPI 는 return 된 객체의 칸을 전부 JSON 으로 바꾼다. 그래서 response_model 로 \"이것만 보내라\" 명단을 붙인다. 명단에 없는 칸은 조용히 빠지고, 명단의 필수 칸이 없으면 응답 전에 에러가 난다.",
+    points: [
+      "자동 변환에 맡기면 클래스에 강사 전화번호가 추가될 때 에러 없이 응답에 실려 나간다",
+      "빼라 목록은 깜빡하면 새고, 이것만 보내라 목록은 깜빡해도 안 나간다 — 실수했을 때 안전한 쪽이 화이트리스트",
+      "level: str 은 필수라 500, str | None = None 이어야 null 로 채운다",
+    ],
+    learned: [
+      {
+        title: "누가 무엇을 바꾸나",
+        items: [
+          "Postgres 는 행을 보내고, SQLAlchemy 는 행을 객체로, FastAPI 는 return 뒤에서 객체를 JSON 으로",
+          "응답 명단은 테이블과 관계가 없어서 Base 가 아니라 BaseModel 을 물려받고, Mapped 없이 그냥 타입을 적는다",
+          "반환 타입 힌트(-> list[CourseOut])로도 명단이 붙는다 — 둘 다 적으면 response_model 이 우선",
+        ],
+      },
+      {
+        title: "명단 설계",
+        items: [
+          "str | None 은 값의 종류, = None 은 칸이 없을 때의 기본값 — 기본값이 없으면 여전히 필수",
+          "입력 명단(CourseCreate)과 출력 명단(CourseOut)은 따로 — 입력도 허용한 칸만 받아야 바꾸면 안 되는 칸을 지킨다",
+          "connect_timeout 을 주면 DB 가 꺼졌을 때 응답 없이 멈추는 대신 빨리 에러가 난다",
+        ],
+      },
+      {
+        title: "막힌 것 · 바로잡은 것",
+        items: [
+          "\"PostgreSQL 이 JSON 으로 보내 줬다\"고 답했다 → echo 로그의 SQL 은 평범한 SELECT 였다",
+          "화이트리스트가 나은 이유를 비용으로 들었다 → 핵심은 안전, 비용 차이는 거의 없다",
+          "\"명단에 없는 값이면 에러\"라고 설명했다 → 명단에 없는 칸은 조용히 빠지고, 에러는 명단의 필수 칸이 객체에 없을 때",
+          "API 가 응답 없이 멈췄다(TS-005) → Docker 엔진 자체가 꺼져 있었다. 에러 없이 멈추면 DB 부터 확인한다",
+        ],
+      },
+    ],
+    tags: ["백엔드", "FastAPI", "Pydantic", "보안"],
+    keywords:
+      "fastapi pydantic response_model basemodel dto schema whitelist blacklist jsonable_encoder responsevalidationerror optional default none from_attributes model_validate mass assignment connect_timeout docker 미니 인프런",
+  },
+  {
+    slug: "be-transaction-rollback",
+    area: "Back",
+    course: "Nightly 풀스택",
+    lesson: "M4",
+    date: "2026.10.27",
+    title: "구독 결제 — 트랜잭션 · 롤백 · 영수증 검증 · 낙관적 업데이트",
+    summary:
+      "결제 한 건(주문 + 구독)을 하나의 트랜잭션으로 묶었다. Repository 는 flush 까지만 하고, Service 가 끝에서 commit 을 한 번 한다. 결제사 영수증 검증은 느린 외부 호출이라 트랜잭션 밖에서 먼저 한다.",
+    points: [
+      "Repository 에서 commit 하게 바꿨더니 주문 1 · 구독 0 이 남았고, 재시도는 UNIQUE 에 막혀 409 만 받았다 (돈만 빠진 고객)",
+      "금액은 프론트 말이 아니라 결제사 응답과 서버 가격표만 믿는다 — 요청에서 금액을 아예 받지 않는다",
+      "돈이 걸린 결제는 서버가 확정한 뒤 invalidateQueries, 틀려도 피해가 작은 토글만 낙관적 업데이트",
+    ],
+    learned: [
+      {
+        title: "트랜잭션",
+        items: [
+          "flush 는 SQL 을 보내 id 는 받지만 확정이 아니라 롤백으로 취소된다 — 구독에 order_id 가 필요해서 쓴다",
+          "롤백은 마지막 커밋 이후만 지운다 — 이미 커밋한 건 안 돌아온다",
+          "Read Committed(PostgreSQL 기본)라 커밋 전 구독은 다른 요청에 안 보인다 — 롤백된 구독으로 무제한을 주는 일이 없다",
+          "시퀀스 번호는 롤백돼도 반납되지 않는다 — 실험 후 첫 정상 주문 id 가 2였다",
+        ],
+      },
+      {
+        title: "외부 호출과 프론트",
+        items: [
+          "영수증 검증을 트랜잭션 안에 넣으면 기다리는 동안 DB 커넥션을 붙잡고, 결제사 승인은 DB 롤백으로 안 돌아와 얻는 것도 없다",
+          "낙관적 업데이트는 onMutate(스냅샷 + 먼저 바꾸기) → onError(되돌리기) → onSettled(재조회) — 실패하면 스위치가 왔다 갔다 하는 게 정상",
+          "결제사는 승인했는데 커밋이 실패하면 → 결제 취소(보상 트랜잭션), PENDING 주문 먼저 저장, 웹훅으로 최종 맞춤",
+        ],
+      },
+      {
+        title: "막힌 것 · 바로잡은 것",
+        items: [
+          "Repository commit 실험 결과를 주문 2 · 구독 1 로 셌다 → raise 가 나면 아래 줄은 실행되지 않아 주문 1 · 구독 0",
+          "async with db.begin() 이 \"A transaction is already begun\" → get_current_user 의 SELECT 로 이미 autobegin 됐다. try / commit / except / rollback 으로",
+          "\"트랜잭션 밖\"이 되려면 검증 전에 조회용 트랜잭션을 commit 으로 닫아야 했다",
+          "rollback 뒤 user.id 에 접근하자 MissingGreenlet → 롤백이 객체를 만료시켜서, 필요한 값은 롤백 전에 꺼내 둔다",
+        ],
+      },
+    ],
+    tags: ["백엔드", "트랜잭션", "결제", "TanStack Query"],
+    keywords:
+      "transaction acid atomicity commit rollback flush autobegin isolation level read committed dirty read receipt verification payment gateway idempotency unique integrityerror optimistic update usemutation invalidatequeries onmutate onerror onsettled saga compensation sqlalchemy nightly m4",
+  },
+  {
+    slug: "be-sqlalchemy-orm",
+    area: "Back",
+    course: "미니 인프런",
+    lesson: "8회차",
+    date: "2026.10.27",
+    title: "SQLAlchemy ORM 전환 — 클래스와 테이블 짝짓기",
+    summary:
+      "ORM 은 파이썬 클래스와 DB 테이블을 짝지어 SQL 로 번역해 주는 통역사다. 클래스 속성 오타는 DB 에 가기 전에 잡히지만, 클래스와 테이블이 어긋난 것은 DB 에 가서야 드러난다.",
+    points: [
+      "문자열 SQL 의 오타는 API 를 부를 때 Postgres 가 처음 알아챈다 — Course.titel 은 에디터와 파이썬이 먼저 잡는다",
+      "echo=True 로 보니 ORM 도 결국 SQL 을 보낸다 — 컬럼 이름의 출처는 DB 가 아니라 내가 적은 클래스",
+      "클래스에만 있는 level 컬럼은 서버는 잘 켜지고 호출할 때 UndefinedColumn 이 났다",
+    ],
+    learned: [
+      {
+        title: "ORM",
+        items: [
+          "select(Course) → ORM 이 SQL 로 번역 → 드라이버가 Postgres 로 → 돌아온 행을 Course 객체로",
+          "Base 를 상속한 클래스만 SQLAlchemy 가 테이블로 알아본다 — 파이썬은 위에서 아래로 읽으니 Base 가 먼저",
+          "where · order_by 도 파이썬으로 쓰고, 값은 자리표시자로 들어가 SQL 인젝션을 막는다",
+        ],
+      },
+      {
+        title: "클래스는 테이블의 복사본이 아니다",
+        items: [
+          "Mapped[str] 은 NOT NULL 이라는 약속 — 실제 테이블과 제약이 달라도 조회만 할 때는 드러나지 않는다",
+          "create_all 은 없는 테이블만 만들고 있는 테이블은 고쳐 주지 않는다 — 함께 바꾸는 건 Alembic 의 일",
+          "어긋나면 어느 쪽이 기준인지부터 정한다 — 잘못 들어간 컬럼이면 클래스에서, 정말 필요하면 테이블에",
+          "ORM 에러는 맨 아래 [SQL: ...] 줄부터 — 무엇을 보냈고 왜 거절당했는지 한 번에 보인다",
+        ],
+      },
+      {
+        title: "막힌 것 · 바로잡은 것",
+        items: [
+          "없는 테이블을 조회하면 [] 가 올 줄 알았다 → [] 는 테이블은 있고 행이 0개일 때, 없는 테이블은 에러",
+          "Relational 을 \"객체의 관계\"로, ORM 결과를 dict 로 알았다 → 관계형 DB 의 그 Relational, 결과는 Course 객체",
+          "level 에러를 테이블 이름 오타로 읽었다 → 없다는 건 courses 가 아니라 level 컬럼",
+          "uvicorn: command not found → 설치는 돼 있었고 가상환경이 활성화되지 않아 PATH 에 없었다",
+        ],
+      },
+    ],
+    tags: ["백엔드", "SQLAlchemy", "ORM", "PostgreSQL"],
+    keywords:
+      "sqlalchemy orm declarativebase mapped mapped_column session select scalars echo undefinedcolumn attributeerror create_all alembic migration not null uvicorn command not found venv activate 미니 인프런",
+  },
+  {
     slug: "be-sse-redis-ratelimit",
     area: "Back",
     course: "Nightly 풀스택",

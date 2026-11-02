@@ -55,7 +55,13 @@
     "409df951bf8081cfb4f9d06ed5d19c02": "fe-es6-typescript-jsx",
     "409df951bf8081e39a3bd5e6fc7cb76d": "fe-state-immutability",
     "409df951bf808131b12af91514be27c4": "fe-hooks-lifecycle-context",
-    "409df951bf8081548b16e7c8671ce171": "fe-router-cors-redux"
+    "409df951bf8081548b16e7c8671ce171": "fe-router-cors-redux",
+    "40cdf951bf8080fc8d1bd0264ebf95a4": "ps-long-shadow-joker",
+    "406df951bf80808695b5f053b1c5060f": "be-transaction-rollback",
+    "406df951bf8080e5a83fc4f1907c46cf": "be-sqlalchemy-orm",
+    "40bdf951bf8080c78327ed9d6f61251c": "be-pydantic-response-model",
+    "40cdf951bf80806ebbdce74ce0ba200c": "be-path-param-404",
+    "40cdf951bf80802584a3d9417f850d3e": "fe-ssr-getserversideprops"
   },
   "skipped": {
     "3efdf951bf8080beb779ecde4838b7ce": "포토샵 1. — 6강 이후 요약본에 합쳐진 앞 회차 초안",
