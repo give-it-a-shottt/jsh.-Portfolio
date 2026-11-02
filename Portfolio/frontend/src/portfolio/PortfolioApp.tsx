@@ -17,9 +17,9 @@ const EngineeringCaseDetail = lazy(() => import('./EngineeringCaseDetail'))
 
 const INTRO_SEEN_KEY = 'jsh-intro-seen'
 
-// 같은 세션에서 이미 봤거나, 움직임 줄이기 설정이면 인트로를 건너뛴다. 저장소를 못 쓰면 매번 보여준다.
+// 같은 세션에서 이미 봤으면 인트로를 건너뛴다. 저장소를 못 쓰면 매번 보여준다.
+// 움직임 줄이기 설정이어도 띄운다 — 영상은 시작 버튼을 눌러야 재생되고, 닫힐 때는 제자리 페이드뿐이다.
 function shouldPlayIntro() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
   try {
     return sessionStorage.getItem(INTRO_SEEN_KEY) !== '1'
   } catch {

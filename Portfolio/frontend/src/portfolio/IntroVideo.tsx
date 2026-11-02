@@ -15,7 +15,7 @@ function playWithSound(video: HTMLVideoElement, onBlocked: () => void) {
   video.play().catch(onBlocked)
 }
 
-// 첫 방문 인트로 —1분 자기소개 영상. 한 세션에 한 번, 움직임 줄이기 설정이면 아예 띄우지 않는다(PortfolioApp 에서 판단).
+// 첫 방문 인트로 —1분 자기소개 영상. 한 세션에 한 번 띄운다(PortfolioApp 에서 판단).
 // 브라우저는 사용자가 누르기 전에는 소리 나는 영상을 자동 재생하지 않아서, 시작 버튼을 눌러야 튼다.
 // 화면 아무 데나 누르는 건 영상 조작(소리·멈춤·탐색)이라, 인트로는 건너뛰기 버튼이나 영상이 끝날 때만 닫힌다.
 export default function IntroVideo({ onDone, autoStart = false }: IntroVideoProps) {
