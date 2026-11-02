@@ -2,6 +2,238 @@ import type { StudyNote } from '../notes'
 
 // Front 공부 노트 — 노션 학습노트 > 학습 폴더 > 프론트엔드, AI와 학습(화면 쪽)
 export const FRONT_NOTES: StudyNote[] = [
+  // ── React (같은 날짜는 위에 적은 순서대로 보이므로 최신 편부터) ──
+  {
+    slug: 'fe-router-cors-redux',
+    area: 'Front',
+    course: 'React',
+    lesson: '5편',
+    date: '2026.10.30',
+    title: 'React Router · 레이지 로딩 · CORS 와 프록시 · Redux',
+    summary: 'React Router 는 URL 과 화면을 맞추고, 중첩 라우트는 부모 안의 <Outlet /> 자리에 자식 화면을 끼운다. CORS 는 브라우저가 거는 제한이라 프록시로 피해 가고, Redux 는 지금 Redux Toolkit 으로 쓴다.',
+    points: [
+      'React Router v8 에서 react-router-dom 패키지가 없어졌다 — npm i react-router',
+      '오리진은 같은 컴퓨터가 아니라 프로토콜 + 도메인 + 포트 — 5173 과 8000 은 다른 오리진',
+      'CORS 에러가 나도 요청은 서버에 도착했고 응답도 나갔다 — 막은 건 브라우저',
+    ],
+    learned: [
+      {
+        title: '라우터',
+        items: [
+          'index 라우트는 부모 경로까지만 맞았을 때 <Outlet /> 에 넣을 기본 자식 — 없으면 그 자리가 빈다',
+          '"어떤 대상인가"(강의 7번)는 경로 파라미터(useParams), "어떻게 보여 줄까"(정렬 · 필터)는 검색 파라미터(useSearchParams)',
+          '레이지 로딩은 빌드를 덜 하는 게 아니라 페이지별 파일로 쪼개 두고, 들어가는 순간 그 파일만 내려받는 것',
+        ],
+      },
+      {
+        title: 'HTTP · CORS',
+        items: [
+          '프록시는 브라우저가 같은 오리진(5173)에만 요청하고, 개발 서버가 8000 에 대신 전달 — 서버끼리는 CORS 가 없다',
+          'Vite server.proxy 는 개발 서버 전용 — 배포에서는 백엔드 CORS 허용이나 리버스 프록시가 따로 필요',
+          'fetch 는 404 · 500 을 에러로 보지 않는다 — res.ok 를 직접 확인해야 하고, axios 는 바로 에러를 던진다',
+        ],
+      },
+      {
+        title: 'Redux',
+        items: [
+          '리듀서를 순수 함수로 뺀 이유 — 화면 없이 테스트하고, 액션을 다시 넣어 과거 시점을 재현(시간 여행)할 수 있어서',
+          'Redux Toolkit 의 createSlice 가 액션 · 리듀서를 한 번에 만들고, 안의 immer 덕분에 고치듯 써도 불변 업데이트가 된다',
+          'counter 액션만 보냈을 때 todos 는 이전과 같은 객체로 남았다 — 바뀐 영역만 새 객체',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '"같은 컴퓨터면 같은 오리진 아닌가?" → 포트가 다르면 다른 오리진이다. 프록시로 온 요청은 서버 로그에 Origin 이 비어 있었다',
+          'useLocation 으로 이동하려 했다 → 읽기 전용이고, 이동은 useNavigate 나 <Link> 로 한다',
+          '해시 라우터면 404 가 안 난다 → 맞지만 URL · 검색 노출에서 손해라, 보통은 호스팅에 index.html 폴백을 설정한다',
+          '책처럼 createStore 와 switch 리듀서를 손으로 짜는 방식은 Redux 팀이 더 이상 권하지 않는다 — thunk 도 따로 설치하지 않는다',
+        ],
+      },
+    ],
+    tags: ['프론트엔드', 'React', 'React Router', 'CORS', 'Redux'],
+    keywords: 'react router v8 outlet index route useparams usesearchparams usenavigate uselocation navlink lazy suspense code splitting hash router fallback cors origin proxy vite server.proxy fetch axios res.ok redux toolkit createslice configurestore thunk saga generator reducer time travel',
+  },
+  {
+    slug: 'fe-hooks-lifecycle-context',
+    area: 'Front',
+    course: 'React',
+    lesson: '4편',
+    date: '2026.10.30',
+    title: '화면 단위 설계 · 함수 컴포넌트와 훅 · 생명주기 · Context',
+    summary: '화면은 시안 → 상태와 액션 → 컴포넌트 분할 순서로 설계한다. Context 는 멀리 있는 자식에게 값을 바로 주는 통로일 뿐, 상태 관리 라이브러리는 아니다.',
+    points: [
+      '마운트 순서는 렌더링 → DOM 반영 → useLayoutEffect → 화면 그리기 → useEffect',
+      '레이지 초기화는 비동기가 아니다 — 마운트 때 한 번만 부르는 것 (일반 초기화 4번, 레이지 1번 실행)',
+      'state 는 다시 렌더링돼도 유지된다 — 초기화되는 건 일반 변수, ref 는 기억하지만 바꿔도 다시 그리지 않는다',
+    ],
+    learned: [
+      {
+        title: '설계',
+        items: [
+          'IA 의 화면 정보는 상태 후보, 유저플로우의 행동은 액션, 시안에서 반복되는 덩어리는 컴포넌트 후보가 된다',
+          '따로 바뀌는 상태는 나누고, 항상 같이 바뀌는 상태(x, y)는 하나로 묶는다',
+          'useReducer 의 Action 타입이 곧 유저플로우의 행동 목록 — 바꾸는 로직은 컴포넌트 밖 순수 함수에 모인다',
+        ],
+      },
+      {
+        title: '훅',
+        items: [
+          'useEffect 하나가 마운트 · 업데이트 · 언마운트를 맡는다 — 클린업은 언마운트 때와 다시 실행되기 직전에 돈다',
+          '클린업을 빼면 컴포넌트가 사라져도 타이머가 계속 돌았다(메모리 누수)',
+          'useMemo 는 결과값, useCallback 은 함수 자체를 캐싱 — 커스텀 훅은 로직을 나누는 것이지 상태를 나누는 게 아니다',
+        ],
+      },
+      {
+        title: 'Context',
+        items: [
+          'Provider 가 감싼 범위에만 값을 방송하고, 필요한 컴포넌트만 받아 쓴다',
+          '값이 바뀌면 그 Context 를 쓰는 컴포넌트는 전부 다시 렌더링 — 테마 · 로그인 사용자처럼 가끔 바뀌는 값에 맞다',
+          '자주 바뀌고 여러 곳에서 쓰는 값(장바구니)은 골라 구독할 수 있는 Zustand · Redux 쪽이 낫다',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '"다시 렌더링되면 state 가 리셋된다"고 알았다 → 리셋되는 건 일반 변수였다. ref 2번 누른 뒤 state 를 누르니 ref=2, plain=0',
+          '책의 마운트 순서는 useLayoutEffect 가 DOM 반영보다 앞이었다 → 실제로는 DOM 반영이 먼저라 useLayoutEffect 안에서 글자를 읽을 수 있었다',
+          '"공통 로직은 커스텀 훅이면 되지 HOC 가 왜 필요하지?" → 훅은 컴포넌트 안에서 돌아서 렌더링 자체를 건너뛸 수는 없다. 그게 memo(HOC)의 몫',
+          '클래스 컴포넌트를 고르는 기준은 익숙함이 아니다 — 지금은 레거시이고, 남은 쓰임은 에러 바운더리 정도',
+        ],
+      },
+    ],
+    tags: ['프론트엔드', 'React', '훅', 'Context'],
+    keywords: 'react hooks usestate useeffect uselayouteffect usereducer useref usememo usecallback custom hook lazy initialization mount unmount cleanup lifecycle context provider use hoc memo class component error boundary thinking in react',
+  },
+  {
+    slug: 'fe-state-immutability',
+    area: 'Front',
+    course: 'React',
+    lesson: '3편',
+    date: '2026.10.30',
+    title: '상태와 불변성 · 스타일링 · 이벤트 · 폼 입력',
+    summary: '상태는 그걸 쓰는 컴포넌트들의 가장 가까운 공통 부모에 두고, 직접 고치지 않는다. 바뀐 값까지 가는 길에 있는 객체만 새로 만들어야 React 가 주소 비교 한 번으로 변화를 알아차린다.',
+    points: [
+      'push 후 같은 배열로 setState 하면 화면이 안 바뀌다가, 다른 버튼을 누르자 숨어 있던 값이 한꺼번에 나왔다 (A → A,X,X,O)',
+      'React 19 에서 함수 컴포넌트의 PropTypes 검사가 없어졌다 — props 타입은 TypeScript, 외부 데이터는 zod',
+      '제어 · 비제어는 "입력 도중에 그 값이 필요한가"로 고른다',
+    ],
+    learned: [
+      {
+        title: '상태와 불변성',
+        items: [
+          '다른 값으로 계산할 수 있는 값은 state 로 두지 않는다 — 따로 두면 둘이 어긋난다',
+          'React 는 안을 다 열어 보는 깊은 비교 대신 주소만 보는 얕은 비교를 한다',
+          '경로 복사: 바뀐 값을 감싼 객체들만 새로 만들고 나머지는 공유 — 깊은 복사는 안 바뀐 곳까지 주소가 바뀌어 memo 가 무의미해진다',
+        ],
+      },
+      {
+        title: '스타일링 · 이벤트',
+        items: [
+          'CSS 모듈은 클래스 이름에 고유값을 붙여 충돌을 막는다(.title → _title_nc2zs_2) — Tailwind 와는 다른 방식',
+          'onClick={handle()} 은 그리는 순간 실행된다 — 함수를 넘기거나 () => handle(id) 로 감싼다',
+          '<MyButton onClick> 은 이벤트가 아니라 이름이 onClick 인 prop — 안쪽 <button> 에 넘겨야 동작했다',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '"경로를 루트로 거슬러 올라가며 새로 만든다"가 헷갈렸다 → 새로 만들어지는 객체를 설명한 말이고, 코드는 위에서 아래로 쓴다',
+          '"이벤트 아규먼트"를 useState 의 첫 인자로 알았다 → 이벤트 핸들러가 받는 첫 인자 e 다',
+          '컨테이너 / 표현 컴포넌트는 소개한 사람도 2019년에 더 이상 권하지 않는다 — 로직은 커스텀 훅으로 뺀다',
+          '책은 "비제어는 꼭 필요할 때만"이라 했지만, 비제어는 글자마다 다시 그리지 않아 오히려 빠르다 — React 19 form action 이 FormData 를 바로 넘겨준다',
+        ],
+      },
+    ],
+    tags: ['프론트엔드', 'React', '불변성', '폼'],
+    keywords: 'react state immutability shallow compare object.is structural sharing immer spread props mutation css modules tailwind sass styled-components proptypes defaultprops zod synthetic event controlled uncontrolled form action formdata container presentational custom hook',
+  },
+  {
+    slug: 'fe-es6-typescript-jsx',
+    area: 'Front',
+    course: 'React',
+    lesson: '2편',
+    date: '2026.10.30',
+    title: 'ES6+ · TypeScript 기초와 JSX · props · 리스트 렌더링',
+    summary: 'React 코드는 ES6+ 문법과 TypeScript 타입 위에서 쓴다. JSX 의 {} 에는 표현식만 들어가고 문자열은 자동으로 이스케이프된다. 목록은 항목 컴포넌트로 쪼개고 바뀌지 않는 key 를 준다.',
+    points: [
+      'async/await 는 Promise 를 대체한 게 아니라 Promise 위에 올린 문법 — 동시에 기다리려면 Promise.all',
+      'enum 대신 리터럴 유니언 — Vite 8 react-ts 템플릿은 enum 을 막는다',
+      '쪼개기만 해서는 렌더링이 줄지 않는다 — memo 없이 9번, memo 를 붙이니 3번',
+    ],
+    learned: [
+      {
+        title: 'ES6+ · TypeScript',
+        items: [
+          '화살표 함수는 자기 this 가 없다 — JS 클래스 메서드를 떼어 부르면 this 가 사라지는 게 파이썬 self 와 다른 점',
+          'type 은 유니언 · 별칭, interface 는 선언 병합 · extends — 프로젝트 안에서 한 규칙으로 통일하는 게 먼저',
+          '절대 경로 @/ 는 tsconfig paths 와 vite.config 두 곳 다 설정해야 한다 — 하나만 하면 에디터나 실행 중 한쪽이 깨진다',
+        ],
+      },
+      {
+        title: 'JSX · 렌더링',
+        items: [
+          '{} 안의 문자열은 이스케이프돼서 <img onerror> 같은 코드가 글자로 찍힌다 — dangerouslySetInnerHTML 만 예외',
+          'key 는 형제 사이에서 고유하고 바뀌지 않는 값 — 순서가 바뀌는 목록에 index 를 쓰면 입력값이 엉뚱한 줄에 남는다',
+          '렌더링은 컴포넌트 함수를 불러 화면 모양을 계산하는 것, 실제 DOM 을 바꾸는 건 그다음 커밋',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '"요즘은 Promise 안 쓰고 async/await 만 쓴다"고 알았다 → async 함수는 항상 Promise 를 돌려준다',
+          '인터섹션 & 를 합집합처럼 느꼈다 → 속성은 합쳐지지만 값의 범위로는 교집합이라 이름이 그렇다',
+          '책의 "세분화하면 렌더링 최적화"는 저절로 되지 않는다 — 부모가 다시 그려지면 자식은 props 가 같아도 다시 그려진다',
+          '{count && ...} 는 count 가 0 이면 화면에 0 이 찍힌다 → count > 0 && 로 쓴다',
+        ],
+      },
+    ],
+    tags: ['프론트엔드', 'React', 'TypeScript', 'JavaScript'],
+    keywords: 'es6 es2015 destructuring spread rest arrow function this promise async await promise.all class typescript type interface generic union intersection enum erasablesyntaxonly unknown any literal union path alias tsconfig paths jsx escape xss fragment props key memo rerender commit',
+  },
+  {
+    slug: 'fe-react-modules-bundling',
+    area: 'Front',
+    course: 'React',
+    lesson: '1편',
+    date: '2026.10.30',
+    title: 'React 시작하기 — 단방향 흐름 · 모듈 · 번들링 · 호이스팅',
+    summary: 'React 는 상태가 바뀌면 화면을 다시 그리고, 데이터는 부모 → 자식 한 방향으로만 흐른다. 컴포넌트가 늘면 파일(모듈)로 쪼개고, 번들러가 import 관계를 따라가 몇 개 파일로 묶는다.',
+    points: [
+      '가상 DOM 이라서 무조건 빠른 건 아니다 — 비교하는 것도 비용이고, 장점은 선언형으로 써도 충분히 빠르다는 것',
+      'Vite · Next.js 는 번들러가 아니라 번들러를 품은 도구 (Vite 8 은 Rolldown, Next.js 16 은 Turbopack)',
+      '호이스팅은 코드를 옮기는 게 아니라 실행 전에 선언을 먼저 등록하는 것 — let · const 도 등록되지만 TDZ 에 걸린다',
+    ],
+    learned: [
+      {
+        title: '모듈 · 번들링',
+        items: [
+          '번들러가 하는 일 — 합치기 · 안 쓰는 export 빼기(트리 셰이킹) · JSX/TS 변환 · 압축과 파일명 해시',
+          '파일 3개를 묶었더니 1개가 되고, 아무도 안 쓰는 unused 함수는 빠졌다',
+          'import 는 파일 어디에 써도 먼저 처리된다 — 그래서 모듈 맨 위에 부작용 코드를 두지 않는다',
+        ],
+      },
+      {
+        title: 'npm · 도구',
+        items: [
+          '--save 는 npm 5 부터 기본값, 개발 도구는 -D, 전역 -g 대신 npx',
+          'create-react-app 은 2025년 2월 지원이 끝났다 — npm create vite@latest 나 create-next-app',
+          'lazy(() => import()) 한 줄로 About 이 별도 파일로 나뉘었다(코드 스플리팅)',
+        ],
+      },
+      {
+        title: '막힌 것 · 바로잡은 것',
+        items: [
+          '"번들링이 뭘 묶는다는 거지?" → 내가 쪼갠 JS · CSS 파일과 node_modules 의 라이브러리를 의존성 순서대로 묶는다',
+          '"호이스팅 = 선언을 맨 위로 옮기는 것"은 비유일 뿐 — 엔진은 코드를 옮기지 않고, 공식 단계 이름도 아니다',
+          'var 는 중복 선언이 되고 let 은 안 된다 → let 중복은 파싱 단계 SyntaxError 라 첫 줄조차 실행되지 않았다',
+          '책의 "단방향 데이터 바인딩"은 공식 문서에서 "단방향 데이터 흐름"이라고 부른다',
+        ],
+      },
+    ],
+    tags: ['프론트엔드', 'React', '번들링', 'JavaScript'],
+    keywords: 'react one-way data flow virtual dom reconciliation module dependency bundler bundling webpack rollup rolldown esbuild turbopack vite next.js tree shaking code splitting npm install save-dev npx npm ci hoisting var let const tdz esm commonjs barrel file',
+  },
   // ── 포트폴리오 검색 (번외) ──
   {
     slug: 'fe-search-algorithm',

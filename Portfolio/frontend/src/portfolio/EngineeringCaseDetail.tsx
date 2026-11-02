@@ -139,7 +139,7 @@ function CodePanel({ samples, tall }: { samples: CodeSample[]; tall: boolean }) 
             {({ tokens, getLineProps, getTokenProps }) => (
               <pre
                 lang="en"
-                className={`overflow-auto py-4 font-mono text-13 tracking-normal ${
+                className={`scrollbar-dark overflow-auto py-4 font-mono text-13 tracking-normal ${
                   tall ? 'max-h-[60svh] lg:max-h-[calc(100svh-220px)]' : 'max-h-[60svh] lg:max-h-120'
                 }`}
               >
