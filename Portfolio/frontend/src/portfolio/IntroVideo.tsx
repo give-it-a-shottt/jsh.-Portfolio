@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import introVideo from './assets/intro/intro-qna.mp4'
+import introVideo from './assets/intro/intro-paper.mp4'
 import './IntroVideo.css'
 
 interface IntroVideoProps {
