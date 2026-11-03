@@ -197,7 +197,6 @@ export default function StudyDetail({ slug }: StudyDetailProps) {
               <h2 id="note-learned-title" className="text-24 font-semibold text-main">
                 배운 것
               </h2>
-              <p className="mt-1.5 text-14 text-sub-weak">주제별로 묶어 정리했어요.</p>
               {learned.map(({ title, items }, i) => (
                 <section key={title} id={`note-learned-${i}`} aria-labelledby={`note-learned-${i}-title`} className="mt-6 scroll-mt-6">
                   <h3 id={`note-learned-${i}-title`} className="flex items-center gap-2.5 text-18 font-semibold break-keep text-main">

@@ -11,12 +11,24 @@ const CONCEPT_COUNT = NOTES.reduce(
   (sum, note) => sum + visibleLearned(note).reduce((count, group) => count + group.items.length, 0),
   0,
 )
-const STATS = [
-  { label: '노트', value: NOTES.length },
-  { label: '개념 묶음', value: GROUP_COUNT },
-  { label: '정리한 개념', value: CONCEPT_COUNT },
-  { label: '공부한 날', value: new Set(NOTES.map((note) => note.date)).size },
-]
+// '공부한 날'은 공부를 본격적으로 시작한 날부터 오늘까지 지난 날수(시작일 포함) — 사용자 결정. 노트를 올린 날 수가 아니다
+// 날짜만 비교하려고 둘 다 UTC 자정으로 맞춘다 — 서머타임이 끼어도 하루가 23·25시간으로 어긋나지 않는다
+const STUDY_START_UTC = Date.UTC(2026, 8, 1) // 2026-09-01 (월은 0부터 세서 8 = 9월)
+const MS_PER_DAY = 24 * 60 * 60 * 1000
+
+function daysSinceStart(today = new Date()) {
+  const end = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
+  return Math.max(0, Math.floor((end - STUDY_START_UTC) / MS_PER_DAY) + 1)
+}
+
+function stats() {
+  return [
+    { label: '노트', value: NOTES.length },
+    { label: '개념 묶음', value: GROUP_COUNT },
+    { label: '정리한 개념', value: CONCEPT_COUNT },
+    { label: '공부한 날', value: daysSinceStart() },
+  ]
+}
 
 /** '다른 강의' 한 줄에 붙일 대표 낱말 — 노트 태그에서 많이 나온 순. 강의 이름·분야처럼 뻔한 태그는 뺀다 */
 function courseKeywords({ area, course, notes }: StudyCourse) {
@@ -146,7 +158,7 @@ function Overview() {
 
       <section aria-label="공부 기록" className="flex flex-col gap-8 rounded-card border border-regular p-6 sm:flex-row sm:items-center sm:gap-10 sm:px-7">
         <dl className="grid shrink-0 grid-cols-2 gap-x-10 gap-y-5">
-          {STATS.map(({ label, value }) => (
+          {stats().map(({ label, value }) => (
             <div key={label} className="flex w-24 flex-col-reverse gap-0.5">
               <dt className="text-13 text-sub-weak">{label}</dt>
               <dd className="text-28 font-semibold text-main tabular-nums">{value}</dd>
