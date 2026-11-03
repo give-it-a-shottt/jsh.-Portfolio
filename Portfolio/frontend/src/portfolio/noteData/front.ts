@@ -302,6 +302,58 @@ export const FRONT_NOTES: StudyNote[] = [
   },
   // ── AI와 학습 (미니 인프런 · Nightly 풀스택) ──
   {
+    slug: 'fe-ssr-dynamic-route',
+    area: 'Front',
+    course: '미니 인프런',
+    lesson: '12회차',
+    date: '2026.11.03',
+    title: '강의 상세 SSR — 동적 라우트 [id] · fetch 상태 코드 확인',
+    summary: 'pages/courses/[id].tsx 파일 하나가 /courses/1, /courses/2 … 를 모두 받고, 주소의 그 자리 값은 문자열로 context.params.id 에 담긴다. fetch 는 응답이 오기만 하면 404 든 500 이든 성공으로 보니, 상태 코드를 직접 확인해 나눠야 한다.',
+    points: [
+      'fetch 는 연결조차 못 할 때(ECONNREFUSED)만 에러를 던지고, 404 · 500 처럼 응답이 오면 조용히 통과시킨다 — 확인 없이 두면 빈 화면이 200 OK 로 나간다',
+      '400번대(없는 강의 404 · 숫자 아닌 id 422)는 { notFound: true }, 그 밖의 실패는 throw(500) — "없음"과 "고장"을 같은 화면으로 섞지 않는다',
+      '파일 이름에는 타입을 적는 자리가 없다 — Next.js 는 /courses/abc 도 받으니 거르는 건 우리(또는 FastAPI 의 course_id: int) 몫',
+    ],
+    learned: [
+      {
+        title: '동적 라우트',
+        items: [
+          '강의마다 파일을 만들면 강의가 늘 때마다 코드를 고치고 다시 배포해야 한다 — 대괄호 파일 하나로 대신한다',
+          '괄호는 프레임워크마다 다르다 — Next.js 는 [id], FastAPI 는 {course_id}, App Router 의 (이름)은 주소에 안 나오는 라우트 그룹',
+          'context.params 의 열쇠 이름은 대괄호 안 글자다 — [courseId].tsx 로 바꾸면 params.id 는 undefined',
+          'pages/courses.tsx(목록)와 pages/courses/[id].tsx(상세)는 함께 있어도 된다',
+        ],
+      },
+      {
+        title: '주소 값과 템플릿 리터럴',
+        items: [
+          '주소는 브라우저가 보낸 요청에 담긴 글자라 /courses/1 의 id 는 숫자가 아니라 문자열 "1"',
+          '백틱 + ${id} 를 써야 값이 들어간다 — 큰따옴표나 $ 없는 백틱 안의 {id}는 그냥 글자라 FastAPI 가 422',
+          '순서는 id 꺼내기 → fetch → 상태 코드 확인 → res.json() → props — 주소 확인, 받기, 쪽지 확인, 뜯기, 건네기',
+        ],
+      },
+      {
+        title: '서버에서 일어나는 일',
+        items: [
+          'getServerSideProps 안의 console.log 는 브라우저 콘솔이 아니라 npm run dev 터미널에 찍힌다',
+          'Pages Router 컴포넌트는 서버 컴포넌트가 아니다 — 서버에서 한 번 그리고 브라우저에서 다시 실행해 이벤트를 붙인다(하이드레이션)',
+          'Ctrl+U 의 <!-- --> 는 React 가 글자 조각 경계에 끼운 표시라 하이드레이션 때 서버 HTML 과 맞춰 본다',
+          '이미 앱 안에서 이동할 때는 페이지 HTML 대신 /_next/data/…json 으로 props 만 받아 온다',
+        ],
+      },
+      {
+        title: '앞으로',
+        items: [
+          '로그인이 붙으면 401 은 로그인 페이지로 redirect, 403 은 "권한 없음" — 400번대를 모두 404 로 묶는 규칙은 공개 상세 페이지에서만 맞다',
+          '자주 안 바뀌는 상세는 getStaticPaths + revalidate(ISR)로 미리 만들어 DB 부담을 줄일 수 있다',
+          'App Router 에서는 app/courses/[id]/page.tsx 에서 await params 로 꺼내고 notFound() 를 부른다',
+        ],
+      },
+    ],
+    tags: ['프론트엔드', 'Next.js', 'SSR', '동적 라우트', '에러 처리'],
+    keywords: 'next.js pages router dynamic route [id] getserversideprops context params string template literal backtick fetch res.ok res.status notfound throw 404 422 500 econnrefused hydration server component app router await params notfound() getstaticpaths isr revalidate console.log terminal 미니 인프런',
+  },
+  {
     slug: 'fe-ssr-getserversideprops',
     area: 'Front',
     course: '미니 인프런',

@@ -1108,6 +1108,727 @@ export const BACK_NOTES: StudyNote[] = [
     keywords:
       "algorithm hash dict set defaultdict 오픈채팅방 신고 결과 받기 kakao 카카오 중복 제거 코테 코딩테스트 프로그래머스",
   },
+  // ── FastAPI (2026.08.18부터 하루 한 편 — 노션 00~15 = 1~16일차, 날짜는 사용자가 알려 준 대로) ──
+  {
+    slug: 'be-fastapi-intro',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '1일차',
+    date: '2026.08.18',
+    title: 'FastAPI 시작 — 프레임워크 · ASGI · Uvicorn · 자동 문서',
+    summary: 'FastAPI 는 Starlette(웹 처리) + Pydantic(검증) 위에 만든 API 프레임워크다. 타입 힌트를 읽어 검증과 문서(/docs)를 자동으로 만들고, 실제 실행은 ASGI 서버 Uvicorn 이 맡는다.',
+    points: [
+      '책임이 나뉜다 — Uvicorn 은 포트를 열고 요청을 받고, FastAPI 는 URL 과 함수를 잇고, Pydantic 은 값을 검사한다',
+      '라이브러리는 내가 불러 쓰고, 프레임워크는 내 함수를 불러 준다(제어의 역전)',
+      'Swagger UI(/docs)와 ReDoc(/redoc)은 같은 /openapi.json 을 다르게 그린 화면일 뿐이다',
+    ],
+    learned: [
+      {
+        title: '웹서비스와 프레임워크',
+        items: [
+          '정적 웹 → 동적 웹 → MVC → API 중심으로 발전했다. React + FastAPI 는 서버가 JSON 만 주는 4세대 구조',
+          '마이크로 프레임워크는 라우팅 · 요청 · 응답만 두고 DB · 인증은 필요할 때 붙인다 — 마이크로서비스(MSA)와는 다른 말',
+          'Node.js 는 프레임워크가 아니라 자바스크립트 실행 환경이다. 웹 프레임워크는 Express · NestJS',
+        ],
+      },
+      {
+        title: 'ASGI 와 Uvicorn',
+        items: [
+          'ASGI 는 서버와 앱이 대화하는 규격, Uvicorn 은 그 규격을 따르는 서버 — 콘센트 규격과 멀티탭 관계',
+          'uvicorn main:app 의 app 은 파일 안 FastAPI() 객체의 변수 이름이다. 이름이 다르면 "Attribute app not found"',
+          'WSGI(Flask · Django)는 동기 전용, ASGI 는 async 와 웹소켓까지 지원한다',
+        ],
+      },
+      {
+        title: '실행과 배포',
+        items: [
+          '요즘은 pip install "fastapi[standard]" 로 uvicorn · CLI 를 한 번에 받고 fastapi dev(개발) · fastapi run(배포)으로 띄운다',
+          '--reload 는 개발 전용, 배포는 워커 여러 개로 돌린다. 127.0.0.1 은 내 컴퓨터만, 0.0.0.0 은 외부 접속까지 받는다',
+          '프론트는 /openapi.json 으로 TypeScript 타입을 자동 생성할 수 있다 — 타입 힌트 = 문서 = 계약서',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'ASGI', 'Uvicorn', 'Swagger'],
+    keywords: 'fastapi starlette pydantic asgi wsgi uvicorn swagger redoc openapi docs framework library ioc 제어의 역전 microframework flask django fastapi dev run reload 0.0.0.0 127.0.0.1 uv',
+  },
+  {
+    slug: 'be-fastapi-routing',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '2일차',
+    date: '2026.08.19',
+    title: '라우팅 — 경로 매개변수 · 쿼리 매개변수 · 기본값 · 경로 순서',
+    summary: '라우팅은 "이 메서드 + 이 URL 이면 이 함수"라는 연결표다. 경로 매개변수는 무엇을 가리킬지, 쿼리 매개변수는 어떻게 보여 줄지를 정한다.',
+    points: [
+      '함수 인자 이름이 경로의 {이름}과 같으면 경로 매개변수, 경로에 없는 단순 타입이면 쿼리 매개변수다',
+      '타입 힌트가 없으면 URL 값은 문자열 그대로 들어온다 — /items/5 는 "5"',
+      '라우트는 쓴 순서대로 비교한다 — 고정 경로(/users/me)를 변수 경로(/users/{id})보다 위에 둔다',
+    ],
+    learned: [
+      {
+        title: '경로와 쿼리',
+        items: [
+          '상품 5번처럼 자원 자체는 경로(/items/5), 페이지 · 정렬 · 필터처럼 보여 주는 방식은 쿼리(?skip=0&limit=10)',
+          '경로 매개변수는 항상 필수, 쿼리는 기본값을 주면 선택이 된다',
+          '소유 관계는 중첩 경로로 드러낸다(/users/7/items) — 2단계 정도까지만',
+        ],
+      },
+      {
+        title: '페이지네이션',
+        items: [
+          '3페이지(페이지당 10개)는 skip = (3 - 1) × 10 = 20, limit = 10 — DB 로는 OFFSET 20 LIMIT 10',
+          'OFFSET 이 커질수록 느려져서 무한 스크롤은 "마지막으로 본 id 다음부터" 커서 방식을 쓴다',
+          'Annotated[int, Query(ge=1, le=100)] 처럼 범위를 걸어 limit=100000 같은 요청을 입구에서 막는다',
+        ],
+      },
+      {
+        title: 'URL 설계',
+        items: [
+          'URL 에는 명사(복수형), 동사는 HTTP 메서드가 맡는다 — /getItems 대신 GET /items',
+          '같은 URL 이라도 메서드가 다르면 다른 라우트다',
+          '/items 를 /items/ 로 등록하면 끝 슬래시 없는 요청은 307 로 옮겨진다 — 프론트 fetch 에서 헷갈리는 지점',
+          '라우트가 많아지면 APIRouter(prefix="/items")로 파일을 나누고 main 에서 include_router 로 합친다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', '라우팅', 'REST', '페이지네이션'],
+    keywords: 'fastapi routing path parameter query parameter skip limit pagination offset cursor route order users me annotated query path ge le apirouter include_router prefix rest 307 redirect trailing slash',
+  },
+  {
+    slug: 'be-fastapi-type-hints',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '3일차',
+    date: '2026.08.20',
+    title: '타입 힌트 — 자동 변환 · 검증 · Query · 컨테이너 타입 · Optional',
+    summary: 'FastAPI 에서 타입 힌트는 장식이 아니라 명령이다. item_id: int 한 줄이 변환("5" → 5) · 검증("fun" → 422) · 문서화를 한꺼번에 한다.',
+    points: [
+      '파이썬은 타입 힌트를 무시한다 — FastAPI 가 함수 서명을 읽어 두었다가 Pydantic 으로 변환 · 검증한 뒤 함수를 부른다',
+      '단순 타입은 쿼리, list · dict · 모델은 본문(body)이 기본 — 쿼리로 리스트를 받으려면 Query()를 붙인다',
+      'str | None 은 "None 도 된다"일 뿐 선택이 아니다. 선택으로 만드는 건 기본값(= None)',
+    ],
+    learned: [
+      {
+        title: '변환과 검증',
+        items: [
+          '검증은 함수에 들어가기 전에 일어나서, 잘못된 값은 내 함수까지 오지 않고 422 로 돌아간다',
+          'Pydantic 기본은 바꿀 수 있으면 바꿔 준다 — "123" → 123 은 통과, "fun" · "1.5" 는 422. 막고 싶으면 strict 모드',
+          'bool 은 true · 1 · yes · on 을 True, false · 0 · no · off 를 False 로 받는다',
+        ],
+      },
+      {
+        title: '어디서 꺼내나',
+        items: [
+          'Query() 없이 q: list[int] = [] 로 쓰면 에러 없이 본문에서 찾아서 ?q=1&q=2 를 보내도 빈 리스트 — 조용한 함정',
+          'Annotated[list[int], Query()] = [] 로 쓰면 같은 이름 쿼리 여러 개를 [1, 2, 3] 으로 모아 준다',
+          '422 응답의 loc 는 어디서(path · query · body) 어떤 값이, msg 는 왜, input 은 실제로 보낸 값',
+        ],
+      },
+      {
+        title: '요즘 표기',
+        items: [
+          'Python 3.9+ 는 List · Dict 대신 list[int] · dict[str, int], 3.10+ 는 Union · Optional 대신 int | str · str | None',
+          'dict[str, int] 본문은 필드 이름을 검사하지 못한다 — 실무에서는 Pydantic 모델로 양식을 정한다',
+          '실행 전 타입 검사는 mypy · pyright 같은 도구가 맡는다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', '타입 힌트', 'Pydantic', '422'],
+    keywords: 'fastapi type hint annotation int str bool list dict optional union none default query annotated 422 unprocessable loc msg input lax strict pydantic mypy pyright __annotations__',
+  },
+  {
+    slug: 'be-fastapi-http-methods',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '4일차',
+    date: '2026.08.21',
+    title: 'HTTP 메서드 — GET · POST · PUT · PATCH · DELETE · 상태 코드 · 멱등성',
+    summary: 'URL 은 명사(무엇을), HTTP 메서드는 동사(어떻게)다. 같은 /items/1 이라도 GET 은 읽기, PUT 은 통째 바꾸기, DELETE 는 지우기이고, 결과는 상태 코드로 알린다.',
+    points: [
+      '멱등 — 같은 요청을 여러 번 보내도 서버 상태가 같다. PUT · DELETE 는 멱등, POST 는 아니다',
+      '401 은 누구인지 모름(인증 안 됨), 403 은 누군지 알지만 권한 없음',
+      '생성은 201, 삭제는 본문 없는 204 — 4xx 는 클라이언트 잘못, 5xx 는 서버 잘못',
+    ],
+    learned: [
+      {
+        title: '메서드',
+        items: [
+          'PUT 은 전체 교체, PATCH 는 보낸 필드만 수정 — 닉네임만 바꾸면 PATCH',
+          'GET 은 서버를 바꾸지 않는 안전한 메서드라 본문을 넣지 않고, 조건은 쿼리로 보낸다',
+          '로그아웃 · 주문 취소처럼 CRUD 에 안 맞는 행동은 POST(/orders/1/cancel). 상태를 바꾸는 일을 GET 으로 만들지 않는다',
+        ],
+      },
+      {
+        title: '멱등성',
+        items: [
+          '엘리베이터 5층 버튼은 여러 번 눌러도 5층(멱등), 자판기 구매는 누를 때마다 하나씩(멱등 아님)',
+          '응답을 못 받아 다시 보낼 때 POST 는 주문이 두 번 생길 수 있다 — 결제는 Idempotency-Key 헤더로 중복을 막는다',
+          'DELETE 를 두 번 하면 두 번째는 404 여도 "없는 상태"는 같아서 멱등이다 — 기준은 응답 코드가 아니라 서버 상태',
+        ],
+      },
+      {
+        title: '상태 코드',
+        items: [
+          '405 는 경로는 있는데 그 메서드는 안 받음, 409 는 이미 있는 이메일 같은 충돌, 429 는 요청 횟수 초과',
+          '307 · 308 은 메서드를 유지한 채 이동 — FastAPI 의 끝 슬래시 이동이 307',
+          'curl 의 -d 는 기본이 form 형식이라 JSON 을 보낼 때는 Content-Type: application/json 헤더가 필요하다(없으면 422)',
+        ],
+      },
+      {
+        title: '요청 모델 나누기',
+        items: [
+          '생성용 모델은 필드 필수, 수정용 모델은 필드 전부 선택(None 기본값)으로 따로 만든다',
+          'PATCH 는 model_dump(exclude_unset=True) 로 실제로 보낸 필드만 반영한다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'HTTP', 'REST', '멱등성'],
+    keywords: 'fastapi http method get post put patch delete crud status code 200 201 204 301 302 307 308 400 401 403 404 405 409 422 429 500 503 idempotent idempotency key safe curl content-type exclude_unset',
+  },
+  {
+    slug: 'be-fastapi-pydantic',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '5일차',
+    date: '2026.08.22',
+    title: 'Pydantic — BaseModel · 검증 · 직렬화 · Field 제약 · 중첩 모델 · v2 문법',
+    summary: 'Pydantic 모델은 데이터의 주문서 양식이다. 필드 이름 · 타입 · 제약을 적어 두면 들어올 때 검증과 역직렬화, 나갈 때 직렬화가 자동으로 된다.',
+    points: [
+      '역직렬화는 JSON 글자 → 파이썬 객체, 직렬화는 객체 → JSON — Pydantic 은 역직렬화하면서 검증도 한다',
+      '모델에 없는 필드는 에러 없이 조용히 버려진다. 막으려면 ConfigDict(extra="forbid")',
+      '공통 필드는 Base 에 두고 UserCreate(+ password) · UserRead(+ id)로 나눠 비밀번호가 응답으로 새지 않게 한다',
+    ],
+    learned: [
+      {
+        title: 'Field 제약',
+        items: [
+          'min_length · max_length(길이), gt · ge · lt · le(범위), pattern(정규식), description(문서 설명)을 필드에 붙인다',
+          'Field(...) 의 ... 는 기본값 없음 = 필수',
+          'alias 를 주면 클라이언트는 별칭으로만 보내야 한다 — 파이썬 이름으로 보내면 무시되고 기본값이 들어간다. 둘 다 받으려면 populate_by_name=True',
+        ],
+      },
+      {
+        title: '중첩 모델과 Union',
+        items: [
+          'Image 모델을 따로 두고 image: Image 로 포함하면 상품 · 게시글 · 프로필이 같은 규칙을 재사용한다',
+          '중첩 필드의 에러 위치는 ["body", "image", "url"] 처럼 끝까지 알려 준다. URL 형식 검사는 HttpUrl',
+          'v2 의 int | str 은 들어온 값과 정확히 같은 타입을 먼저 고른다 — "1" 은 문자열 그대로',
+        ],
+      },
+      {
+        title: 'v1 → v2 문법',
+        items: [
+          '.dict() → model_dump(), .json() → model_dump_json(), parse_obj → model_validate',
+          'orm_mode = True → ConfigDict(from_attributes=True), @validator → @field_validator',
+          'bool = None 처럼 타입과 기본값이 어긋나면 bool | None = None 으로 쓴다',
+        ],
+      },
+      {
+        title: '타입으로 안 되는 규칙',
+        items: [
+          '@field_validator 는 한 필드를 고치거나 검사하고(앞뒤 공백 제거), @model_validator(mode="after") 는 두 필드를 비교한다(비밀번호 확인)',
+          'DB 를 봐야 하는 규칙(중복 이메일)은 Field 로 못 하고 서비스 로직에서 막는다',
+          '.env 의 DB 주소 · 비밀 키는 pydantic-settings 의 BaseSettings 로 타입 검사까지 하며 읽는다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'Pydantic', '직렬화', '검증'],
+    keywords: 'pydantic basemodel field validation serialization deserialization model_dump model_dump_json model_validate min_length max_length gt ge lt le pattern alias populate_by_name extra forbid nested model httpurl union smart mode field_validator model_validator configdict from_attributes orm_mode pydantic-settings basesettings',
+  },
+  {
+    slug: 'be-fastapi-response-model',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '6일차',
+    date: '2026.08.23',
+    title: '응답 모델 — response_model · 필터링 · Union · List · 반환 타입',
+    summary: '요청 모델이 들어오는 문의 검수원이라면 응답 모델은 나가는 문의 검수원이다. 함수가 무엇을 반환하든 모델에 적힌 필드만 내보내고, 모양이 틀리면 서버 에러로 막는다.',
+    points: [
+      '응답 모델은 허용 목록이다 — DB 에 새 민감 필드가 생겨도 모델에 없으면 자동으로 막힌다',
+      '요청 검증 실패는 422(클라이언트 잘못), 응답 검증 실패는 500(서버가 약속을 어김)',
+      'response_model 과 반환 타입(-> Item)을 둘 다 쓰면 response_model 이 우선한다',
+    ],
+    learned: [
+      {
+        title: '필터링',
+        items: [
+          '함수가 dis_price 같은 내부 필드가 든 dict 를 돌려줘도 response_model=Item 이면 Item 필드만 나간다',
+          'response_model 을 지우면 UserIn 의 password 가 응답에 그대로 노출된다',
+          '함수 안에서 del 로 지우는 건 금지 목록 방식이라 새 필드가 생기면 샌다',
+        ],
+      },
+      {
+        title: '응답 모델 종류',
+        items: [
+          '하나 조회는 Item, 목록은 list[Item], 상황마다 다르면 Cat | Dog',
+          'Cat · Dog 가 둘 다 name 하나뿐이면 클라이언트가 구분 못 한다 — type: Literal["cat"] 같은 구분 필드를 넣는다',
+          'FastAPI 0.89 부터 -> Item 반환 타입만 적어도 똑같이 걸러 준다',
+        ],
+      },
+      {
+        title: '실무 패턴',
+        items: [
+          'UserBase(공통) → UserCreate(+ password) · UserRead(+ id) 상속으로 중복을 줄인다',
+          'response_model_exclude_unset · exclude_none 으로 빈 값을 뺄 수 있지만, 필드가 있다 없다 하면 프론트가 다루기 어렵다',
+          '목록은 { items, total, has_next } 봉투 모델로 주면 나중에 페이지 정보를 붙이기 쉽다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'Pydantic', '응답 모델', '보안'],
+    keywords: 'fastapi response_model return type annotation filter allowlist userin userout usercreate userread inheritance union literal discriminator list 500 responsevalidationerror exclude_unset exclude_none envelope total has_next',
+  },
+  {
+    slug: 'be-fastapi-response-class',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '7일차',
+    date: '2026.08.24',
+    title: '응답 클래스 — JSON · HTML · PlainText · Redirect · Streaming · File',
+    summary: '응답 모델은 내용물의 양식, 응답 클래스는 포장 방식이다. 같은 데이터를 JSON · HTML · 글자 · 리다이렉트 중 무엇에 담을지 정하고, 거기에 맞는 Content-Type 과 상태 코드가 붙는다.',
+    points: [
+      '브라우저는 Content-Type 을 보고 동작한다 — HTML 문자열을 기본(JSON)으로 보내면 따옴표 붙은 글자가 찍힌다',
+      'RedirectResponse 기본은 307(메서드 유지) — 폼 POST 뒤 목록 GET 으로 보낼 때는 303',
+      'Response 객체를 직접 반환하면 response_model 필터링을 건너뛴다 — 민감한 데이터가 그대로 나갈 수 있다',
+    ],
+    learned: [
+      {
+        title: '응답 클래스',
+        items: [
+          'JSONResponse 가 기본이라 response_class=JSONResponse 는 써도 안 써도 같다',
+          'HTMLResponse(text/html)는 템플릿 · 관리자 화면, PlainTextResponse(text/plain)는 헬스 체크 "ok"',
+          'FileResponse 는 다운로드, 사용자가 보낸 파일 이름을 경로에 그대로 넣으면 ../ 경로 조작 공격을 받는다',
+        ],
+      },
+      {
+        title: '리다이렉트',
+        items: [
+          '본문 대신 Location 헤더에 새 주소를 담는다 — curl 은 -L 을 줘야 따라간다',
+          '301 · 308 은 영구, 302 · 307 은 임시. 307 · 308 은 메서드를 유지하고 303 은 항상 GET 으로 바꾼다',
+          'React 같은 SPA 는 fetch 가 리다이렉트를 조용히 따라가서 화면 이동은 프론트 라우터가 맡는다',
+        ],
+      },
+      {
+        title: '스트리밍',
+        items: [
+          'StreamingResponse 는 만들어지는 대로 조금씩 보낸다 — AI 답변이 한 글자씩 나타나는 원리',
+          '브라우저 실시간 수신은 text/event-stream(SSE) 형식을 쓴다',
+          '상태 코드만 바꿀 거면 Response 직접 반환보다 데코레이터 status_code=201 이 깔끔하다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'HTTP', '리다이렉트', '스트리밍'],
+    keywords: 'fastapi response class jsonresponse htmlresponse plaintextresponse redirectresponse streamingresponse fileresponse content-type mime location header 301 302 303 307 308 sse text/event-stream path traversal default_response_class',
+  },
+  {
+    slug: 'be-fastapi-request',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '8일차',
+    date: '2026.08.25',
+    title: '리퀘스트 — HTTP 요청 구조 · Query 옵션 · Body · alias · Header · Cookie',
+    summary: 'HTTP 요청은 Method · URL(경로 + 쿼리) · Headers · Body 네 칸이다. FastAPI 에서는 Path · Query · Header · Cookie · Body 로 어느 칸에서 꺼낼지 지정하고, 같은 자리에 길이 · 범위 · 패턴 규칙을 붙인다.',
+    points: [
+      'HTTP 는 이전 요청을 기억하지 않는다(stateless) — 로그인 상태는 매 요청마다 쿠키나 토큰으로 다시 보낸다',
+      '비밀번호는 쿼리가 아니라 본문으로, 토큰은 Authorization 헤더로 — 쿼리는 브라우저 기록과 서버 로그에 남는다',
+      '본문 인자가 하나면 JSON 전체가 그 인자, 둘 이상이면 JSON 을 인자 이름으로 나눠 보낸다',
+    ],
+    learned: [
+      {
+        title: 'Query 옵션',
+        items: [
+          'min_length · max_length · ge · le · pattern · alias · deprecated · description · examples 를 붙인다',
+          'alias 를 주면 URL 에서는 별칭만 통한다 — ?search= 로 보내야 하고 원래 이름은 무시된다',
+          '기본값은 검증하지 않는다 — 기본값도 규칙에 맞게 정한다',
+          'regex → pattern, example → examples 로 바뀌었다(예전 이름은 deprecated 경고)',
+        ],
+      },
+      {
+        title: '값의 위치 규칙',
+        items: [
+          '경로의 {이름}이면 Path, 단순 타입이면 Query, 모델 · dict 면 Body, Header() · Cookie() 면 헤더 · 쿠키',
+          'user_agent: str = Header() 는 밑줄을 하이픈으로 바꿔 User-Agent 를 찾는다(대소문자 무시)',
+          'Request 객체는 IP · 전체 헤더가 필요할 때만 — 검증과 문서화가 빠진다',
+        ],
+      },
+      {
+        title: 'Annotated 를 쓰는 이유',
+        items: [
+          'q: str = Query(None) 은 기본값 자리에 Query 를 넣어서, FastAPI 밖에서 부르면 기본값이 Query 객체가 된다',
+          'Annotated[str | None, Query(max_length=50)] = None 은 타입 자리에 규칙, 기본값 자리에 진짜 기본값',
+          '폼 · 파일 업로드는 JSON 이 아니라 Form() · UploadFile 로 받는다(python-multipart 필요)',
+          'FastAPI 0.115 부터 쿼리 조건이 많으면 Pydantic 모델 하나로 묶어 받을 수 있다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'HTTP', '요청', 'Annotated'],
+    keywords: 'fastapi request http method url path query header body cookie stateless authorization bearer user-agent alias deprecated pattern regex examples body embed multiple body annotated form file uploadfile python-multipart request client host query model',
+  },
+  {
+    slug: 'be-fastapi-exceptions',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '9일차',
+    date: '2026.08.26',
+    title: '예외 처리 — HTTPException · 커스텀 예외 · 전역 핸들러 · 에러 응답 규격',
+    summary: '예외 처리는 실패도 응답의 일부로 설계하는 것이다. 파이썬 예외를 그대로 두면 500(서버 고장)이 되고, HTTPException 으로 바꾸면 알맞은 상태 코드와 이유(detail)를 알려 줄 수 있다.',
+    points: [
+      'HTTPException 은 return 이 아니라 raise — return 하면 200 에 예외 내용이 본문으로 나가 실패가 성공으로 위장된다',
+      '서비스 로직은 ItemNotFound 같은 도메인 예외만 던지고, @app.exception_handler 가 HTTP 응답으로 바꾼다 — 서비스가 HTTP 를 몰라도 된다',
+      '422 는 형식 · 타입이 틀린 요청(자동 검증), 400 은 형식은 맞지만 비즈니스 규칙 위반',
+    ],
+    learned: [
+      {
+        title: '실패에 맞는 코드',
+        items: [
+          '없는 id 는 404, 남의 글 수정은 403, 로그인 안 함은 401, 이미 가입된 이메일은 409',
+          '실패를 return {"error": ...} 로 주면 200 이라 프론트의 if (!res.ok) 처리가 동작하지 않는다',
+          '음수 막기 같은 단순 범위는 try/except 보다 Path(ge=0) 선언 한 줄 — 대신 400 이 아니라 422',
+        ],
+      },
+      {
+        title: '예외를 다루는 층',
+        items: [
+          '예외는 호출한 쪽으로 전파되어 어느 깊이에서 던져도 응답이 된다',
+          '레포지토리(DB 예외) → 서비스(도메인 예외) → 라우터(HTTP 응답)로 나누면 DB 를 바꿔도 에러 응답은 그대로',
+          'except Exception: 으로 다 잡으면 진짜 버그까지 숨는다 — 예상하는 예외만 골라 잡는다',
+        ],
+      },
+      {
+        title: '에러 응답 규격',
+        items: [
+          '모든 에러를 { code, message } 같은 한 모양으로 내보내면 프론트는 code 하나로 분기하고 message 를 토스트로 띄운다',
+          'RequestValidationError 핸들러를 등록하면 422 응답 모양도 팀 규격으로 바꿀 수 있다',
+          '표준 규격으로 RFC 9457 Problem Details(type · title · status · detail)도 있다',
+          '500 은 사용자에게 원인을 숨기고 서버 로그 · Sentry 로 추적한다 — DB 주소나 코드 구조가 새면 안 된다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', '예외 처리', 'HTTP', '에러 응답'],
+    keywords: 'fastapi exception try except httpexception raise return detail headers custom exception domain exception exception_handler requestvalidationerror error response code message rfc 9457 problem details 400 401 403 404 409 422 500 sentry logging layer',
+  },
+  {
+    slug: 'be-fastapi-templates',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '10일차',
+    date: '2026.08.27',
+    title: '템플릿 기초 — Jinja2 · TemplateResponse · 제어문 · 상속 · 자동 이스케이프',
+    summary: '템플릿은 빈칸이 있는 HTML 이다. FastAPI 가 데이터(context)를 넘기면 Jinja2 가 {{ 변수 }} · {% if %} · {% for %}를 채워 완성된 HTML 을 만들고, 공통 틀은 base.html 상속으로 한 곳에서 관리한다.',
+    points: [
+      '{{ }}는 < > 를 글자로 바꿔(자동 이스케이프) 댓글 속 <script> 가 실행되지 않게 막는다',
+      '|safe 는 안전하게가 아니라 "검사하지 마" — 보호를 끄는 것이라 사용자 입력에는 절대 쓰지 않는다(XSS)',
+      '최신 Starlette 는 TemplateResponse(request, "index.html", {...}) — request 를 첫 인자로',
+    ],
+    learned: [
+      {
+        title: 'SSR 과 CSR',
+        items: [
+          'Jinja2 는 서버가 완성된 HTML 을 보내는 SSR — 첫 화면과 검색 노출에 유리하고, 상호작용은 페이지 단위',
+          'React 단독은 브라우저가 JS 로 그리는 CSR, Next.js 는 둘을 섞는다',
+          '화면을 프론트가 맡아도 회원가입 인증 메일 본문은 지금도 Jinja2 로 자주 만든다',
+        ],
+      },
+      {
+        title: '문법',
+        items: [
+          '{{ }}는 출력, {% %}는 제어문, {# #}는 주석 — Jinja2 주석은 소스 보기에도 안 남고 HTML 주석은 누구나 본다',
+          '{% for %} … {% else %}로 빈 리스트일 때 문구를, loop.index · loop.first · loop.last 로 순서 정보를 쓴다',
+          'split(",") 은 빈 문자열이면 [""] 가 되어 빈 항목이 그려진다 — 빈 값을 걸러 넘긴다',
+        ],
+      },
+      {
+        title: '상속',
+        items: [
+          'base.html 에 {% block content %} 빈칸을 두고 자식은 {% extends %} 후 블록만 채운다 — 블록 밖 내용은 무시된다',
+          'React 의 Layout 컴포넌트 + children 과 같은 생각이다',
+          '데이터 준비는 라우터(파이썬), 배치와 모양은 템플릿 — 템플릿 안에서 DB 를 직접 조회하지 않는다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'Jinja2', 'SSR', 'XSS'],
+    keywords: 'fastapi jinja2 jinja2templates templateresponse request context variable filter safe autoescape xss if elif else for loop index extends block base.html inheritance ssr csr htmx comment',
+  },
+  {
+    slug: 'be-fastapi-templates-static',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '11일차',
+    date: '2026.08.28',
+    title: '템플릿 심화 — include · 정적 파일 · mount · url_for · 매크로',
+    summary: '화면을 조각(include)으로 나눠 재사용하고, CSS · 이미지 같은 정적 파일은 app.mount("/static", StaticFiles(...))로 폴더째 열어 준다. 주소는 url_for 로 만들어 경로가 바뀌어도 안 깨지게 한다.',
+    points: [
+      'extends 는 양식지에 본문 채우기, include 는 도장 찍기, macro 는 값만 바꿔 찍는 고무인 — React 의 Layout · 컴포넌트 · props',
+      'CSS 링크도 브라우저가 따로 보내는 GET 요청이다 — mount 가 없으면 404 가 나고 스타일이 빠진다',
+      'static 폴더는 로그인 없이 누구나 받는다 — .env · DB 파일 · 업로드 파일을 두지 않는다',
+    ],
+    learned: [
+      {
+        title: '조각 재사용',
+        items: [
+          'include 는 현재 변수를 그대로 공유한 채 조각을 끼운다 — 헤더 조각에서도 {{ site_name }}을 쓸 수 있다',
+          'macro 는 인자를 받는 조각이라 상품 카드처럼 값만 다른 반복 요소에 쓴다',
+          '조각 파일은 _header.html 처럼 앞에 _ 를 붙여 페이지가 아님을 표시한다',
+        ],
+      },
+      {
+        title: 'mount 와 url_for',
+        items: [
+          'mount 는 URL 앞부분을 통째로 다른 앱(StaticFiles)에 넘긴다 — 파일마다 라우트를 만들 수 없으니까',
+          'StaticFiles 는 Content-Type 과 캐시용 ETag · Last-Modified 를 붙이고, /static/../ 처럼 폴더 밖으로 나가는 요청은 막는다',
+          'url_for(\'static\', path=...) 는 mount 의 name 으로 주소를 만든다 — 경로를 /assets 로 바꿔도 템플릿은 그대로',
+        ],
+      },
+      {
+        title: '운영에서는',
+        items: [
+          '정적 파일은 Nginx · CDN 이 더 빠르고 파이썬 서버는 API 에 집중한다',
+          '브라우저 캐시 때문에 CSS 를 고쳐도 예전 화면이 보일 수 있다 — 빌드 도구가 파일 이름에 해시를 붙인다',
+          '사용자 업로드는 S3 같은 저장소에 두고 비공개 파일은 Presigned URL 로 잠깐만 연다',
+          'React 빌드를 함께 서빙할 때는 API 라우트를 먼저, "/" mount 를 마지막에 둔다(경로 순서 원리)',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'Jinja2', '정적 파일', '캐시'],
+    keywords: 'fastapi jinja2 include macro extends staticfiles mount url_for static css image cache etag last-modified path traversal cdn nginx s3 presigned url html=True spa build hash filename',
+  },
+  {
+    slug: 'be-fastapi-sqlalchemy-basics',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '12일차',
+    date: '2026.08.29',
+    title: 'SQLAlchemy 기초 — ORM · Engine · Session · 모델 · Depends(get_db) · 2.0 문법',
+    summary: 'ORM 은 테이블을 클래스로, 행을 객체로 다루게 해 준다. SQLAlchemy 는 Engine(연결 통로) → Session(작업 단위) → Model(테이블 설계도) 세 층으로 돌고, FastAPI 는 Depends(get_db)로 요청마다 세션을 열고 닫는다.',
+    points: [
+      'Engine 은 앱에 하나(연결 풀), Session 은 요청마다 하나 — 마트 계산대와 내 장바구니',
+      'add 는 담기, commit 은 확정, refresh 는 DB 가 채운 id 를 다시 읽기 — commit 없이 끝나면 변경은 버려진다',
+      'get_db 의 yield 뒤 finally 에서 close — 에러가 나도 연결이 반납되고, 테스트에서는 가짜 DB 로 바꿔 끼운다',
+    ],
+    learned: [
+      {
+        title: 'ORM',
+        items: [
+          '문자열로 SQL 을 조립하면 오타가 늦게 잡히고 SQL 인젝션에 노출된다 — ORM 은 값을 분리해서 보낸다',
+          'ORM 을 써도 SQL 은 알아야 한다 — create_engine(echo=True)로 실제 SQL 을 찍어 보며 확인한다',
+          'DB 모델(models.py)과 API 스키마(schemas.py)를 나누면 DB 가 바뀌어도 API 계약을 지킨다',
+        ],
+      },
+      {
+        title: '세션과 트랜잭션',
+        items: [
+          'flush 는 SQL 을 보내지만 확정은 안 한다 — commit 은 항상 먼저 flush 한다',
+          '중복 username 의 IntegrityError 는 rollback 후 409 로 — 그대로 두면 500',
+          '세션을 닫지 않으면 연결 풀이 바닥나 서버가 멈춘 것처럼 된다',
+        ],
+      },
+      {
+        title: '1.4 → 2.0 문법',
+        items: [
+          'Column(Integer) → Mapped[int] = mapped_column(), declarative_base() → class Base(DeclarativeBase)',
+          'Mapped[str] 은 자동 NOT NULL, Mapped[str | None] 은 NULL 허용 — 타입으로 NULL 여부를 표현한다',
+          'db.query(User) → db.scalars(select(User)), autocommit=True 는 2.0 에서 제거',
+          'datetime.utcnow 대신 datetime.now(timezone.utc), DB 객체를 응답 모델로 바꿀 때는 ConfigDict(from_attributes=True)',
+        ],
+      },
+      {
+        title: '운영 준비',
+        items: [
+          'create_all 은 없는 테이블만 만든다 — 컬럼 추가 같은 변경은 Alembic 마이그레이션으로 기록 · 적용한다',
+          'database · models · schemas · crud · routers 로 파일을 나누면 누가 무엇을 책임지는지 드러난다',
+          'SQLModel 은 SQLAlchemy 모델과 Pydantic 모델을 클래스 하나로 합친 라이브러리',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'SQLAlchemy', 'ORM', '트랜잭션'],
+    keywords: 'fastapi sqlalchemy orm engine session sessionmaker sessionlocal model declarativebase mapped mapped_column depends get_db yield finally close add commit flush refresh rollback integrityerror 409 echo connection pool select scalars from_attributes alembic migration create_all sqlmodel lifespan sqlite mysql pymysql postgresql',
+  },
+  {
+    slug: 'be-fastapi-sqlalchemy-crud',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '13일차',
+    date: '2026.08.30',
+    title: 'SQLAlchemy 심화 — 조회 · 검색 · 집계 · 수정 · 삭제 · 관계 · N+1',
+    summary: 'CRUD 의 R · U · D 를 완성한다. 조회는 select() + where · order_by · offset/limit, 수정은 객체 속성을 바꾸고 commit, 삭제는 db.delete + commit 이고, 못 찾으면 반드시 404 다.',
+    points: [
+      '세션은 꺼낸 객체를 기억하고 지켜본다(변경 감지) — 속성만 바꾸고 commit 하면 바뀐 컬럼만 UPDATE 된다',
+      'N+1 — 글 목록 1번 + 글마다 작성자 1번씩. selectinload 로 작성자를 한꺼번에 미리 불러오면 2번으로 준다',
+      '"찾고 없으면 404"는 get_user_or_404 공통 함수 하나로 — 조회 · 수정 · 삭제가 같은 규칙을 쓴다',
+    ],
+    learned: [
+      {
+        title: '조회 문법(2.0)',
+        items: [
+          'db.query() 는 레거시, select() 는 동기 · 비동기 모두 같은 문법 — db.scalars(select(User).where(...)).all()',
+          '기본 키 한 건은 db.get(User, 1), OR 는 or_(A, B), 포함 검색은 contains · ilike',
+          'scalars() 는 첫 컬럼(보통 모델)만, execute() 는 행 전체 — 집계처럼 값이 여러 개면 execute',
+          '검색어가 있을 때만 stmt = stmt.where(...) 로 조건을 덧붙여 조립한다',
+        ],
+      },
+      {
+        title: '집계',
+        items: [
+          'group_by 는 같은 값끼리 묶어 count · max · min · sum — 중복되는 값(도시 · 카테고리)에 쓴다. unique 컬럼으로 묶으면 항상 1',
+          '결과 튜플은 [{"city": c, "count": n} for c, n in rows] 로 dict 로 바꿔 보낸다',
+          '/users/stats 같은 고정 경로는 /users/{user_id} 보다 위에 둔다',
+        ],
+      },
+      {
+        title: '수정 · 삭제',
+        items: [
+          '일부 수정은 PATCH + model_dump(exclude_unset=True) 를 setattr 로 — "안 보낸 필드"와 "null 로 보낸 필드"를 구분한다',
+          'relationship(cascade="all, delete-orphan") 이면 사용자를 지울 때 글도 함께 지워진다',
+          '복구나 감사가 필요하면 진짜 삭제 대신 is_active=False · deleted_at 같은 soft delete',
+        ],
+      },
+      {
+        title: '계층과 트랜잭션',
+        items: [
+          '라우터(HTTP 입출력) → 서비스(비즈니스 규칙) → 레포지토리(select · add · delete)로 나눠 규칙을 API 없이 테스트한다',
+          '"주문 생성 + 재고 차감"처럼 함께 성공해야 하는 일은 commit 을 마지막에 한 번만 — with db.begin() 은 예외면 자동 rollback',
+          '마지막 재고를 동시에 사는 경쟁은 with_for_update(행 잠금)나 WHERE stock > 0 조건부 UPDATE 로 막는다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'SQLAlchemy', 'N+1', 'CRUD'],
+    keywords: 'sqlalchemy select where or_ order_by desc offset limit scalars execute get count func group_by aggregate update setattr exclude_unset patch delete cascade relationship back_populates foreignkey selectinload lazy loading n+1 identity map unit of work soft delete with_for_update repository service',
+  },
+  {
+    slug: 'be-fastapi-async',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '14일차',
+    date: '2026.08.31',
+    title: '비동기 — async · await · 이벤트 루프 · gather · def vs async def · 블로킹 함정',
+    summary: '비동기는 기다리는 동안 다른 일을 하는 것이다. await 를 만나면 함수가 자리를 비켜 주고 이벤트 루프가 그동안 다른 요청을 처리한다. 단, async def 안에서 동기 대기 함수를 쓰면 서버 전체가 멈춘다.',
+    points: [
+      '동기 라이브러리(requests · 동기 Session · time.sleep)는 def, 비동기 라이브러리(httpx.AsyncClient · AsyncSession)는 async def — FastAPI 는 def 를 스레드 풀에서 돌려 준다',
+      '동시 요청 5개(각 1초) — async + await asyncio.sleep 은 약 1초, async + time.sleep 은 약 5초, def + time.sleep 은 약 1초',
+      '비동기는 동시성(번갈아 처리)이지 병렬성이 아니다 — 무거운 계산은 빨라지지 않고 멀티프로세스나 작업 큐로 보낸다',
+    ],
+    learned: [
+      {
+        title: '코루틴과 이벤트 루프',
+        items: [
+          'async def 를 부르면 바로 실행되지 않고 코루틴 객체가 나온다 — await 하지 않으면 "coroutine was never awaited"',
+          'gather(a(), b()) 는 가장 긴 것만큼 걸리고, 결과는 끝난 순서가 아니라 넣은 순서',
+          'FastAPI 는 uvicorn 이 이미 루프를 돌리고 있어서 asyncio.run 을 직접 부르지 않는다',
+        ],
+      },
+      {
+        title: '실무 패턴',
+        items: [
+          '외부 API 두 개를 gather 로 동시에 부르면 2초가 1초로 — 여러 AI 에 같은 질문을 보내는 비교 앱이 이 구조',
+          '동기 SDK 를 async 안에서 써야 하면 asyncio.to_thread · run_in_threadpool 로 스레드에 보낸다',
+          '응답 뒤 가벼운 일은 BackgroundTasks, 무거운 일은 Celery · ARQ 같은 작업 큐',
+        ],
+      },
+      {
+        title: '안전장치',
+        items: [
+          '외부 API 는 httpx.AsyncClient(timeout=10) · asyncio.timeout 으로 항상 상한을 둔다',
+          'Python 3.11 의 TaskGroup 은 하나가 실패하면 나머지를 자동으로 취소해 gather 보다 안전하다',
+          '서버 여러 프로세스(uvicorn --workers)는 병렬성, 한 프로세스 안의 asyncio 는 동시성',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', '비동기', 'asyncio', '동시성'],
+    keywords: 'fastapi async await asyncio event loop coroutine future task gather run sleep blocking time.sleep requests httpx asyncclient def vs async def threadpool to_thread run_in_threadpool concurrency parallelism multiprocessing workers backgroundtasks celery arq timeout taskgroup',
+  },
+  {
+    slug: 'be-fastapi-async-sqlalchemy',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '15일차',
+    date: '2026.09.01',
+    title: '비동기 SQLAlchemy — create_async_engine · AsyncSession · lifespan · expire_on_commit',
+    summary: '비동기 SQLAlchemy 는 동기 버전과 구조가 같고 DB 에 다녀오는 지점마다 await 가 붙는다. 바뀌는 건 비동기 드라이버 · create_async_engine · AsyncSession, 그리고 lazy loading 이 안 되니 필요한 데이터는 미리 불러와야 한다.',
+    points: [
+      'DB 에 실제로 다녀오면 await(commit · execute · get · delete), 세션에 담기만 하면 await 없음(add)',
+      'commit 뒤 값이 만료되면 다시 불러오려다 MissingGreenlet 에러 — async_sessionmaker(expire_on_commit=False) 또는 await refresh',
+      '서버당 한 번(테이블 생성 · 연결 풀 정리)은 lifespan, 요청마다(세션)는 get_db 의존성',
+    ],
+    learned: [
+      {
+        title: '동기 → 비동기',
+        items: [
+          '드라이버까지 비동기여야 한다 — mysql+aiomysql · postgresql+asyncpg · sqlite+aiosqlite',
+          'async with AsyncSessionLocal() as session 은 블록이 끝나면 자동 close',
+          'create_all 은 동기 함수라 lifespan 안에서 await conn.run_sync(Base.metadata.create_all) 로 돌린다',
+          '@app.on_event("startup") 은 deprecated — lifespan 하나로 시작과 종료를 쓴다',
+        ],
+      },
+      {
+        title: '결과 꺼내기',
+        items: [
+          '집계처럼 값이 여러 개인 행은 result.all() — scalars() 를 쓰면 첫 컬럼만 남고 count 가 사라진다',
+          '전체 개수는 select(func.count()).select_from(User) — select 를 FROM 에 넣으려면 .subquery() 가 필요하다',
+          'commit 은 라우터에서 명시적으로 — get_db 에서 자동 commit 하면 조회에도 commit 이 나가고 응답 뒤 실패를 놓친다',
+        ],
+      },
+      {
+        title: '주의할 점',
+        items: [
+          '하나의 AsyncSession 으로 gather 처럼 동시에 쿼리하면 에러 — 세션은 한 번에 한 작업',
+          '관계는 selectinload 로 미리 — 동기에서는 N+1(느림)이던 문제가 비동기에서는 아예 에러로 드러난다',
+          '동기 SQLAlchemy + def 라우터도 스레드 풀 덕분에 충분히 빠르다 — 외부 API · 스트리밍과 함께 쓸 때 비동기가 자연스럽다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', 'SQLAlchemy', '비동기', 'lifespan'],
+    keywords: 'sqlalchemy asyncio create_async_engine asyncsession async_sessionmaker expire_on_commit missinggreenlet lazy loading selectinload aiomysql asyncpg aiosqlite lifespan asynccontextmanager run_sync create_all dispose await commit execute scalars result.all func.count subquery on_event startup deprecated',
+  },
+  {
+    slug: 'be-fastapi-auth-basics',
+    area: 'Back',
+    course: 'FastAPI',
+    lesson: '16일차',
+    date: '2026.09.02',
+    title: '인증 기초 — HTTP Basic · 쿠키 · 세션 · 비밀번호 해시 · JWT',
+    summary: 'HTTP 는 직전 요청을 기억하지 못해서, 인증 뒤에는 매 요청마다 "나야"를 증명하는 표(쿠키의 세션 또는 토큰)를 보낸다. FastAPI 는 이 확인을 의존성으로 만들어 보호할 라우터에 끼운다.',
+    points: [
+      '인코딩(Base64)은 누구나 읽고, 서명(세션 쿠키 · JWT)은 읽혀도 위조를 막고, 암호화는 키 있는 사람만 읽고, 해시는 되돌릴 수 없다',
+      'SessionMiddleware 쿠키와 JWT 는 서명일 뿐 암호화가 아니다 — 디코딩하면 {"username": "john"} 이 보여서 민감한 값을 넣지 않는다',
+      '인증은 get_current_user(401), 인가는 그 위에 쌓은 require_admin(403) — 의존성을 레고처럼 쌓는다',
+    ],
+    learned: [
+      {
+        title: '인증 방식',
+        items: [
+          'HTTP Basic 은 아이디:비밀번호를 Base64 로 매 요청 헤더에 — HTTPS 없이는 쓰면 안 되고 내부 도구 정도에만',
+          '세션은 서버가 상태를 저장해 강제 로그아웃이 쉽고, JWT 는 어느 서버나 서명만 검사해 확장이 쉽지만 만료 전 무효화가 어렵다',
+          '비밀번호는 쿼리가 아니라 본문(Form)으로 받는다 — URL 은 로그와 브라우저 기록에 남는다',
+        ],
+      },
+      {
+        title: '쿠키',
+        items: [
+          'HttpOnly 는 자바스크립트가 못 읽어 XSS 를, SameSite 는 CSRF 를 막고, Secure(https_only)는 HTTPS 에서만 보낸다',
+          'curl 은 쿠키를 자동으로 안 붙여서 -c 로 저장하고 -b 로 보낸다',
+          '서명 쿠키는 크기 제한(약 4KB)이 있고 서버에서 강제 만료가 안 된다 — 진짜 서버 세션은 Redis 에 둔다',
+        ],
+      },
+      {
+        title: '비밀번호와 비교',
+        items: [
+          '비밀번호는 argon2 · bcrypt 처럼 일부러 느리고 소금(salt)이 들어간 해시로 저장한다 — MD5 · SHA-256 은 너무 빨라 대입 공격에 약하다',
+          'passlib 은 유지보수가 멈춰 FastAPI 문서는 pwdlib 을 쓴다',
+          '일반 == 비교는 응답 시간 차이로 한 글자씩 추측하는 타이밍 공격이 가능해서 secrets.compare_digest 를 쓴다',
+          '401 응답에는 WWW-Authenticate 헤더를 붙인다 — Basic 은 이게 있어야 브라우저가 로그인 창을 띄운다',
+        ],
+      },
+      {
+        title: '토큰 보관',
+        items: [
+          'localStorage 는 쓰기 쉽지만 XSS 에 약하고, HttpOnly 쿠키는 XSS 에 강한 대신 CSRF 방어가 필요하다',
+          '짧은 액세스 토큰(15~30분) + 긴 리프레시 토큰(HttpOnly 쿠키) 조합으로 무효화 문제를 줄인다',
+          '소셜 로그인은 OAuth2 · OIDC, 인증을 Auth0 · Supabase Auth 같은 외부에 맡기고 토큰 검증만 하는 구조도 흔하다',
+        ],
+      },
+    ],
+    tags: ['백엔드', 'FastAPI', '인증', 'JWT', '보안'],
+    keywords: 'fastapi authentication authorization http basic base64 www-authenticate cookie session sessionmiddleware secret_key signature httponly secure samesite csrf xss jwt pyjwt oauth2passwordbearer bearer token access refresh password hash argon2 bcrypt pwdlib passlib compare_digest timing attack 401 403 require_admin oauth oidc',
+  },
   // ── 백엔드 강의 (Flask 30강) ──
   {
     slug: "be-deploy",

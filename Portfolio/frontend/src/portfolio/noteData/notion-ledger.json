@@ -10,7 +10,8 @@
     "3fadf951bf80801bb3a8ef117b311ca3": "학습한 내용(클로드)",
     "3b1df951bf808040aa04f9c18e4f469f": "알아두면 좋은 디자인 지식",
     "408df951bf80805f9728dd9842fd3d7b": "React",
-    "40cdf951bf808024b15ce4233148119e": "타입스크립트"
+    "40cdf951bf808024b15ce4233148119e": "타입스크립트",
+    "40ddf951bf80802e8244dc3d4e776890": "FastAPI"
   },
   "migrated": {
     "3bedf951bf8080379bd4df7ce656d4fe": "design-figma-hierarchy",
@@ -61,7 +62,25 @@
     "406df951bf8080e5a83fc4f1907c46cf": "be-sqlalchemy-orm",
     "40bdf951bf8080c78327ed9d6f61251c": "be-pydantic-response-model",
     "40cdf951bf80806ebbdce74ce0ba200c": "be-path-param-404",
-    "40cdf951bf80802584a3d9417f850d3e": "fe-ssr-getserversideprops"
+    "40cdf951bf80802584a3d9417f850d3e": "fe-ssr-getserversideprops",
+    "40ddf951bf8081ffba04e1f56ac03e59": "be-fastapi-intro",
+    "40ddf951bf8081c4a15be303c468e8b3": "be-fastapi-routing",
+    "40ddf951bf8081afbee5e4285785d266": "be-fastapi-type-hints",
+    "40ddf951bf808167ac3eee64611b0ef6": "be-fastapi-http-methods",
+    "40ddf951bf808141b60ae7df7fa2ff6e": "be-fastapi-pydantic",
+    "40ddf951bf8081349b9bee4bcb04db02": "be-fastapi-response-model",
+    "40ddf951bf8081c6afeeddc5ecb0725e": "be-fastapi-response-class",
+    "40ddf951bf8081fdbc9ac2d989534917": "be-fastapi-request",
+    "40ddf951bf80815795ebe0428c2ae92b": "be-fastapi-exceptions",
+    "40ddf951bf80810b951ac9d87b77395e": "be-fastapi-templates",
+    "40ddf951bf8081e5954dd6899861de12": "be-fastapi-templates-static",
+    "40ddf951bf80819f9172e1acd52d6fb0": "be-fastapi-sqlalchemy-basics",
+    "40ddf951bf80814f81b0edbdd80cce73": "be-fastapi-sqlalchemy-crud",
+    "40ddf951bf80812bb101c64f498818cc": "be-fastapi-async",
+    "40ddf951bf808141ad14d8e6841c20bc": "be-fastapi-async-sqlalchemy",
+    "40ddf951bf8081789335defdf3a11504": "be-fastapi-auth-basics",
+    "40ddf951bf80803a9bfceeeb2468fac2": "fe-ssr-dynamic-route",
+    "40ddf951bf808094b1b9eca235e1c526": "ps-speed-typo-flash"
   },
   "skipped": {
     "3efdf951bf8080beb779ecde4838b7ce": "포토샵 1. — 6강 이후 요약본에 합쳐진 앞 회차 초안",

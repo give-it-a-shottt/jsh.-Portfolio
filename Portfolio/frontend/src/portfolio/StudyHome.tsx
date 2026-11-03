@@ -13,7 +13,7 @@ const CONCEPT_COUNT = NOTES.reduce(
 )
 // '공부한 날'은 공부를 본격적으로 시작한 날부터 오늘까지 지난 날수(시작일 포함) — 사용자 결정. 노트를 올린 날 수가 아니다
 // 날짜만 비교하려고 둘 다 UTC 자정으로 맞춘다 — 서머타임이 끼어도 하루가 23·25시간으로 어긋나지 않는다
-const STUDY_START_UTC = Date.UTC(2026, 8, 1) // 2026-09-01 (월은 0부터 세서 8 = 9월)
+const STUDY_START_UTC = Date.UTC(2026, 7, 18) // 2026-08-18 FastAPI 1일차 (월은 0부터 세서 7 = 8월)
 const MS_PER_DAY = 24 * 60 * 60 * 1000
 
 function daysSinceStart(today = new Date()) {

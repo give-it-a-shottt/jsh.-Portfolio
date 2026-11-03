@@ -28,6 +28,7 @@ import titleLongShadowNavy from '../assets/study/title-long-shadow-1-navy.webp'
 import titleLongShadowCoral from '../assets/study/title-long-shadow-2-coral.webp'
 import titleLongShadowNeon from '../assets/study/title-long-shadow-3-neon.webp'
 import titleLongShadowMustard from '../assets/study/title-long-shadow-4-mustard.webp'
+import titleSpeedFlash from '../assets/study/title-speed-flash.webp'
 import type { StudyNote } from '../notes'
 
 // Design 공부 노트 — 노션 학습노트 > 학습 폴더 > 포토샵 / 일러스트 (6강 이후는 앞 회차 초안을 합친 요약본이라 1~3·5번은 싣지 않는다)
@@ -322,6 +323,60 @@ export const DESIGN_NOTES: StudyNote[] = [
     ],
     tags: ['포토샵', '배너', '카드뉴스', '템플릿'],
     keywords: 'photoshop banner card news artboard object selection live corners polygon 템플릿',
+  },
+  {
+    slug: 'ps-speed-typo-flash',
+    area: 'Design',
+    course: '포토샵 / 일러스트',
+    lesson: '15강',
+    date: '2026.11.03',
+    title: '번쩍 속도감 타이포 — 기울기 · 그레이디언트 마스크 · 빛망울 · Linear Dodge',
+    summary: '속도감은 기울기(Skew -15°)와 끝이 흐려지는 겹침(그레이디언트 마스크)으로, 빛은 완전한 검정 위에 만든 빛망울 + Linear Dodge (Add)로 만든다. 빛 효과는 어두운 배경 위에서만 산다.',
+    points: [
+      '글자를 -15° 기울이고 끝을 그레이디언트 마스크로 흐리면 지나간 자리에 잔상이 남은 듯 달려 나간다',
+      '빛망울은 완전한 검정 위에서 만든다 — Linear Dodge 는 밝기를 더하는 모드라 검정만 변화가 없어 사라져 보인다',
+      '흰색 · 검정에는 색조가 없어 Hue 를 돌려도 안 바뀐다 — Colorize 로 새 색을 입힌다',
+    ],
+    learned: [
+      {
+        title: '속도감',
+        items: [
+          '-10° 안팎은 세련된 이탤릭, -15° ~ -20° 는 스포츠 · 게임처럼 강한 속도감 — 너무 기울이면 획이 얇아져 읽기 어렵다',
+          '흐려진 "번" 위에 "쩍"을 겹치면 평면인데도 앞뒤 깊이가 생긴다',
+          '기울어진 글자의 대각선은 움직임, 가로 빛줄기의 수평선은 속도 방향 — 두 선이 만나는 곳에 빛망울을 둬 시선을 모은다',
+        ],
+      },
+      {
+        title: '빛망울 만들기',
+        items: [
+          '흰 점 하나를 납작하게 눌러 빛줄기를 만들고, 30° 회전 후 Ctrl+Alt+Shift+T 로 복사하며 반복해 12갈래 별을 만든다',
+          'Transform Again 은 바로 직전의 변형 하나만 기억한다 — 회전을 마지막에 해야 회전이 반복된다',
+          'Ctrl+Alt+Shift+E 로 보이는 레이어만 합친 새 레이어를 만들어 원본은 남겨 둔다',
+          '바탕이 회색이면 그 회색만큼 화면 전체가 뿌옇게 밝아진다 — 그래서 완전한 검정',
+        ],
+      },
+      {
+        title: '블렌딩 모드',
+        items: [
+          'Screen 은 부드럽게, Linear Dodge (Add) 는 하얗게 타듯 강하게 밝아진다. 반대로 Multiply 는 흰색이 사라진다',
+          '밝은 곳끼리 겹쳐 하얗게 날아가면 불투명도를 낮추거나 Screen 으로 바꾼다',
+          '빛망울을 스마트 오브젝트로 바꾼 뒤 Colorize 를 걸면 스마트 필터로 남아 Alt+드래그로 다른 빛에 복사할 수 있다',
+        ],
+      },
+      {
+        title: '색과 구도',
+        items: [
+          '짙은 남보라 배경 + 형광 연두 글자 — 명도 대비가 최대에 가깝고 색상환에서 보색에 가까워 서로를 더 선명하게 만든다',
+          '빛 효과는 어두운 면적이 넓을수록 강해 보여서 배경 비율을 80% 까지 키웠다',
+          '같은 틀에 단어와 색만 바꿔도 장르가 달라진다 — 핑크 · 시안은 사이버, 골드는 프리미엄, 흰색 · 파랑은 스피드',
+        ],
+      },
+    ],
+    practice: [
+      { image: titleSpeedFlash, caption: '번쩍', how: '-15° 기울인 글자 + 그레이디언트 마스크 잔상, 검정 위 빛망울을 Linear Dodge 로 얹고 Colorize 로 보라빛' },
+    ],
+    tags: ['포토샵', '타이포그래피', '블렌딩 모드', '빛 효과'],
+    keywords: 'photoshop speed typography skew italic gradient mask layer mask lens flare light flare soft round brush transform again ctrl+alt+shift+t stamp visible linear dodge add screen multiply smart object colorize hue saturation complementary color 번쩍 빛망울 속도감 잔상',
   },
   {
     slug: 'ps-long-shadow-joker',
