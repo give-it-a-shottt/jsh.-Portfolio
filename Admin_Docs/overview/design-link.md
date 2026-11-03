@@ -19,6 +19,9 @@
 | 포트폴리오 홈 리뉴얼 | 피그마 「jsh」 파일 · 「01 Home — Light 리뉴얼」 프레임 (주소는 공개 문서에 적지 않아요) |
 | Study 노션형 (F-004) | 피그마 「jsh」 파일 · Page 2 「05 Study 홈 — PC 1440」 · 「06 Study 상세 — 노션 문서형 PC 1440」 · 「Study Components」(`Study/TreeRow` → `StudyLayout.tsx`, `Study/ConceptChip` · `Study/ConceptCard` → `StudyHome.tsx`) — 색은 `jsh` 변수 Ivory 모드 = `index.css` Ivory · `study` 토큰 |
 
+### 포트폴리오 포커스 표시 (2026-11-03, F-004 5차)
+- 키보드 포커스는 `portfolio` 파랑 솔리드 링 2px + 간격 2px다. 디자인 md의 Focus/Ring(#5B8CFF 40% 헤일로 3px)과 다른데, md 6-5의 접근성 예외(간격 2 + 링 2)를 따랐다. 헤일로만으로는 흰 배경 대비가 3:1이 안 된다. 위치는 `index.css` `@layer base`의 `[data-theme="ivory"] :is(a, button, summary):focus-visible`, 가로 스크롤 탭만 안쪽에 그린다.
+
 ### 디자인 md · 토큰 원본
 | 무엇 | 위치 |
 |---|---|

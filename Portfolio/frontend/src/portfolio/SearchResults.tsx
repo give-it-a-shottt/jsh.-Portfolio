@@ -206,7 +206,8 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
                 key={id}
                 href={searchHref(query, id)}
                 aria-current={active ? 'page' : undefined}
-                className={`flex shrink-0 items-center gap-2 border-b-2 pt-4 pb-3 text-15 tracking-normal ${active ? 'border-black font-semibold text-main' : 'border-transparent font-medium text-sub-weak hover:text-main'}`}
+                // 가로 스크롤 줄이라 바깥 포커스 테두리가 잘린다 — 안쪽으로 그린다
+                className={`flex shrink-0 items-center gap-2 border-b-2 pt-4 pb-3 text-15 tracking-normal focus-visible:-outline-offset-2 ${active ? 'border-black font-semibold text-main' : 'border-transparent font-medium text-sub-weak hover:text-main'}`}
               >
                 {id === 'study' && <span aria-hidden="true" className="size-1.5 rounded-full bg-study" />}
                 {label}
