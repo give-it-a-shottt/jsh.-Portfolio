@@ -29,6 +29,12 @@ import titleLongShadowCoral from '../assets/study/title-long-shadow-2-coral.webp
 import titleLongShadowNeon from '../assets/study/title-long-shadow-3-neon.webp'
 import titleLongShadowMustard from '../assets/study/title-long-shadow-4-mustard.webp'
 import titleSpeedFlash from '../assets/study/title-speed-flash.webp'
+import titleSpeedFlashNeon from '../assets/study/title-speed-flash-1-neon.webp'
+import titleSpeedFlashGold from '../assets/study/title-speed-flash-2-gold.webp'
+import titleSpeedFlashElectric from '../assets/study/title-speed-flash-3-electric.webp'
+import titleSpeedFlashKwang from '../assets/study/title-speed-flash-4-kwang.webp'
+import titleSpeedFlashShuung from '../assets/study/title-speed-flash-5-shuung.webp'
+import titleSpeedFlashBanjjak from '../assets/study/title-speed-flash-6-banjjak.webp'
 import type { StudyNote } from '../notes'
 
 // Design 공부 노트 — 노션 학습노트 > 학습 폴더 > 포토샵 / 일러스트 (6강 이후는 앞 회차 초안을 합친 요약본이라 1~3·5번은 싣지 않는다)
@@ -374,6 +380,15 @@ export const DESIGN_NOTES: StudyNote[] = [
     ],
     practice: [
       { image: titleSpeedFlash, caption: '번쩍', how: '-15° 기울인 글자 + 그레이디언트 마스크 잔상, 검정 위 빛망울을 Linear Dodge 로 얹고 Colorize 로 보라빛' },
+    ],
+    // AI 버전 — 같은 원리에 색 · 구성 · 단어만 바꾼 것(사용자 요청으로 참고 예시에 싣는다)
+    examples: [
+      { image: titleSpeedFlashNeon, caption: 'v1 · 네온 핑크 · 시안', how: '글자 복사본 Fill 0% · 시안 Stroke 를 몇 px 밀어 외곽선 잔상, 왼쪽에 속도선' },
+      { image: titleSpeedFlashGold, caption: 'v2 · 골든 플래시', how: '노랑 → 오렌지 Gradient Overlay, 복사 → Flip Vertical → 불투명도 13% 로 바닥 반사' },
+      { image: titleSpeedFlashElectric, caption: 'v3 · 일렉트릭 블루', how: 'Ctrl+J 3번 → 왼쪽으로 50px 씩 · 불투명도 60 · 35 · 18% 로 파란 잔상 3겹' },
+      { image: titleSpeedFlashKwang, caption: 'v4 · 쾅! (충격)', how: '빨강 그림자 글자 위에 노랑 글자를 어긋나게, 집중선은 세로 줄무늬에 Polar Coordinates' },
+      { image: titleSpeedFlashShuung, caption: 'v5 · 슈웅 (질주)', how: '민트 글자 복사본에 Motion Blur 잔상, 가로 빛줄기 여러 개' },
+      { image: titleSpeedFlashBanjjak, caption: 'v6 · 반짝 (반짝임)', how: '파스텔 그라데이션 글자, 45° 회전 · Ctrl+Alt+Shift+T 두 번으로 4갈래 별을 크기 달리해 흩뿌리기' },
     ],
     tags: ['포토샵', '타이포그래피', '블렌딩 모드', '빛 효과'],
     keywords: 'photoshop speed typography skew italic gradient mask layer mask lens flare light flare soft round brush transform again ctrl+alt+shift+t stamp visible linear dodge add screen multiply smart object colorize hue saturation complementary color 번쩍 빛망울 속도감 잔상',
