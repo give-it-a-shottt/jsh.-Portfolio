@@ -167,18 +167,16 @@ interface SearchResultsProps {
 export default function SearchResults({ query, tab }: SearchResultsProps) {
   // 사례는 레벨 높은 것부터(rank.ts), 노트는 최신순(notes.ts) — 찾는 규칙은 search.ts
   const { cases: matched, notes: matchedNotes, corrections } = search(query)
-  // Front · Back · Design 탭은 그 분야 사례 아래에 같은 분야 노트를 잇는다. Study 탭은 분야 구분 없이 전체
+  // Front · Back · Design 탭은 사례만 — 공부 노트는 Study 홈(#/study)이 따로 생겨 Study 탭과 '전체' 탭에서만 보여 준다(F-004)
   const casesOf = (tab: ResultTab) => matched.filter((item) => item.type.toLowerCase() === tab)
-  const notesOf = (tab: ResultTab) => matchedNotes.filter((note) => note.area.toLowerCase() === tab)
   const counts: Record<ResultTab, number> = {
     all: matched.length + matchedNotes.length,
-    front: casesOf('front').length + notesOf('front').length,
-    back: casesOf('back').length + notesOf('back').length,
-    design: casesOf('design').length + notesOf('design').length,
+    front: casesOf('front').length,
+    back: casesOf('back').length,
+    design: casesOf('design').length,
     study: matchedNotes.length,
   }
   const results = tab === 'all' || tab === 'study' ? matched : casesOf(tab)
-  const areaNotes = tab === 'all' || tab === 'study' ? [] : notesOf(tab)
   // 관련 검색어는 지금 결과의 태그에서 고른다(related.ts). 검색어가 없거나 고를 태그가 없으면 추천 키워드
   const fromResults = query ? relatedSearches(query, matched, matchedNotes) : []
   const related = fromResults.length > 0 ? fromResults : KEYWORDS.filter(({ label }) => label !== query).slice(0, 5).map(({ label }) => label)
@@ -187,15 +185,12 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
   const isStudy = tab === 'study'
   // 노트 묶음은 '전체' 탭에서만. 사례가 적으면 목록 끝에, 사례가 없으면 빈 안내 대신 노트를 보여준다
   const showModule = tab === 'all' && matchedNotes.length > 0
-  const isEmpty = isStudy ? matchedNotes.length === 0 : results.length === 0 && !showModule && areaNotes.length === 0
-  const resultLabel = query ? `'${query}' 검색 결과` : TABS.find((item) => item.tab === tab)?.label ?? '전체'
+  const isEmpty = isStudy ? matchedNotes.length === 0 : results.length === 0 && !showModule
   const summary = isStudy
     ? `${query ? `'${query}' 공부 노트` : '전체 공부 노트'} ${matchedNotes.length}건`
     : tab === 'all' && matchedNotes.length > 0
       ? `${query ? `'${query}' 검색 결과` : '전체'} ${counts.all}건 · 사례 ${matched.length} · 공부 노트 ${matchedNotes.length}`
-      : areaNotes.length > 0
-        ? `${resultLabel} ${counts[tab]}건 · 사례 ${results.length} · 공부 노트 ${areaNotes.length}`
-        : `${query ? `'${query}' 검색 결과` : '전체 사례'} ${results.length}건`
+      : `${query ? `'${query}' 검색 결과` : '전체 사례'} ${results.length}건`
 
   return (
     <div className="flex flex-1 flex-col">
@@ -243,6 +238,14 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
                     ? `'${query}'에 대한 사례가 아직 없어요.`
                     : '아직 등록된 사례가 없어요.'}
               </h2>
+              {/* 분야 탭에는 노트를 싣지 않으니, 사례가 없을 때만 같은 검색어의 노트가 Study 탭에 있다고 길을 알려 준다 */}
+              {!isStudy && matchedNotes.length > 0 && (
+                <p className="text-15 break-keep text-sub">
+                  <a href={searchHref(query, 'study')} className="font-semibold text-portfolio underline-offset-4 hover:underline">
+                    {query ? `'${query}' ` : ''}공부 노트 {matchedNotes.length}건은 <span lang="en">Study</span> 탭에서 볼 수 있어요 →
+                  </a>
+                </p>
+              )}
               {suggestion && (
                 <p className="text-15 break-keep text-sub">
                   혹시 이걸 찾으셨나요?{' '}
@@ -281,25 +284,6 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
                     <ResultRow key={item.slug} item={item} />
                   ))}
                 </ul>
-              )}
-              {areaNotes.length > 0 && (
-                <section aria-labelledby="area-notes-title" className={results.length > 0 ? 'mt-14' : 'mt-6'}>
-                  {results.length === 0 && (
-                    <p className="mb-6 text-15 break-keep text-sub">
-                      {query ? `'${query}'에 대한 사례는 아직 없지만, 공부한 노트가 있어요.` : '이 분야 사례는 아직 없지만, 공부한 노트가 있어요.'}
-                    </p>
-                  )}
-                  <h2 id="area-notes-title" className="flex items-center gap-2 text-16 font-semibold text-main">
-                    <span aria-hidden="true" className="size-2 rounded-full bg-study" />
-                    공부 노트
-                    <span className="text-14 font-medium tracking-normal text-sub-weak">{areaNotes.length}</span>
-                  </h2>
-                  <ul className="mt-2">
-                    {areaNotes.map((note) => (
-                      <NoteRow key={note.slug} note={note} />
-                    ))}
-                  </ul>
-                </section>
               )}
             </>
           )}
