@@ -803,7 +803,7 @@ export const FRONT_NOTES: StudyNote[] = [
     ],
     learned: [
       {
-        title: '헷갈리는 것',
+        title: 'id · class · name',
         items: ['id 는 페이지에 하나, class 는 여러 요소 · 한 요소에 여러 개', 'input 의 name 은 서버로 보낼 때의 키 이름'],
       },
     ],

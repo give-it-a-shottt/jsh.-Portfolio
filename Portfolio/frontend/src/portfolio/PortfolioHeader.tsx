@@ -1,3 +1,4 @@
+import { studyHref } from './notes'
 import { searchHref, type ResultTab } from './routes'
 import SearchBox from './SearchBox'
 
@@ -57,7 +58,8 @@ export default function PortfolioHeader({ search, activeTab = 'all' }: Portfolio
             return (
               <a
                 key={tab}
-                href={searchHref('', tab)}
+                // Study 는 검색 결과 대신 노션 같은 Study 홈으로 간다(F-004)
+                href={tab === 'study' ? studyHref() : searchHref('', tab)}
                 aria-current={active ? 'page' : undefined}
                 lang="en"
                 className={`rounded-full px-3 py-2 text-14 font-medium tracking-normal sm:px-4 ${active ? 'bg-main text-white' : 'text-main hover:bg-light'}`}

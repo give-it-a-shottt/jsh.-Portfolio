@@ -62,6 +62,66 @@ export function noteHref(slug: string) {
   return `#/study/${slug}`
 }
 
+/** Study 홈 `#/study`, 강의를 고르면 `#/study?area=…&course=…` */
+export function studyHref(course?: { area: CaseType; course: string }) {
+  if (!course) return '#/study'
+  return `#/study?${new URLSearchParams({ area: course.area, course: course.course })}`
+}
+
+// 노트의 '막힌 것 · 바로잡은 것' 묶음은 내가 틀렸던 문답이라 화면과 검색에서 뺀다. 데이터는 다시 볼 수 있게 남겨 둔다.
+const HIDDEN_GROUP = /막힌|바로잡|헷갈/
+
+/** 화면에 보일 '배운 것' 묶음 — 틀렸던 문답 묶음은 뺀다 */
+export function visibleLearned(note: StudyNote) {
+  return note.learned.filter((group) => !HIDDEN_GROUP.test(group.title))
+}
+
+export interface StudyCourse {
+  area: CaseType
+  course: string
+  /** 최신순 */
+  notes: StudyNote[]
+  /** 이 강의의 개념 묶음 이름 — 나온 순서대로, 겹치면 한 번만 */
+  groups: string[]
+}
+
+const AREA_ORDER: CaseType[] = ['Front', 'Back', 'Design']
+
+/** 분야 → 강의 묶음. 강의는 노트가 많은 순. 같은 강의라도 분야가 다르면 따로 센다(미니 인프런 Front · Back) */
+export const STUDY_TREE = AREA_ORDER.map((area) => {
+  const courses = new Map<string, StudyNote[]>()
+  for (const note of NOTES) if (note.area === area) courses.set(note.course, [...(courses.get(note.course) ?? []), note])
+  return {
+    area,
+    count: [...courses.values()].reduce((sum, notes) => sum + notes.length, 0),
+    courses: [...courses]
+      .map(([course, notes]): StudyCourse => ({
+        area,
+        course,
+        notes,
+        groups: [...new Set(notes.flatMap((note) => visibleLearned(note).map((group) => group.title)))],
+      }))
+      .sort((a, b) => b.notes.length - a.notes.length),
+  }
+}).filter(({ count }) => count > 0)
+
+export const COURSES = STUDY_TREE.flatMap(({ courses }) => courses)
+
+export function findCourse(area: string | null, course: string | null) {
+  return COURSES.find((item) => item.area === area && item.course === course)
+}
+
+const FEATURED_COUNT = 2
+
+/**
+ * Study 홈에서 개념 카드로 크게 보여 줄 대표 강의 — 가장 최근에 공부한 강의부터(같은 날이면 노트가 많은 쪽).
+ * 같은 강의가 Front · Back 에 나뉘어 있으면 한 번만 넣는다. 나머지는 '다른 강의' 목록에 한 줄씩.
+ */
+export const FEATURED_COURSES = [...COURSES]
+  .sort((a, b) => b.notes[0].date.localeCompare(a.notes[0].date) || b.notes.length - a.notes.length)
+  .filter((course, i, sorted) => sorted.findIndex((other) => other.course === course.course) === i)
+  .slice(0, FEATURED_COUNT)
+
 /** 실제로 있는 사례에 쓴 것만 — 사례가 아직 없으면 '써먹은 곳'에 나오지 않는다 */
 export function appliedCases(note: StudyNote): (StudyApplied & { item: PortfolioCase })[] {
   return (note.applied ?? []).flatMap((applied) => {

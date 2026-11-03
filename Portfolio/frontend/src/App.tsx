@@ -77,7 +77,8 @@ function App() {
   // 사례 상세 '#/case/{slug}'
   if (path.startsWith("/case/"))
     return <PortfolioApp path="/case" params={params} slug={path.slice("/case/".length)} />;
-  // 공부 노트 상세 '#/study/{slug}'
+  // Study 홈 '#/study'(강의를 고르면 '?area=…&course=…'), 공부 노트 상세 '#/study/{slug}'
+  if (path === "/study") return <PortfolioApp path="/study" params={params} />;
   if (path.startsWith("/study/"))
     return <PortfolioApp path="/study" params={params} slug={path.slice("/study/".length)} />;
 

@@ -12,7 +12,7 @@
 **지금 상태**
 
 - 공개 중: 검색형 포트폴리오, 마에스트로(리뉴얼), Accio 리디자인, FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn 강의 플랫폼 시안(핵심 흐름), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
-- 리뷰: F-001·F-006·F-008·F-009 판정 완료([주의]). F-010은 판정 완료([주의]), F-007은 리뷰 전, F-002~F-005는 백로그예요.
+- 리뷰: F-001·F-004·F-006·F-008·F-009·F-010 판정 완료([주의]). F-007은 리뷰 전, F-002·F-003·F-005는 백로그예요.
 
 **읽는 순서** (면접 전에는 이것만 읽어도 돼요)
 
@@ -84,7 +84,7 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-001](features/F-001-flaseek-renewal/feature.md) | FLASEEK 리뉴얼 시안 | [주의] 판정 완료 |
 | [F-002](features/F-002-accio-redesign/feature.md) | Accio 리디자인 | 백로그 |
 | [F-003](features/F-003-portfolio-search/feature.md) | 검색형 포트폴리오 | 백로그 |
-| [F-004](features/F-004-study-notes/feature.md) | Study 노트 | 백로그 |
+| [F-004](features/F-004-study-notes/feature.md) | Study 노트 (노션형 홈 · 문서형 상세) | [주의] 판정 완료 |
 | [F-005](features/F-005-maestro/feature.md) | 마에스트로 | 백로그 |
 | [F-006](features/F-006-design-system-case/feature.md) | 개인 디자인 시스템 사례 | [주의] 판정 완료 |
 | [F-007](features/F-007-search-algorithm/feature.md) | 검색 알고리즘 개선 (S0~S6) | 리뷰 전 |
@@ -92,4 +92,4 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-009](features/F-009-nightly/feature.md) | Nightly 수면 코칭 시안 (홈 · 수면 대시보드 · AI 코치) | [주의] 판정 완료 |
 | [F-010](features/F-010-maestro-renewal/feature.md) | 마에스트로 리뉴얼 (지금 열린 식당 3곳 · Zustand · 유미 real + 저장본) | [주의] 판정 완료 |
 
-최종 수정: 2026-11-01 · 관련: D-001~D-004, F-001~F-010
+최종 수정: 2026-11-03 · 관련: D-001~D-004, F-001~F-010

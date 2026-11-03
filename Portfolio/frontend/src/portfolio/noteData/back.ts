@@ -457,7 +457,7 @@ export const BACK_NOTES: StudyNote[] = [
     ],
     learned: [
       {
-        title: "헷갈렸던 것",
+        title: "ORM · 세션 · 비동기",
         items: [
           "User(...) 는 메모리에 객체를 찍을 뿐 DB 에 저장하지 않는다",
           "AsyncSession 은 스키마를 만드는 게 아니라 DB 와 대화하는 통로 (쿼리 · 추적 · 트랜잭션)",
@@ -570,10 +570,10 @@ export const BACK_NOTES: StudyNote[] = [
     ],
     learned: [
       {
-        title: "헷갈렸던 것",
+        title: "요청과 응답의 규칙",
         items: [
-          "@app.GET 은 AttributeError — 코드에서는 소문자 get",
-          "키에 따옴표가 없으면 id 는 파이썬 내장 함수라 조용히 틀린다",
+          "데코레이터는 소문자 — @app.get · @app.post (대문자 GET 은 AttributeError)",
+          "딕셔너리 키는 따옴표로 감싼다 — 따옴표 없는 id 는 파이썬 내장 함수 id 를 가리킨다",
           "메서드 · 경로는 요청에, 상태 코드 · 본문은 응답에 담긴다",
         ],
       },
@@ -612,9 +612,9 @@ export const BACK_NOTES: StudyNote[] = [
         ],
       },
       {
-        title: "바로잡은 것",
+        title: "요청의 구성",
         items: [
-          '요청의 두 번째 요소는 "파라미터"가 아니라 경로(path), 파라미터는 그 안의 일부',
+          "요청은 메서드 + 경로(path) — 쿼리 파라미터는 경로 안의 일부다",
         ],
       },
     ],

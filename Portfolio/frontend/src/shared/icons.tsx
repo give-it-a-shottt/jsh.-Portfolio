@@ -121,6 +121,24 @@ export function ArrowRightIcon(props: IconProps) {
   )
 }
 
+/** 펼친 책 — Study 공부 노트 페이지 아이콘 */
+export function BookIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M10 6v10.5M2.5 4h5a2.5 2.5 0 0 1 2.5 2.5A2.5 2.5 0 0 1 12.5 4h5v11h-5.5a2 2 0 0 0-2 2 2 2 0 0 0-2-2H2.5z" />
+    </Icon>
+  )
+}
+
+/** 전구 — 노트의 한 줄 요약 콜아웃 */
+export function LightbulbIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M7.5 15h5M8.5 17.5h3M10 2.5a5.5 5.5 0 0 0-3.2 10c.45.35.7.85.7 1.4v.1h5v-.1c0-.55.25-1.05.7-1.4A5.5 5.5 0 0 0 10 2.5z" />
+    </Icon>
+  )
+}
+
 export function CloseIcon(props: IconProps) {
   return (
     <Icon {...props}>

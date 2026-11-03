@@ -11,6 +11,7 @@ import { SEARCH_INPUT_ID } from './SearchBox'
 import SearchHome from './SearchHome'
 import SearchResults from './SearchResults'
 import StudyDetail from './StudyDetail'
+import StudyHome from './StudyHome'
 
 // Front·Back 상세는 코드 원문과 하이라이터를 함께 받아서, 열 때만 받는다
 const EngineeringCaseDetail = lazy(() => import('./EngineeringCaseDetail'))
@@ -36,7 +37,7 @@ function markIntroSeen() {
 }
 
 interface PortfolioAppProps {
-  /** '/' = 검색 홈, '/search' = 결과, '/case' = 사례 상세, '/study' = 공부 노트 상세 */
+  /** '/' = 검색 홈, '/search' = 결과, '/case' = 사례 상세, '/study' = Study 홈(slug 없음) · 공부 노트 상세 */
   path: '/' | '/search' | '/case' | '/study'
   params: URLSearchParams
   /** path 가 '/case' · '/study' 일 때 보여줄 사례·노트 */
@@ -113,7 +114,11 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
             }
           />
           {path === '/study' ? (
-            <StudyDetail slug={slug} />
+            slug ? (
+              <StudyDetail slug={slug} />
+            ) : (
+              <StudyHome area={params.get('area')} course={params.get('course')} />
+            )
           ) : caseItem && !caseItem.design ? (
             <Suspense fallback={null}>
               <EngineeringCaseDetail slug={slug} />

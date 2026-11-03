@@ -1,6 +1,6 @@
 import { CASE_STORIES } from './caseStories'
 import { CASES, type PortfolioCase } from './data'
-import { NOTES, type StudyNote } from './notes'
+import { NOTES, visibleLearned, type StudyNote } from './notes'
 import { rankCases } from './rank'
 import { editDistance, hangulToKeys, keysToHangul, toJamo } from './hangul'
 import { isShortLatin, latinWords, normalize, plainWords, queryWords, stripJosa, type QueryWord } from './searchText'
@@ -82,7 +82,8 @@ function caseDoc(item: PortfolioCase): SearchDoc {
 
 function noteDoc(note: StudyNote): SearchDoc {
   const body = [
-    ...note.learned.flatMap((group) => [group.title, ...group.items]),
+    // 화면에 숨긴 '막힌 것' 묶음으로는 찾지 않는다 — 결과를 열었는데 검색어가 안 보이면 안 되니까
+    ...visibleLearned(note).flatMap((group) => [group.title, ...group.items]),
     ...(note.practice ?? []).flatMap((practice) => [practice.caption, practice.how]),
   ]
   return makeDoc(`note:${note.slug}`, 1, {

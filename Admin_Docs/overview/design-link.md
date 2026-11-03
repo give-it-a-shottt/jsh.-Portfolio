@@ -17,11 +17,12 @@
 | techlearn 강의 플랫폼 | 피그마 「techlearn 디자인」 파일 · 「디자인 · 네이비」 페이지 (주소는 공개 문서에 적지 않아요) — 색은 `index.css`의 `tl-*` 토큰 |
 | Nightly 수면 코칭 | 피그마 「AI 수면」 파일 · 「Design · Liquid Glass」 페이지의 'PC · Liquid Glass · 수정안' 01 · 04 · 05 (2026-10-31부터, 주소는 공개 문서에 적지 않아요). 모바일은 수정안이 없어 기존 모바일 배치에 수정안 색 · 유리 스타일을 맞췄어요 — 색은 `index.css`의 `nt-*` 토큰(피그마 변수 값 그대로) |
 | 포트폴리오 홈 리뉴얼 | 피그마 「jsh」 파일 · 「01 Home — Light 리뉴얼」 프레임 (주소는 공개 문서에 적지 않아요) |
+| Study 노션형 (F-004) | 피그마 「jsh」 파일 · Page 2 「05 Study 홈 — PC 1440」 · 「06 Study 상세 — 노션 문서형 PC 1440」 · 「Study Components」(`Study/TreeRow` → `StudyLayout.tsx`, `Study/ConceptChip` · `Study/ConceptCard` → `StudyHome.tsx`) — 색은 `jsh` 변수 Ivory 모드 = `index.css` Ivory · `study` 토큰 |
 
 ### 디자인 md · 토큰 원본
 | 무엇 | 위치 |
 |---|---|
-| 공통 디자인 시스템 기준 | [MyDesign.md](../../MyDesign.md) |
+| 공통 디자인 시스템 기준 | [My_DesignSystem_v1.md](../../My_DesignSystem_v1.md) (예전 이름 MyDesign.md, 2026-11-03 링크 수정 — 사용자 확인) |
 | 이커머스 기준 (FLASEEK 상품 카드 등) | [MyDesign(E-commerce).md](<../../MyDesign(E-commerce).md>) |
 | 마에스트로 리뉴얼 (브리프 · IA · 대비 판정 ①②③ · 시스템 밖 결정) | [maestro-design.md](../../maestro-design.md) |
 | 토큰 코드 (Tailwind 4 `@theme`, 포트폴리오 Ivory `[data-theme="ivory"]`) | [index.css](../../Portfolio/frontend/src/index.css) |

@@ -42,7 +42,7 @@
 ### 서비스별 주소
 | 서비스 | 주소 | 무엇 | 서버 | 코드 |
 |---|---|---|---|---|
-| 포트폴리오 | `#/`, `#/search?q=`, `#/case/{slug}`, `#/study/{slug}` | 검색형 포트폴리오. 사례·노트 데이터는 코드 안의 정적 데이터 | 없음 | `Portfolio/frontend/src/portfolio/` |
+| 포트폴리오 | `#/`, `#/search?q=`, `#/case/{slug}`, `#/study`(Study 홈), `#/study?area=&course=`(강의 노트 모음), `#/study/{slug}` | 검색형 포트폴리오. 사례·노트 데이터는 코드 안의 정적 데이터 | 없음 | `Portfolio/frontend/src/portfolio/` |
 | 마에스트로 | `#/maestro/…` | 낯선 서울 동네에서 지금 열린 식당 3곳을 근거와 함께 골라 주는 서비스 (F-010 리뉴얼) | 마에스트로 API(헤이유미 API 중계, mock/real) | `src/projects/maestro/`, `backend/maestro/` |
 | Accio | `#/accio/…` | AI 자연어 검색 쇼핑몰. 팀 프로젝트를 Figma 리디자인으로 다시 만든 화면 | 프론트만 동작(목 데이터). 백엔드는 뼈대 | `src/projects/accio/`, `backend/accio/` |
 | FLASEEK | `#/flaseek/…` | 보정속옷·압박스타킹 자사몰 리뉴얼 시안. 메인·리스트·상세·로그인 | 없음(정적 데이터, 이번 방문 동안만 상태 유지) | `src/projects/flaseek/` |
