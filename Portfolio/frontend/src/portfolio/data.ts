@@ -443,7 +443,7 @@ export const CASES: PortfolioCase[] = [
     code: 'CASE 01',
     date: '2026.10',
     level: 3,
-    title: '하루 70요청 한도 안에서 끼니마다 대안 18곳 미리 찾기',
+    title: '하루 70토큰 한도 안에서 끼니마다 대안 18곳 미리 찾기',
     description:
       '상황마다 따로 검색하면 끼니 하나에 요청이 6번 나가는 구조. 끼니마다 추천순으로 한 번만 넓게 받고, 상황별 조건은 그 결과 안에서 골라 요청 수를 상황 수와 무관하게 고정.',
     metrics: [
@@ -465,7 +465,7 @@ export const CASES: PortfolioCase[] = [
       '키를 받기 전에도 개발하고, 발표 중 외부 API가 멈춰도 버틸 수 있게 유미 클라이언트를 인터페이스 하나로 묶고 환경변수 하나로 바꿔 끼우게 설계.',
     metrics: [
       { label: '모드 전환', value: '환경변수 1개' },
-      { label: '공개 사이트 유미 호출', value: '0회' },
+      { label: '유미가 막히면', value: '저장본 400곳' },
     ],
     tags: ['FastAPI', 'Protocol', '의존성 주입'],
     keywords: '마에스트로 maestro mock real 목 모드 인터페이스 의존성 주입 depends protocol 테스트 장애 대비 발표 백업 외부 api',
@@ -526,7 +526,7 @@ export const CASES: PortfolioCase[] = [
     title: '무료 서버·DB 위에서 데모 서비스 유지하기',
     description:
       '쉬면 잠드는 Render 무료 서버, 1주일 안 쓰면 멈추는 Supabase 무료 DB. 블루프린트로 배포 설정을 코드로 남기고, GitHub Actions 로 DB를 주기적으로 깨우게 함.',
-    metrics: [{ label: 'DB 깨우기', value: '사흘마다' }],
+    metrics: [{ label: '배포 설정', value: '블루프린트(코드)' }],
     tags: ['Render', 'GitHub Actions', 'Supabase'],
     keywords: '무료 서버 render supabase 배포 github actions cron 크론 헬스체크 인프라 운영 블루프린트',
     href: '#/case/free-tier-infra',
