@@ -4,7 +4,6 @@
 // 원본 파일을 고쳐 줄이 밀리면 여기 lines 도 같이 고친다.
 // 이 파일은 상세 화면을 열 때만 받는다(PortfolioApp 의 lazy) — 코드 원문이 첫 화면 용량에 들어가지 않는다.
 
-import accioCart from '../projects/accio/ui/useCart.ts?raw'
 import accioArchitecture from './assets/accio/architecture.png'
 import accioDemoIntentPoster from './assets/accio/demo-intent.jpg'
 import accioDemoIntent from './assets/accio/demo-intent.mp4'
@@ -115,13 +114,6 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
         source: designTokens,
         lines: [3, 28],
         note: '--font-weight-*: initial, --text-*: initial 로 Tailwind 기본값을 지우고 디자인 문서의 값만 남겼다. 토큰에 없는 크기는 쓰려 해도 클래스가 없다.',
-      },
-      {
-        label: 'useCart.ts',
-        path: 'Portfolio/frontend/src/projects/accio/ui/useCart.ts',
-        source: accioCart,
-        lines: [81, 91],
-        note: '저장하는 건 담은 상품·옵션·수량·선택뿐이고, 결제할 항목과 할인·배송비·합계는 장바구니와 주문서가 이 함수로 매번 계산한다.',
       },
     ],
     // 팀 저장소 README(mall-haebwa_) — 시연 GIF 는 용량이 커서(13MB) mp4 로 바꿔 두었다

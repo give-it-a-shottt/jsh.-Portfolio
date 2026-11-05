@@ -1,5 +1,5 @@
 import screenshotPlaceholder from './assets/screenshot-placeholder.webp'
-import { KEYWORDS, type PortfolioCase } from './data'
+import { caseTab, KEYWORDS, type PortfolioCase } from './data'
 import { SearchIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
 import NoteCard from './NoteCard'
@@ -12,9 +12,8 @@ import { didYouMean, relatedSearches } from './related'
 
 const TABS: { tab: ResultTab; label: string }[] = [
   { tab: 'all', label: '전체' },
-  { tab: 'front', label: 'Front' },
-  { tab: 'back', label: 'Back' },
   { tab: 'design', label: 'Design' },
+  { tab: 'fullstack', label: 'Fullstack' },
   { tab: 'study', label: 'Study' },
 ]
 
@@ -167,13 +166,13 @@ interface SearchResultsProps {
 export default function SearchResults({ query, tab }: SearchResultsProps) {
   // 사례는 레벨 높은 것부터(rank.ts), 노트는 최신순(notes.ts) — 찾는 규칙은 search.ts
   const { cases: matched, notes: matchedNotes, corrections } = search(query)
-  // Front · Back · Design 탭은 사례만 — 공부 노트는 Study 홈(#/study)이 따로 생겨 Study 탭과 '전체' 탭에서만 보여 준다(F-004)
-  const casesOf = (tab: ResultTab) => matched.filter((item) => item.type.toLowerCase() === tab)
+  // Design · Fullstack 탭은 사례만 — 공부 노트는 Study 홈(#/study)이 따로 생겨 Study 탭과 '전체' 탭에서만 보여 준다(F-004).
+  // Front · Back 사례는 Fullstack 한 탭에 함께 둔다(F-011)
+  const casesOf = (tab: ResultTab) => matched.filter((item) => caseTab(item) === tab)
   const counts: Record<ResultTab, number> = {
     all: matched.length + matchedNotes.length,
-    front: casesOf('front').length,
-    back: casesOf('back').length,
     design: casesOf('design').length,
+    fullstack: casesOf('fullstack').length,
     study: matchedNotes.length,
   }
   const results = tab === 'all' || tab === 'study' ? matched : casesOf(tab)
@@ -197,7 +196,7 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
       <h1 className="sr-only">{query ? `'${query}' 검색 결과` : '전체 사례'}</h1>
 
       <div className="border-b border-light">
-        {/* 탭이 다섯 개라 좁은 화면에서는 가로로 넘긴다 */}
+        {/* 좁은 화면에서는 탭 줄을 가로로 넘긴다 */}
         <nav aria-label="결과 분류" className="scrollbar-none mx-auto flex max-w-300 gap-6 overflow-x-auto px-5 sm:px-10">
           {TABS.map(({ tab: id, label }) => {
             const active = tab === id

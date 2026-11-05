@@ -3,11 +3,11 @@ import { Highlight, themes } from 'prism-react-renderer'
 import screenshotPlaceholder from './assets/screenshot-placeholder.webp'
 import { CASE_DETAILS, type CodeSample, type TeamProject } from './caseDetails'
 import { CASE_STORIES } from './caseStories'
-import { CASES, type PortfolioCase } from './data'
+import { caseTab, CASES, type PortfolioCase } from './data'
 import { CheckIcon, ChevronRightIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
 import CaseNotes from './CaseNotes'
-import { searchHref, type ResultTab } from './routes'
+import { searchHref } from './routes'
 
 const REPO_URL = 'https://github.com/give-it-a-shottt/jsh.-Portfolio'
 const CODE_THEME = themes.oneDark
@@ -27,7 +27,7 @@ function languageOf(path: string) {
 }
 
 function listHref(item: PortfolioCase) {
-  return searchHref('', item.type.toLowerCase() as ResultTab)
+  return searchHref('', caseTab(item))
 }
 
 function BackLink({ item }: { item: PortfolioCase }) {
@@ -35,7 +35,7 @@ function BackLink({ item }: { item: PortfolioCase }) {
     <a href={listHref(item)} className="flex w-fit items-center gap-1 text-14 font-medium text-sub hover:text-main">
       <ChevronRightIcon size={16} className="rotate-180" />
       <span>
-        <span lang="en">{item.type}</span> 사례 목록
+        <span lang="en">Fullstack</span> 사례 목록
       </span>
     </a>
   )
@@ -429,7 +429,7 @@ export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailPro
           className="flex w-fit items-center gap-1 rounded-full border border-regular px-5 py-3 text-14 font-medium text-main hover:bg-light"
         >
           <span>
-            다른 <span lang="en">{item.type}</span> 사례 보기
+            다른 <span lang="en">Fullstack</span> 사례 보기
           </span>
           <ChevronRightIcon size={16} />
         </a>

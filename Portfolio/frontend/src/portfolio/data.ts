@@ -191,12 +191,38 @@ import type { Level } from './rank'
 
 export type CaseType = 'Front' | 'Back' | 'Design'
 
+/** 다시 만든 Accio 배포 주소 — 사이트 안 앱(#/accio)은 지우고 링크만 둔다(F-011) */
+export const ACCIO_LIVE = 'https://accio-two.vercel.app/'
+/** 배포 주소 — 사례(CASES)와 프로젝트 페이지(projects.ts)가 함께 쓴다 */
+export const PLANFORME_LIVE = 'https://planforme-web.vercel.app/'
+export const REMIND_LIVE = 'https://remind-flame-ten.vercel.app/'
+
 /** 분류 점 색 — Back 은 포인트 파랑, Front 는 회색, Design 은 주황, 공부 노트(Study)는 인디고 */
 export const TYPE_DOT_CLASS: Record<CaseType | 'Study', string> = {
   Back: 'bg-portfolio',
   Front: 'bg-icon-disabled',
   Design: 'bg-accent',
   Study: 'bg-study',
+}
+
+/** 실제로 맡은 부분 — 카드의 역할 칩(F-011). 사례에 roles 가 없으면 분류(type)로 정한다 */
+export type Role = 'Design' | 'Front' | 'Back' | 'DB'
+
+/** 역할 칩 색 — My Design System 12 Badge Soft (Design 보라 · Front 파랑 · Back 남색 · DB 초록) */
+export const ROLE_BADGE_CLASS: Record<Role, string> = {
+  Design: 'bg-role-design-soft text-role-design',
+  Front: 'bg-role-front-soft text-role-front',
+  Back: 'bg-role-back-soft text-role-back',
+  DB: 'bg-role-db-soft text-role-db',
+}
+
+export function caseRoles(item: { type: CaseType; roles?: Role[] }): Role[] {
+  return item.roles ?? [item.type]
+}
+
+/** 사례가 어느 탭에 들어가는지 — Front · Back 은 Fullstack 한 탭으로 합친다(F-011) */
+export function caseTab(item: { type: CaseType }): 'design' | 'fullstack' {
+  return item.type === 'Design' ? 'design' : 'fullstack'
 }
 
 /** Design 사례의 화면 한 장(시안·화면 구성·디자인 시스템 가이드) */
@@ -262,6 +288,8 @@ export interface PortfolioCase {
   title: string
   description: string
   metrics: { label: string; value: string }[]
+  /** 실제로 맡은 부분. 없으면 [type] — 여러 부분을 함께 한 사례만 적는다 */
+  roles?: Role[]
   tags: string[]
   /** 화면에 보이지 않는 추가 검색어 */
   keywords: string
@@ -291,6 +319,7 @@ export const CASES: PortfolioCase[] = [
       { label: '유미 검색', value: '동네당 6시간에 1번' },
       { label: '실패하면', value: '저장본 400곳' },
     ],
+    roles: ['Front', 'Back'],
     tags: ['React', 'Zustand', 'Leaflet', 'FastAPI'],
     keywords:
       '마에스트로 maestro 리뉴얼 해커톤 yumithon 헤이유미 맛집 식당 추천 지금 영업 영업시간 막대 지도 leaflet zustand 전역 상태 persist 을지로 성수 익선동 연남 자리 물어보기 롱폴링 fastapi 백엔드',
@@ -312,13 +341,15 @@ export const CASES: PortfolioCase[] = [
       { label: '기간', value: '2025.10 – 11' },
       { label: '팀', value: '5명' },
     ],
+    // 2025 팀 프로젝트(5명)에서 맡은 부분. 혼자 다시 만든 쪽(Design · Front · Back · DB)은 projects.ts 의 accio
+    roles: ['Design', 'Front'],
     tags: ['React', 'TypeScript', 'Tailwind'],
     keywords: 'accio 아씨오 쇼핑몰 이커머스 ai 검색 리액트 디자인 시스템',
     image: accioHome,
     href: '#/case/accio',
-    // v1: 실제 서비스했던 원본. 서버가 닫혀 목데이터로 도는 정적 빌드(public/accio-v1)다
+    // 다시 만든 Accio 는 따로 배포했다(F-011). v1: 실제 서비스했던 팀 원본의 정적 빌드(public/accio-v1)
     links: [
-      { label: '실제 화면 보기', href: '#/accio' },
+      { label: '서비스 열기', href: ACCIO_LIVE },
       { label: 'v1 원본 보기', href: '/accio-v1/' },
     ],
   },
@@ -386,7 +417,7 @@ export const CASES: PortfolioCase[] = [
       'planforme 플랜포미 플래너 next.js nextjs 16 activity cache components 상태 초기화 화면 보관 useLayoutEffect 바텀시트 폼 리셋 버그',
     image: pfmPreviewBook,
     href: '#/case/planforme-activity-state',
-    links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
+    links: [{ label: '실제 서비스 보기', href: PLANFORME_LIVE }],
   },
   {
     slug: 'planforme-stale-response',
@@ -403,7 +434,7 @@ export const CASES: PortfolioCase[] = [
       'planforme 플랜포미 플래너 캘린더 useapi 데이터 패칭 fetch 오래된 응답 stale 경쟁 상태 race condition 로딩 스켈레톤 훅',
     image: pfmCalendar,
     href: '#/case/planforme-stale-response',
-    links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
+    links: [{ label: '실제 서비스 보기', href: PLANFORME_LIVE }],
   },
   // ── Back ──
   {
@@ -517,7 +548,7 @@ export const CASES: PortfolioCase[] = [
     keywords:
       'planforme 플랜포미 플래너 재계산 replan 리플랜 밀림 연체 overdue 기준 시점 rebased_on 쿼리 회귀 테스트 fastapi sqlalchemy 백엔드 python',
     href: '#/case/planforme-replan-overdue',
-    links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
+    links: [{ label: '실제 서비스 보기', href: PLANFORME_LIVE }],
   },
   {
     slug: 'planforme-quota-logic',
@@ -536,7 +567,7 @@ export const CASES: PortfolioCase[] = [
     keywords:
       'planforme 플랜포미 플래너 할당량 계산 로직 올림 분배 유효 일수 과부하 순수 함수 단위 테스트 unit test pytest 기획 백엔드 python',
     href: '#/case/planforme-quota-logic',
-    links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
+    links: [{ label: '실제 서비스 보기', href: PLANFORME_LIVE }],
   },
   {
     slug: 'planforme-api-key',
@@ -801,7 +832,7 @@ export const CASES: PortfolioCase[] = [
       'accio 아씨오 아시오 리디자인 쇼핑몰 이커머스 ai 검색 대화 장바구니 마이페이지 판매자센터 상태 화면 빈 상태 오류 토스트 디자인 시스템 피그마 반응형',
     image: acHome,
     href: '#/case/accio-redesign',
-    links: [{ label: '실제 화면 보기', href: '#/accio' }],
+    links: [{ label: '서비스 열기', href: ACCIO_LIVE }],
     design: {
       app: 'Accio — 상품 이름을 몰라도 말로 찾는 AI 쇼핑몰 (팀 프로젝트 리디자인)',
       problem:
@@ -969,7 +1000,7 @@ export const CASES: PortfolioCase[] = [
       'remind 리마인드 노션 학습노트 복습 퀴즈 오답노트 객관식 ox 단답형 서술형 라이트너 leitner 학습 앱 모바일 반응형 디자인 시스템 피그마',
     image: rmHome,
     href: '#/case/remind',
-    links: [{ label: '실제 서비스 보기', href: 'https://remind-flame-ten.vercel.app/' }],
+    links: [{ label: '실제 서비스 보기', href: REMIND_LIVE }],
     design: {
       app: 'remind — 노션에 정리한 강의 노트를 퀴즈로 바꿔 매일 복습하는 웹 앱 (개인 프로젝트)',
       problem:
@@ -1020,7 +1051,7 @@ export const CASES: PortfolioCase[] = [
       'planforme 플랜포미 플래너 계획 할 일 독서 강의 일정 할당량 재계산 바텀시트 캘린더 통계 글래스모피즘 컴포넌트 ia 정보 구조 유저 플로우 user flow 모바일 피그마',
     image: pfmHome,
     href: '#/case/planforme',
-    links: [{ label: '실제 서비스 보기', href: 'https://planforme-web.vercel.app/' }],
+    links: [{ label: '실제 서비스 보기', href: PLANFORME_LIVE }],
     design: {
       app: 'PlanForMe — 총분량과 마감일만 입력하면 하루 할당량을 자동 계산해 일정에 등록해 주는 1인용 스마트 플래너 (개인 프로젝트)',
       problem:
@@ -1142,9 +1173,7 @@ export const KEYWORDS: { label: string; type: CaseType | 'Study' }[] = [
  */
 export const PROJECTS: { name: string; summary: string; href?: string }[] = [
   { name: 'techlearn', summary: '강의 플랫폼', href: '#/techlearn' },
-  { name: 'ACCIO', summary: 'AI 검색 쇼핑몰', href: '#/accio' },
   { name: 'Nightly', summary: '수면 코칭 커머스', href: '#/nightly' },
-  { name: '마에스트로', summary: '맛집 추천 MCP', href: '#/maestro' },
 ]
 
 // 검색은 search.ts, 자동완성은 suggest.ts 에서 한다.

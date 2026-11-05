@@ -1,6 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
 import PortfolioApp from "./portfolio/PortfolioApp";
-import { ACCIO_BASE, LEGACY_ROUTES } from "./projects/accio/routes";
 import { MAESTRO_BASE } from "./projects/maestro/routes";
 import { FLASEEK_BASE } from "./projects/flaseek/routes";
 import { TECHLEARN_BASE } from "./projects/techlearn/routes";
@@ -9,7 +8,6 @@ import useHashRoute from "./shared/hooks/useHashRoute";
 
 // 프로젝트는 들어갈 때 코드를 받는다 — 프로젝트가 늘어도 포트폴리오 첫 화면은 자기 코드만 받는다.
 // 새 프로젝트: projects/<이름>/ 를 만들고 아래에 lazy 한 줄 + 라우트 한 줄을 더한다.
-const AccioApp = lazy(() => import("./projects/accio/AccioApp"));
 const MaestroApp = lazy(() => import("./projects/maestro/MaestroApp"));
 const FlaseekApp = lazy(() => import("./projects/flaseek/FlaseekApp"));
 const TechlearnApp = lazy(() => import("./projects/techlearn/TechlearnApp"));
@@ -33,13 +31,9 @@ function App() {
   const [path, search = ""] = route.split("?");
   const params = new URLSearchParams(search);
 
-  const accioPath = subPath(path, ACCIO_BASE) ?? LEGACY_ROUTES[path];
-  if (accioPath)
-    return (
-      <Suspense fallback={null}>
-        <AccioApp path={accioPath} params={params} />
-      </Suspense>
-    );
+  // Accio 는 따로 배포했다(F-011) — 예전 '#/accio/…' 주소는 프로젝트 페이지로 보낸다
+  if (path === "/accio" || path.startsWith("/accio/"))
+    return <PortfolioApp path="/project" params={params} slug="accio" />;
 
   const maestroPath = subPath(path, MAESTRO_BASE);
   if (maestroPath)
@@ -77,6 +71,9 @@ function App() {
   // 사례 상세 '#/case/{slug}'
   if (path.startsWith("/case/"))
     return <PortfolioApp path="/case" params={params} slug={path.slice("/case/".length)} />;
+  // 프로젝트 페이지 '#/project/{slug}'(F-011)
+  if (path.startsWith("/project/"))
+    return <PortfolioApp path="/project" params={params} slug={path.slice("/project/".length)} />;
   // Study 홈 '#/study'(강의를 고르면 '?area=…&course=…'), 공부 노트 상세 '#/study/{slug}'
   if (path === "/study") return <PortfolioApp path="/study" params={params} />;
   if (path.startsWith("/study/"))

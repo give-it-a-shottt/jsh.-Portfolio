@@ -2,17 +2,16 @@
 
 ## 한눈에 보기 (코드 몰라도 OK)
 상태: [통과] 사용자 확인 완료 (2026-10-25)
-무엇을: 화면은 **한 건물 안의 여러 매장**처럼 동작해요. 건물(Vite 앱)은 하나이고, 주소의 `#/maestro`, `#/accio`, `#/flaseek`가 각 매장 입구예요. 매장 안의 코드는 손님이 들어올 때 꺼내요(lazy). 서버가 필요한 매장은 마에스트로 하나뿐이고, 마에스트로의 화면 → 마에스트로 API → 헤이유미 API(또는 가짜 데이터) 순서로 흘러요.
+무엇을: 화면은 **한 건물 안의 여러 매장**처럼 동작해요. 건물(Vite 앱)은 하나이고, 주소의 `#/maestro`, `#/flaseek`, `#/techlearn`이 각 매장 입구예요. Accio는 따로 배포한 서비스로 옮겨 링크만 걸어요(F-011). 매장 안의 코드는 손님이 들어올 때 꺼내요(lazy). 서버가 필요한 매장은 마에스트로 하나뿐이고, 마에스트로의 화면 → 마에스트로 API → 헤이유미 API(또는 가짜 데이터) 순서로 흘러요.
 왜: 프로젝트가 늘어나도 포트폴리오 첫 화면이 무거워지지 않고, 배포는 하나로 끝나게 하려고요.
 
 ```
 브라우저 ── Vercel(정적 파일) ── index.html + JS 묶음
    │
    ├─ App.tsx  주소(#/...)를 보고 어느 앱을 띄울지 고름
-   │    ├─ PortfolioApp (처음부터 받음)
+   │    ├─ PortfolioApp (처음부터 받음) — 프로젝트 페이지(ProjectPage)는 lazy
    │    ├─ MaestroApp ─ lazy ── fetch ──▶ 마에스트로 API (Render, FastAPI)
    │    │                                   └─ YumiClient: mock(JSON) | real(헤이유미 API, 실패하면 저장본 snapshot.json)
-   │    ├─ AccioApp   ─ lazy (목 데이터만)       Accio API (FastAPI+SQLAlchemy, /health 뿐)
    │    ├─ FlaseekApp ─ lazy (정적 데이터만)
    │    └─ TechlearnApp ─ lazy (목업 데이터, 수강신청은 api.ts 가 서버 흉내)
    └─ /accio-v1/  팀 원본 정적 빌드 (App.tsx 를 거치지 않음)
@@ -30,9 +29,8 @@
 Portfolio/frontend/src/
 ├─ App.tsx, main.tsx, index.css   진입·라우팅·디자인 토큰(@theme)
 ├─ shared/                        여러 프로젝트가 같이 쓰는 것 (useHashRoute, MobileFrame, icons)
-├─ portfolio/                     검색형 포트폴리오 (data.ts, caseStories.ts, caseDetails.ts, notes.ts, rank.ts, search.ts, Search*, *Detail)
+├─ portfolio/                     검색형 포트폴리오 (data.ts, projects.ts, caseStories.ts, caseDetails.ts, notes.ts, rank.ts, search.ts, Search*, *Detail, ProjectPage)
 └─ projects/
-   ├─ accio/     (ai, data, home, my, pages, seller, ui, hooks, utils)
    ├─ maestro/   (MaestroApp, routes, api, store(Zustand), hooks, components, MapView(Leaflet), format, styles, types, icons/, screens/)
    ├─ flaseek/   (FlaseekApp, routes, store, data, layout, ui, BeforeAfterSlider, pages/)
    ├─ techlearn/ (TechlearnApp, routes, data(홈), lectures(강의 8개), store, api, hooks, components, enroll, screens/)
@@ -48,7 +46,7 @@ Portfolio/backend/maestro/app/
 ├─ picks/          새 화면용 라우터 + service(후보 고르기 · 6시간 캐시 · 저장본) · hours · conditions · schemas
 ├─ health/ regions/ places/ score/   라우터 (regions · score · places는 예전 화면용, places의 live-status만 새 화면도 씀)
 └─ yumi/           YumiClient 인터페이스 + mock.py / real.py, deps.py(YUMI_MODE 로 교체), fixtures/snapshot.json(실제 데이터 400곳)
-Portfolio/backend/accio/app/  main.py, core/(config, db: async SQLAlchemy 엔진), health/
+Portfolio/backend/accio/app/  main.py, core/(config, db: async SQLAlchemy 엔진), health/ — 프론트 앱은 지웠고(F-011) 뼈대만 남음
 ```
 - 의존 방향: 라우터 → (service) → `YumiClient`(Depends 주입). 라우터는 클라이언트 구현을 몰라요([D-002](../decisions/D-002-mock-real-client.md)).
 - 테스트: `backend/*/tests/`(pytest). 프론트에는 테스트 러너가 없어요(`package.json`에 test 스크립트 없음).
@@ -57,4 +55,4 @@ Portfolio/backend/accio/app/  main.py, core/(config, db: async SQLAlchemy 엔진
 - 프론트: `cd Portfolio/frontend && npm install && npm run dev`. 검사는 `npm run build`(tsc + vite), `npm run lint`
 - 마에스트로 API: `cd Portfolio/backend/maestro && uv sync && uv run fastapi dev app/main.py --port 8001` (`.env.example`을 복사해서 써요. 기본은 mock)
 
-최종 수정: 2026-11-01 · 관련: D-001, D-002, D-003, F-007, F-010
+최종 수정: 2026-11-05 · 관련: D-001, D-002, D-003, F-007, F-010, F-011

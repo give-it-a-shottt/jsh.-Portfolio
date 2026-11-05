@@ -3,9 +3,8 @@ import { searchHref, type ResultTab } from './routes'
 import SearchBox from './SearchBox'
 
 const NAV: { tab: Exclude<ResultTab, 'all'>; label: string }[] = [
-  { tab: 'front', label: 'Front' },
-  { tab: 'back', label: 'Back' },
   { tab: 'design', label: 'Design' },
+  { tab: 'fullstack', label: 'Fullstack' },
   { tab: 'study', label: 'Study' },
 ]
 
@@ -15,7 +14,7 @@ interface PortfolioHeaderProps {
   activeTab?: ResultTab
 }
 
-// 로고 · (결과 화면) 검색창 · Front/Back/Design/Study 바로가기. md 미만에서는 검색창이 두 번째 줄로 내려간다.
+// 로고 · (결과 화면) 검색창 · Design/Fullstack/Study 바로가기(F-011). md 미만에서는 검색창이 두 번째 줄로 내려간다.
 // 높이 72 · 아래 구분선 · 본문과 같은 1200 폭 안에 정렬 (피그마 01 Home 리뉴얼 Header)
 export default function PortfolioHeader({ search, activeTab = 'all' }: PortfolioHeaderProps) {
   return (

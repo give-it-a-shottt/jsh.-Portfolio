@@ -108,10 +108,21 @@
   /* 포트폴리오(개인 브랜드) 포인트 — MyDesign.md Primary. Accio 의 주황과 구분한다 */
   --color-portfolio: #2563eb;
   --color-portfolio-soft: #eff4ff;
+  /* 주 버튼 hover — 한 단계 진하게 */
+  --color-portfolio-strong: #1d4ed8;
   /* 공부 노트(Study) — 로고의 점과 같은 인디고. 배지 글자는 soft 위 대비 4.5:1 을 넘기려 strong 을 쓴다 */
   --color-study: #6366f1;
   --color-study-soft: #eef0fe;
   --color-study-strong: #4f46e5;
+  /* 역할 칩(F-011) — My Design System 12 Badge Soft. 글자는 soft 위 대비 4.5:1 이상 */
+  --color-role-design: #6b3fa0;
+  --color-role-design-soft: #f3edfb;
+  --color-role-front: #1e5bb8;
+  --color-role-front-soft: #e8f1fd;
+  --color-role-back: #253a75;
+  --color-role-back-soft: #e9ecf5;
+  --color-role-db: #1b7a3a;
+  --color-role-db-soft: #e8f5ec;
 
   /*
    * 마에스트로 리뉴얼(피그마 「마에스트로」 변수 Maestro Renewal / Color · 브랜드 02 Lavender) — mr- 접두어.
@@ -227,6 +238,8 @@
   --radius-thumb: 12px;
   --radius-thumb-sm: 8px;
   --radius-badge: 4px;
+  /* 버튼 — My Design System radius/button (Default 8). 프로젝트 페이지 · 홈 버튼(F-011) */
+  --radius-button: 8px;
   /* Accio 디자인 시스템 radius — xs 배지 · sm 칩 · md 버튼·썸네일 · lg 카드 · xl 배너·모달 */
   --radius-xs: 4px;
   --radius-sm: 8px;

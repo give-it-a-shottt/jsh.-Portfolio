@@ -2,22 +2,22 @@
 
 ## 한눈에 보기 (코드 몰라도 OK)
 상태: [주의] 전체 지도는 사용자 확인 완료(2026-10-25). 화면별 흐름은 FLASEEK만 정리했어요.
-무엇을: **검색하듯 둘러보는 포트폴리오**예요. 첫 화면은 검색창이고, 키워드를 넣으면 작업 사례(Front·Back·Design)와 공부 노트(Study)가 중요한 순서대로 결과처럼 나와요. 사례 안에서 프로젝트를 바로 실행해 볼 수 있어요.
+무엇을: **검색하듯 둘러보는 포트폴리오**예요. 첫 화면은 소개 + 검색 + '먼저 볼 프로젝트' 4개이고, 프로젝트마다 한 페이지(`#/project/{slug}`)가 있어요. 검색하면 작업 사례(Design·Fullstack)와 공부 노트(Study)가 중요한 순서대로 나와요(F-011).
 비유: 백화점 안내 데스크(검색창)에 물으면 매장(사례)을 알려 주고, 몇몇 매장은 들어가서 직접 체험(실행 화면)할 수 있는 구조예요.
 왜: 이력서 링크 하나로 "무엇을 했고 어떻게 생각했는지"를 바로 찾아보고 직접 눌러 보게 하려고요.
 
 ### 전체 지도
 ```
            ┌──────────── 포트폴리오 (#/) ────────────┐
-           │ 검색 홈 → 검색 결과(탭) → 사례 상세 / 노트 상세 │
+           │ 홈 → 프로젝트 페이지 / 검색 결과(탭) → 사례 상세 / 노트 상세 │
            └──────┬─────────┬──────────┬────────────┘
                   │ 실행해 보기 링크
      ┌────────────┼─────────┼──────────┬──────────────┬─────────────┬──────────────┐
   마에스트로     Accio      FLASEEK     Accio v1 원본    techlearn      Nightly
-  #/maestro    #/accio    #/flaseek   /accio-v1/      #/techlearn    #/nightly
-  (해커톤)     (팀→리디자인) (리뉴얼 시안) (팀 원본 정적 빌드) (강의 플랫폼 시안) (수면 코칭 시안)
-     │            │
-  마에스트로 API  Accio API (지금은 헬스 체크만)
+  #/maestro    바깥 링크   #/flaseek   /accio-v1/      #/techlearn    #/nightly
+  (해커톤)     (따로 배포)  (리뉴얼 시안) (팀 원본 정적 빌드) (강의 플랫폼 시안) (수면 코칭 시안)
+     │
+  마에스트로 API
 ```
 
 ### FLASEEK 흐름
@@ -42,9 +42,9 @@
 ### 서비스별 주소
 | 서비스 | 주소 | 무엇 | 서버 | 코드 |
 |---|---|---|---|---|
-| 포트폴리오 | `#/`, `#/search?q=`, `#/case/{slug}`, `#/study`(Study 홈), `#/study?area=&course=`(강의 노트 모음), `#/study/{slug}` | 검색형 포트폴리오. 사례·노트 데이터는 코드 안의 정적 데이터 | 없음 | `Portfolio/frontend/src/portfolio/` |
+| 포트폴리오 | `#/`, `#/project/{slug}`(accio · maestro · planforme · remind), `#/search?q=&tab=`(all · design · fullstack · study, 예전 front · back은 fullstack으로), `#/case/{slug}`, `#/study`(Study 홈), `#/study?area=&course=`(강의 노트 모음), `#/study/{slug}` | 검색형 포트폴리오. 사례·프로젝트·노트 데이터는 코드 안의 정적 데이터 | 없음 | `Portfolio/frontend/src/portfolio/` |
 | 마에스트로 | `#/maestro/…` | 낯선 서울 동네에서 지금 열린 식당 3곳을 근거와 함께 골라 주는 서비스 (F-010 리뉴얼) | 마에스트로 API(헤이유미 API 중계, mock/real) | `src/projects/maestro/`, `backend/maestro/` |
-| Accio | `#/accio/…` | AI 자연어 검색 쇼핑몰. 팀 프로젝트를 Figma 리디자인으로 다시 만든 화면 | 프론트만 동작(목 데이터). 백엔드는 뼈대 | `src/projects/accio/`, `backend/accio/` |
+| Accio | `#/accio/…` → `#/project/accio` | 따로 배포한 서비스(accio-two.vercel.app)로 옮겼어요. 사이트 안 앱은 지우고, 예전 주소는 프로젝트 페이지로 보내요(F-011) | 바깥 서비스 | `backend/accio/`(뼈대만) |
 | FLASEEK | `#/flaseek/…` | 보정속옷·압박스타킹 자사몰 리뉴얼 시안. 메인·리스트·상세·로그인 | 없음(정적 데이터, 이번 방문 동안만 상태 유지) | `src/projects/flaseek/` |
 | techlearn | `#/techlearn/…` | 강의 플랫폼 시안. 홈 → 강의 목록 → 상세 → 포인트 수강신청 ([F-008](../features/F-008-techlearn/feature.md)) | 없음(목업 데이터, 포인트·수강 기록은 이번 방문 동안만) | `src/projects/techlearn/` |
 | Nightly | `#/nightly/…` | 백엔드 공부용 AI 수면 코칭 프로젝트의 시안. 홈 · 수면 대시보드 · AI 코치 ([F-009](../features/F-009-nightly/feature.md)) | 없음(가짜 데이터, 코치 대화는 이번 방문 동안만) | `src/projects/nightly/` |
@@ -80,7 +80,7 @@
 - IA · 유저플로우 원본은 레포 루트 `maestro-design.md`(0-4 · 0-5)와 피그마예요. 투표(VOT)는 구현 2차라 표로 비교의 [함께 고르기]는 누르지 않는 버튼이에요.
 - 조건은 주소에 있어서 새로고침 · 뒤로 가기에도 남아요. 1024px 이상은 PC 배치예요.
 
-최종 수정: 2026-11-01 · 관련: D-001, F-001~F-005, F-007, F-010
+최종 수정: 2026-11-05 · 관련: D-001, F-001~F-005, F-007, F-010, F-011
 
 ### techlearn 흐름
 ```

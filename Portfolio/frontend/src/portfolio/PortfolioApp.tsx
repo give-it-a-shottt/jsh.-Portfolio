@@ -1,12 +1,12 @@
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { CASES } from './data'
+import { caseTab, CASES } from './data'
 import DesignCaseDetail from './DesignCaseDetail'
 import { EASE_OUT } from './motion'
 import PortfolioFooter from './PortfolioFooter'
 import PortfolioHeader from './PortfolioHeader'
 import IntroVideo from './IntroVideo'
-import { goTo, readTab, searchHref, type ResultTab } from './routes'
+import { goTo, readTab, searchHref } from './routes'
 import { SEARCH_INPUT_ID } from './SearchBox'
 import SearchHome from './SearchHome'
 import SearchResults from './SearchResults'
@@ -15,6 +15,8 @@ import StudyHome from './StudyHome'
 
 // Front·Back 상세는 코드 원문과 하이라이터를 함께 받아서, 열 때만 받는다
 const EngineeringCaseDetail = lazy(() => import('./EngineeringCaseDetail'))
+// 프로젝트 페이지(F-011)도 들어갈 때 받는다
+const ProjectPage = lazy(() => import('./ProjectPage'))
 
 const INTRO_SEEN_KEY = 'jsh-intro-seen'
 
@@ -37,10 +39,10 @@ function markIntroSeen() {
 }
 
 interface PortfolioAppProps {
-  /** '/' = 검색 홈, '/search' = 결과, '/case' = 사례 상세, '/study' = Study 홈(slug 없음) · 공부 노트 상세 */
-  path: '/' | '/search' | '/case' | '/study'
+  /** '/' = 홈, '/search' = 결과, '/case' = 사례 상세, '/project' = 프로젝트 페이지, '/study' = Study 홈(slug 없음) · 공부 노트 상세 */
+  path: '/' | '/search' | '/case' | '/project' | '/study'
   params: URLSearchParams
-  /** path 가 '/case' · '/study' 일 때 보여줄 사례·노트 */
+  /** path 가 '/case' · '/project' · '/study' 일 때 보여줄 사례·프로젝트·노트 */
   slug?: string
 }
 
@@ -110,10 +112,14 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
           <PortfolioHeader
             search={isResults ? { query, onSearch: search } : undefined}
             activeTab={
-              isResults ? tab : path === '/study' ? 'study' : caseItem ? (caseItem.type.toLowerCase() as ResultTab) : 'all'
+              isResults ? tab : path === '/study' ? 'study' : path === '/project' ? 'fullstack' : caseItem ? caseTab(caseItem) : 'all'
             }
           />
-          {path === '/study' ? (
+          {path === '/project' ? (
+            <Suspense fallback={null}>
+              <ProjectPage slug={slug} />
+            </Suspense>
+          ) : path === '/study' ? (
             slug ? (
               <StudyDetail slug={slug} />
             ) : (
