@@ -77,6 +77,21 @@ try {
       [],
     )
   }
+
+  // ── 공부 노트(F-012): 합친 노트의 예전 주소 · 새 노트 틀
+  const { NOTES, resolveNoteSlug } = await server.ssrLoadModule('/src/portfolio/notes.ts')
+  const slugs = new Set(NOTES.map((n) => n.slug))
+  check('노트 slug 는 겹치지 않는다', slugs.size, NOTES.length)
+  for (const note of NOTES.filter((n) => n.replaces)) {
+    check(`${note.slug} · 예전 주소가 이 노트로 이어진다`, note.replaces.map(resolveNoteSlug), note.replaces.map(() => note.slug))
+    check(`${note.slug} · 예전 노트가 따로 남아 있지 않다`, note.replaces.filter((old) => slugs.has(old)), [])
+  }
+  for (const note of NOTES.filter((n) => n.sections)) {
+    check(`${note.slug} · 개념 4개 이상`, note.sections.length >= 4, true)
+    check(`${note.slug} · 개념 제목이 겹치지 않는다`, new Set(note.sections.map((s) => s.title)).size, note.sections.length)
+    check(`${note.slug} · 개념마다 설명이 있다`, note.sections.filter((s) => !s.body).map((s) => s.title), [])
+  }
+  check('없는 노트 주소는 그대로', resolveNoteSlug('없는-노트'), '없는-노트')
 } finally {
   await server.close()
 }

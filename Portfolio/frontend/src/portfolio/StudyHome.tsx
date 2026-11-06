@@ -1,14 +1,14 @@
 import { BookIcon } from '../shared/icons'
-import { COURSES, FEATURED_COURSES, findCourse, noteHref, NOTES, studyHref, visibleLearned, type StudyCourse, type StudyNote } from './notes'
+import { conceptCount, conceptGroups, COURSES, FEATURED_COURSES, findCourse, noteHref, NOTES, studyHref, type StudyCourse, type StudyNote } from './notes'
 import StudyHeatmap from './StudyHeatmap'
 import StudyLayout from './StudyLayout'
 
 // Study 홈(피그마 05) — 들어오자마자 '개념으로 정리했다'가 보이게, 강의마다 개념 묶음과 노트의 핵심 개념 두 줄을 먼저 보여 준다.
 // 강의를 고르면(?area=…&course=…) 그 강의의 노트를 모두 같은 카드로 보여 준다.
 
-const GROUP_COUNT = NOTES.reduce((sum, note) => sum + visibleLearned(note).length, 0)
+const GROUP_COUNT = NOTES.reduce((sum, note) => sum + conceptGroups(note).length, 0)
 const CONCEPT_COUNT = NOTES.reduce(
-  (sum, note) => sum + visibleLearned(note).reduce((count, group) => count + group.items.length, 0),
+  (sum, note) => sum + conceptCount(note),
   0,
 )
 // '공부한 날'은 공부를 본격적으로 시작한 날부터 오늘까지 지난 날수(시작일 포함) — 사용자 결정. 노트를 올린 날 수가 아니다
@@ -74,7 +74,7 @@ function ConceptChips({ groups }: { groups: string[] }) {
 /** 노트 카드 — 제목보다 핵심 개념 두 줄이 먼저 읽히게. Design 노트는 실습 결과물 첫 장을 위에 둔다 */
 function ConceptCard({ note }: { note: StudyNote }) {
   const thumb = note.practice?.[0]
-  const groups = visibleLearned(note).map((group) => group.title)
+  const groups = conceptGroups(note).map((group) => group.title)
   return (
     <a
       href={noteHref(note.slug)}

@@ -27,6 +27,13 @@
   - "지금의 Accio 는 Vercel Cron 이 매일 DB 를 깨운다"는 다른 저장소 사실이고, 근거는 사용자의 Accio 포트폴리오용 기록(D-6 배포)이에요. 유미 한도 70토큰은 caseStories · data.ts 제목 · real.py 주석 세 곳에 있어 함께 고쳐야 해요.
   - "Activity 최대 3개"는 Next.js 공식 가이드(Preserving UI state)에서 확인돼 그대로 뒀어요.
   - 사례 `accio`: 사이트가 닫혀 다시 만든 화면이라 설명은 그대로 두기로 했어요(사용자 확인). 맨 앞에 맡은 일 한 줄(사용자 말 그대로)과 '팀에서 맡은 일' 포인트를 더했어요 — 팀 저장소 커밋(최근 본 상품 Redis · 기록 비우기 API, brand.keyword, 클레임 우선순위)으로 확인한 사실만. '기본 유틸리티를 지웠다'는 실제대로 글자 크기 · 굵기 · 모서리로 좁혔어요. 역할 칩은 Design · Front 그대로(Back 추가 여부는 답 대기).
+- 단계 3 노트 새 틀 + 합치기 (2026-11-06)
+  - StudyNote 에 선택 필드 `sections`(설명 · why · code) · `pitfalls` · `replaces` 를 더했어요. 상세는 '핵심 개념'을 다룬 것 칩 + 개념별 칸(설명 → 왜? → 코드)으로, `pitfalls` 는 '자주 하는 실수'로 그려요. 코드 블록은 `NoteCode.tsx`(lazy).
+  - 합친 노트의 예전 주소는 `replaces` → `resolveNoteSlug()` 로 새 노트에 이어져요. Study 홈 통계 · 개념 칩 · 검색은 `conceptGroups()` · `conceptCount()` 로 두 틀을 같이 읽어요.
+  - MySQL 10 → `noteData/mysql.ts` 4개, MongoDB 9 → `mongodb.ts` 3개, 백엔드 30 → `flask.ts` 8개. 노션 원문으로 쓰고 코드는 임시 MySQL 8.0 · MongoDB 8.0 · Flask 3.1 에서 돌려 확인, 노트마다 사실 확인 리뷰(틀림 4 · 과장 32)를 고쳐 반영했어요.
+  - `npm run check` 에 예전 주소 연결 · 개념 칸 검사를 더했고(127개), 검색 채점 정답의 예전 노트 4개를 합친 노트로 바꿨어요.
+  - 리뷰 [주의] 위험 1 · 주의 4는 그대로 두고 커밋했어요(사용자 결정, 2026-11-06).
+  - 남은 것: 프론트 0~15강 16개, 알고리즘 5개.
 
 ## 리뷰
 - [review/SUMMARY.md](review/SUMMARY.md) — 단계 1 1차(2026-11-05) R1 · R3 · R4: [통과] 위험 0 · 주의 0 · 제안 4. 사례 accio 문구: [통과] 제안 2. 최종 판정은 사용자 확인 대기.

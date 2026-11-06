@@ -1,10 +1,13 @@
-import { useCallback, useState } from 'react'
+import { lazy, Suspense, useCallback, useState } from 'react'
 import { useReducedMotion } from 'motion/react'
 import { BookIcon, LightbulbIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
 import Lightbox from './Lightbox'
-import { appliedCases, findCourse, noteHref, NOTES, studyHref, visibleLearned, type StudyPractice } from './notes'
+import { appliedCases, findCourse, noteHref, NOTES, resolveNoteSlug, studyHref, visibleLearned, type StudyPractice } from './notes'
 import StudyLayout from './StudyLayout'
+
+// 코드 하이라이터는 무거워서 코드가 있는 노트를 열 때만 받는다
+const NoteCode = lazy(() => import('./NoteCode'))
 
 interface ImageGalleryProps {
   id: string
@@ -74,7 +77,9 @@ interface StudyDetailProps {
  */
 export default function StudyDetail({ slug }: StudyDetailProps) {
   const reduceMotion = useReducedMotion()
-  const index = NOTES.findIndex((candidate) => candidate.slug === slug)
+  // 합쳐진 예전 노트 주소로 들어와도 지금 노트를 보여 준다(F-012)
+  const resolved = resolveNoteSlug(slug)
+  const index = NOTES.findIndex((candidate) => candidate.slug === resolved)
   const note = NOTES[index]
 
   if (!note) {
@@ -96,12 +101,15 @@ export default function StudyDetail({ slug }: StudyDetailProps) {
   const applied = appliedCases(note)
   const practice = note.practice ?? []
   const examples = note.examples ?? []
+  const sections = note.sections ?? []
+  const pitfalls = note.pitfalls ?? []
   // NOTES 는 최신순 — 이전 노트는 더 오래된 쪽
   const older = NOTES[index + 1]
   const newer = NOTES[index - 1]
   const toc = [
     { id: 'note-summary', label: '한 줄 요약', children: [] },
-    { id: 'note-points', label: '핵심 개념', children: [] },
+    { id: 'note-points', label: '핵심 개념', children: sections.map(({ title }, i) => ({ id: `note-section-${i}`, label: title })) },
+    ...(pitfalls.length > 0 ? [{ id: 'note-pitfalls', label: '자주 하는 실수', children: [] }] : []),
     ...(learned.length > 0
       ? [{ id: 'note-learned', label: '배운 것', children: learned.map(({ title }, i) => ({ id: `note-learned-${i}`, label: title })) }]
       : []),
@@ -180,17 +188,76 @@ export default function StudyDetail({ slug }: StudyDetailProps) {
             <h2 id="note-points-title" className="text-24 font-semibold text-main">
               핵심 개념
             </h2>
-            <ol className="mt-3.5 flex flex-col gap-2.5">
-              {note.points.map((point, i) => (
-                <li key={point} className="flex gap-2.5 text-15 break-keep text-sub">
-                  <span aria-hidden="true" className="w-4 shrink-0 font-medium text-study-strong tabular-nums">
-                    {i + 1}.
-                  </span>
-                  {point}
-                </li>
-              ))}
-            </ol>
+            {sections.length > 0 ? (
+              <>
+                {/* 다룬 것 — 누르면 그 개념으로 내려간다 */}
+                <ul aria-label="다룬 것" className="mt-3.5 flex flex-wrap gap-1.5">
+                  {sections.map(({ title }, i) => (
+                    <li key={title}>
+                      <button
+                        type="button"
+                        onClick={() => scrollTo(`note-section-${i}`)}
+                        className="rounded-sm border border-regular bg-default px-2.5 py-1 text-13 font-medium break-keep text-sub hover:border-black hover:text-main"
+                      >
+                        {title}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                {sections.map(({ title, body, why, code }, i) => (
+                  <section key={title} id={`note-section-${i}`} aria-labelledby={`note-section-${i}-title`} className="mt-8 scroll-mt-6">
+                    <h3 id={`note-section-${i}-title`} className="flex items-center gap-2.5 text-18 font-semibold break-keep text-main">
+                      <span aria-hidden="true" className="w-5 shrink-0 text-15 font-medium text-study-strong tabular-nums">
+                        {i + 1}.
+                      </span>
+                      {title}
+                    </h3>
+                    <p className="mt-2.5 text-15 break-keep text-sub">{body}</p>
+                    {why && (
+                      <p className="mt-2.5 flex gap-2 rounded-sm bg-light px-3.5 py-2.5 text-14 break-keep text-main">
+                        <span className="shrink-0 font-semibold text-study-strong">왜?</span>
+                        {why}
+                      </p>
+                    )}
+                    {code && (
+                      <Suspense fallback={<pre className="mt-3 rounded-card-sm bg-[#282c34] p-4 font-mono text-13 text-white/80">{code.source.trim()}</pre>}>
+                        <NoteCode code={code} />
+                      </Suspense>
+                    )}
+                  </section>
+                ))}
+              </>
+            ) : (
+              <ol className="mt-3.5 flex flex-col gap-2.5">
+                {note.points.map((point, i) => (
+                  <li key={point} className="flex gap-2.5 text-15 break-keep text-sub">
+                    <span aria-hidden="true" className="w-4 shrink-0 font-medium text-study-strong tabular-nums">
+                      {i + 1}.
+                    </span>
+                    {point}
+                  </li>
+                ))}
+              </ol>
+            )}
           </section>
+
+          {pitfalls.length > 0 && (
+            <section id="note-pitfalls" aria-labelledby="note-pitfalls-title" className="mt-11 scroll-mt-6">
+              <h2 id="note-pitfalls-title" className="text-24 font-semibold text-main">
+                자주 하는 실수
+              </h2>
+              <ul className="mt-3.5 flex flex-col gap-2.5">
+                {pitfalls.map((pitfall) => (
+                  <li key={pitfall} className="flex gap-2.5 text-15 break-keep text-sub">
+                    <span aria-hidden="true" className="mt-0.5 shrink-0 text-14 font-semibold text-status-error">
+                      !
+                    </span>
+                    {pitfall}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {learned.length > 0 && (
             <section id="note-learned" aria-labelledby="note-learned-title" className="mt-11 scroll-mt-6">

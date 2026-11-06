@@ -24,12 +24,12 @@
 
     { "id": "Q18", "category": "유사어", "stage": "S4", "query": "프론트", "relevant": ["case:accio", "case:maestro", "case:search-portfolio", "case:planforme-activity-state", "case:planforme-stale-response", "case:maestro-wake", "case:accio-v1", "note:fe-tanstack-query", "note:fe-cors-usestate", "note:fe-flex-grid", "note:fe-responsive", "note:fe-inheritance", "note:fe-float", "note:fe-transform", "note:fe-animation", "note:fe-transition", "note:fe-position", "note:fe-font-text", "note:fe-display", "note:fe-background", "note:fe-box-model", "note:fe-selectors", "note:fe-css-units", "note:fe-css-basics", "note:fe-html", "note:fe-overview"] },
     { "id": "Q19", "category": "유사어", "stage": "S4", "query": "타입스크립트", "relevant": ["case:accio", "case:search-portfolio"] },
-    { "id": "Q20", "category": "유사어", "stage": "S4", "query": "에러 처리", "relevant": ["case:maestro-api-resilience", "note:be-error-logging"] },
+    { "id": "Q20", "category": "유사어", "stage": "S4", "query": "에러 처리", "relevant": ["case:maestro-api-resilience", "note:be-flask-structure"] },
     { "id": "Q21", "category": "유사어", "stage": "S4", "query": "레이트 리밋", "relevant": ["case:maestro-api-resilience", "note:be-sse-redis-ratelimit"] },
 
     { "id": "Q22", "category": "한영 오타", "stage": "S4", "query": "vmffosvhal", "relevant": ["case:planforme", "case:planforme-replan-overdue", "case:planforme-activity-state", "case:planforme-quota-logic", "case:planforme-stale-response", "case:planforme-api-key", "case:planforme-kst-today"] },
     { "id": "Q23", "category": "한영 오타", "stage": "S4", "query": "ㅁㅊㅊㅑㅐ", "relevant": ["case:accio", "case:accio-redesign", "case:accio-v1"] },
-    { "id": "Q24", "category": "한영 오타", "stage": "S4", "query": "fhrmdls", "relevant": ["case:stay-login", "note:design-figma-hierarchy", "note:be-flask-login", "note:be-auth-jwt"] },
+    { "id": "Q24", "category": "한영 오타", "stage": "S4", "query": "fhrmdls", "relevant": ["case:stay-login", "note:design-figma-hierarchy", "note:be-flask-data-deploy", "note:be-auth-jwt"] },
 
     { "id": "Q25", "category": "자모 오타", "stage": "S4", "query": "마에스트르", "relevant": ["case:maestro", "case:maestro-quota", "case:maestro-wake", "case:maestro-mock-real", "case:maestro-owner-sim", "case:maestro-api-resilience", "case:maestro-trust-rank"] },
     { "id": "Q26", "category": "자모 오타", "stage": "S4", "query": "디자인 시스탬", "relevant": ["case:jsh-design-system", "case:accio-redesign", "case:gameprobe", "case:remind", "case:flaseek-renewal", "case:accio"] },
@@ -59,7 +59,7 @@
     { "id": "H07", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "디쟈인 시스템", "relevant": ["case:jsh-design-system", "case:accio-redesign", "case:gameprobe", "case:remind", "case:flaseek-renewal", "case:accio"], "memo": "오타. S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
     { "id": "H08", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "시간대 버그", "relevant": ["case:planforme-kst-today"], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
     { "id": "H09", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "rjator", "relevant": ["case:search-portfolio", "case:accio"], "memo": "검색을 영문 자판으로. S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
-    { "id": "H10", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "mongodb 집계", "relevant": ["note:mongo-aggregation-1", "note:mongo-aggregation-2"], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
+    { "id": "H10", "heldOut": true, "category": "처음 보는 검색어", "stage": "S4", "query": "mongodb 집계", "relevant": ["note:mongo-aggregation"], "memo": "S4 를 만든 뒤에 정하고 한 번만 잼(사전·규칙을 이 결과에 맞춰 고치지 않음)" },
 
     { "id": "Q37", "category": "없어야 함", "stage": "S0", "query": "블록체인", "relevant": [] },
     { "id": "Q38", "category": "없어야 함", "stage": "S0", "query": "쿠버네티스", "relevant": [] },

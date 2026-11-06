@@ -1,7 +1,10 @@
 import { CASES, type CaseType, type PortfolioCase } from './data'
 import { BACK_NOTES } from './noteData/back'
 import { DESIGN_NOTES } from './noteData/design'
+import { FLASK_NOTES } from './noteData/flask'
 import { FRONT_NOTES } from './noteData/front'
+import { MONGODB_NOTES } from './noteData/mongodb'
+import { MYSQL_NOTES } from './noteData/mysql'
 
 // 공부 노트(Study) — 노션 학습노트를 직접 골라 요약해 옮긴다. 노션 원문 링크는 두지 않는다.
 // 사례(CASES)와 따로 두고, 실제로 화면·코드에 쓴 경우에만 applied 로 사례와 잇는다. 억지로 잇지 않는다.
@@ -26,6 +29,24 @@ export interface StudyApplied {
   used: string
 }
 
+/** 노트 속 코드 예시 — 직접 돌려 본 것만 싣는다(F-012) */
+export interface NoteCode {
+  lang: 'sql' | 'python' | 'javascript' | 'typescript' | 'css' | 'markup' | 'bash' | 'json'
+  source: string
+  /** 코드 위에 붙는 한 줄 설명 */
+  caption?: string
+}
+
+/** 새 노트 틀(F-012)의 개념 한 칸 — 설명 · 왜 이렇게 하나 · 코드 */
+export interface NoteSection {
+  title: string
+  /** 설명 2~3문장 */
+  body: string
+  /** 왜 이렇게 하나 — 한 줄 */
+  why?: string
+  code?: NoteCode
+}
+
 export interface StudyNote {
   slug: string
   /** 어느 분야 탭(Design · Front · Back)에 함께 보일지 */
@@ -48,15 +69,32 @@ export interface StudyNote {
   examples?: StudyPractice[]
   /** 없으면 '써먹은 곳' 칸을 숨긴다 */
   applied?: StudyApplied[]
+  /**
+   * 새 노트 틀(F-012) — 있으면 상세의 '핵심 개념'을 개념마다 설명 · 왜 · 코드로 그린다.
+   * 얇은 강의 노트 여러 개를 합친 노트에 쓴다. 없으면 예전처럼 points 목록.
+   */
+  sections?: NoteSection[]
+  /** 자주 하는 실수 — 공식 문서로 확인한 것만 */
+  pitfalls?: string[]
+  /** 이 노트로 합친 예전 노트 slug — 예전 주소가 이 노트로 열린다 */
+  replaces?: string[]
   tags: string[]
   /** 화면에 보이지 않는 추가 검색어 */
   keywords: string
 }
 
-const RAW_NOTES: StudyNote[] = [...DESIGN_NOTES, ...FRONT_NOTES, ...BACK_NOTES]
+const RAW_NOTES: StudyNote[] = [...DESIGN_NOTES, ...FRONT_NOTES, ...BACK_NOTES, ...MYSQL_NOTES, ...MONGODB_NOTES, ...FLASK_NOTES]
 
 /** 최신순. 날짜가 같으면 위에 적은 순서를 지킨다(sort 는 안정 정렬) */
 export const NOTES = [...RAW_NOTES].sort((a, b) => b.date.localeCompare(a.date))
+
+/** 합쳐서 없어진 예전 노트 slug → 지금 노트 slug */
+const NOTE_ALIASES = new Map(RAW_NOTES.flatMap((note) => (note.replaces ?? []).map((old) => [old, note.slug] as const)))
+
+/** 예전 주소로 들어와도 합친 노트를 찾는다 */
+export function resolveNoteSlug(slug: string) {
+  return NOTE_ALIASES.get(slug) ?? slug
+}
 
 export function noteHref(slug: string) {
   return `#/study/${slug}`
@@ -74,6 +112,20 @@ const HIDDEN_GROUP = /막힌|바로잡|헷갈/
 /** 화면에 보일 '배운 것' 묶음 — 틀렸던 문답 묶음은 뺀다 */
 export function visibleLearned(note: StudyNote) {
   return note.learned.filter((group) => !HIDDEN_GROUP.test(group.title))
+}
+
+/**
+ * 노트의 개념 묶음 — 새 틀(sections) 노트는 개념 한 칸이 한 묶음, 예전 노트는 화면에 보이는 '배운 것' 묶음.
+ * Study 홈 통계 · 개념 칩 · 검색이 두 틀을 같은 방식으로 읽게 한다(F-012).
+ */
+export function conceptGroups(note: StudyNote): { title: string; items: string[] }[] {
+  if (note.sections) return note.sections.map(({ title, body, why }) => ({ title, items: why ? [body, why] : [body] }))
+  return visibleLearned(note)
+}
+
+/** '정리한 개념' 수 — 새 틀은 개념 칸 수, 예전 노트는 '배운 것' 항목 수 */
+export function conceptCount(note: StudyNote) {
+  return note.sections ? note.sections.length : visibleLearned(note).reduce((count, group) => count + group.items.length, 0)
 }
 
 export interface StudyCourse {
@@ -99,7 +151,7 @@ export const STUDY_TREE = AREA_ORDER.map((area) => {
         area,
         course,
         notes,
-        groups: [...new Set(notes.flatMap((note) => visibleLearned(note).map((group) => group.title)))],
+        groups: [...new Set(notes.flatMap((note) => conceptGroups(note).map((group) => group.title)))],
       }))
       .sort((a, b) => b.notes.length - a.notes.length),
   }
