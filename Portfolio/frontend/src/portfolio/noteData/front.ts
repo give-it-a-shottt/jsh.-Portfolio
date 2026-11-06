@@ -301,6 +301,166 @@ export const FRONT_NOTES: StudyNote[] = [
     keywords: 'search algorithm 검색 알고리즘 정규화 nfc 역색인 inverted index bigram n-gram bm25 tf idf 랭킹 편집거리 levenshtein 오타 동의어 자동완성 초성 한영 자판 mrr 검증 세트',
   },
   // ── AI와 학습 (미니 인프런 · Nightly 풀스택) ──
+  // 13회차부터 F-012 노트 틀(개념 · 왜 · 코드). 코드는 미니 인프런 pages/courses.tsx 와 맞춰 보고, JSON.parse 조각은 Node 에서 돌려 확인
+  {
+    slug: 'fe-res-ok-status',
+    area: 'Front',
+    course: '미니 인프런',
+    lesson: '14회차',
+    date: '2026.11.06',
+    title: '목록 페이지 상태 코드 확인 — res.ok · 구간별 상태 코드',
+    summary:
+      'fetch 응답을 믿기 전에 res.ok 로 먼저 확인하고, 실패를 정직한 500 으로 내보내며, 에러 메시지와 Network 탭의 숫자가 왜 다른지 설명할 수 있다.',
+    points: [
+      'fetch 는 404 · 500 에서 실패하지 않는다 — 확인은 res.ok 로 직접',
+      '확인은 res.json() 보다 먼저 — HTML 본문이면 SyntaxError 가 먼저 터진다',
+      'FastAPI 의 404 를 throw 하면 메시지엔 404, 브라우저엔 500',
+    ],
+    learned: [],
+    sections: [
+      {
+        title: 'fetch 와 HTTP 에러',
+        body: 'fetch 가 에러를 던지는 건 서버에 아예 닿지 못했을 때(FastAPI 가 꺼져 TypeError: fetch failed, 원인은 ECONNREFUSED)뿐이다. 404 · 500 은 서버가 대답은 한 것이라 정상 완료로 치고, res.ok 만 false 가 된다. res.ok 는 상태 코드가 200~299 일 때만 true 다.',
+        why: '확인하지 않으면 에러 응답을 정상 데이터인 줄 알고 다음 줄로 넘어간다 — 400 · 500 번대에서 에러를 던지는 axios 와 다른 점이다.',
+      },
+      {
+        title: 'res.json() 은 본문을 그대로 읽는다',
+        body: 'res.json() 은 본문 글자를 JSON 규칙대로 JS 값으로 바꿀 뿐, 내용을 고치거나 비우지 않는다. 본문이 {"detail": ...} 객체면 courses 에 객체가 들어가 courses.map is not a function 이 나고, HTML 이나 일반 글자면 읽지 못해 SyntaxError 를 던진다.',
+        why: '잘못된 본문을 조용히 {} 나 null 로 바꿔 주지 않는다 — 그래서 원인이 가려지기 전에 상태 코드부터 본다.',
+        code: {
+          lang: 'bash',
+          caption: "SyntaxError 의 '<' · 'I' 는 본문 첫 글자 — JSON 대신 HTML · 글자가 왔다는 뜻",
+          source: `node -e 'JSON.parse("<html><body>502 Bad Gateway</body></html>")'
+# SyntaxError: Unexpected token '<', "<html><bod"... is not valid JSON
+
+node -e 'JSON.parse("Internal Server Error")'
+# SyntaxError: Unexpected token 'I', "Internal S"... is not valid JSON`,
+        },
+      },
+      {
+        title: 'TypeScript 타입은 실행 중에 없다',
+        body: 'const courses: Course[] 는 "배열일 것이다"라는 내 약속이지 실행 중 검사가 아니다. .tsx 는 실행 전에 JS 로 바뀌면서 타입이 지워지고, res.json() 결과는 any 라 TypeScript 는 내 말을 그대로 믿는다. getServerSideProps 는 브라우저가 아니라 Next.js 서버(Node)에서 돌지만, 어디서든 타입이 지워진 JS 가 돈다는 점은 같다.',
+        why: '서버 응답은 실행해 봐야 알 수 있어서, 실행 중 확인은 res.ok 같은 코드로 한다.',
+      },
+      {
+        title: 'res.ok 를 먼저 확인하고 throw',
+        body: '순서는 fetch → if (!res.ok) throw → res.json() → return 이다. 실패하면 throw 해서 Next.js 의 500 페이지를 보여 주고, 메시지에 res.status 를 넣어 FastAPI 의 진짜 상태 코드를 남긴다. 빈 목록을 돌려주면 고장이 숨고, notFound(404)는 "원래 없음"으로 오해하게 만든다.',
+        why: '사용자가 강의가 원래 없는 것과 서버가 고장 난 것을 구별할 수 있어야 한다 — 404 는 상세 페이지처럼 정말 없을 때만 쓴다.',
+        code: {
+          lang: 'typescript',
+          caption: '미니 인프런 pages/courses.tsx 의 getServerSideProps',
+          source: `export async function getServerSideProps() {
+  const res = await fetch("http://localhost:8000/orm/courses");
+  if (!res.ok) {                                       // ① 상태 코드부터
+    throw new Error(\`강의 목록 실패: \${res.status}\`);   // ② FastAPI 의 진짜 숫자를 메시지에
+  }
+  const courses: Course[] = await res.json();          // ③ 통과한 뒤에만 본문을 읽는다
+  return { props: { courses } };
+}`,
+        },
+      },
+      {
+        title: '상태 코드는 구간마다 따로다',
+        body: 'SSR 페이지 요청은 브라우저 ↔ Next.js, Next.js ↔ FastAPI 두 구간을 지나고, 응답마다 상태 코드가 따로 붙는다. res.status 는 FastAPI 가 Next.js 에게 준 숫자고, Network 탭의 Status 는 Next.js 가 브라우저에게 준 숫자다. getServerSideProps 에서 처리되지 않은 throw 는 항상 500 이다.',
+        why: '숫자를 볼 때 "누가 누구에게 준 응답인가"부터 보면, 한 화면에 404 와 500 이 같이 보여도 헷갈리지 않는다.',
+        code: {
+          lang: 'bash',
+          caption: '고장 실험 — 목록 fetch 주소를 /coursesx 로 바꿨을 때',
+          source: `curl -i http://localhost:8000/coursesx
+# HTTP/1.1 404 Not Found … {"detail":"Not Found"}   ← FastAPI → Next.js 구간
+
+# 같은 주소를 부른 목록 페이지
+# 에러 메시지: Error: 강의 목록 실패: 404
+# Next.js 로그: GET /courses 500                     ← Next.js → 브라우저 구간`,
+        },
+      },
+      {
+        title: 'App Router 의 error.tsx',
+        body: 'App Router 에서는 서버 컴포넌트 page.tsx 안에서 바로 await fetch 하고, 실패하면 똑같이 throw 한다. 그러면 같은 폴더의 error.tsx 가 페이지 자리에 그려진다. error.tsx 는 "다시 시도" 버튼처럼 브라우저에서 동작해야 해서 맨 위에 "use client" 가 있어야 한다.',
+        why: 'throw 는 간단하게 두고, 실패 화면은 구간마다 우리 디자인으로 꾸밀 수 있다.',
+      },
+    ],
+    pitfalls: [
+      '확인을 res.json() 뒤에 두면 HTML · 글자 본문에서 SyntaxError 가 먼저 터져 if 까지 가지 못한다',
+      'error.tsx 는 page.tsx 와 같은 폴더에 나란히 둔다(app/courses/error.tsx)',
+      '배포 모드에서는 사용자에게 에러 메시지가 보이지 않고 서버 로그에만 남는다 — 그래도 메시지에 비밀번호 같은 값은 넣지 않는다',
+    ],
+    tags: ['Next.js', 'TypeScript', '에러 처리', 'SSR'],
+    keywords:
+      'nextjs getserversideprops fetch res.ok res.status res.json json.parse syntaxerror unexpected token throw error 500 404 notfound error.tsx app router use client typescript any runtime 미니 인프런 상태 코드',
+  },
+  {
+    slug: 'fe-next-link',
+    area: 'Front',
+    course: '미니 인프런',
+    lesson: '13회차',
+    date: '2026.11.04',
+    title: '목록 → 상세 이동 — Link · pageProps · 절대 경로',
+    summary:
+      '<a> 와 Next.js Link 의 차이를 Network 탭으로 확인하고, 강의마다 바뀌는 상세 주소를 href 에 바르게 쓸 수 있다.',
+    points: [
+      '<a> 는 전체 새로고침, Link 는 새 페이지의 데이터(pageProps JSON)만 받는다',
+      'href 는 Next.js 화면 주소, fetch 는 FastAPI 데이터 주소',
+      '바뀌는 주소는 href={`/courses/${course.id}`} — 중괄호 · 백틱 · 맨 앞 /',
+    ],
+    learned: [],
+    sections: [
+      {
+        title: '<a> 와 Link',
+        body: '<a href> 는 브라우저의 기본 이동이라, 누르면 새 HTML 을 받고 JS 를 처음부터 다시 실행한다. next/link 의 Link 는 클릭할 때 그 기본 이동을 막고, Next.js 라우터가 새 페이지에 필요한 데이터만 받아 이미 떠 있는 React 가 화면을 바꿔 그린다. 주소창은 history API 로만 바뀌어 뒤로 가기도 그대로 된다.',
+        why: '페이지를 옮길 때 새로 필요한 건 그 페이지의 데이터뿐이라, 이미 받은 JS 와 _app.tsx 의 상태 · 메모리 캐시를 버릴 이유가 없다.',
+      },
+      {
+        title: '/_next/data/… .json 과 pageProps',
+        body: 'Link 로 getServerSideProps 페이지에 가면 브라우저는 Next.js(3000)에 /_next/data/development/courses/1.json 을 요청한다(Network Type: fetch). Next.js 서버가 getServerSideProps 를 실행해 FastAPI(8000)를 부르고, 돌려준 props 를 pageProps 로 감싸 보낸다. 브라우저는 FastAPI 와 직접 대화하지 않는다.',
+        why: 'getServerSideProps 는 링크로 와도 서버에서 실행되므로, 브라우저 쪽 React 가 그 결과를 받을 통로가 필요하다.',
+        code: {
+          lang: 'json',
+          caption: 'Link 로 이동했을 때 Network 탭 Response — <a> 였다면 Type document 로 완성된 HTML 이 온다',
+          source: `{
+  "pageProps": {
+    "course": { "id": 1, "title": "파이썬", "instructor": "클로드", "price": 33000 }
+  },
+  "__N_SSP": true
+}`,
+        },
+      },
+      {
+        title: '화면 주소(href) vs API 주소(fetch)',
+        body: 'Link 의 href 는 사람이 볼 Next.js 화면 주소이고, getServerSideProps 의 fetch 는 데이터를 받을 FastAPI 주소다. href 에 http://localhost:8000/… 을 넣으면 화면 대신 JSON 글자가 뜨고, 다른 서버로 넘어가 Link 의 장점도 사라진다. 같은 앱 안의 화면은 도메인 없이 /courses/1 처럼 경로만 쓴다.',
+        why: '배포하면 도메인이 바뀌므로 앱 안 링크에 주소를 박아 두지 않는다.',
+      },
+      {
+        title: 'JSX 중괄호 · 템플릿 리터럴 · 절대 경로',
+        body: 'JSX 속성 값은 고정 글자면 따옴표, JS 로 계산할 값이면 { } 안에 넣는다. 문자열에 값을 끼울 때는 백틱과 ${} 가 한 세트라, 큰따옴표 안의 ${} 는 글자 그대로다. 그리고 / 로 시작해야 루트 기준 절대 경로가 되어 링크가 어느 페이지에 있든 같은 곳으로 간다.',
+        why: '/courses/1 페이지에서 상대 경로 courses/2 를 누르면 /courses/courses/2 로 간다 — 목록 페이지에서는 우연히 맞아서 늦게 발견된다.',
+        code: {
+          lang: 'typescript',
+          caption: '미니 인프런 pages/courses.tsx 와 고장 실험',
+          source: `// 맞는 쓰기 — 값이 바뀌니 { } 안에 백틱 + \${}, 맨 앞은 /
+<Link href={\`/courses/\${course.id}\`}>{course.title}</Link>
+
+// 고장 실험 — 따옴표 안의 {course.id} 는 글자 그대로
+<Link href="/courses/{course.id}">{course.title}</Link>
+// 주소 /courses/%7Bcourse.id%7D → FastAPI 422 → 상세 페이지 notFound → 404`,
+        },
+      },
+      {
+        title: 'Pages Router 와 App Router 의 Link',
+        body: 'import 는 같지만, Pages Router 는 클릭할 때 getServerSideProps 결과(pageProps JSON)를 받아 브라우저의 React 가 페이지를 그린다. App Router 에는 getServerSideProps 가 없어서 서버 컴포넌트가 그린 결과(페이로드)를 받고, 바뀐 구간만 받는다. 미리 받기(prefetch)는 배포 모드에서만 동작한다.',
+        why: 'Pages 는 데이터를 받아 브라우저가 그리고, App 은 서버가 그려 브라우저가 들고 있을 JS 를 줄인다 — 어느 쪽이 무조건 가볍다고 할 수 없다.',
+      },
+    ],
+    pitfalls: [
+      '로그에 %7B · %7D 가 보이면 { } 가 퍼센트 인코딩된 것 — 원래 글자로 되돌려 읽으면 원인이 바로 보인다',
+      'href 에 백틱을 쓰면서 { } 를 빼면(href=`…`) JSX 문법이 아니라 빌드 에러가 난다',
+      'Link 도 화면에는 진짜 <a> 를 그린다 — Ctrl+클릭 새 탭 열기와 검색 엔진의 링크 수집이 그대로 된다',
+      'Link 로 다른 페이지에 가도 이전 페이지 안의 입력값은 사라진다 — 지켜지는 건 앱 전체가 들고 있는 상태와 캐시다',
+    ],
+    tags: ['Next.js', 'React', '라우팅', 'SSR'],
+    keywords:
+      'nextjs next/link link a tag client side navigation full reload pageprops __n_ssp _next/data getserversideprops href template literal absolute path relative path percent encoding %7b app router prefetch history api 미니 인프런 목록 상세',
+  },
   {
     slug: 'fe-ssr-dynamic-route',
     area: 'Front',

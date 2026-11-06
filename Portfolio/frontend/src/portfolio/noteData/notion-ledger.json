@@ -11,7 +11,8 @@
     "3b1df951bf808040aa04f9c18e4f469f": "알아두면 좋은 디자인 지식",
     "408df951bf80805f9728dd9842fd3d7b": "React",
     "40cdf951bf808024b15ce4233148119e": "타입스크립트",
-    "40ddf951bf80802e8244dc3d4e776890": "FastAPI"
+    "40ddf951bf80802e8244dc3d4e776890": "FastAPI",
+    "40ddf951bf80800ca130e2663b8eea91": "디자인의 힘"
   },
   "migrated": {
     "3bedf951bf8080379bd4df7ce656d4fe": "design-figma-hierarchy",
@@ -80,7 +81,13 @@
     "40ddf951bf808141ad14d8e6841c20bc": "be-fastapi-async-sqlalchemy",
     "40ddf951bf8081789335defdf3a11504": "be-fastapi-auth-basics",
     "40ddf951bf80803a9bfceeeb2468fac2": "fe-ssr-dynamic-route",
-    "40ddf951bf808094b1b9eca235e1c526": "ps-speed-typo-flash"
+    "40ddf951bf808094b1b9eca235e1c526": "ps-speed-typo-flash",
+    "410df951bf8080f3af98cf16e37b1a40": "algo-phone-book",
+    "40edf951bf80804ba3a1ddddbbd34a37": "fe-next-link",
+    "410df951bf8081a291ccf0f9c2f264ad": "fe-res-ok-status",
+    "410df951bf80819a96c2dc3413ed9f47": "be-orm-two-filters",
+    "40edf951bf8080f0bb86c471eca5ed62": "ps-3d-typo",
+    "410df951bf808182b817c83061f88ba3": "ps-neon-photo"
   },
   "skipped": {
     "3efdf951bf8080beb779ecde4838b7ce": "포토샵 1. — 6강 이후 요약본에 합쳐진 앞 회차 초안",
@@ -91,6 +98,7 @@
     "3f7df951bf80803ea411fbe2e2ef19d1": "제미나이 1. (구버전) — 미니 인프런 노트로 대체",
     "3f9df951bf80801b9d09ed68cd05b0ef": "제미나이 2. (구버전) — 미니 인프런 노트로 대체",
     "3fadf951bf8080e19066ff99b1e40651": "제미나이 3. (구버전) — 미니 인프런 노트로 대체",
-    "409df951bf8081628260efdaa9e1f495": "Admin_Docs 스킬 추가 후보 — 공부 노트가 아니라 리뷰 항목 후보 모음"
+    "409df951bf8081628260efdaa9e1f495": "Admin_Docs 스킬 추가 후보 — 공부 노트가 아니라 리뷰 항목 후보 모음",
+    "40edf951bf8080c58b60c21da9ddd7f7": "몽고DB (1~8강 복습 · 문제집) — 기존 MongoDB 노트 3개(mongo-basics · mongo-aggregation · mongo-python)와 중복"
   }
 }

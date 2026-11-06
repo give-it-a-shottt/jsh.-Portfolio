@@ -35,6 +35,11 @@ import titleSpeedFlashElectric from '../assets/study/title-speed-flash-3-electri
 import titleSpeedFlashKwang from '../assets/study/title-speed-flash-4-kwang.webp'
 import titleSpeedFlashShuung from '../assets/study/title-speed-flash-5-shuung.webp'
 import titleSpeedFlashBanjjak from '../assets/study/title-speed-flash-6-banjjak.webp'
+import title3dJinjjaro from '../assets/study/title-3d-jinjjaro.webp'
+import title3dKkuljaem from '../assets/study/title-3d-kkuljaem.webp'
+import title3dBrushShape from '../assets/study/title-3d-brush-shape.webp'
+import title3dAiSheet from '../assets/study/title-3d-ai-sheet.webp'
+import neonSneaker from '../assets/study/neon-sneaker.webp'
 import type { StudyNote } from '../notes'
 
 // Design 공부 노트 — 노션 학습노트 > 학습 폴더 > 포토샵 / 일러스트 (6강 이후는 앞 회차 초안을 합친 요약본이라 1~3·5번은 싣지 않는다)
@@ -329,6 +334,122 @@ export const DESIGN_NOTES: StudyNote[] = [
     ],
     tags: ['포토샵', '배너', '카드뉴스', '템플릿'],
     keywords: 'photoshop banner card news artboard object selection live corners polygon 템플릿',
+  },
+  {
+    slug: 'ps-neon-photo',
+    area: 'Design',
+    course: '포토샵 / 일러스트',
+    lesson: '17강',
+    date: '2026.11.06',
+    title: '네온 사진 — Color Lookup · Inner Glow 흰 심지 · Outer Glow · Shift 직선',
+    summary: '네온은 빛이라서 먼저 Color Lookup(Moonlight)으로 배경을 어둡게 만든다. 그다음 브러시 선 하나에 색(Color Overlay) → 가까운 빛(Outer Glow, Linear Dodge) → 넓은 빛(Drop Shadow) → 흰 심지(Inner Glow)를 쌓으면 네온관이 된다.',
+    points: [
+      '흰 심지는 Inner Glow(Edge) — 15px 선에 Size 8px 이면 양쪽 가장자리의 빛이 가운데에서 만나 선 전체가 하얘진다',
+      'Outer Glow 는 Linear Dodge (Add) — 아래 색에 더해져 겹칠수록 밝아지고, 밝은 배경에서는 묻힌다',
+      'Ctrl+J 로 복사한 뒤 색만 바꾸고 Inner Glow 는 흰색 그대로 — 차가운 밤 배경 속 노랑 로고가 시선 1순위가 된다',
+    ],
+    learned: [
+      {
+        title: '어두운 무대 먼저',
+        items: [
+          'Color Lookup 조정 레이어 → 3DLUT File Moonlight 로 낮 사진을 어둡고 채도 낮은 푸른 밤으로 바꾼다',
+          '조정 레이어라 원본 사진은 그대로다 — 너무 어두우면 조정 레이어 Opacity 로 강도를 줄인다',
+        ],
+      },
+      {
+        title: '네온관 한 줄의 층',
+        items: [
+          'Inner Glow 흰색(Size 8px · Contour Half Round) → Color Overlay #FFD800 → Outer Glow 같은 색(Linear Dodge, 50% · 20px) → Drop Shadow 같은 색(넓게)',
+          'Inner Glow 기본값(Edge)은 가장자리에서 안쪽으로 번진다 — 선이 굵어지면 Size 를 선 굵기의 절반 이상으로 키우거나 Source 를 Center 로',
+          'Drop Shadow 는 16강과 반대로 Spread 를 낮추고 Size 를 크게 써야 부드러운 빛이 된다',
+          '효과는 넣은 순서가 아니라 Layer Style 목록 순서로 쌓인다 — 위에서부터 심지 → 색 → 가까운 빛 → 먼 빛, 실제 네온관 구조와 같다',
+        ],
+      },
+      {
+        title: '선 긋기와 색 바꾸기',
+        items: [
+          'Hard Round 15px, 직선은 Shift + 클릭, 곡선은 Smoothing 50% — 두께가 일정해야 유리관처럼 보인다',
+          'Ctrl+J 복사본에서 Color Overlay · Outer Glow · Drop Shadow 색만 바꿔 빨강 · 파랑을 만든다. Inner Glow 까지 바꾸면 흰 심지가 사라져 납작해진다',
+          '칠하기 전에 어느 색 레이어가 선택돼 있는지 확인한다 — 노랑 레이어에 밑창을 그리면 색을 따로 바꿀 수 없다',
+          '브러시 굵기를 바꾸면 레이어 우클릭 Scale Effects 로 효과 크기도 같은 비율로 맞춘다',
+        ],
+      },
+      {
+        title: '색과 구도',
+        items: [
+          '배경은 검정에 가깝고 심지는 흰색이라 명도 대비가 극단적이다 — 그래서 선이 빛나 보인다',
+          '차가운 푸른 밤 속 유일한 따뜻한 색인 노랑 로고가 가장 먼저 눈에 들어온다',
+          '윤곽 전체가 아니라 로고 · 밑창 · 윤곽선 같은 포인트만 칠해서 시선이 로고 → 윤곽 → 밑창 순서로 흐른다',
+          '삼원색은 레트로 팝, 시안 + 마젠타는 사이버펑크, 핑크 한 색은 감성 간판처럼 색 수만으로 장르가 바뀐다',
+        ],
+      },
+    ],
+    practice: [
+      { image: neonSneaker, caption: '네온 신발', how: 'Moonlight LUT 로 밤 배경, 로고 노랑 · 밑창 빨강 · 윤곽 파랑 네온 레이어 세 개' },
+    ],
+    tags: ['포토샵', '레이어 스타일', '블렌딩 모드', '빛 효과'],
+    keywords: 'photoshop neon glow color lookup lut 3dlut moonlight inner glow outer glow drop shadow color overlay linear dodge add contour half round source edge center smoothing shift click straight line ctrl+j duplicate scale effects 네온 흰 심지 빛 번짐 가산 혼합 블룸',
+  },
+  {
+    slug: 'ps-3d-typo',
+    area: 'Design',
+    course: '포토샵 / 일러스트',
+    lesson: '16강',
+    date: '2026.11.04',
+    title: '입체 타이포 — Drop Shadow 여러 겹 · Inner Shadow · 회전 + 기울이기',
+    summary: 'Drop Shadow 를 (+)로 여러 겹 쌓고 Distance 는 0 → 20 → 30 으로 늘리며 색은 점점 어둡게 하면 글자에 두께가 생긴다. Inner Shadow 로 안쪽 입체를 더하고 래스터화하지 않으면, 글자만 바꿔도 스타일이 따라오는 템플릿이 된다.',
+    points: [
+      'Distance 0 · Spread 100 인 그림자는 번지지 않고 글자에 딱 붙어 외곽선이 된다',
+      'Rotation -15° + Horizontal Skew -15° — 기준선은 오른쪽 위로 올라가고 세로획은 똑바로 선다',
+      '같은 파랑에서 명도만 단계적으로 낮춰 두께를 칠하고, 모든 그림자 Angle 을 125° 로 맞춰 광원을 하나로',
+    ],
+    learned: [
+      {
+        title: '두께 만들기',
+        items: [
+          'Drop Shadow 는 (+)로 같은 설정을 복제해 쌓는다 — Distance 0 · 20 · 30, 색은 외곽선 하늘 → 진파랑 → 남색',
+          'Layer Style 목록에서 위에 있는 그림자가 앞에 그려진다 — 외곽선용(Distance 0)이 맨 위, 가장 먼 그림자가 맨 아래',
+          'Spread 는 거리가 아니라 Size 중 몇 % 를 딱딱하게 할지다 — Spread 100 이면 만화처럼 경계가 또렷하고, Size 가 0 이면 Spread 를 올려도 커지지 않는다',
+          '(+)로 여러 겹 넣을 수 있는 건 Stroke · Inner Shadow · Color Overlay · Gradient Overlay · Drop Shadow 다섯 개뿐이다',
+        ],
+      },
+      {
+        title: '안쪽 입체와 기울기',
+        items: [
+          'Inner Shadow 를 Angle 125° · Distance 10px · Size 5px 로 넣으면 흰 면 왼쪽 위에 그늘이 생겨 도톰해 보인다',
+          '안쪽 그늘 색은 검정 대신 배경 계열 하늘색(Opacity 50%) — 무겁지 않게 입체만 더한다',
+          'Ctrl+T 로 Rotation -15° 뒤 Horizontal Skew -15° — 회전만 하면 세로획까지 쓰러져 불안해 보이고, 기울이기만 하면 이탤릭일 뿐 상승감이 약하다',
+        ],
+      },
+      {
+        title: '다시 쓰기',
+        items: [
+          '래스터화하지 않고 텍스트 레이어에 스타일만 얹으면 글자를 바꿔도 효과가 새 모양을 따라 다시 계산된다',
+          'Copy · Paste Layer Style 로 Hard Round 브러시로 그린 모양에도 같은 입체를 붙인다 — Soft Round 는 가장자리가 흐려 외곽선이 뭉개진다',
+          'New Style 로 Styles 패널에 저장하면 다른 문서에서도 클릭 한 번으로 쓴다. Use Global Light 를 켜 두면 Angle 하나로 모든 그림자 방향이 같이 바뀐다',
+        ],
+      },
+      {
+        title: '색과 구도',
+        items: [
+          '글자색은 순백 대신 배경색을 한 방울 섞은 #EFF7FE 근처 — 배경과 한 팔레트로 묶여 차분하다',
+          '아주 밝은 글자 면과 아주 어두운 두께가 맞닿아 있어서 밝은 배경에서도 또렷하게 읽힌다',
+          '기준선이 오른쪽 위로 올라가는 상승 대각선이라 가장 높이 뜬 "?" 에서 시선이 끝나 반문하는 느낌이 산다',
+          '같은 구조라도 어두운 배경 + 노랑은 쇼핑 · 할인, 청록 플랫은 정보 · 이벤트, 남색 + 핑크 빛은 밤 · 감성으로 장르가 바뀐다',
+        ],
+      },
+    ],
+    practice: [
+      { image: title3dJinjjaro, caption: '진짜로?', how: 'Rotation · Skew -15°, Drop Shadow 3겹(Distance 0 · 20 · 30)으로 외곽선과 두께, Inner Shadow 로 안쪽 입체' },
+      { image: title3dKkuljaem, caption: '꿀잼', how: '같은 스타일에 글자와 색만 민트 계열로 바꾼 버전' },
+      { image: title3dBrushShape, caption: '브러시 모양 응용', how: 'Hard Round 로 그린 별 · 원 · 물결에 Paste Layer Style' },
+    ],
+    // AI 버전 — 같은 기법에 값만 바꾼 것(사용자 요청으로 참고 예시에 싣는다)
+    examples: [
+      { image: title3dAiSheet, caption: 'AI 버전 · 핫딜 · 오늘만 · 새벽감성 · 말랑', how: '이중 외곽선 스티커, 30겹 롱 섀도우, Spread 0 으로 번지는 네온 빛, Angle 90° 로 아래로 두꺼운 젤리' },
+    ],
+    tags: ['포토샵', '타이포그래피', '레이어 스타일', '입체'],
+    keywords: 'photoshop 3d typography extrude drop shadow multiple inner shadow layer style distance spread size angle 125 global light rotation skew free transform ctrl+t copy paste layer style hard round brush styles panel non-destructive 입체 타이포 두께 외곽선 가변형 롱 섀도우',
   },
   {
     slug: 'ps-speed-typo-flash',

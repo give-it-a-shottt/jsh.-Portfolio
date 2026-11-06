@@ -3,6 +3,122 @@ import type { StudyNote } from "../notes";
 // Back 공부 노트 — 노션 학습노트 > 학습 폴더 > 백엔드 · MySQL · MongoDB, AI와 학습(서버 쪽), 알고리즘. 구버전·개발 환경 노트는 싣지 않는다
 export const BACK_NOTES: StudyNote[] = [
   // ── AI와 학습 (미니 인프런 · Nightly 풀스택) ──
+  // 15회차부터 F-012 노트 틀(개념 · 왜 · 코드). 코드는 미니 인프런 main.py 와 맞춰 보고, Pydantic 조각은 프로젝트 가상환경에서 돌려 확인
+  {
+    slug: "be-orm-two-filters",
+    area: "Back",
+    course: "미니 인프런",
+    lesson: "15회차",
+    date: "2026.11.06",
+    title: "목록 API ORM 통일 — Course · CourseOut 거름망 두 겹",
+    summary:
+      "SQLAlchemy 모델과 Pydantic 응답 모델이 각각 언제 무엇을 거르는지 구분하고, SELECT * API 를 없애 새 컬럼이 밖으로 새지 않게 할 수 있다.",
+    points: [
+      "Course 는 DB 에서 꺼낼 컬럼, CourseOut 은 밖으로 내보낼 칸",
+      "response_model 은 모자라면 에러, 남으면 조용히 버린다",
+      "순서는 SQL 실행 → return → CourseOut 검사",
+    ],
+    learned: [],
+    sections: [
+      {
+        title: "Course 와 CourseOut — 거름망 두 겹",
+        body: "Course(SQLAlchemy, Base 상속)는 DB 테이블과 짝을 이뤄 select(Course) 가 SELECT 할 컬럼을 정한다. CourseOut(Pydantic, BaseModel 상속)은 response_model 로 쓰여 응답 JSON 에 나갈 칸을 정한다. 생김새는 비슷해도 일하는 시점과 상대가 다르다.",
+        why: "꺼내는 것과 보여 주는 것이 다를 수 있다 — 강사 연락처를 Course 로 꺼내 계산에 쓰되 CourseOut 에서 빼면 밖으로 나가지 않는다.",
+        code: {
+          lang: "python",
+          caption: "미니 인프런 main.py — 모델 두 개와 목록 API",
+          source: `class Course(Base):                  # 1차 거름망: DB 에서 꺼낼 컬럼 — DB 테이블과 반드시 일치
+    __tablename__ = "courses"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str]
+    instructor: Mapped[str]
+    price: Mapped[int]
+
+class CourseOut(BaseModel):          # 2차 거름망: 밖으로 내보낼 칸
+    id: int
+    title: str
+    instructor: str
+    price: int
+
+@app.get("/orm/courses", response_model=list[CourseOut])
+def get_courses_orm():
+    with Session(engine) as session:
+        courses = session.scalars(select(Course)).all()   # ① Course 가 SQL 을 만든다
+    return courses                                        # ② 돌려준 뒤 ③ CourseOut 검사`,
+        },
+      },
+      {
+        title: "response_model 의 두 규칙",
+        body: "response_model 은 \"이 칸들은 꼭 있어야 하고, 이 칸들만 내보낸다\"는 명단이다. 돌려준 값에 명단의 칸이 빠지면 ResponseValidationError(500)로 내보내기를 거부하고, 명단에 없는 칸이 더 있으면 에러 없이 그 칸만 버린다.",
+        why: "약속한 모양은 지키고, 약속하지 않은 정보는 새지 않게 한다.",
+        code: {
+          lang: "python",
+          caption: "같은 명단에 칸이 남을 때와 모자랄 때",
+          source: `from pydantic import BaseModel, ValidationError
+
+class CourseOut(BaseModel):
+    id: int
+    title: str
+    instructor: str
+    price: int
+
+# 칸이 남으면 — level 만 조용히 버려진다
+print(CourseOut.model_validate({"id": 1, "title": "파이썬", "instructor": "클로드", "price": 33000, "level": "입문"}).model_dump())
+# {'id': 1, 'title': '파이썬', 'instructor': '클로드', 'price': 33000}
+
+# 칸이 모자라면 — 에러
+try:
+    CourseOut.model_validate({"id": 1, "title": "파이썬", "price": 33000})
+except ValidationError as e:
+    print(e.errors()[0]["type"], e.errors()[0]["loc"])   # missing ('instructor',)`,
+        },
+      },
+      {
+        title: "실행 순서 — SQL → return → 출구 검수",
+        body: "GET /orm/courses 가 오면 select(Course) 가 SQL 을 만들어 DB 에 보내고(Course 가 일함), 결과를 return 한 뒤에야 FastAPI 가 CourseOut 명단으로 검사하고 JSON 으로 바꾼다(CourseOut 이 일함). response_model 검사는 SQL 을 보내기 전 확인이 아니라, 꺼내 온 값에 대한 출구 검수다.",
+        why: "에러가 어느 단계에서 났는지 알면 원인이 바로 좁혀진다 — DB 가 준 None 이 응답 검사에 걸렸던 일(미니 인프런 트러블슈팅 기록)이 이 순서의 증거다.",
+        code: {
+          lang: "sql",
+          caption: "echo=True 로 본 /orm/courses 의 SQL — 네 컬럼은 Course 클래스의 네 줄에서 나왔다",
+          source: `SELECT courses.id, courses.title, courses.instructor, courses.price FROM courses`,
+        },
+      },
+      {
+        title: "UndefinedColumn 과 traceback 읽기",
+        body: "Course 에만 level: Mapped[str] 을 넣고 DB 에는 그 컬럼이 없으면, SELECT 에 courses.level 이 들어가 DB 가 거부하고 500 이 난다. 출구 검수(CourseOut)까지 가 보지도 못한다. 긴 traceback 에서는 내 파일(main.py) 줄과 맨 아래 에러 줄만 보면 되고, sqlalchemy.exc.ProgrammingError 안쪽의 psycopg.errors.UndefinedColumn 이 진짜 원인이다.",
+        why: "Course 는 DB 와 반드시 맞아야 하는 1차 거름망이다 — 이 어긋남을 사람 대신 막아 주는 도구가 마이그레이션(Alembic)이다.",
+        code: {
+          lang: "bash",
+          caption: "고장 실험 — Course 에만 level 을 넣고 호출",
+          source: `curl -i http://localhost:8000/orm/courses
+# HTTP/1.1 500 Internal Server Error   ← 본문은 JSON 이 아니라 글자 Internal Server Error
+# uvicorn 로그:
+#   psycopg.errors.UndefinedColumn: column courses.level does not exist
+#   [SQL: SELECT courses.id, courses.title, courses.instructor, courses.price, courses.level FROM courses]`,
+        },
+      },
+      {
+        title: "SELECT * API 를 지운 이유",
+        body: "SELECT * + dict(row) 는 테이블의 모든 컬럼을 확인 없이 내보낸다. 나중에 instructor_phone 같은 컬럼을 추가하면 코드를 한 줄도 안 바꿔도 그 값이 공개 API 로 나가 누구나 curl 로 받아 간다. 그래서 목록도 /orm/courses 로 통일하고, 프론트 한 군데에서만 쓰던 /courses 는 지웠다.",
+        why: "목록과 상세가 서로 다른 버전의 API 를 쓰면, 컬럼을 추가했을 때 두 화면의 결과가 달라진다.",
+        code: {
+          lang: "bash",
+          caption: "지운 라우트는 FastAPI 가 모르는 주소라 404",
+          source: `curl -i http://localhost:8000/courses
+# HTTP/1.1 404 Not Found … {"detail":"Not Found"}`,
+        },
+      },
+    ],
+    pitfalls: [
+      "Course 와 CourseOut 은 칸 이름이 같아도 역할이 다르다 — 상속이 Base 면 DB 쪽, BaseModel 이면 응답 쪽",
+      "DB 에 ALTER TABLE 로 컬럼만 추가하면 ORM API 는 SELECT 하지 않아 그대로지만, SELECT * API 는 바로 새 컬럼을 내보낸다",
+      "처리되지 않은 파이썬 에러의 500 본문은 JSON 이 아닌 글자라, 프론트에서 res.ok 확인 없이 res.json() 하면 SyntaxError 가 난다",
+      "라우트를 지울 때 그 라우트만 쓰던 import(text)도 함께 지운다",
+    ],
+    tags: ["백엔드", "FastAPI", "SQLAlchemy", "Pydantic"],
+    keywords:
+      "fastapi sqlalchemy pydantic response_model basemodel declarativebase select orm select * dict(row) responsevalidationerror undefinedcolumn programmingerror traceback alembic migration curl echo 미니 인프런 거름망",
+  },
   {
     slug: "be-path-param-404",
     area: "Back",
@@ -623,6 +739,83 @@ export const BACK_NOTES: StudyNote[] = [
       "http request response method get post status code 404 500 header body json curl",
   },
   // ── 알고리즘 (프로그래머스 코테 풀이) — 문제 풀이 대신 무엇을 떠올려야 풀리는지와 막힌 곳을 정리 ──
+  // 14번부터 F-012 노트 틀(개념 · 왜 · 코드). 코드는 개념 확인용 조각만 싣고 풀이 전문은 싣지 않는다(Python 3 에서 돌려 확인)
+  {
+    slug: "algo-phone-book",
+    area: "Back",
+    course: "알고리즘",
+    lesson: "14번",
+    date: "2026.11.06",
+    title: "전화번호 목록 — 정렬 후 이웃 비교 · 접두어",
+    summary:
+      "문자열을 사전순으로 정렬하면 접두어 관계가 반드시 이웃에서 드러난다는 성질로, 모든 쌍을 보지 않고 O(N log N) 에 접두어를 찾을 수 있다.",
+    points: [
+      "사전순 정렬 후에는 옆자리끼리 N-1번만 비교하면 된다",
+      "접두어 검사는 startswith — in 은 중간에 있어도 참",
+      "해시셋 풀이는 번호마다 앞부분을 set 에서 O(1) 로 찾는다",
+    ],
+    learned: [],
+    sections: [
+      {
+        title: "문자열 사전순 정렬",
+        body: '문자열은 길이가 아니라 첫 글자부터 한 글자씩 비교해 순서를 정하고, 한쪽이 먼저 끝나면 짧은 쪽이 앞이다. 그래서 숫자로는 119 가 12 보다 크지만 문자열로는 "119" < "12" 다. 같은 앞부분으로 시작하는 문자열끼리는 정렬하면 한 덩어리로 붙는다.',
+        why: 'int 로 바꿔 정렬하면 접두어가 같은 번호가 흩어지고, "0123" 의 앞자리 0 도 사라진다.',
+        code: {
+          lang: "python",
+          caption: "사전순이면 접두어 관계인 번호가 이웃이 된다",
+          source: `book = ["119", "97674223", "1195524421"]
+print(sorted(book))           # ['119', '1195524421', '97674223'] ← 접두어 관계가 이웃
+print(sorted(book, key=int))  # ['119', '97674223', '1195524421'] ← 숫자순이면 흩어진다
+print("119" < "12")           # True
+print(int("0123"))            # 123 ← 앞자리 0 이 사라진다`,
+        },
+      },
+      {
+        title: "정렬 후 이웃 비교 — 왜 옆자리만 봐도 되나",
+        body: "사전순으로 정렬했을 때 A 가 C 의 접두어라면, A 와 C 사이에 끼는 문자열 B 는 전부 A 로 시작한다. 그래서 A–B 이웃 비교에서 이미 접두어가 잡힌다. 이 성질은 예외 없이 성립하므로 이웃 N-1번 비교로 빠짐없이 찾는다.",
+        why: "N 이 100만이면 모든 쌍 비교는 약 5,000억 번이라 시간 초과, 정렬 + 이웃 비교는 O(N log N) 이다(번호 길이 L ≤ 20 을 상수로 볼 때, 엄밀히는 O(L · N log N)).",
+        code: {
+          lang: "python",
+          caption: '"12" 와 "1234" 는 직접 비교하지 않아도 첫 쌍에서 잡힌다',
+          source: `pb = sorted(["1234", "12", "120"])
+print(pb)                                             # ['12', '120', '1234']
+print([b.startswith(a) for a, b in zip(pb, pb[1:])])  # [True, False]`,
+        },
+      },
+      {
+        title: "접두어 검사 — startswith 와 슬라이싱",
+        body: "접두어는 \"맨 앞이 같은가\"라서 뒤.startswith(앞) 으로 묻는다. 뒤 번호를 앞 번호 길이만큼 잘라 비교(뒤[:len(앞)] == 앞)해도 같다. 슬라이싱은 범위를 넘어도 에러 없이 있는 데까지만 잘라서, 뒤 번호가 더 짧아도 길이 검사가 필요 없다.",
+        why: 'in 은 어디든 들어 있으면 참이라 "1" in "21" 이 True — 접두어가 아닌데 걸린다.',
+        code: {
+          lang: "python",
+          caption: "포함과 맨 앞, 슬라이싱과 인덱싱",
+          source: `print("1234".startswith("23"), "23" in "1234")  # False True
+s = "12"
+print(repr(s[0:3]), repr(s[5:9]))  # '12' '' ← 슬라이싱은 범위 밖이어도 에러가 없다
+s[2]                               # IndexError: string index out of range ← 인덱싱은 에러`,
+        },
+      },
+      {
+        title: "조기 반환과 return 위치",
+        body: '"하나라도 있으면 False" 는 찾는 즉시 return 으로 끝내도 되지만, "하나도 없으면 True" 는 반복을 끝까지 돈 뒤 반복문 밖에서만 말할 수 있다. any() 에 제너레이터 식을 넘기면 처음 참을 만나는 순간 나머지를 계산하지 않아서 같은 조기 종료를 한 줄로 쓴다.',
+        why: 'return True 를 반복문 안 else 에 두면 첫 쌍만 보고 끝나 ["1", "23", "234"] 에서 오답(True)이 나온다.',
+      },
+      {
+        title: "해시셋 풀이와 트라이",
+        body: "모든 번호를 set 에 넣고, 번호마다 앞부분(1글자 … 자기 길이-1글자)이 set 에 있는지 O(1) 로 찾으면 정렬 없이 O(N · L²) 에 풀린다. 번호가 계속 추가 · 삭제되거나 자동완성처럼 앞부분 검색이 많으면, 글자 하나를 한 칸으로 저장하는 트라이(O(N · L))가 맞다.",
+        why: "목록이 한 번에 주어지면 정렬 한 번이면 되지만, 하나씩 계속 들어오면 매번 다시 정렬해야 해서 불리하다.",
+      },
+    ],
+    pitfalls: [
+      "for i in len(pb) - 1 은 정수라 TypeError('int' object is not iterable) — 횟수는 range() 로 감싼다",
+      "슬라이싱 길이에 len(pb)(번호 개수)를 쓰면 접두어를 놓친다 — 앞 번호 하나의 길이 len(pb[i]) 만큼 자른다",
+      "해시셋 풀이에서 range(1, len(num) + 1) 까지 돌리면 자기 자신이 set 에 있어 어떤 입력이든 False",
+      "sort() 는 넘겨받은 리스트 자체를 바꾼다 — 호출한 쪽 순서를 지켜야 하면 sorted()",
+    ],
+    tags: ["알고리즘", "해시", "정렬", "Python"],
+    keywords:
+      "algorithm phone book prefix startswith lexicographic sort hash set trie slicing indexerror early return any zip sorted 전화번호 목록 접두어 사전순 코테 코딩테스트 프로그래머스",
+  },
   {
     slug: "algo-lru-cache",
     area: "Back",
