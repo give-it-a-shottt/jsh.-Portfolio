@@ -2,7 +2,7 @@
 
 ## 한눈에 보기 (코드 몰라도 OK)
 
-상태: [주의] 새 구조로 옮겼어요(2026-10-29). Overview는 사용자 확인을 받았고, D-002·D-003과 피그마 링크는 아직 확인 전이에요.
+상태: [통과] 새 구조로 옮겼어요(2026-10-29). Overview · D-002 · D-003 · 피그마 링크 모두 사용자 확인(2026-11-08).
 
 **이 서비스는 무엇이고 누구를 위한 것인지** (사용자 확인)
 
@@ -13,7 +13,7 @@
 
 - 공개 중: 검색형 포트폴리오(프로젝트 페이지 4개 포함), 마에스트로(리뉴얼), Accio(따로 배포 · 링크만), FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn(미니 인프런으로 따로 배포 · 링크만), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
 - 리뷰: F-001·F-006·F-009·F-010 판정 완료([주의]). F-004 7차 · F-008 · F-011 · F-012는 판정 일부 대기, F-007은 리뷰 전, F-002·F-003·F-005는 백로그예요.
-- 진행: 됨 3 · 일부 10 · 다음 0, 열린 질문 6개 ([STATUS.md](STATUS.md) 초안 · 사용자 확인 대기)
+- 진행: 됨 9 · 일부 4 · 다음 0, 열린 질문 0개 ([STATUS.md](STATUS.md), 사용자 확인 완료)
 
 **읽는 순서** (면접 전에는 이것만 읽어도 돼요)
 
@@ -81,10 +81,10 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | 번호 | 결정 | 상태 |
 |---|---|---|
 | [D-001](decisions/D-001-single-vite-hash-routing.md) | Vite 앱 하나 + 해시 라우팅 + lazy | 확인 완료 · Accio·마에스트로 분리 예정 |
-| [D-002](decisions/D-002-mock-real-client.md) | 외부 API mock ↔ real 교체 구조 | 확인 필요 |
-| [D-003](decisions/D-003-accio-v1-static-build.md) | 팀 원본은 정적 빌드만 보존 | 확인 필요 |
+| [D-002](decisions/D-002-mock-real-client.md) | 외부 API mock ↔ real 교체 구조 | 확인 완료 |
+| [D-003](decisions/D-003-accio-v1-static-build.md) | 팀 원본은 정적 빌드만 보존 | 확인 완료 |
 | [D-004](decisions/D-004-notion-notes-semi-auto.md) | 노션 노트는 터미널 한마디로 반자동 옮기기 | 확인 완료 |
-| [D-005](decisions/D-005-accio-separate-service.md) | Accio를 포트폴리오 밖 서비스로 분리하고 링크만 | 분리는 확인 완료 · 예전 주소 처리 확인 필요 |
+| [D-005](decisions/D-005-accio-separate-service.md) | Accio를 포트폴리오 밖 서비스로 분리하고 링크만 | 확인 완료 |
 | [D-006](decisions/D-006-techlearn-mini-inflearn-link.md) | techlearn 시안을 지우고 미니 인프런 배포 사이트로 링크만 | 확인 완료 |
 | [D-007](decisions/D-007-main-study-landing.md) | 첫 화면 긴 페이지 · 헤더 Main / Study · 피그마 공개 링크 | 확인 완료 |
 
@@ -95,7 +95,7 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-001](features/F-001-flaseek-renewal/feature.md) | FLASEEK 리뉴얼 시안 | [주의] 판정 완료 |
 | [F-002](features/F-002-accio-redesign/feature.md) | Accio 리디자인 | 백로그 |
 | [F-003](features/F-003-portfolio-search/feature.md) | 검색형 포트폴리오 | 백로그 |
-| [F-004](features/F-004-study-notes/feature.md) | Study 노트 (노션형 홈 · 문서형 상세 · 결과 Study 탭 → Study 홈) | [통과] 7차 · 판정 대기 |
+| [F-004](features/F-004-study-notes/feature.md) | Study 노트 (노션형 홈 · 문서형 상세 · 결과 Study 탭 → Study 홈) | [통과] 7차 · 판정 완료 |
 | [F-005](features/F-005-maestro/feature.md) | 마에스트로 | 백로그 |
 | [F-006](features/F-006-design-system-case/feature.md) | 개인 디자인 시스템 사례 | [주의] 판정 완료 |
 | [F-007](features/F-007-search-algorithm/feature.md) | 검색 알고리즘 개선 (S0~S6) | 리뷰 전 |
