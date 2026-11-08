@@ -20,7 +20,8 @@
 | [T-010](T-010-yumi-burst-limit.md) | 유미 "Rate limit exceeded" — 하루 한도 말고 짧은 구간 10요청 한도 (F-010) | [통과] | 2026-11-01 |
 | [T-011](T-011-uv-trampoline.md) | Git Bash에서 `uv run pytest`가 안 됨 — uv trampoline 오류 (F-010) | [통과] | 2026-11-01 |
 | [T-012](T-012-test-read-env-key.md) | 테스트가 로컬 `.env`의 실제 키를 읽어 유미를 한 번 부름 (F-010) | [통과] | 2026-11-01 |
+| [T-013](T-013-github-heatmap-snapshot.md) | GitHub 잔디 이미지 서비스가 응답하지 않음 — 저장본으로 그리기 (F-013) | [통과] | 2026-11-08 |
 
 💡 Admin_Docs를 도입하기 전의 트러블 사례는 포트폴리오 Front·Back 사례(`portfolio/caseStories.ts`)에 있어요.
 
-최종 수정: 2026-11-01
+최종 수정: 2026-11-08
