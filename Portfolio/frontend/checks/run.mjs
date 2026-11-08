@@ -92,6 +92,16 @@ try {
     check(`${note.slug} · 개념마다 설명이 있다`, note.sections.filter((s) => !s.body).map((s) => s.title), [])
   }
   check('없는 노트 주소는 그대로', resolveNoteSlug('없는-노트'), '없는-노트')
+
+  // ── techlearn → 미니 인프런(D-006): 홈 칩과 예전 주소가 배포 사이트로 간다
+  const { MINI_INFLEARN_LIVE, PROJECTS } = data
+  const { isOldTechlearnPath } = routes
+  check('MINI_INFLEARN_LIVE 는 https 바깥 주소', /^https:\/\//.test(MINI_INFLEARN_LIVE) && isExternal(MINI_INFLEARN_LIVE), true)
+  check('홈 techlearn 칩 → 미니 인프런', PROJECTS.find((p) => p.name === 'techlearn')?.href, MINI_INFLEARN_LIVE)
+  for (const old of ['/techlearn', '/techlearn/courses', '/techlearn/course/nextjs-pages'])
+    check(`예전 주소 ${old} → 배포 사이트로`, isOldTechlearnPath(old), true)
+  for (const other of ['/', '/techlearnx', '/nightly', '/project/accio'])
+    check(`${other} 는 techlearn 주소가 아니다`, isOldTechlearnPath(other), false)
 } finally {
   await server.close()
 }

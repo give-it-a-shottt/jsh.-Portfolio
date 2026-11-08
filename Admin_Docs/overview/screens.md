@@ -14,8 +14,8 @@
                   │ 실행해 보기 링크
      ┌────────────┼─────────┼──────────┬──────────────┬─────────────┬──────────────┐
   마에스트로     Accio      FLASEEK     Accio v1 원본    techlearn      Nightly
-  #/maestro    바깥 링크   #/flaseek   /accio-v1/      #/techlearn    #/nightly
-  (해커톤)     (따로 배포)  (리뉴얼 시안) (팀 원본 정적 빌드) (강의 플랫폼 시안) (수면 코칭 시안)
+  #/maestro    바깥 링크   #/flaseek   /accio-v1/      바깥 링크       #/nightly
+  (해커톤)     (따로 배포)  (리뉴얼 시안) (팀 원본 정적 빌드) (미니 인프런 배포) (수면 코칭 시안)
      │
   마에스트로 API
 ```
@@ -46,7 +46,7 @@
 | 마에스트로 | `#/maestro/…` | 낯선 서울 동네에서 지금 열린 식당 3곳을 근거와 함께 골라 주는 서비스 (F-010 리뉴얼) | 마에스트로 API(헤이유미 API 중계, mock/real) | `src/projects/maestro/`, `backend/maestro/` |
 | Accio | `#/accio/…` → `#/project/accio` | 따로 배포한 서비스(accio-two.vercel.app)로 옮겼어요. 사이트 안 앱은 지우고, 예전 주소는 프로젝트 페이지로 보내요(F-011) | 바깥 서비스 | `backend/accio/`(뼈대만) |
 | FLASEEK | `#/flaseek/…` | 보정속옷·압박스타킹 자사몰 리뉴얼 시안. 메인·리스트·상세·로그인 | 없음(정적 데이터, 이번 방문 동안만 상태 유지) | `src/projects/flaseek/` |
-| techlearn | `#/techlearn/…` | 강의 플랫폼 시안. 홈 → 강의 목록 → 상세 → 포인트 수강신청 ([F-008](../features/F-008-techlearn/feature.md)) | 없음(목업 데이터, 포인트·수강 기록은 이번 방문 동안만) | `src/projects/techlearn/` |
+| techlearn | `#/techlearn/…` → 미니 인프런 | 실제로 동작하는 미니 인프런(mini-inflearn.vercel.app)으로 옮겼어요. 사이트 안 시안은 지우고, 홈 칩과 예전 주소는 배포 사이트로 보내요([F-008](../features/F-008-techlearn/feature.md), [D-006](../decisions/D-006-techlearn-mini-inflearn-link.md)) | 바깥 서비스(미니 인프런 레포) | 없음 — `data.ts`의 `MINI_INFLEARN_LIVE` |
 | Nightly | `#/nightly/…` | 백엔드 공부용 AI 수면 코칭 프로젝트의 시안. 홈 · 수면 대시보드 · AI 코치 ([F-009](../features/F-009-nightly/feature.md)) | 없음(가짜 데이터, 코치 대화는 이번 방문 동안만) | `src/projects/nightly/` |
 | Accio v1 | `/accio-v1/` | 팀 프로젝트 원본 프론트를 정적 빌드로 보존. 목 모드로만 동작 | 없음 | `public/accio-v1/` (빌드 결과만) |
 
@@ -80,17 +80,14 @@
 - IA · 유저플로우 원본은 레포 루트 `maestro-design.md`(0-4 · 0-5)와 피그마예요. 투표(VOT)는 구현 2차라 표로 비교의 [함께 고르기]는 누르지 않는 버튼이에요.
 - 조건은 주소에 있어서 새로고침 · 뒤로 가기에도 남아요. 1024px 이상은 PC 배치예요.
 
-최종 수정: 2026-11-05 · 관련: D-001, F-001~F-005, F-007, F-010, F-011
+최종 수정: 2026-11-08 · 관련: D-001, D-006, F-001~F-005, F-007, F-008, F-010, F-011
 
 ### techlearn 흐름
 ```
-홈 #/techlearn  (히어로 검색 · 분야 · 인기 강좌 · 로드맵 · 후기)
- └─ 검색 / 강의 탐색 / 카드 ──▶ 강의 목록 #/techlearn/courses?tab=&q=
-                                  └─ 강의 카드 ──▶ 강의 상세 #/techlearn/course/{id}
-                                                   └─ 수강신청 하기 ──▶ 확인 모달 ──▶ 처리 중 ──▶ 토스트(201·400·409·500)
+홈 '진행 중인 프로젝트' techlearn 칩 ──▶ https://mini-inflearn.vercel.app/ (새 탭 ↗ — 사이트의 다른 바깥 링크와 같음)
+예전 주소 #/techlearn, #/techlearn/… ──▶ 같은 배포 사이트 (location.replace, 뒤로가기로 돌아오지 않음)
 ```
-- 홈의 인기 강좌(원화 가격)는 홍보용 카드라 강의 목록으로 보내요. 포인트로 신청하는 강의는 목록의 8개예요.
-- 아직 없는 화면(내 강의 09, 장바구니 05, 결제 07, 로그인 06, 404·500 10·11)은 다음 단계예요. '내 강의로 이동'은 지금 강의 목록으로 가요.
+- 화면 흐름(홈 → 강의 목록 → 상세 → 수강신청 · 로그인 · 404/500)은 이제 미니 인프런 레포에서 관리해요(2026-11-08, D-006).
 
 ### Nightly 흐름
 ```

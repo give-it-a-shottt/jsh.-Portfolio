@@ -11,7 +11,7 @@
 
 **지금 상태**
 
-- 공개 중: 검색형 포트폴리오(프로젝트 페이지 4개 포함), 마에스트로(리뉴얼), Accio(따로 배포 · 링크만), FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn 강의 플랫폼 시안(핵심 흐름), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
+- 공개 중: 검색형 포트폴리오(프로젝트 페이지 4개 포함), 마에스트로(리뉴얼), Accio(따로 배포 · 링크만), FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn(미니 인프런으로 따로 배포 · 링크만), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
 - 리뷰: F-001·F-004·F-006·F-008·F-009·F-010 판정 완료([주의]). F-007은 리뷰 전, F-002·F-003·F-005는 백로그예요.
 
 **읽는 순서** (면접 전에는 이것만 읽어도 돼요)
@@ -78,6 +78,7 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [D-003](decisions/D-003-accio-v1-static-build.md) | 팀 원본은 정적 빌드만 보존 | 확인 필요 |
 | [D-004](decisions/D-004-notion-notes-semi-auto.md) | 노션 노트는 터미널 한마디로 반자동 옮기기 | 확인 완료 |
 | [D-005](decisions/D-005-accio-separate-service.md) | Accio를 포트폴리오 밖 서비스로 분리하고 링크만 | 분리는 확인 완료 · 예전 주소 처리 확인 필요 |
+| [D-006](decisions/D-006-techlearn-mini-inflearn-link.md) | techlearn 시안을 지우고 미니 인프런 배포 사이트로 링크만 | 확인 완료 |
 
 ### 기능
 
@@ -90,9 +91,9 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-005](features/F-005-maestro/feature.md) | 마에스트로 | 백로그 |
 | [F-006](features/F-006-design-system-case/feature.md) | 개인 디자인 시스템 사례 | [주의] 판정 완료 |
 | [F-007](features/F-007-search-algorithm/feature.md) | 검색 알고리즘 개선 (S0~S6) | 리뷰 전 |
-| [F-008](features/F-008-techlearn/feature.md) | techlearn 강의 플랫폼 시안 (홈 → 목록 → 상세 → 수강신청) | [주의] 판정 완료 |
+| [F-008](features/F-008-techlearn/feature.md) | techlearn 강의 플랫폼 — 시안을 지우고 미니 인프런 배포 사이트로 링크 (2차, 2026-11-08) | [주의] 1차 판정 완료 · 2차 리뷰 |
 | [F-009](features/F-009-nightly/feature.md) | Nightly 수면 코칭 시안 (홈 · 수면 대시보드 · AI 코치) | [주의] 판정 완료 |
 | [F-010](features/F-010-maestro-renewal/feature.md) | 마에스트로 리뉴얼 (지금 열린 식당 3곳 · Zustand · 유미 real + 저장본) | [주의] 판정 완료 |
 | [F-011](features/F-011-portfolio-restructure/feature.md) | 포트폴리오 개편 (탭 Design · Fullstack · Study · 홈 대표 4개 · 프로젝트 페이지 · Accio 링크만) | [통과] 2차 · 판정 일부 대기 |
 
-최종 수정: 2026-11-05 · 관련: D-001~D-005, F-001~F-011
+최종 수정: 2026-11-08 · 관련: D-001~D-006, F-001~F-012

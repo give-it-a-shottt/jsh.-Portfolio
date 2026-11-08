@@ -193,6 +193,8 @@ export type CaseType = 'Front' | 'Back' | 'Design'
 
 /** 다시 만든 Accio 배포 주소 — 사이트 안 앱(#/accio)은 지우고 링크만 둔다(F-011) */
 export const ACCIO_LIVE = 'https://accio-two.vercel.app/'
+/** techlearn 시안을 실제로 만든 미니 인프런 배포 주소 — 사이트 안 시안(#/techlearn)은 지우고 링크만 둔다(D-006) */
+export const MINI_INFLEARN_LIVE = 'https://mini-inflearn.vercel.app/'
 /** 배포 주소 — 사례(CASES)와 프로젝트 페이지(projects.ts)가 함께 쓴다 */
 export const PLANFORME_LIVE = 'https://planforme-web.vercel.app/'
 export const REMIND_LIVE = 'https://remind-flame-ten.vercel.app/'
@@ -1167,12 +1169,12 @@ export const KEYWORDS: { label: string; type: CaseType | 'Study' }[] = [
 ]
 
 /**
- * 홈 '진행 중인 프로젝트' 칩 — 마에스트로처럼 사이트 안에 만든 화면으로 보낸다.
+ * 홈 '진행 중인 프로젝트' 칩 — 사이트 안에 만든 화면이나, 따로 배포한 서비스(techlearn)로 보낸다.
  * 화면이 없는 프로젝트는 href 없이 이름만 보여 준다. 화면이 생기면 href 를 더한다.
  * 피그마 주소는 공개 사이트에 넣지 않는다.
  */
 export const PROJECTS: { name: string; summary: string; href?: string }[] = [
-  { name: 'techlearn', summary: '강의 플랫폼', href: '#/techlearn' },
+  { name: 'techlearn', summary: '강의 플랫폼', href: MINI_INFLEARN_LIVE },
   { name: 'Nightly', summary: '수면 코칭 커머스', href: '#/nightly' },
 ]
 

@@ -222,8 +222,19 @@ export default function SearchHome({ onSearch, onReplayIntro }: SearchHomeProps)
                 return (
                   <li key={name}>
                     {href ? (
-                      <a href={href} className={`${chipClass} hover:border-black`}>
+                      // 따로 배포한 서비스(techlearn)는 다른 바깥 링크처럼 새 탭 + ↗ 로 연다
+                      <a
+                        href={href}
+                        {...(isExternal(href) ? { target: '_blank', rel: 'noopener' } : {})}
+                        className={`${chipClass} hover:border-black`}
+                      >
                         {chip}
+                        {isExternal(href) && (
+                          <>
+                            <span aria-hidden="true" className="text-sub">↗</span>
+                            <span className="sr-only">(새 탭)</span>
+                          </>
+                        )}
                       </a>
                     ) : (
                       <span className={chipClass}>

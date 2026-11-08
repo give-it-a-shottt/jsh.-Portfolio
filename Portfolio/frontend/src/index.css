@@ -166,31 +166,6 @@
   --color-flaseek-pink-soft: #fff4f8;
 
   /*
-   * techlearn(강의 플랫폼 시안 · 디자인 네이비) — tl- 접두어. 포인트는 네이비 하나, 할인가만 빨강.
-   * 바탕은 tl-bg(옅은 파랑) 위에 흰 카드, 어두운 프로모션 판은 tl-dark.
-   */
-  --color-tl: #1e3a8a;
-  --color-tl-ink: #171c21;
-  --color-tl-sub: #3b404b;
-  /* 강의 목록·상세의 본문 글자와 보조 글자 — 홈보다 살짝 푸른 회색 */
-  --color-tl-body: #434a57;
-  --color-tl-muted: #6b7385;
-  --color-tl-weak: #6b707c;
-  --color-tl-bg: #eff4fb;
-  --color-tl-bg-alt: #f6f9ff;
-  --color-tl-chip: #eaeef5;
-  --color-tl-line: #e4e8ef;
-  --color-tl-dark: #2c3136;
-  --color-tl-on-dark: #e3e2e3;
-  --color-tl-sale: #ba1a1a;
-  --color-tl-hot: #93000a;
-  --color-tl-hot-soft: #ffdad6;
-  --color-tl-lavender: #a5b4fc;
-  --color-tl-indigo-soft: #c7d2fe;
-  --color-tl-indigo-ink: #0b1330;
-  --color-tl-step: #4f6bd8;
-
-  /*
    * Nightly(AI 수면 코칭 시안 · 피그마 「AI 수면」 Liquid Glass 수정안) — nt- 접두어.
    * 짙은 남색 바탕에 흰 빛 번짐을 깔고, 그 위에 위 → 아래로 옅어지는 유리 카드를 얹는다. 카드 안에는 박스를 겹치지 않는다.
    * 글자는 main · sub · weak 3단계, 아이콘은 모두 sub 한 색. 포인트는 인디고(primary) · 보라(secondary), 주 버튼만 파랑(cta).
@@ -246,9 +221,6 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
-  /* techlearn — 태그·할인 배지 2, 해시태그 칩 6 */
-  --radius-tl-tag: 2px;
-  --radius-tl-chip: 6px;
   /* 마에스트로 — 칩 · 배지 6, 시트 윗변 20 */
   --radius-mr-chip: 6px;
   --radius-mr-sheet: 20px;

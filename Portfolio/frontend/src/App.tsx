@@ -1,8 +1,9 @@
 import { lazy, Suspense, useEffect } from "react";
 import PortfolioApp from "./portfolio/PortfolioApp";
+import { MINI_INFLEARN_LIVE } from "./portfolio/data";
+import { isOldTechlearnPath } from "./portfolio/routes";
 import { MAESTRO_BASE } from "./projects/maestro/routes";
 import { FLASEEK_BASE } from "./projects/flaseek/routes";
-import { TECHLEARN_BASE } from "./projects/techlearn/routes";
 import { NIGHTLY_BASE } from "./projects/nightly/routes";
 import useHashRoute from "./shared/hooks/useHashRoute";
 
@@ -10,13 +11,20 @@ import useHashRoute from "./shared/hooks/useHashRoute";
 // 새 프로젝트: projects/<이름>/ 를 만들고 아래에 lazy 한 줄 + 라우트 한 줄을 더한다.
 const MaestroApp = lazy(() => import("./projects/maestro/MaestroApp"));
 const FlaseekApp = lazy(() => import("./projects/flaseek/FlaseekApp"));
-const TechlearnApp = lazy(() => import("./projects/techlearn/TechlearnApp"));
 const NightlyApp = lazy(() => import("./projects/nightly/NightlyApp"));
 
 /** '/accio', '/accio/list' 처럼 base 아래 경로면 base 뒤 경로('/', '/list')를, 아니면 null */
 function subPath(path: string, base: string) {
   if (path === base) return "/";
   return path.startsWith(`${base}/`) ? path.slice(base.length) : null;
+}
+
+/** 사이트 밖 주소로 옮긴다. replace 라서 뒤로가기가 예전 주소로 되돌아오지 않는다 */
+function ExternalRedirect({ href }: { href: string }) {
+  useEffect(() => {
+    window.location.replace(href);
+  }, [href]);
+  return null;
 }
 
 function App() {
@@ -35,6 +43,9 @@ function App() {
   if (path === "/accio" || path.startsWith("/accio/"))
     return <PortfolioApp path="/project" params={params} slug="accio" />;
 
+  // techlearn 은 미니 인프런으로 따로 배포했다(D-006) — 예전 '#/techlearn/…' 주소는 배포 사이트로 보낸다
+  if (isOldTechlearnPath(path)) return <ExternalRedirect href={MINI_INFLEARN_LIVE} />;
+
   const maestroPath = subPath(path, MAESTRO_BASE);
   if (maestroPath)
     return (
@@ -48,14 +59,6 @@ function App() {
     return (
       <Suspense fallback={null}>
         <FlaseekApp path={flaseekPath} params={params} />
-      </Suspense>
-    );
-
-  const techlearnPath = subPath(path, TECHLEARN_BASE);
-  if (techlearnPath)
-    return (
-      <Suspense fallback={null}>
-        <TechlearnApp path={techlearnPath} params={params} />
       </Suspense>
     );
 

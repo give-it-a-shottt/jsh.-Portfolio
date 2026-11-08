@@ -38,3 +38,8 @@ export function goTo(href: string) {
 export function isExternal(href: string) {
   return !href.startsWith('#')
 }
+
+/** 예전 techlearn 시안 주소인지 — '/techlearn', '/techlearn/…'. 이 주소는 미니 인프런 배포 사이트로 보낸다(D-006) */
+export function isOldTechlearnPath(path: string) {
+  return path === '/techlearn' || path.startsWith('/techlearn/')
+}

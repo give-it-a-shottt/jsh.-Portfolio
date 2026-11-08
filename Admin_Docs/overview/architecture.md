@@ -2,7 +2,7 @@
 
 ## 한눈에 보기 (코드 몰라도 OK)
 상태: [통과] 사용자 확인 완료 (2026-10-25)
-무엇을: 화면은 **한 건물 안의 여러 매장**처럼 동작해요. 건물(Vite 앱)은 하나이고, 주소의 `#/maestro`, `#/flaseek`, `#/techlearn`이 각 매장 입구예요. Accio는 따로 배포한 서비스로 옮겨 링크만 걸어요(F-011). 매장 안의 코드는 손님이 들어올 때 꺼내요(lazy). 서버가 필요한 매장은 마에스트로 하나뿐이고, 마에스트로의 화면 → 마에스트로 API → 헤이유미 API(또는 가짜 데이터) 순서로 흘러요.
+무엇을: 화면은 **한 건물 안의 여러 매장**처럼 동작해요. 건물(Vite 앱)은 하나이고, 주소의 `#/maestro`, `#/flaseek`, `#/nightly`가 각 매장 입구예요. Accio(F-011)와 techlearn(D-006)은 따로 배포한 서비스로 옮겨 링크만 걸어요. 매장 안의 코드는 손님이 들어올 때 꺼내요(lazy). 서버가 필요한 매장은 마에스트로 하나뿐이고, 마에스트로의 화면 → 마에스트로 API → 헤이유미 API(또는 가짜 데이터) 순서로 흘러요.
 왜: 프로젝트가 늘어나도 포트폴리오 첫 화면이 무거워지지 않고, 배포는 하나로 끝나게 하려고요.
 
 ```
@@ -13,7 +13,8 @@
    │    ├─ MaestroApp ─ lazy ── fetch ──▶ 마에스트로 API (Render, FastAPI)
    │    │                                   └─ YumiClient: mock(JSON) | real(헤이유미 API, 실패하면 저장본 snapshot.json)
    │    ├─ FlaseekApp ─ lazy (정적 데이터만)
-   │    └─ TechlearnApp ─ lazy (목업 데이터, 수강신청은 api.ts 가 서버 흉내)
+   │    ├─ NightlyApp ─ lazy (가짜 데이터)
+   │    └─ #/techlearn/… ─ 미니 인프런 배포 사이트로 이동 (ExternalRedirect, D-006)
    └─ /accio-v1/  팀 원본 정적 빌드 (App.tsx 를 거치지 않음)
 ```
 
@@ -33,10 +34,9 @@ Portfolio/frontend/src/
 └─ projects/
    ├─ maestro/   (MaestroApp, routes, api, store(Zustand), hooks, components, MapView(Leaflet), format, styles, types, icons/, screens/)
    ├─ flaseek/   (FlaseekApp, routes, store, data, layout, ui, BeforeAfterSlider, pages/)
-   ├─ techlearn/ (TechlearnApp, routes, data(홈), lectures(강의 8개), store, api, hooks, components, enroll, screens/)
    └─ nightly/   (NightlyApp, routes, data, hooks(코치 대화 흉내), components, screens/)
 ```
-- 상태 관리 패턴: 라이브러리 없이 `useSyncExternalStore`와 모듈 단위 작은 스토어를 써요(`flaseek/store.ts`, `techlearn/store.ts`). 마에스트로만 Zustand(`maestro/store.ts`, persist로 마지막 동네만 저장)를 써요(F-010, 사용자 결정).
+- 상태 관리 패턴: 라이브러리 없이 `useSyncExternalStore`와 모듈 단위 작은 스토어를 써요(`flaseek/store.ts`). 마에스트로만 Zustand(`maestro/store.ts`, persist로 마지막 동네만 저장)를 써요(F-010, 사용자 결정).
 
 ### 백엔드
 ```

@@ -76,7 +76,7 @@ export const CASE_STORIES: Record<string, CaseStory> = {
       },
       {
         title: '필요할 때 받기',
-        body: '마에스트로 · FLASEEK · techlearn · Nightly 같은 프로젝트와 사례 · 프로젝트 상세 화면은 lazy 로 나눴다. 프로젝트가 늘어도 포트폴리오 첫 화면은 자기 코드만 받는다.',
+        body: '마에스트로 · FLASEEK · Nightly 같은 프로젝트와 사례 · 프로젝트 상세 화면은 lazy 로 나눴다. 프로젝트가 늘어도 포트폴리오 첫 화면은 자기 코드만 받는다.',
       },
       {
         title: '코드는 저장소에서 그대로',
