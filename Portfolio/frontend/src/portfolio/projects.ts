@@ -13,9 +13,23 @@ import rmHome from './assets/design/remind/screen-01-home.webp'
 import rmChoice from './assets/design/remind/screen-04-choice.webp'
 import rmFeedback from './assets/design/remind/screen-05-feedback.webp'
 import rmWrongNote from './assets/design/remind/screen-10-wrong-note.webp'
-import { ACCIO_LIVE, CASES, PLANFORME_LIVE, REMIND_LIVE, type Role } from './data'
+import miHome from './assets/design/mini-inflearn/screen-01-home.webp'
+import miLogin from './assets/design/mini-inflearn/screen-04-login.webp'
+import ntHome from './assets/design/nightly/screen-01-home.webp'
+import ntSleep from './assets/design/nightly/screen-02-sleep.webp'
+import ntCoach from './assets/design/nightly/screen-03-coach.webp'
+import gpHome from './assets/design/gameprobe/screen-01-home.webp'
+import gpProfile from './assets/design/gameprobe/screen-02-profile.webp'
+import gpMatch from './assets/design/gameprobe/screen-03-match.webp'
+import gpLineup from './assets/design/gameprobe/screen-08-lineup.webp'
+import flPcMain from './assets/design/flaseek/pc-01-main.webp'
+import flPcList from './assets/design/flaseek/pc-02-list.webp'
+import flPcDetail from './assets/design/flaseek/pc-03-detail.webp'
+import flPcLogin from './assets/design/flaseek/pc-04-login.webp'
+import { ACCIO_LIVE, CASES, MINI_INFLEARN_LIVE, PLANFORME_LIVE, REMIND_LIVE, type DesignVariant, type Role } from './data'
 
-// 프로젝트 페이지(#/project/{slug}) 데이터 — F-011. 홈 '먼저 볼 프로젝트' 카드도 여기서 만든다.
+// 프로젝트 페이지(#/project/{slug}) 데이터 — F-011. 홈 '프로젝트' 카드도 이 목록 순서대로 만든다(F-013) —
+// 프로젝트를 추가할 때는 PROJECT_LIST 에 하나 넣으면 홈 카드 · 프로젝트 페이지 · '다음 프로젝트'가 같이 생긴다.
 // 틀은 피그마 jsh 파일 Page 3 「Project · Accio · PC 1440」. 칸이 비면 그 섹션을 그리지 않는다.
 // 글은 기록(Admin_Docs · Accio 포트폴리오용 기록 · data.ts 사례)에 있는 사실만 옮긴다.
 // 배포 주소는 data.ts 상수를 같이 쓴다. 역할(roles)은 사례와 맞추되, Accio 만 다르다 —
@@ -51,8 +65,9 @@ export interface Project {
   links: { label: string; href: string }[]
   /** 대표 화면. mobile 이면 휴대폰 화면 여러 장을 나란히 */
   cover: { images: string[]; device: 'desktop' | 'mobile' }
-  /** 오른쪽 '구조' 패널 — 화면에서 DB까지 위에서 아래로 */
-  structure: { title: string; steps: { key: string; name: string; desc: string }[]; note?: string }
+  /** 오른쪽 '구조' 패널 — 화면에서 DB까지 위에서 아래로. 디자인만 한 프로젝트처럼 없으면 대표 화면을 넓게 */
+  structure?: { title: string; steps: { key: string; name: string; desc: string }[]; note?: string }
+  /** 숫자로 보는 결과. 비면 섹션을 그리지 않는다 */
   numbers: { value: string; label: string; note: string }[]
   why: string
   decisions?: { code: string; title: string; body: string }[]
@@ -60,8 +75,12 @@ export interface Project {
   troubles?: ProjectTrouble[]
   screens: { device: 'desktop' | 'mobile'; items: ProjectScreen[] }
   next?: { title: string; body: string }[]
-  /** 홈 카드 — 한 줄 제목 · 두 줄 설명 · 숫자 3개 */
-  card: { title: string; desc: string; metrics: [string, string][] }
+  /** 홈 카드 — 한 줄 제목 · 두 줄 설명 */
+  card: { title: string; desc: string }
+  /** 피그마 공개 링크(보기 전용, F-013) — 프로젝트 페이지 '디자인' 섹션의 버튼 */
+  figma: string
+  /** 같은 서비스의 Design 사례 slug — 프로젝트 페이지 '디자인' 섹션에 시안을 함께 보여 준다(F-013) */
+  designCase?: string
 }
 
 function findCase(slug: string) {
@@ -81,6 +100,20 @@ function designProblem(slug: string) {
   const problem = findCase(slug).design?.problem
   if (!problem) throw new Error(`사례에 design.problem 이 없어요: ${slug}`)
   return problem
+}
+
+/** Design 사례의 시안을 장표 → 화면 → 기획 · 시스템 순으로 모아 앞에서 몇 장 — 프로젝트 페이지 '디자인' 섹션용 */
+export function designPreview(slug: string, count = 6): DesignVariant[] {
+  const d = findCase(slug).design
+  if (!d) throw new Error(`Design 사례가 아니에요: ${slug}`)
+  return [
+    ...(d.story ?? []),
+    ...(d.sections ?? []).flatMap((s) => s.items),
+    ...(d.screens ?? []),
+    ...(d.variants ?? []),
+    ...(d.mobileScreens ?? []),
+    ...(d.system ?? []),
+  ].slice(0, count)
 }
 
 export const PROJECT_LIST: Project[] = [
@@ -168,12 +201,9 @@ export const PROJECT_LIST: Project[] = [
     card: {
       title: 'Accio — AI 자연어 검색 쇼핑몰',
       desc: '“비 오는 날 신을 운동화”처럼 모호한 말도 알아듣는 쇼핑몰. Gemini가 검색어를 조건으로 바꾸고 SQL이 걸러 낸다.',
-      metrics: [
-        ['0.61 → 0.94', '검색 정확도 (상위 5개)'],
-        ['1,100개', '생성 상품 · 리뷰 4,401개'],
-        ['0원', '운영비 (무료 스택 배포)'],
-      ],
     },
+    figma: 'https://www.figma.com/design/rDAy4sMyRqyF3lQ4baGLq2/ACCIO?node-id=464-2',
+    designCase: 'accio-redesign',
   },
   {
     slug: 'maestro',
@@ -230,12 +260,9 @@ export const PROJECT_LIST: Project[] = [
     card: {
       title: '마에스트로 — 지금 열린 식당 3곳',
       desc: '낯선 서울 동네에서 동네 · 상황만 고르면 지금 열려 있는 식당 3곳을 지도와 날짜 붙은 근거로 비교해 준다.',
-      metrics: [
-        ['1탭', '첫 후보까지'],
-        ['6시간에 1번', '동네당 외부 검색'],
-        ['400곳', '실패하면 저장본'],
-      ],
     },
+    figma: 'https://www.figma.com/design/Tec5SHtst0FxyN5P1bm4UT/%EB%A7%88%EC%97%90%EC%8A%A4%ED%8A%B8%EB%A1%9C?node-id=66-113',
+    designCase: 'maestro-redesign',
   },
   {
     slug: 'planforme',
@@ -291,12 +318,76 @@ export const PROJECT_LIST: Project[] = [
     card: {
       title: 'PlanForMe — 하루 할당량 플래너',
       desc: '총분량과 마감일만 넣으면 하루 할 일을 정해 주는 1인용 플래너. 피그마로 설계하고 그대로 구현 · 배포했다.',
-      metrics: [
-        ['14개', '모바일 화면'],
-        ['5개', '계산 규칙'],
-        ['6건', '문제 해결 기록'],
+    },
+    figma: 'https://www.figma.com/design/yHn20tfa3RyUmmRYaRTYcl/PlanForMe?node-id=0-1',
+    designCase: 'planforme',
+  },
+  {
+    slug: 'mini-inflearn',
+    name: '미니 인프런',
+    title: '미니 인프런 — 포인트로 수강신청하는 강의 서비스',
+    summary:
+      '강의 목록 · 상세를 보고 포인트로 수강신청하는 작은 온라인 강의 서비스. 피그마 TechLearn 시안을 Next.js · FastAPI · PostgreSQL로 처음부터 직접 만들고 배포했다.',
+    roles: ['Design', 'Front', 'Back', 'DB'],
+    info: [
+      { label: '역할', value: '개인 학습 프로젝트 — 디자인 · 프론트 · 백엔드 · DB' },
+      { label: '기간', value: '2026.10 – 11' },
+      { label: '팀', value: '1명' },
+      { label: '스택', value: 'Next.js · TanStack Query · FastAPI · PostgreSQL' },
+    ],
+    links: [
+      { label: 'GitHub 코드', href: 'https://github.com/give-it-a-shottt/mini-inflearn' },
+      { label: '서비스 열기', href: MINI_INFLEARN_LIVE },
+    ],
+    cover: { images: [miHome], device: 'desktop' },
+    structure: {
+      title: '화면에서 구조까지',
+      steps: [
+        { key: 'WEB', name: 'Next.js (Pages Router) · Vercel', desc: '강의 목록 · 상세는 서버에서 그려 보내고(SSR), 수강신청은 TanStack Query' },
+        { key: 'API', name: 'FastAPI · Render', desc: 'JWT 로그인, 수강신청은 201 · 400 · 401 · 404 · 409로 답한다' },
+        { key: 'DB', name: 'PostgreSQL · Neon', desc: 'UNIQUE (user_id, course_id) · CHECK (points >= 0)' },
+      ],
+      note: '포인트 차감과 신청 기록은 한 트랜잭션 — 둘 다 성공해야 저장하고, 하나라도 실패하면 전부 되돌린다.',
+    },
+    numbers: [
+      { value: '5가지', label: '수강신청 버튼 상태', note: '로그인 전 · 신청 가능 · 신청 중 · 수강 중 · 포인트 부족' },
+      { value: '5가지', label: '수강신청 응답', note: '201 · 400(포인트 부족) · 401 · 404 · 409(이미 신청)' },
+      { value: '1시간', label: '토큰 유효기간', note: 'JWT exp — 토큰이 새도 영원히 쓰이지 않게' },
+      { value: '60만 번', label: '비밀번호 해시 반복', note: 'PBKDF2 + 소금, 원문은 저장하지 않는다' },
+    ],
+    why: '인프런 공고에 올라온 기술을 익히려고 만들었다. Next.js · FastAPI · PostgreSQL을 처음부터 직접 만들며 요청이 화면에서 DB까지 어떻게 흘러가는지 익히는 학습 프로젝트다.',
+    decisions: [
+      { code: 'D-1', title: 'user_id는 요청 body가 아니라 검증된 토큰에서만', body: 'body에 user_id를 넣어 남의 포인트로 신청하는 것을 막는다. 토큰 내용을 고치면 서명이 달라져 401.' },
+      { code: 'D-2', title: '로그인 실패는 같은 401 문구로', body: '이메일 없음 · 비밀번호 틀림을 구분해서 답하면 가입 여부가 새어 나간다.' },
+    ],
+    troubles: [
+      {
+        code: 'T-1',
+        title: '서로 다른 강의를 동시에 신청하면 포인트가 덜 빠짐 — 갱신 손실',
+        problem: '35,000P로 33,000원 · 3,000원 강의를 동시에 신청하면, 잠금이 없을 때는 둘 다 성공하고 3,000P만 빠졌다.',
+        solution: '유저 행을 SELECT … FOR UPDATE로 잠갔다. 잠금을 건 뒤에는 두 번째 요청이 400(포인트 부족)으로 막혔다. 동시 신청 스크립트로 재현해서 확인했다.',
+      },
+      { code: 'T-2', title: '포인트만 빠지고 기록은 없는 상태', summary: '포인트 차감과 신청 기록을 한 트랜잭션(session.begin())으로 묶어, 하나라도 실패하면 전부 되돌린다.' },
+      { code: 'T-3', title: '버튼 연타 · 동시 요청으로 같은 강의 중복 신청', summary: 'DB에 UNIQUE (user_id, course_id)를 걸고, 위반하면 409로 알려 준다.' },
+      { code: 'T-4', title: '신청 후 화면의 포인트가 옛 값으로 남음', summary: '신청에 성공하면 내 정보 캐시를 무효화(invalidateQueries)해서 새 포인트를 다시 받는다.' },
+    ],
+    screens: {
+      device: 'desktop',
+      items: [
+        { image: miHome, label: '메인 홈' },
+        { image: miLogin, label: '로그인' },
       ],
     },
+    next: [
+      { title: '토큰 보관', body: 'localStorage에서 HttpOnly 쿠키로 옮기고 refresh token 추가' },
+      { title: '회원가입 화면', body: '지금은 API 문서(/docs)에서 가입' },
+      { title: '스키마 변경 관리', body: 'schema.sql 직접 실행 대신 Alembic 마이그레이션' },
+    ],
+    card: {
+      title: '미니 인프런 — 포인트 수강신청 강의 서비스',
+      desc: '피그마 시안을 Next.js · FastAPI · PostgreSQL로 직접 만든 강의 서비스. JWT 로그인과 동시 신청까지 막았다.',
+    },
+    figma: 'https://www.figma.com/design/WLnNcSmrkE1zDS9lFPpg9p/techlearn-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=28-2',
   },
   {
     slug: 'remind',
@@ -344,24 +435,151 @@ export const PROJECT_LIST: Project[] = [
     card: {
       title: 'remind — 노션 노트 복습 퀴즈 앱',
       desc: '노션에 정리한 강의 노트를 객관식 · OX · 단답형 · 서술형 퀴즈로 복습하는 모바일 퍼스트 앱.',
-      metrics: [
-        ['4종', '퀴즈 유형'],
-        ['탭 2번', '첫 문제까지'],
-        ['18 · 5', '모바일 · PC 시안'],
+    },
+    figma: 'https://www.figma.com/design/F9bo9j2bIabfqRtZW87ua2/remind?node-id=0-1',
+    designCase: 'remind',
+  },
+  {
+    slug: 'nightly',
+    name: 'Nightly',
+    title: 'Nightly — AI 수면 코칭 시안',
+    summary:
+      '피그마 「AI 수면」 시안의 홈 · 수면 대시보드 · AI 수면 코치 화면을 가짜 데이터로 옮겼다. 백엔드를 공부하려고 만드는 프로젝트라, 실제 서비스는 따로 만들고 있다.',
+    roles: ['Design', 'Front'],
+    info: [
+      { label: '역할', value: '개인 프로젝트 — 디자인 · 프론트(시안)' },
+      { label: '기간', value: '2026.10' },
+      { label: '팀', value: '1명' },
+      { label: '스택', value: 'React · TypeScript · Tailwind CSS' },
+    ],
+    links: [
+      { label: '실제 서비스 코드', href: 'https://github.com/give-it-a-shottt/my-nightly-project' },
+      { label: '시안 화면 열기', href: '#/nightly' },
+    ],
+    cover: { images: [ntSleep], device: 'desktop' },
+    structure: {
+      title: '화면 구성',
+      steps: [
+        { key: 'HOME', name: '홈', desc: '서비스 소개와 수면 데이터 · AI 코치 기능 카드' },
+        { key: 'SLEEP', name: '수면 대시보드', desc: '수면 점수 · 단계 그래프 · 최근 7일 점수 · 기기 동기화 기록' },
+        { key: 'COACH', name: 'AI 수면 코치', desc: '미리 써 둔 답을 30ms마다 두 글자씩 늘려 스트리밍처럼 보여 준다' },
+      ],
+      note: '서버 없이 코드 안 가짜 데이터만 쓴다. 1분에 5번까지 물을 수 있고, 넘기면 429 안내 뒤 1분 후 다시 열린다.',
+    },
+    numbers: [
+      { value: '3개', label: '화면', note: '홈 · 수면 대시보드 · AI 코치 (PC · 모바일)' },
+      { value: '1분에 5번', label: 'AI 코치 요청 제한', note: '넘기면 429 안내 후 1분 뒤 다시' },
+      { value: '1024px', label: '화면 폭 기준', note: '이상은 PC 시안, 아래는 모바일 배치' },
+    ],
+    why: '백엔드를 공부하려고 만드는 프로젝트 Nightly의 화면이다. 지금은 피그마 시안을 화면으로 옮기고, 나중에 프로젝트 소개 페이지로 바꾼다.',
+    screens: {
+      device: 'desktop',
+      items: [
+        { image: ntHome, label: '홈' },
+        { image: ntSleep, label: '수면 대시보드' },
+        { image: ntCoach, label: 'AI 수면 코치' },
       ],
     },
+    card: {
+      title: 'Nightly — AI 수면 코칭 시안',
+      desc: '수면 대시보드와 AI 코치를 피그마 시안대로 옮긴 화면. 실제 서비스는 백엔드 공부용으로 따로 만들고 있다.',
+    },
+    figma: 'https://www.figma.com/design/LByldIr3d9DfRfnAxblB32/AI-%EC%88%98%EB%A9%B4?node-id=0-1',
+  },
+  {
+    slug: 'gameprobe',
+    name: 'GAMEPROBE',
+    title: 'GAMEPROBE — 발로란트 전적 · 공략 웹 서비스 설계',
+    summary: findCase('gameprobe').description,
+    roles: ['Design'],
+    info: [
+      { label: '역할', value: '화면 설계 · 디자인 시스템' },
+      { label: '기간', value: '2026.10' },
+      { label: '도구', value: 'Figma' },
+      { label: '시안', value: '10개 영역 · 디자인 시스템 7장' },
+    ],
+    links: [
+      { label: '디자인 사례', href: '#/case/gameprobe' },
+      { label: '서비스 열기', href: 'https://valorant-platform.vercel.app/' },
+    ],
+    cover: { images: [gpHome], device: 'desktop' },
+    numbers: [
+      { value: '10개', label: '화면 영역', note: '전적 검색 · 매치 분석 · 메타 · 라인업 · 스모크 · 관리자까지' },
+      { value: '7장', label: '디자인 시스템', note: '컬러 · 타이포 · 텍스트 위계 · 레이아웃 · 모서리 · 컴포넌트' },
+    ],
+    why: designProblem('gameprobe'),
+    screens: {
+      device: 'desktop',
+      items: [
+        { image: gpHome, label: '메인 홈' },
+        { image: gpProfile, label: '플레이어 프로필' },
+        { image: gpMatch, label: '매치 상세' },
+        { image: gpLineup, label: '라인업' },
+      ],
+    },
+    card: {
+      title: 'GAMEPROBE — 발로란트 전적 · 공략',
+      desc: '전적 검색부터 매치 분석, 메타 통계, 라인업 · 스모크 공략까지 10개 영역의 화면과 디자인 시스템을 설계했다.',
+    },
+    figma: 'https://www.figma.com/design/zMbn8YMcz2YgxuEatTZGlj/gameprobe?node-id=0-1',
+    designCase: 'gameprobe',
+  },
+  {
+    slug: 'flaseek',
+    name: 'FLASEEK',
+    title: 'FLASEEK — 자사몰 리뉴얼 시안',
+    summary: findCase('flaseek-renewal').description,
+    roles: ['Design', 'Front'],
+    info: [
+      { label: '역할', value: '개인 작업 · 기여도 100%' },
+      { label: '기간', value: '2026.10 · 2일' },
+      { label: '도구', value: 'Figma · React' },
+      { label: '시안', value: 'PC 4 · 모바일 6' },
+    ],
+    links: [
+      { label: '디자인 사례', href: '#/case/flaseek-renewal' },
+      { label: '시안 화면 열기', href: '#/flaseek' },
+    ],
+    cover: { images: [flPcMain], device: 'desktop' },
+    structure: {
+      title: '설계 핵심',
+      steps: [
+        { key: 'LAYOUT', name: '상단 GNB + 12칼럼', desc: '왼쪽 250px 고정 사이드바를 걷어내고 1200px 가운데로' },
+        { key: 'ENTRY', name: '진입점 11곳 → 3곳', desc: '혜택 · 고객센터를 한 페이지씩으로 묶고 퀵메뉴를 줄임' },
+        { key: 'CARD', name: '상품 카드', desc: '이미지 → 상품명 → 할인율 · 판매가 → 장당가 → 별점 순서 고정' },
+        { key: 'DETAIL', name: '상세페이지', desc: '앵커 탭 · 900px 접기 · 고정 구매바로 어디서든 바로 구매' },
+      ],
+    },
+    numbers: [
+      { value: '11곳 → 3곳', label: '진입점', note: '멤버십 · 쿠폰 · 문의 버튼 중복 정리' },
+      { value: '2.53 → 5.10', label: '버튼 글자 대비', note: '브랜드 핑크는 지키고 역할을 셋으로 나눔' },
+      { value: '3안', label: '메인 시안 비교', note: '증거 · 두께 · 블랙 박스 중 A안 선택' },
+    ],
+    why: designProblem('flaseek-renewal'),
+    screens: {
+      device: 'desktop',
+      items: [
+        { image: flPcMain, label: '메인' },
+        { image: flPcList, label: '상품 리스트' },
+        { image: flPcDetail, label: '상품 상세' },
+        { image: flPcLogin, label: '로그인' },
+      ],
+    },
+    card: {
+      title: 'FLASEEK — 자사몰 리뉴얼 시안',
+      desc: '보정속옷 자사몰의 문제 4가지와 핑크 대비를 진단하고, PC · 모바일 화면과 디자인 시스템을 제안했다.',
+    },
+    figma: 'https://www.figma.com/design/Cv5stZORnc3A75SSvywqat/Untitled?node-id=0-1',
+    designCase: 'flaseek-renewal',
   },
 ]
-
-/** 홈 카드 순서 — 사용자가 고른 대표 4개(F-011) */
-export const FEATURED_SLUGS = ['accio', 'maestro', 'planforme', 'remind']
 
 export function findProject(slug: string) {
   return PROJECT_LIST.find((p) => p.slug === slug)
 }
 
-/** 프로젝트 페이지 맨 아래 '다음 프로젝트' — 홈 카드 순서로 돈다 */
+/** 프로젝트 페이지 맨 아래 '다음 프로젝트' — 홈 카드 순서(PROJECT_LIST)로 돈다 */
 export function nextProject(slug: string) {
-  const i = FEATURED_SLUGS.indexOf(slug)
-  return findProject(FEATURED_SLUGS[(i + 1) % FEATURED_SLUGS.length])
+  const i = PROJECT_LIST.findIndex((p) => p.slug === slug)
+  return PROJECT_LIST[(i + 1) % PROJECT_LIST.length]
 }

@@ -19,7 +19,19 @@ const SIZE = {
     option: 'px-4 text-16',
     placeholder: '문제, 기술, 공부한 내용을 검색해 보세요',
   },
-  // 결과 헤더: 48px 알약 (버튼이 바와 동심원이 되도록 오른쪽 6px)
+  // 헤더: 40px 알약 — 모든 화면에 작게 둔다(F-013)
+  sm: {
+    bar: 'h-10 gap-2 pr-1 pl-4',
+    icon: 16,
+    input: 'text-14',
+    submit: 'size-8',
+    arrow: 14,
+    clear: 'size-6',
+    dropdown: 'top-12',
+    option: 'px-3 text-14',
+    placeholder: '문제, 기술, 키워드로 검색',
+  },
+  // 48px 알약 (버튼이 바와 동심원이 되도록 오른쪽 6px)
   md: {
     bar: 'h-12 gap-3 pr-1.5 pl-5',
     icon: 18,

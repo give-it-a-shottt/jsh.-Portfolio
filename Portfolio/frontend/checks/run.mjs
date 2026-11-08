@@ -3,6 +3,7 @@
 //
 //   npm run check        실패가 하나라도 있으면 종료 코드 1
 
+import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createServer } from 'vite'
@@ -56,27 +57,37 @@ try {
   check('사례 roles 는 Design · Front · Back · DB 만', CASES.flatMap((c) => c.roles ?? []).filter((r) => !['Design', 'Front', 'Back', 'DB'].includes(r)), [])
 
   // ── 프로젝트 데이터
-  const { PROJECT_LIST, FEATURED_SLUGS, findProject, nextProject } = projects
-  check('대표 프로젝트는 모두 데이터가 있다', FEATURED_SLUGS.filter((slug) => !findProject(slug)), [])
+  const { PROJECT_LIST, findProject, nextProject, designPreview } = projects
+  check('프로젝트 slug 는 겹치지 않는다', new Set(PROJECT_LIST.map((p) => p.slug)).size, PROJECT_LIST.length)
   check('없는 slug', findProject('없는-프로젝트'), undefined)
   check('빈 slug', findProject(''), undefined)
-  check(
-    '다음 프로젝트는 대표 순서로 돈다',
-    FEATURED_SLUGS.map((slug) => nextProject(slug)?.slug),
-    [...FEATURED_SLUGS.slice(1), FEATURED_SLUGS[0]],
-  )
+  const order = PROJECT_LIST.map((p) => p.slug)
+  check('다음 프로젝트는 홈 카드 순서로 돈다', order.map((slug) => nextProject(slug)?.slug), [...order.slice(1), order[0]])
   const caseHrefs = new Set(CASES.map((c) => c.href).filter(Boolean))
   for (const p of PROJECT_LIST) {
     check(`${p.slug} · 왜 만들었나 있음`, p.why.length > 0, true)
     check(`${p.slug} · 버튼 1개 이상`, p.links.length > 0, true)
     check(`${p.slug} · 대표 화면 있음`, p.cover.images.length > 0 && p.cover.images.every(Boolean), true)
-    check(`${p.slug} · 홈 카드 숫자 3개`, p.card.metrics.length, 3)
+    check(`${p.slug} · 홈 카드 제목 · 설명 있음`, Boolean(p.card.title && p.card.desc), true)
+    check(`${p.slug} · 피그마 공개 링크`, /^https:\/\/www\.figma\.com\/design\//.test(p.figma) && !p.figma.includes('t='), true)
+    if (p.designCase) check(`${p.slug} · 디자인 섹션 시안 있음`, designPreview(p.designCase).length > 0, true)
     check(
       `${p.slug} · 막힌 것의 사례 링크가 실제 사례`,
       (p.troubles ?? []).filter((t) => t.href && !caseHrefs.has(t.href)).map((t) => t.href),
       [],
     )
   }
+
+  // ── 첫 화면 데이터(F-013): 대표 레포 · GitHub 잔디 저장본
+  const { REPOS, CONTRIBUTIONS, GITHUB_USER } = await server.ssrLoadModule('/src/portfolio/profile.ts')
+  const saved = JSON.parse(readFileSync(join(ROOT, 'src/portfolio/githubContributions.json'), 'utf8'))
+  check('대표 레포의 프로젝트 페이지가 실제로 있다', REPOS.filter((r) => r.project && !findProject(r.project)).map((r) => r.name), [])
+  check('잔디 저장본 주인 = 화면의 GitHub 사용자', saved.user, GITHUB_USER)
+  const days = CONTRIBUTIONS.days
+  check('잔디 저장본은 300일 이상', days.length >= 300, true)
+  check('잔디 날짜는 오름차순 · 겹치지 않음', days.every((d, i) => i === 0 || days[i - 1].date < d.date), true)
+  check('잔디 진하기는 0~4', days.filter((d) => !(Number.isInteger(d.level) && d.level >= 0 && d.level <= 4)).length, 0)
+  check('잔디 합계 = 날마다 기여 수의 합', CONTRIBUTIONS.total, days.reduce((sum, d) => sum + d.count, 0))
 
   // ── 공부 노트(F-012): 합친 노트의 예전 주소 · 새 노트 틀
   const { NOTES, resolveNoteSlug } = await server.ssrLoadModule('/src/portfolio/notes.ts')
@@ -93,11 +104,11 @@ try {
   }
   check('없는 노트 주소는 그대로', resolveNoteSlug('없는-노트'), '없는-노트')
 
-  // ── techlearn → 미니 인프런(D-006): 홈 칩과 예전 주소가 배포 사이트로 간다
-  const { MINI_INFLEARN_LIVE, PROJECTS } = data
+  // ── techlearn → 미니 인프런(D-006): 프로젝트 카드와 예전 주소가 배포 사이트로 간다
+  const { MINI_INFLEARN_LIVE } = data
   const { isOldTechlearnPath } = routes
   check('MINI_INFLEARN_LIVE 는 https 바깥 주소', /^https:\/\//.test(MINI_INFLEARN_LIVE) && isExternal(MINI_INFLEARN_LIVE), true)
-  check('홈 techlearn 칩 → 미니 인프런', PROJECTS.find((p) => p.name === 'techlearn')?.href, MINI_INFLEARN_LIVE)
+  check('미니 인프런 프로젝트의 서비스 열기 → 배포 사이트', findProject('mini-inflearn')?.links.at(-1)?.href, MINI_INFLEARN_LIVE)
   for (const old of ['/techlearn', '/techlearn/courses', '/techlearn/course/nextjs-pages'])
     check(`예전 주소 ${old} → 배포 사이트로`, isOldTechlearnPath(old), true)
   for (const other of ['/', '/techlearnx', '/nightly', '/project/accio'])

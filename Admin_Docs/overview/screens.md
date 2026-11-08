@@ -2,7 +2,7 @@
 
 ## 한눈에 보기 (코드 몰라도 OK)
 상태: [주의] 전체 지도는 사용자 확인 완료(2026-10-25). 화면별 흐름은 FLASEEK만 정리했어요.
-무엇을: **검색하듯 둘러보는 포트폴리오**예요. 첫 화면은 소개 + 검색 + '먼저 볼 프로젝트' 4개이고, 프로젝트마다 한 페이지(`#/project/{slug}`)가 있어요. 검색하면 작업 사례(Design·Fullstack)와 공부 노트(Study)가 중요한 순서대로 나와요(F-011).
+무엇을: **검색하듯 둘러보는 포트폴리오**예요. 첫 화면은 스크롤 한 번으로 나를 다 보는 긴 페이지예요 — 소개(+ 이메일 · GitHub) → 프로젝트 8개(작은 카드) → 스킬 → GitHub → 공부 기록(F-013). 프로젝트마다 한 페이지(`#/project/{slug}`)에서 디자인 · 프론트 · 백엔드를 함께 보여 줘요. 검색은 모든 화면 헤더에 작게 있고, 헤더 탭은 Main / Study 두 개예요.
 비유: 백화점 안내 데스크(검색창)에 물으면 매장(사례)을 알려 주고, 몇몇 매장은 들어가서 직접 체험(실행 화면)할 수 있는 구조예요.
 왜: 이력서 링크 하나로 "무엇을 했고 어떻게 생각했는지"를 바로 찾아보고 직접 눌러 보게 하려고요.
 
@@ -42,7 +42,7 @@
 ### 서비스별 주소
 | 서비스 | 주소 | 무엇 | 서버 | 코드 |
 |---|---|---|---|---|
-| 포트폴리오 | `#/`, `#/project/{slug}`(accio · maestro · planforme · remind), `#/search?q=&tab=`(all · design · fullstack · study, 예전 front · back은 fullstack으로), `#/case/{slug}`, `#/study`(Study 홈), `#/study?area=&course=`(강의 노트 모음), `#/study/{slug}` | 검색형 포트폴리오. 사례·프로젝트·노트 데이터는 코드 안의 정적 데이터 | 없음 | `Portfolio/frontend/src/portfolio/` |
+| 포트폴리오 | `#/`, `#/project/{slug}`(accio · maestro · planforme · mini-inflearn · remind · nightly · gameprobe · flaseek), `#/search?q=&tab=`(all · design · fullstack · study, 예전 front · back은 fullstack으로), `#/case/{slug}`, `#/study`(Study 홈), `#/study?area=&course=`(강의 노트 모음), `#/study/{slug}` | 검색형 포트폴리오. 사례·프로젝트·노트 데이터는 코드 안의 정적 데이터 | 없음 | `Portfolio/frontend/src/portfolio/` |
 | 마에스트로 | `#/maestro/…` | 낯선 서울 동네에서 지금 열린 식당 3곳을 근거와 함께 골라 주는 서비스 (F-010 리뉴얼) | 마에스트로 API(헤이유미 API 중계, mock/real) | `src/projects/maestro/`, `backend/maestro/` |
 | Accio | `#/accio/…` → `#/project/accio` | 따로 배포한 서비스(accio-two.vercel.app)로 옮겼어요. 사이트 안 앱은 지우고, 예전 주소는 프로젝트 페이지로 보내요(F-011) | 바깥 서비스 | `backend/accio/`(뼈대만) |
 | FLASEEK | `#/flaseek/…` | 보정속옷·압박스타킹 자사몰 리뉴얼 시안. 메인·리스트·상세·로그인 | 없음(정적 데이터, 이번 방문 동안만 상태 유지) | `src/projects/flaseek/` |
@@ -85,7 +85,7 @@
 
 ### techlearn 흐름
 ```
-홈 '진행 중인 프로젝트' techlearn 칩 ──▶ https://mini-inflearn.vercel.app/ (새 탭 ↗ — 사이트의 다른 바깥 링크와 같음)
+홈 프로젝트 카드 '미니 인프런' ──▶ #/project/mini-inflearn ──[서비스 열기]──▶ https://mini-inflearn.vercel.app/ (새 탭 ↗, F-013)
 예전 주소 #/techlearn, #/techlearn/… ──▶ 같은 배포 사이트 (location.replace, 뒤로가기로 돌아오지 않음)
 ```
 - 화면 흐름(홈 → 강의 목록 → 상세 → 수강신청 · 로그인 · 404/500)은 이제 미니 인프런 레포에서 관리해요(2026-11-08, D-006).

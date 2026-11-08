@@ -35,12 +35,23 @@ export function ButtonLink({
   )
 }
 
-/** 대표 화면 — 데스크톱 화면은 한 장을 16:9로, 휴대폰 화면은 여러 장을 나란히 위쪽부터 */
-export function ProjectCover({ cover, name, rounded = 'rounded-card' }: { cover: Project['cover']; name: string; rounded?: string }) {
+/** 대표 화면 — 데스크톱 화면은 한 장을 16:9로, 휴대폰 화면은 여러 장을 나란히 위쪽부터.
+ *  홈 카드처럼 첫 화면 아래에 있으면 loading="lazy" 로 보일 때 내려받는다 */
+export function ProjectCover({
+  cover,
+  name,
+  rounded = 'rounded-card',
+  loading = 'eager',
+}: {
+  cover: Project['cover']
+  name: string
+  rounded?: string
+  loading?: 'eager' | 'lazy'
+}) {
   if (cover.device === 'desktop') {
     return (
       <div className={`aspect-video overflow-hidden bg-regular ${rounded}`}>
-        <img src={cover.images[0]} alt={`${name} 대표 화면`} className="size-full object-cover object-top" />
+        <img src={cover.images[0]} alt={`${name} 대표 화면`} loading={loading} className="size-full object-cover object-top" />
       </div>
     )
   }
@@ -48,7 +59,7 @@ export function ProjectCover({ cover, name, rounded = 'rounded-card' }: { cover:
     <div className={`flex aspect-video items-end justify-center gap-[4%] overflow-hidden bg-default px-[6%] pt-[6%] ${rounded}`}>
       {cover.images.map((image, i) => (
         <div key={image} className="h-full w-[26%] overflow-hidden rounded-t-thumb border border-b-0 border-regular bg-default">
-          <img src={image} alt={i === 0 ? `${name} 대표 화면` : ''} className="size-full object-cover object-top" />
+          <img src={image} alt={i === 0 ? `${name} 대표 화면` : ''} loading={loading} className="size-full object-cover object-top" />
         </div>
       ))}
     </div>

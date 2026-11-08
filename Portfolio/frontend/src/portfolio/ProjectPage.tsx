@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { ChevronRightIcon, MinusIcon, PlusIcon } from '../shared/icons'
-import { findProject, nextProject, type Project, type ProjectTrouble } from './projects'
+import { designPreview, findProject, nextProject, type Project, type ProjectTrouble } from './projects'
 import { ButtonLink, ProjectCover } from './ProjectParts'
 import RoleChips from './RoleChips'
-import { projectHref, searchHref } from './routes'
+import { caseHref, projectHref } from './routes'
 
 // 프로젝트 페이지(F-011) — 피그마 jsh Page 3 「Project · Accio · PC 1440」.
-// 위: 화면(7칸) | 구조(5칸) → 정보 띠 → 숫자 4개 → 목차(3칸) + 본문(9칸) → 다음 프로젝트.
+// 위: 화면(7칸) | 구조(5칸) → 정보 띠 → 숫자 → 목차(3칸) + 본문(9칸) → 다음 프로젝트.
+// 서비스 하나의 디자인 · 프론트 · 백엔드를 한 장에서 보도록, 본문에 '디자인'(시안 + 피그마)과 '막힌 것과 해결'(Front · Back 사례)을 함께 둔다(F-013).
 
 interface Section {
   id: string
@@ -17,6 +18,7 @@ interface Section {
 function sectionsOf(p: Project): Section[] {
   return [
     { id: 'why', title: '왜 만들었나' },
+    { id: 'design', title: '디자인' },
     p.decisions && { id: 'decisions', title: '중요한 결정' },
     p.chart && { id: 'chart', title: '검색 정확도' },
     p.troubles && { id: 'troubles', title: '막힌 것과 해결' },
@@ -108,6 +110,47 @@ function TroubleItem({ trouble, open }: { trouble: ProjectTrouble; open: boolean
   )
 }
 
+/** 디자인 섹션에 보여 줄 시안 수 */
+const DESIGN_PREVIEW_MAX = 6
+
+/** 디자인 — 같은 서비스의 Design 사례 시안 몇 장 + 피그마 공개 링크. 사례가 없으면 피그마 버튼만 */
+function DesignSection({ project, index }: { project: Project; index: number }) {
+  // 아래 '화면' 섹션에 이미 있는 그림은 빼고 고른다 — 디자인만 한 프로젝트는 둘이 겹치기 쉬워서,
+  // 빼고도 DESIGN_PREVIEW_MAX 장이 남도록 두 배를 받아 거른다
+  const shown = new Set(project.screens.items.map((s) => s.image))
+  const preview = project.designCase
+    ? designPreview(project.designCase, DESIGN_PREVIEW_MAX * 2)
+        .filter((v) => !shown.has(v.image))
+        .slice(0, DESIGN_PREVIEW_MAX)
+    : []
+  return (
+    <section id="project-design" className="flex scroll-mt-6 flex-col gap-5">
+      <SectionHeading
+        index={index}
+        title="디자인"
+        sub={preview.length > 0 ? '피그마로 설계한 화면과 기준이에요. 원본 파일도 열어 볼 수 있어요.' : '피그마 원본 파일을 열어 볼 수 있어요.'}
+      />
+      {preview.length > 0 && (
+        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {preview.map(({ image, label, note }) => (
+            <li key={image} className="flex flex-col gap-2">
+              <div className="aspect-[4/3] overflow-hidden rounded-thumb border border-regular bg-regular">
+                <img src={image} alt={label} loading="lazy" className="size-full object-cover object-top" />
+              </div>
+              <span className="text-14 font-semibold break-keep text-main">{label}</span>
+              <span className="line-clamp-2 text-13 break-keep text-sub">{note}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="flex flex-wrap gap-2">
+        {project.designCase && <ButtonLink href={caseHref(project.designCase)} label="디자인 과정 전체 보기" />}
+        <ButtonLink href={project.figma} label="피그마에서 보기" />
+      </div>
+    </section>
+  )
+}
+
 export default function ProjectPage({ slug }: { slug: string }) {
   const project = findProject(slug)
   const sections = project ? sectionsOf(project) : []
@@ -141,14 +184,6 @@ export default function ProjectPage({ slug }: { slug: string }) {
             <li aria-hidden="true" className="text-disabled">
               /
             </li>
-            <li>
-              <a href={searchHref('', 'fullstack')} lang="en" className="hover:text-main">
-                Fullstack
-              </a>
-            </li>
-            <li aria-hidden="true" className="text-disabled">
-              /
-            </li>
             <li aria-current="page" className="font-medium text-main">
               {project.name}
             </li>
@@ -157,7 +192,8 @@ export default function ProjectPage({ slug }: { slug: string }) {
 
         {/* 화면(7) | 구조(5) */}
         <div className="grid grid-cols-1 gap-6 pt-8 pb-16 lg:grid-cols-12">
-          <div className="flex flex-col gap-6 lg:col-span-7">
+          {/* 구조 패널이 없는 프로젝트(디자인만 한 것)는 대표 화면을 넓게 */}
+          <div className={`flex flex-col gap-6 ${project.structure ? 'lg:col-span-7' : 'lg:col-span-12'}`}>
             <div className="flex flex-col gap-3">
               <RoleChips roles={project.roles} size="md" />
               <h1 className="text-28 font-semibold break-keep text-main sm:text-36 lg:text-40">{project.title}</h1>
@@ -171,40 +207,42 @@ export default function ProjectPage({ slug }: { slug: string }) {
             <ProjectCover cover={project.cover} name={project.name} />
           </div>
 
-          <aside aria-labelledby="structure-title" className="flex h-fit flex-col gap-5 rounded-card bg-light p-6 sm:p-8 lg:col-span-5">
-            <div className="flex flex-col gap-1">
-              <span lang="en" className="text-14 font-semibold tracking-normal text-portfolio">
-                Architecture
-              </span>
-              <h2 id="structure-title" className="text-24 font-semibold text-main">
-                {project.structure.title}
-              </h2>
-            </div>
-            <ol className="flex flex-col">
-              {project.structure.steps.map((step, i) => (
-                <li key={step.key} className="flex flex-col items-stretch">
-                  {i > 0 && (
-                    <span aria-hidden="true" className="py-1.5 text-center text-14 text-sub-weak">
-                      ↓
-                    </span>
-                  )}
-                  <div className="flex items-center gap-4 rounded-button border border-regular bg-default p-4">
-                    <span
-                      lang="en"
-                      className="flex h-8 w-14 shrink-0 items-center justify-center rounded-badge bg-portfolio-soft text-12 font-semibold tracking-normal text-portfolio"
-                    >
-                      {step.key}
-                    </span>
-                    <span className="flex min-w-0 flex-col gap-1">
-                      <span className="text-15 font-semibold text-main">{step.name}</span>
-                      <span className="text-13 break-keep text-sub">{step.desc}</span>
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ol>
-            {project.structure.note && <p className="text-13 break-keep text-sub">{project.structure.note}</p>}
-          </aside>
+          {project.structure && (
+            <aside aria-labelledby="structure-title" className="flex h-fit flex-col gap-5 rounded-card bg-light p-6 sm:p-8 lg:col-span-5">
+              <div className="flex flex-col gap-1">
+                <span lang="en" className="text-14 font-semibold tracking-normal text-portfolio">
+                  Architecture
+                </span>
+                <h2 id="structure-title" className="text-24 font-semibold text-main">
+                  {project.structure.title}
+                </h2>
+              </div>
+              <ol className="flex flex-col">
+                {project.structure.steps.map((step, i) => (
+                  <li key={step.key} className="flex flex-col items-stretch">
+                    {i > 0 && (
+                      <span aria-hidden="true" className="py-1.5 text-center text-14 text-sub-weak">
+                        ↓
+                      </span>
+                    )}
+                    <div className="flex items-center gap-4 rounded-button border border-regular bg-default p-4">
+                      <span
+                        lang="en"
+                        className="flex h-8 w-14 shrink-0 items-center justify-center rounded-badge bg-portfolio-soft text-12 font-semibold tracking-normal text-portfolio"
+                      >
+                        {step.key}
+                      </span>
+                      <span className="flex min-w-0 flex-col gap-1">
+                        <span className="text-15 font-semibold text-main">{step.name}</span>
+                        <span className="text-13 break-keep text-sub">{step.desc}</span>
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              {project.structure.note && <p className="text-13 break-keep text-sub">{project.structure.note}</p>}
+            </aside>
+          )}
         </div>
 
         {/* 정보 띠 */}
@@ -218,20 +256,22 @@ export default function ProjectPage({ slug }: { slug: string }) {
         </dl>
 
         {/* 숫자 */}
-        <section aria-labelledby="numbers-title" className="flex flex-col gap-7 py-20">
-          <h2 id="numbers-title" className="text-24 font-semibold text-main sm:text-32">
-            숫자로 보는 결과
-          </h2>
-          <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {project.numbers.map(({ value, label, note }) => (
-              <li key={label} className="flex flex-col gap-2 rounded-card bg-light p-6">
-                <span className="text-24 font-semibold tracking-normal text-main sm:text-28">{value}</span>
-                <span className="text-15 font-semibold break-keep text-main">{label}</span>
-                <span className="text-13 break-keep text-sub">{note}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {project.numbers.length > 0 && (
+          <section aria-labelledby="numbers-title" className="flex flex-col gap-7 py-20">
+            <h2 id="numbers-title" className="text-24 font-semibold text-main sm:text-32">
+              숫자로 보는 결과
+            </h2>
+            <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {project.numbers.map(({ value, label, note }) => (
+                <li key={label} className="flex flex-col gap-2 rounded-card bg-light p-6">
+                  <span className="text-24 font-semibold tracking-normal text-main sm:text-28">{value}</span>
+                  <span className="text-15 font-semibold break-keep text-main">{label}</span>
+                  <span className="text-13 break-keep text-sub">{note}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
 
       {/* 목차(3) + 본문(9) */}
@@ -265,6 +305,8 @@ export default function ProjectPage({ slug }: { slug: string }) {
               <SectionHeading index={indexOf('why')} title="왜 만들었나" />
               <p className="text-16 break-keep text-sub">{project.why}</p>
             </section>
+
+            <DesignSection project={project} index={indexOf('design')} />
 
             {project.decisions && (
               <section id="project-decisions" className="flex scroll-mt-6 flex-col gap-5">

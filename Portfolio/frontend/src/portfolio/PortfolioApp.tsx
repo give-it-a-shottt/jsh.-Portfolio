@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { caseTab, CASES } from './data'
+import { CASES } from './data'
 import DesignCaseDetail from './DesignCaseDetail'
 import { EASE_OUT } from './motion'
 import PortfolioFooter from './PortfolioFooter'
@@ -8,7 +8,7 @@ import PortfolioHeader from './PortfolioHeader'
 import IntroVideo from './IntroVideo'
 import { goTo, readTab, searchHref } from './routes'
 import { SEARCH_INPUT_ID } from './SearchBox'
-import SearchHome from './SearchHome'
+import HomePage from './HomePage'
 import SearchResults from './SearchResults'
 import StudyDetail from './StudyDetail'
 import StudyHome from './StudyHome'
@@ -109,12 +109,7 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
 
       {!introPlaying && (
         <div className="flex min-h-svh flex-col bg-default">
-          <PortfolioHeader
-            search={isResults ? { query, onSearch: search } : undefined}
-            activeTab={
-              isResults ? tab : path === '/study' ? 'study' : path === '/project' ? 'fullstack' : caseItem ? caseTab(caseItem) : 'all'
-            }
-          />
+          <PortfolioHeader search={{ query: isResults ? query : '', onSearch: search }} activeTab={path === '/study' ? 'study' : 'main'} />
           {path === '/project' ? (
             <Suspense fallback={null}>
               <ProjectPage slug={slug} />
@@ -135,7 +130,7 @@ export default function PortfolioApp({ path, params, slug = '' }: PortfolioAppPr
           ) : isResults ? (
             <SearchResults query={query} tab={tab} />
           ) : (
-            <SearchHome onSearch={search} onReplayIntro={replayIntro} />
+            <HomePage onReplayIntro={replayIntro} />
           )}
           <PortfolioFooter />
         </div>

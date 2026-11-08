@@ -13,7 +13,7 @@
 
 - 공개 중: 검색형 포트폴리오(프로젝트 페이지 4개 포함), 마에스트로(리뉴얼), Accio(따로 배포 · 링크만), FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn(미니 인프런으로 따로 배포 · 링크만), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
 - 리뷰: F-001·F-006·F-009·F-010 판정 완료([주의]). F-004 7차 · F-008 · F-011 · F-012는 판정 일부 대기, F-007은 리뷰 전, F-002·F-003·F-005는 백로그예요.
-- 진행: 됨 2 · 일부 10 · 다음 0, 열린 질문 5개 ([STATUS.md](STATUS.md) 초안 · 사용자 확인 대기)
+- 진행: 됨 3 · 일부 10 · 다음 0, 열린 질문 6개 ([STATUS.md](STATUS.md) 초안 · 사용자 확인 대기)
 
 **읽는 순서** (면접 전에는 이것만 읽어도 돼요)
 
@@ -86,6 +86,7 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [D-004](decisions/D-004-notion-notes-semi-auto.md) | 노션 노트는 터미널 한마디로 반자동 옮기기 | 확인 완료 |
 | [D-005](decisions/D-005-accio-separate-service.md) | Accio를 포트폴리오 밖 서비스로 분리하고 링크만 | 분리는 확인 완료 · 예전 주소 처리 확인 필요 |
 | [D-006](decisions/D-006-techlearn-mini-inflearn-link.md) | techlearn 시안을 지우고 미니 인프런 배포 사이트로 링크만 | 확인 완료 |
+| [D-007](decisions/D-007-main-study-landing.md) | 첫 화면 긴 페이지 · 헤더 Main / Study · 피그마 공개 링크 | 확인 완료 |
 
 ### 기능
 
@@ -102,5 +103,6 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-009](features/F-009-nightly/feature.md) | Nightly 수면 코칭 시안 (홈 · 수면 대시보드 · AI 코치) | [주의] 판정 완료 |
 | [F-010](features/F-010-maestro-renewal/feature.md) | 마에스트로 리뉴얼 (지금 열린 식당 3곳 · Zustand · 유미 real + 저장본) | [주의] 판정 완료 |
 | [F-011](features/F-011-portfolio-restructure/feature.md) | 포트폴리오 개편 (탭 Design · Fullstack · Study · 홈 대표 4개 · 프로젝트 페이지 · Accio 링크만) | [통과] 2차 · 판정 일부 대기 |
+| [F-013](features/F-013-landing-main/feature.md) | 첫 화면을 프로젝트 중심 긴 페이지로 (카드 8개 · GitHub · 연락처 · 스킬 · 헤더 검색 · Main / Study) | [통과] 2차 · 판정 완료 |
 
-최종 수정: 2026-11-08 · 관련: D-001~D-006, F-001~F-012, Q-001~Q-005
+최종 수정: 2026-11-08 · 관련: D-001~D-006, F-001~F-012, Q-001~Q-006
