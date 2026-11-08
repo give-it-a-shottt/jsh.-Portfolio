@@ -52,6 +52,7 @@
 
 - 💡 프론트는 **Vite 앱 하나**예요. 프로젝트마다 주소의 `#` 뒤 첫 마디로 나뉘어요. 자세한 내용은 [architecture.md](architecture.md), [D-001](../decisions/D-001-single-vite-hash-routing.md)에 있어요.
 - 앞으로(사용자 확인): remind·PlanForMe 디자인 페이지를 같은 방식으로 추가할 수 있어요. Accio와 마에스트로는 별도 서비스로 분리하고, 이 지도에는 디자인 사례와 링크만 남아요([D-001](../decisions/D-001-single-vite-hash-routing.md)).
+- 검색 결과의 Study 탭(과 "Study 탭에서 모두 보기" 링크)은 검색어가 없으면 Study 홈 `#/study`로, 검색어가 있으면 `#/search?q=…&tab=study`로 가요. 헤더 Study 탭과 같은 곳이에요([F-004](../features/F-004-study-notes/feature.md) 7차).
 - 사례 데이터: `portfolio/data.ts`(목록), `portfolio/caseStories.ts`(Front·Back 상세 글), `portfolio/caseDetails.ts`(Front·Back 코드), `portfolio/noteData/`(공부 노트)
 
 ### FLASEEK 화면

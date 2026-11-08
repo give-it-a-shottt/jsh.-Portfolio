@@ -4,11 +4,17 @@ import { SearchIcon } from '../shared/icons'
 import CaseMeta from './CaseMeta'
 import NoteCard from './NoteCard'
 import NoteMeta from './NoteMeta'
-import { appliedCases, noteHref, type StudyNote } from './notes'
+import { appliedCases, noteHref, studyHref, type StudyNote } from './notes'
 import { searchHref, type ResultTab } from './routes'
 // '전체' 탭에서 사례 몇 개 뒤에 노트 묶음을 끼울지 — 채점기도 같은 값으로 순서를 재서 search.ts 에 둔다
 import { NOTES_AFTER, NOTES_IN_MODULE, search } from './search'
 import { didYouMean, relatedSearches } from './related'
+
+// 검색어 없이 Study 노트를 보러 가면 Study 홈(#/study)으로 — 헤더 Study 탭과 같은 곳.
+// 검색어가 있으면 Study 홈엔 검색이 없으니 결과 안의 Study 탭에 둔다
+function studyTabHref(query: string) {
+  return query ? searchHref(query, 'study') : studyHref()
+}
 
 const TABS: { tab: ResultTab; label: string }[] = [
   { tab: 'all', label: '전체' },
@@ -143,7 +149,7 @@ function NotesModule({ notes, query }: { notes: StudyNote[]; query: string }) {
           {query ? '이 키워드로 공부한 노트' : '공부 노트'}
           <span className="text-14 font-medium tracking-normal text-sub-weak">{notes.length}</span>
         </h2>
-        <a href={searchHref(query, 'study')} className="text-13 font-medium text-portfolio hover:underline underline-offset-4">
+        <a href={studyTabHref(query)} className="text-13 font-medium text-portfolio hover:underline underline-offset-4">
           <span lang="en">Study</span> 탭에서 모두 보기 →
         </a>
       </div>
@@ -203,7 +209,7 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
             return (
               <a
                 key={id}
-                href={searchHref(query, id)}
+                href={id === 'study' ? studyTabHref(query) : searchHref(query, id)}
                 aria-current={active ? 'page' : undefined}
                 // 가로 스크롤 줄이라 바깥 포커스 테두리가 잘린다 — 안쪽으로 그린다
                 className={`flex shrink-0 items-center gap-2 border-b-2 pt-4 pb-3 text-15 tracking-normal focus-visible:-outline-offset-2 ${active ? 'border-black font-semibold text-main' : 'border-transparent font-medium text-sub-weak hover:text-main'}`}
@@ -241,7 +247,7 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
               {/* 분야 탭에는 노트를 싣지 않으니, 사례가 없을 때만 같은 검색어의 노트가 Study 탭에 있다고 길을 알려 준다 */}
               {!isStudy && matchedNotes.length > 0 && (
                 <p className="text-15 break-keep text-sub">
-                  <a href={searchHref(query, 'study')} className="font-semibold text-portfolio underline-offset-4 hover:underline">
+                  <a href={studyTabHref(query)} className="font-semibold text-portfolio underline-offset-4 hover:underline">
                     {query ? `'${query}' ` : ''}공부 노트 {matchedNotes.length}건은 <span lang="en">Study</span> 탭에서 볼 수 있어요 →
                   </a>
                 </p>
