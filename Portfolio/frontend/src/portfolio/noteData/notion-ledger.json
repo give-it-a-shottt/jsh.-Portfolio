@@ -87,7 +87,10 @@
     "410df951bf8081a291ccf0f9c2f264ad": "fe-res-ok-status",
     "410df951bf80819a96c2dc3413ed9f47": "be-orm-two-filters",
     "40edf951bf8080f0bb86c471eca5ed62": "ps-3d-typo",
-    "410df951bf808182b817c83061f88ba3": "ps-neon-photo"
+    "410df951bf808182b817c83061f88ba3": "ps-neon-photo",
+    "412df951bf8081b39eb6c95ecbdbb0b9": "be-env-enroll-deploy",
+    "412df951bf8081bb9436f3fb924f0ac1": "be-jwt-login",
+    "40edf951bf808103b07ac58ab2fa4ea1": "design-power-basics"
   },
   "skipped": {
     "3efdf951bf8080beb779ecde4838b7ce": "포토샵 1. — 6강 이후 요약본에 합쳐진 앞 회차 초안",

@@ -4,6 +4,289 @@ import type { StudyNote } from "../notes";
 export const BACK_NOTES: StudyNote[] = [
   // ── AI와 학습 (미니 인프런 · Nightly 풀스택) ──
   // 15회차부터 F-012 노트 틀(개념 · 왜 · 코드). 코드는 미니 인프런 main.py 와 맞춰 보고, Pydantic 조각은 프로젝트 가상환경에서 돌려 확인
+  // 17회차 해시 · JWT 위조 · 만료 조각과 16회차 FOR UPDATE SQL · FRONTEND_ORIGINS 조각은 프로젝트 가상환경에서 돌려 확인
+  {
+    slug: "be-jwt-login",
+    area: "Back",
+    course: "미니 인프런",
+    lesson: "17회차",
+    date: "2026.11.08",
+    title: "JWT 로그인 — 서명 · 비밀번호 해시 · Bearer 토큰",
+    summary:
+      "비밀번호를 해시로 저장하고, 서버가 서명한 JWT 로 요청마다 누가 보냈는지 확인해 남의 포인트로 신청하는 것을 막을 수 있다.",
+    points: [
+      "JWT 는 암호화가 아니라 서명 — 내용은 누구나 읽지만, 비밀키 없이는 고친 내용에 맞는 서명을 못 만든다",
+      "비밀번호는 소금 + 60만 번 반복한 PBKDF2 해시만 저장한다",
+      "user_id 는 body 가 아니라 Depends 로 검증한 토큰에서 꺼낸다",
+    ],
+    learned: [],
+    sections: [
+      {
+        title: "인증 — 서버는 누가 보냈는지 모른다",
+        body: "HTTP 요청은 하나하나가 따로라서, 서버는 요청만 보고 보낸 사람을 알 수 없다. 그래서 로그인할 때 이메일 · 비밀번호를 한 번 확인하고 \"N번 유저\" 라고 적은 토큰을 준 뒤, 그다음부터는 요청마다 토큰을 보여 주게 한다. 고정 테스트 유저(TEST_USER_ID = 1)를 없애고 /me 와 /enrollments 가 토큰에서 꺼낸 유저를 쓰게 바꿨다.",
+        why: "토큰이 없으면 누가 접속해도 같은 유저의 포인트가 빠지고, 남의 포인트로 신청하는 것도 막을 수 없다.",
+      },
+      {
+        title: "JWT — 서명이 위조를 잡는다",
+        body: "JWT 는 헤더.내용.서명 세 덩어리다. 내용에 누구인지(sub)와 언제까지인지(exp)를 적고, 서버 비밀키로 HS256 서명을 만든다. 내용은 base64url 이라 누구나 풀어 읽지만, 공격자가 내용만 고치면 옛 서명이 그대로 붙어 오고 서버가 고친 내용 + 비밀키로 다시 계산한 서명과 달라 거부된다. 비밀키는 토큰에 들어가지 않고 서버 환경변수에만 있다.",
+        why: "토큰은 사용자 손에 있어서 누구나 고칠 수 있다 — 아이디만 넣은 토큰이면 3 을 1 로 바꿔 남의 계정을 쓸 수 있다.",
+        code: {
+          lang: "python",
+          caption: "PyJWT 로 직접 돌려 본 결과 — 내용은 읽히고, 고치면 서명 에러, 만료되면 만료 에러",
+          source: `token = jwt.encode({"sub": "3", "exp": now + timedelta(hours=1)}, SECRET, algorithm="HS256")
+header, body, sig = token.split(".")
+json.loads(base64.urlsafe_b64decode(body + "=" * (-len(body) % 4)))
+# {'sub': '3', 'exp': 1794214198}   ← 서명이 있어도 내용은 누구나 읽는다
+
+forged = f"{header}.{fake_body}.{sig}"          # 내용만 {"sub": "1"} 로 바꾸고 서명은 그대로
+jwt.decode(forged, SECRET, algorithms=["HS256"])
+# InvalidSignatureError
+
+jwt.decode(expired_token, SECRET, algorithms=["HS256"])
+# ExpiredSignatureError                          ← exp 도 decode 가 함께 검사한다`,
+        },
+      },
+      {
+        title: "비밀번호 해시 — 원문은 저장하지 않는다",
+        body: "가입할 때 유저마다 다른 무작위 소금(16바이트)을 섞어 PBKDF2-SHA256 을 60만 번 반복한 값만 저장한다. 로그인할 때는 저장된 소금 · 반복 횟수로 입력 비밀번호를 같은 방법으로 다시 섞어 비교하고, 비교는 hmac.compare_digest 로 해서 걸린 시간으로 힌트가 새지 않게 한다. 표준 라이브러리 hashlib 만 써서 패키지를 늘리지 않았다.",
+        why: "비밀번호는 되돌릴 필요가 없으니 암호화가 아니라 해시가 맞다 — DB 가 통째로 털려도 원문을 알아내기 어렵다.",
+        code: {
+          lang: "python",
+          caption: "미니 인프런 main.py — 같은 비밀번호도 소금 때문에 매번 다른 해시가 나온다",
+          source: `PBKDF2_ITERATIONS = 600_000
+
+def hash_password(password: str) -> str:
+    salt = os.urandom(16)                                   # 유저마다 다른 소금
+    digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, PBKDF2_ITERATIONS)
+    return f"pbkdf2_sha256\${PBKDF2_ITERATIONS}\${salt.hex()}\${digest.hex()}"
+
+def verify_password(password: str, stored: str) -> bool:
+    _, iterations, salt_hex, digest_hex = stored.split("$")
+    digest = hashlib.pbkdf2_hmac("sha256", password.encode(),
+                                 bytes.fromhex(salt_hex), int(iterations))   # 같은 방법으로 다시 섞기
+    return hmac.compare_digest(digest.hex(), digest_hex)
+
+hash_password("pass1234") == hash_password("pass1234")   # False
+verify_password("wrong", stored)                          # False`,
+        },
+      },
+      {
+        title: "Authorization: Bearer 와 Depends",
+        body: "브라우저는 Authorization: Bearer 토큰 헤더로 토큰을 보낸다. FastAPI 의 HTTPBearer 가 헤더에서 토큰을 꺼내고(없으면 401), get_current_user_id 가 서명 · 만료를 검사해 sub 를 숫자로 돌려준다. CurrentUserId 라는 이름을 붙여 두면 엔드포인트는 user_id: CurrentUserId 만 적으면 된다.",
+        why: "검사를 한 곳에 모아 두면 엔드포인트마다 복붙하다 한 곳을 빠뜨려 그 API 만 뚫리는 일이 없다.",
+        code: {
+          lang: "python",
+          caption: "미니 인프런 main.py — user_id 는 요청 body 가 아니라 검증된 토큰에서 온다",
+          source: `bearer = HTTPBearer()   # "Authorization: Bearer <토큰>" 에서 토큰 꺼내기, 없으면 401
+
+def get_current_user_id(
+    cred: Annotated[HTTPAuthorizationCredentials, Depends(bearer)],
+) -> int:
+    try:
+        payload = jwt.decode(cred.credentials, JWT_SECRET, algorithms=[JWT_ALGORITHM])  # 서명 + exp
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="토큰이 유효하지 않습니다. 다시 로그인해 주세요",
+                            headers={"WWW-Authenticate": "Bearer"})
+    return int(payload["sub"])
+
+CurrentUserId = Annotated[int, Depends(get_current_user_id)]
+
+@app.post("/enrollments", response_model=EnrollOut, status_code=201)
+def enroll(body: EnrollIn, user_id: CurrentUserId):
+    ...`,
+        },
+      },
+      {
+        title: "로그인 응답과 비밀키 관리",
+        body: "/login 은 없는 이메일과 틀린 비밀번호를 같은 문구의 401 로 답해 가입 여부가 새지 않게 한다. 비밀키 JWT_SECRET 은 secrets.token_urlsafe(32) 로 만들어 로컬은 .env, 배포는 Render 환경변수에 두고, 값이 없으면 서버가 RuntimeError 로 아예 켜지지 않게 했다. 그래서 배포는 Render 에 키 넣기 → push 순서를 지킨다.",
+        why: "약한 기본 키로 몰래 돌아가는 서버가 켜지지 않는 서버보다 더 위험하다.",
+        code: {
+          lang: "python",
+          caption: "미니 인프런 main.py — 이메일 없음 · 비밀번호 틀림을 구분하지 않는다",
+          source: `@app.post("/login", response_model=TokenOut)
+def login(body: LoginIn):
+    with Session(engine) as session:
+        user = session.scalars(select(User).where(User.email == body.email)).first()
+    if user is None or user.password_hash is None or not verify_password(body.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="이메일 또는 비밀번호가 올바르지 않습니다")
+    return TokenOut(access_token=create_access_token(user.id))`,
+        },
+      },
+      {
+        title: "토큰 보관 — localStorage 와 그 대가",
+        body: "로그인 성공하면 토큰을 localStorage 에 넣고, 요청마다 꺼내 Authorization 헤더에 붙인다. /me 가 401 이면 만료 · 위조된 토큰이라 버린다. localStorage 는 브라우저에만 있어서 getServerSideProps(서버)에서는 쓸 수 없고, 그래서 내 포인트는 SSR 이 아니라 브라우저에서 useQuery 로 받는다.",
+        why: "구현이 가장 단순하고 헤더로 보내는 흐름이 보이지만, 페이지에 악성 스크립트(XSS)가 들어오면 토큰을 읽어 갈 수 있다 — 실서비스는 HttpOnly 쿠키를 검토한다.",
+        code: {
+          lang: "typescript",
+          caption: "미니 인프런 frontend/lib/api.ts",
+          source: `function authHeaders(): Record<string, string> {
+  const token = getToken();
+  return token ? { Authorization: \`Bearer \${token}\` } : {};
+}
+
+export async function fetchMe(): Promise<Me | null> {
+  if (!getToken()) return null;                       // 로그인 안 함
+  const res = await fetch(\`\${API_BASE_URL}/me\`, { headers: authHeaders() });
+  if (res.status === 401) {
+    clearToken();                                     // 만료 · 위조된 토큰은 버린다
+    return null;
+  }
+  if (!res.ok) throw await readError(res, "내 정보 실패");
+  return res.json();
+}`,
+        },
+      },
+    ],
+    pitfalls: [
+      "JWT 내용에는 비밀번호 · 개인정보를 넣지 않는다 — base64url 은 인코딩일 뿐 누구나 풀어 읽는다",
+      "jwt.decode 에는 algorithms=[\"HS256\"] 처럼 허용할 알고리즘을 꼭 정한다",
+      "HS256 비밀키가 32바이트보다 짧으면 PyJWT 가 InsecureKeyLengthWarning 을 낸다 — secrets.token_urlsafe(32) 로 만든다",
+      "PyJWT 는 sub 를 문자열로 요구한다 — str(user_id) 로 넣고 꺼낼 때 int() 로 바꾼다",
+      "비밀키를 바꾸면 이미 발급한 토큰이 전부 무효가 되어 모두 다시 로그인해야 한다",
+      "인증(누구인가)과 인가(무엇을 해도 되는가)는 다르다 — 401 은 누군지 모름, 403 은 알지만 권한 없음",
+    ],
+    tags: ["백엔드", "FastAPI", "JWT", "인증"],
+    keywords:
+      "jwt json web token hs256 signature sign encode decode pyjwt invalidsignatureerror expiredsignatureerror exp sub base64url bearer authorization header httpbearer depends annotated pbkdf2 hashlib salt compare_digest password hash localstorage xss httponly cookie 401 403 인증 인가 서명 위조 비밀키 미니 인프런 로그인",
+  },
+  {
+    slug: "be-env-enroll-deploy",
+    area: "Back",
+    course: "미니 인프런",
+    lesson: "16회차",
+    date: "2026.11.08",
+    title: "환경변수 · 수강신청 트랜잭션 · 배포 — 상태는 제약으로, 순서는 잠금으로",
+    summary:
+      "장소마다 다른 값과 비밀값을 환경변수로 빼고, 트랜잭션 · DB 제약 · 행 잠금으로 수강신청을 지키고, 프론트 · 백엔드 · DB 를 각각 다른 곳에 배포할 수 있다.",
+    points: [
+      "환경변수는 이름은 같게, 값은 장소에 맞게 — 배포 서버에서 localhost 는 DB 가 없는 자기 자신",
+      "DB 제약(UNIQUE · CHECK)은 있을 수 없는 상태를, 행 잠금(FOR UPDATE)은 동시에 읽고 쓰는 순서를 막는다",
+      "CORS 는 브라우저만 검사해서, SSR 은 되는데 버튼만 막힐 수 있다",
+    ],
+    learned: [],
+    sections: [
+      {
+        title: "환경변수 — 이름은 같게, 값은 장소에 맞게",
+        body: "코드에는 os.getenv(\"DATABASE_URL\") 처럼 이름만 쓰고, 실제 값은 로컬은 .env(load_dotenv 로 등록), 배포는 Render 설정 화면에 둔다. 순서는 .env 에 적기 → load_dotenv() 로 등록 → os.getenv() 로 꺼내기 → create_engine() 으로 연결이다. 실제 값은 .gitignore 로 빼고, 필요한 이름만 적은 견본 .env.example 을 올린다.",
+        why: "비밀번호가 코드에 있으면 GitHub 를 보는 모두에게 열쇠를 주는 셈이고, 커밋에 한 번 올라가면 지워도 기록에 남는다. 내 컴퓨터와 배포 서버는 DB 주소도 다르다.",
+        code: {
+          lang: "python",
+          caption: "미니 인프런 main.py — 값이 없으면 서버가 켜지지 않게",
+          source: `load_dotenv()                                   # .env 파일을 읽어 환경변수로 등록
+DATABASE_URL = os.getenv("DATABASE_URL")        # 환경변수에서 값 꺼내기
+if DATABASE_URL is None:
+    raise RuntimeError("DATABASE_URL 환경변수가 없습니다 (.env 또는 배포 설정 화면 확인)")
+# Neon 은 postgresql:// 로 주는데, 그러면 SQLAlchemy 가 설치 안 된 psycopg2 를 찾는다
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
+engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)   # Neon 은 쉬면 연결을 끊는다`,
+        },
+      },
+      {
+        title: "DB 제약 — 있을 수 없는 상태를 DB 가 거부한다",
+        body: "UNIQUE (user_id, course_id) 는 같은 강의 두 번 신청을, CHECK (points >= 0) 은 음수 포인트를, REFERENCES(외래키)는 없는 유저 · 강의를 가리키는 신청을 막는다. 파이썬에서 \"이미 신청했나 SELECT → 없으면 INSERT\" 로 막으면 두 요청이 그 틈에 함께 들어와 둘 다 INSERT 한다. threading.Lock 은 한 프로세스 안에서만 통해 서버가 여러 개면 못 막는다.",
+        why: "모든 서버 · 프로세스가 같이 보는 곳은 DB 하나라서, DB 가 마지막 문지기가 된다.",
+        code: {
+          lang: "sql",
+          caption: "미니 인프런 schema.sql — 고장 실험에서 같은 신청 두 번 · 음수 포인트가 DB 에서 거부됐다",
+          source: `CREATE TABLE IF NOT EXISTS users (
+    id     INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name   VARCHAR(20) NOT NULL,
+    points INTEGER     NOT NULL DEFAULT 0 CHECK (points >= 0)   -- 음수 금지
+);
+CREATE TABLE IF NOT EXISTS enrollments (
+    id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id    INTEGER     NOT NULL REFERENCES users(id),        -- 있는 유저만
+    course_id  INTEGER     NOT NULL REFERENCES courses(id),      -- 있는 강의만
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (user_id, course_id)                                  -- 같은 강의 두 번 금지
+);
+-- 같은 신청 두 번: duplicate key value violates unique constraint "enrollments_user_id_course_id_key"
+-- 포인트를 음수로: violates check constraint "users_points_check"`,
+        },
+      },
+      {
+        title: "트랜잭션 — 차감과 기록을 한 묶음으로",
+        body: "with Session(engine) as session, session.begin(): 블록 안에서 강의 조회 → 유저 조회 → 포인트 확인 → 차감 + 신청 추가를 한다. 블록이 정상으로 끝나면 COMMIT, 중간에 HTTPException 같은 예외가 나면 앞에서 바꾼 포인트까지 자동 ROLLBACK 된다. session.flush() 로 SQL 을 COMMIT 전에 바로 보내 UNIQUE 위반을 그 자리에서 잡아 409 로 바꾼다.",
+        why: "묶지 않으면 포인트만 빠지고 신청 기록은 없는 \"돈만 날린\" 상태가 생길 수 있다.",
+        code: {
+          lang: "python",
+          caption: "미니 인프런 main.py — 404 · 400 · 409 가 나면 차감도 함께 취소된다",
+          source: `with Session(engine) as session, session.begin():      # 정상 종료 COMMIT / 예외 ROLLBACK
+    course = session.get(Course, body.course_id)
+    if course is None:
+        raise HTTPException(status_code=404, detail="강의를 찾을 수 없습니다")
+
+    user = session.get(User, user_id, with_for_update=True)   # 행 잠금 (아래 칸)
+    if user.points < course.price:
+        raise HTTPException(status_code=400, detail="포인트가 부족합니다")
+
+    user.points -= course.price                         # 1) 차감
+    enrollment = Enrollment(user_id=user.id, course_id=course.id)
+    session.add(enrollment)                             # 2) 기록
+    try:
+        session.flush()                                 # UNIQUE 위반을 여기서 잡는다
+    except IntegrityError:
+        raise HTTPException(status_code=409, detail="이미 신청한 강의입니다")`,
+        },
+      },
+      {
+        title: "갱신 손실과 행 잠금(FOR UPDATE)",
+        body: "35,000P 유저가 33,000원 · 3,000원 강의를 동시에 신청하면, 두 요청이 같은 35,000 을 읽고 각자 빼서 덮어써 둘 다 성공하고 32,000P 가 남았다. 결과가 음수가 아니라 CHECK 도, 강의가 달라 UNIQUE 도 못 잡는다. 유저 행을 SELECT ... FOR UPDATE 로 읽으면 뒤 요청은 앞 트랜잭션이 끝날 때까지 기다렸다가 2,000P 를 읽고 400 이 된다(201 + 400, 최종 2,000P).",
+        why: "트랜잭션은 \"한 묶음\" 을 보장할 뿐, 다른 트랜잭션이 같은 행을 동시에 읽는 것까지 막지는 않는다 — 제약은 상태를, 잠금은 순서를 지킨다.",
+        code: {
+          lang: "sql",
+          caption: "with_for_update=True 가 만드는 SQL (PostgreSQL 방언으로 컴파일해 확인)",
+          source: `SELECT users.id, users.points
+FROM users
+WHERE users.id = %(id_1)s::INTEGER FOR UPDATE`,
+        },
+      },
+      {
+        title: "TanStack Query — 쓰기와 다시 읽기는 따로",
+        body: "useQuery({ queryKey: [\"me\"] }) 가 /me 를 불러 포인트를 캐시에 둔다. 수강신청 버튼은 useMutation 으로 POST /enrollments 를 보내기만 하고, 화면 숫자를 바꾸는 건 invalidateQueries({ queryKey: [\"me\"] }) 다. 이 캐시를 낡았다고 표시해야 /me 를 다시 불러 새 포인트를 그린다.",
+        why: "이 줄을 빼면 신청은 201 인데 화면 포인트는 옛 숫자 그대로 남는다.",
+        code: {
+          lang: "typescript",
+          caption: "미니 인프런 frontend/lib/hooks.ts — 성공이든 실패든 서버의 진짜 포인트로 다시 그린다",
+          source: `const mutation = useMutation({
+  mutationFn: () => enroll(course.id),
+  onSuccess: () => setToast(TOAST_BY_STATUS[201]),
+  onError: (error) => { /* 400 · 401 · 409 마다 다른 토스트 */ },
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ["me"] }),
+});`,
+        },
+      },
+      {
+        title: "배포 구조와 CORS",
+        body: "프론트는 Vercel, 백엔드는 Render, DB 는 Neon 에 따로 두고 인터넷 주소로 서로 찾는다. Render 는 uvicorn main:app --host 0.0.0.0 --port $PORT 로 띄운다(기본 127.0.0.1 이면 자기 자신만 접속 가능). 배포 직후 목록 · 상세(SSR)는 됐는데 버튼만 실패했다 — SSR 은 Vercel 서버가 부르는 요청이라 CORS 검사가 없고, 버튼은 브라우저가 다른 출처로 보내는 요청이라 preflight 에서 막혔다. FRONTEND_ORIGINS 에 Vercel 주소를 쉼표로 추가해 해결했다.",
+        why: "\"이 주소는 어느 컴퓨터를 가리키나?\" 를 먼저 물으면 localhost · CORS · 0.0.0.0 문제가 한 번에 풀린다.",
+        code: {
+          lang: "python",
+          caption: "미니 인프런 main.py — 쉼표로 여러 주소를 허용 (값을 바꿔 가며 돌려 확인)",
+          source: `app.add_middleware(
+    CORSMiddleware,
+    allow_origins=os.getenv("FRONTEND_ORIGINS", "http://localhost:3000").split(","),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# 값 없음 → ['http://localhost:3000']
+# "http://localhost:3000,https://mini-inflearn.vercel.app" → 두 주소 모두 허용`,
+        },
+      },
+    ],
+    pitfalls: [
+      "Render 에 내 .env 의 값을 그대로 복사하면 localhost 가 들어가 접속 에러가 난다 — 같은 건 이름뿐이다",
+      "NEXT_PUBLIC_ 값은 빌드할 때 브라우저 JS 에 글자로 박힌다 — 비밀번호를 넣으면 개발자 도구에 보이고, 값을 바꾸면 Redeploy 해야 반영된다",
+      "CORS Origin 은 글자가 정확히 같아야 한다 — 끝에 / 를 붙이면 계속 막힌다",
+      "비밀값이 새었다고 의심되면 지우는 게 아니라 바꾼다 — 이미 본 사람은 옛 값을 알고 있다",
+      "Render 무료 플랜은 15분 동안 요청이 없으면 잠들어 첫 요청이 30~50초 걸린다 — 에러가 아니다",
+      "Windows 에서 --reload 가 재시작 도중 멈추면 옛 코드가 계속 응답한다 — 고쳤는데 그대로면 SQL 로그에 FOR UPDATE 가 찍혔는지부터 본다",
+    ],
+    tags: ["백엔드", "트랜잭션", "동시성", "배포"],
+    keywords:
+      "environment variable dotenv os.getenv .env.example next_public transaction commit rollback session.begin flush integrityerror unique check foreign key constraint race condition lost update select for update with_for_update row lock tanstack query usemutation invalidatequeries cors preflight ssr vercel render neon deploy 0.0.0.0 psycopg pool_pre_ping 환경변수 트랜잭션 갱신 손실 행 잠금 경쟁 상태 멱등성 배포 수강신청 미니 인프런",
+  },
   {
     slug: "be-orm-two-filters",
     area: "Back",

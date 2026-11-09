@@ -40,6 +40,8 @@ import title3dKkuljaem from '../assets/study/title-3d-kkuljaem.webp'
 import title3dBrushShape from '../assets/study/title-3d-brush-shape.webp'
 import title3dAiSheet from '../assets/study/title-3d-ai-sheet.webp'
 import neonSneaker from '../assets/study/neon-sneaker.webp'
+import realestateOnboarding from '../assets/study/design-practice-realestate-onboarding.webp'
+import realestateHome from '../assets/study/design-practice-realestate-home.webp'
 import type { StudyNote } from '../notes'
 
 // Design 공부 노트 — 노션 학습노트 > 학습 폴더 > 포토샵 / 일러스트 (6강 이후는 앞 회차 초안을 합친 요약본이라 1~3·5번은 싣지 않는다)
@@ -627,6 +629,64 @@ export const DESIGN_NOTES: StudyNote[] = [
     ],
     tags: ['포토샵', '피드', '구도', '통일감'],
     keywords: 'photoshop instagram feed series torn paper clipping mask gaussian blur layer mask gradient type on path canvas size guide layout 오버레이 분할 프레임 속 프레임 명도 대비 위계 통일감 꽃 구독',
+  },
+
+  // ── 디자인의 힘 (책 『AI 시대에 살아남는 DESIGN의 힘』) — F-012 노트 틀 ──
+  {
+    slug: 'design-power-basics',
+    area: 'Design',
+    course: '디자인의 힘',
+    lesson: '1장',
+    date: '2026.11.04',
+    title: '디자인을 보는 눈과 재료 — 나쁜 디자인 5패턴 · 점선면 · 위계 · 타이포',
+    summary:
+      '나쁜 디자인을 위계 · 여백 · 색 · 폰트 · 컨셉 같은 이유의 언어로 짚고, 점 · 선 · 면, 시선의 경로, 자간 · 행간 · 커닝으로 고칠 수 있다.',
+    points: [
+      '좋다 · 나쁘다는 감상이고 왜 그런지 말하는 게 실력이다. 시작 전에 가장 먼저 봐야 할 것 하나를 정한다',
+      '점은 시선을 멈추고, 선은 움직이고, 면은 나눈다. 여백도 면이다',
+      '자간은 글자 전체에 한 번에 주고, 커닝은 두 글자 사이 하나를 눈으로 맞춘다',
+    ],
+    learned: [],
+    sections: [
+      {
+        title: '나쁜 디자인의 5가지 패턴',
+        body: '컨셉 없는 배치(요소끼리 관계가 없음), 폰트 남용(서체가 여러 목소리로 동시에 말함), 색의 충돌(채도가 비슷한 색 두 개가 나란히), 위계의 붕괴(전부 비슷한 크기라 아무것도 중요해 보이지 않음), 여백 공포증(빈 곳을 못 참고 채움). 처방은 각각 모든 요소에 있어야 할 이유 붙이기, 서체는 한 화면에 2종(패밀리)까지, 주인공 색은 하나, 크기 · 굵기 · 색으로 보는 순서 설계, 여백을 숨 쉬는 공간으로 남기기다.',
+        why: '문제에 이름을 붙일 수 있어야 고칠 수 있고, AI 에게도 "예쁘게" 대신 "제목을 본문의 2배로, 배경 채도를 낮춰" 처럼 정확히 지시할 수 있다.',
+      },
+      {
+        title: '점 · 선 · 면, 그리고 형태의 감정',
+        body: '모든 시각물은 점 · 선 · 면으로 이뤄진다. 점(강조 숫자 · 아이콘)은 시선을 멈추게 하고, 선(구분선 · 정렬선)은 시선을 움직이고, 면(배경 · 블록 · 여백)은 공간을 나눈다. 선은 수평이면 안정, 수직이면 긴장 · 힘, 사선이면 역동을 주고, 도형은 원이 따뜻함 · 안전, 사각형이 신뢰 · 질서, 삼각형이 역동 · 긴장을 떠올리게 한다.',
+        why: '형태가 메시지와 같은 말을 해야 한다 — 어린이 교육 브랜드에 각진 서체와 삼각형을 쓰면 세련돼도 차갑고 멀게 느껴진다.',
+      },
+      {
+        title: '위계와 시선의 경로',
+        body: '위계는 "이것부터 봐라" 라는 보는 순서를 설계하는 것이다. 눈은 본능적으로 큰 것 → 작은 것, 밝은 것 → 어두운 것, 색 있는 것 → 색 없는 것 순서로 움직이고 사람 얼굴을 가장 먼저 본다. 가장 먼저 볼 것 하나를 정해 가장 크고 강하게 두고, 나머지는 단계적으로 낮춘다. 글이 적은 화면은 Z 패턴, 글이 많은 화면은 F 패턴으로 읽힌다.',
+        why: 'AI 는 입력된 정보를 모두 똑같이 중요하게 보고 고르게 배치한다. 무엇이 더 중요한지는 내용을 아는 사람만 정할 수 있다.',
+      },
+      {
+        title: '서체 · 자간 · 행간 · 정렬',
+        body: '세리프(명조)는 전통 · 신뢰, 산세리프(고딕)는 현대 · 중립, 손글씨는 감성을 준다. 자간은 글자 사이, 행간은 줄 사이 간격이다. 본문 행간은 영문 1.2~1.5배, 글자가 네모꼴로 꽉 찬 한글은 1.5~1.8배를 쓰고, 제목은 더 좁게 묶는다. 긴 본문은 왼쪽 정렬, 가운데 정렬은 초대장 · 짧은 제목에만 쓴다.',
+        why: '"왠지 이쪽이 더 좋다" 는 느낌의 정체는 눈에 잘 안 보이는 간격과 정렬에 있는 경우가 많다.',
+      },
+      {
+        title: '커닝 — 두 글자 사이 하나',
+        body: '자간이 선택한 글자 전체에 한 번에 주는 간격이라면, 커닝은 글자 쌍마다 따로 맞추는 간격이다. To · Av · Ye 처럼 서로 반대로 기운 쌍은 같은 간격이어도 벌어져 보여 좁히고, I · l 처럼 세로획끼리는 붙어 보여 넓힌다. 기준은 수치가 아니라 눈이다.',
+        why: '로고 · 큰 제목처럼 크게 보이는 글자에서만 차이가 눈에 띄어서, 본문까지 손으로 맞출 필요는 없다.',
+      },
+    ],
+    pitfalls: [
+      '폰트 2종은 서체 패밀리 기준이다 — Pretendard Bold 와 Regular 는 1종이고, 위계는 한 패밀리의 굵기 · 크기로 만든다',
+      '"골고루 깔끔하게" 는 칭찬이 아니다 — 전부 강조하면 아무것도 강조되지 않는다',
+      '영문 기준 행간(1.2~1.5배)을 한글 본문에 그대로 쓰면 빽빽해 보인다',
+      '피그마에는 글자 쌍 커닝 메뉴가 따로 없어서, 글자 하나만 선택해 자간을 바꾸는 방식으로 대신한다',
+    ],
+    practice: [
+      { image: realestateOnboarding, caption: '디자인 연습 · 부동산 앱 온보딩', how: '피그마 모바일 화면 — 사진 위에 제목 → 설명 → 버튼 순서' },
+      { image: realestateHome, caption: '디자인 연습 · 부동산 앱 홈', how: '피그마 모바일 화면 — 카테고리 탭 · 인기 매물 카드 · 내 주변 건물 목록' },
+    ],
+    tags: ['디자인 원칙', '위계', '타이포', '커닝'],
+    keywords:
+      'design hierarchy typography kerning tracking leading alignment serif sans-serif point line plane shape form eye tracking z pattern f pattern 나쁜 디자인 컨셉 폰트 남용 색의 충돌 위계 여백 점선면 시선 자간 행간 정렬 커닝 이유의 언어',
   },
   {
     slug: 'design-basics-communication',
