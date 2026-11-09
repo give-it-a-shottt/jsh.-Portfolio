@@ -680,13 +680,28 @@ export const DESIGN_NOTES: StudyNote[] = [
       '영문 기준 행간(1.2~1.5배)을 한글 본문에 그대로 쓰면 빽빽해 보인다',
       '피그마에는 글자 쌍 커닝 메뉴가 따로 없어서, 글자 하나만 선택해 자간을 바꾸는 방식으로 대신한다',
     ],
-    practice: [
-      { image: realestateOnboarding, caption: '디자인 연습 · 부동산 앱 온보딩', how: '피그마 모바일 화면 — 사진 위에 제목 → 설명 → 버튼 순서' },
-      { image: realestateHome, caption: '디자인 연습 · 부동산 앱 홈', how: '피그마 모바일 화면 — 카테고리 탭 · 인기 매물 카드 · 내 주변 건물 목록' },
-    ],
     tags: ['디자인 원칙', '위계', '타이포', '커닝'],
     keywords:
       'design hierarchy typography kerning tracking leading alignment serif sans-serif point line plane shape form eye tracking z pattern f pattern 나쁜 디자인 컨셉 폰트 남용 색의 충돌 위계 여백 점선면 시선 자간 행간 정렬 커닝 이유의 언어',
+  },
+
+  // ── 디자인 연습 — 피그마로 직접 그린 화면 (날짜별) ──
+  {
+    slug: 'design-practice-2026-11-09',
+    area: 'Design',
+    course: '디자인 연습',
+    lesson: '11.09',
+    date: '2026.11.09',
+    title: '부동산 앱 화면 연습 — 온보딩 · 홈',
+    summary: '피그마로 부동산 앱의 온보딩 화면과 홈 화면을 모바일 크기로 그렸다.',
+    points: ['온보딩 · 홈 모바일 화면 2장'],
+    learned: [],
+    practice: [
+      { image: realestateOnboarding, caption: '부동산 앱 온보딩', how: '피그마 모바일 화면' },
+      { image: realestateHome, caption: '부동산 앱 홈', how: '피그마 모바일 화면' },
+    ],
+    tags: ['피그마', '디자인 연습', '모바일'],
+    keywords: 'figma design practice mobile app real estate onboarding home 부동산 앱 온보딩 홈 디자인 연습',
   },
   {
     slug: 'design-basics-communication',
