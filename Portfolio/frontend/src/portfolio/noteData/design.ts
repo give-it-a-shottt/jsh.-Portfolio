@@ -42,6 +42,7 @@ import title3dAiSheet from '../assets/study/title-3d-ai-sheet.webp'
 import neonSneaker from '../assets/study/neon-sneaker.webp'
 import realestateOnboarding from '../assets/study/design-practice-realestate-onboarding.webp'
 import realestateHome from '../assets/study/design-practice-realestate-home.webp'
+import realestateHomeDark from '../assets/study/design-practice-realestate-home-dark.webp'
 import type { StudyNote } from '../notes'
 
 // Design 공부 노트 — 노션 학습노트 > 학습 폴더 > 포토샵 / 일러스트 (6강 이후는 앞 회차 초안을 합친 요약본이라 1~3·5번은 싣지 않는다)
@@ -702,6 +703,22 @@ export const DESIGN_NOTES: StudyNote[] = [
     ],
     tags: ['피그마', '디자인 연습', '모바일'],
     keywords: 'figma design practice mobile app real estate onboarding home 부동산 앱 온보딩 홈 디자인 연습',
+  },
+  {
+    slug: 'design-practice-2026-11-10',
+    area: 'Design',
+    course: '디자인 연습',
+    lesson: '11.10',
+    date: '2026.11.10',
+    title: '부동산 앱 홈 화면 연습 — 다크 모드',
+    summary: '피그마로 부동산 앱의 홈 화면을 어두운 배경의 모바일 크기로 그렸다.',
+    points: ['다크 모드 홈 모바일 화면 1장'],
+    learned: [],
+    practice: [
+      { image: realestateHomeDark, caption: '부동산 앱 홈 (다크)', how: '피그마 모바일 화면' },
+    ],
+    tags: ['피그마', '디자인 연습', '모바일'],
+    keywords: 'figma design practice mobile app real estate home dark mode 부동산 앱 홈 다크 모드 디자인 연습',
   },
   {
     slug: 'design-basics-communication',
