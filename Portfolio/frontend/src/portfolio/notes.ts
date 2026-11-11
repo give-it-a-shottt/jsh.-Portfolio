@@ -163,16 +163,37 @@ export function findCourse(area: string | null, course: string | null) {
   return COURSES.find((item) => item.area === area && item.course === course)
 }
 
-const FEATURED_COUNT = 2
+// 대표 강의 수 — 가장 최근 노트 날짜를 포함한 7일(날짜 차이 0~6일, 예: 최신이 11.11 이면 11.05~11.11) 안에
+// 노트가 올라온 강의 전부, 단 2~4개 (사용자 결정 2026-11-11, F-004 8차)
+const FEATURED_MIN = 2
+const FEATURED_MAX = 4
+const FEATURED_WINDOW_DAYS = 7
 
-/**
- * Study 홈에서 개념 카드로 크게 보여 줄 대표 강의 — 가장 최근에 공부한 강의부터(같은 날이면 노트가 많은 쪽).
- * 같은 강의가 Front · Back 에 나뉘어 있으면 한 번만 넣는다. 나머지는 '다른 강의' 목록에 한 줄씩.
- */
-export const FEATURED_COURSES = [...COURSES]
+/** 'YYYY.MM.DD' → UTC 자정 기준 일 수. 날짜끼리 며칠 차이인지만 본다 */
+function dayNumber(date: string) {
+  const [year, month, day] = date.split('.').map(Number)
+  return Date.UTC(year, month - 1, day) / (24 * 60 * 60 * 1000)
+}
+
+/** 최근 공부한 순(같은 날이면 노트가 많은 쪽). 같은 강의가 Front · Back 에 나뉘어 있으면 한 번만 */
+const RECENT_COURSES = [...COURSES]
   .sort((a, b) => b.notes[0].date.localeCompare(a.notes[0].date) || b.notes.length - a.notes.length)
   .filter((course, i, sorted) => sorted.findIndex((other) => other.course === course.course) === i)
-  .slice(0, FEATURED_COUNT)
+
+/**
+ * 대표 강의 고르기 — courses 는 최근 공부한 순(각 강의의 notes[0] 이 최신). 최신 노트 날짜를 포함한 7일 안에
+ * 업데이트된 강의를 앞에서부터, 최소 2 · 최대 4개. 오늘 날짜가 아니라 노트 날짜끼리 비교해서, 공부를 며칠 쉬어도 비지 않는다.
+ * 입력만 바꿔 규칙을 확인할 수 있게 순수 함수로 둔다(checks/run.mjs).
+ */
+export function pickFeatured<T extends { notes: { date: string }[] }>(courses: T[]): T[] {
+  if (courses.length === 0) return []
+  const newest = dayNumber(courses[0].notes[0].date)
+  const recent = courses.filter((course) => newest - dayNumber(course.notes[0].date) < FEATURED_WINDOW_DAYS)
+  return courses.slice(0, Math.min(FEATURED_MAX, Math.max(FEATURED_MIN, recent.length)))
+}
+
+/** Study 홈에서 개념 카드로 크게 보여 줄 대표 강의. 나머지는 '다른 강의' 목록에 한 줄씩 */
+export const FEATURED_COURSES = pickFeatured(RECENT_COURSES)
 
 /** 실제로 있는 사례에 쓴 것만 — 사례가 아직 없으면 '써먹은 곳'에 나오지 않는다 */
 export function appliedCases(note: StudyNote): (StudyApplied & { item: PortfolioCase })[] {

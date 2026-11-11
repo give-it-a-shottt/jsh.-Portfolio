@@ -43,6 +43,8 @@ import neonSneaker from '../assets/study/neon-sneaker.webp'
 import realestateOnboarding from '../assets/study/design-practice-realestate-onboarding.webp'
 import realestateHome from '../assets/study/design-practice-realestate-home.webp'
 import realestateHomeDark from '../assets/study/design-practice-realestate-home-dark.webp'
+import realestateHomeLightV2 from '../assets/study/design-practice-realestate-home-light-v2.webp'
+import realestateHomeDarkV2 from '../assets/study/design-practice-realestate-home-dark-v2.webp'
 import type { StudyNote } from '../notes'
 
 // Design 공부 노트 — 노션 학습노트 > 학습 폴더 > 포토샵 / 일러스트 (6강 이후는 앞 회차 초안을 합친 요약본이라 1~3·5번은 싣지 않는다)
@@ -634,6 +636,70 @@ export const DESIGN_NOTES: StudyNote[] = [
 
   // ── 디자인의 힘 (책 『AI 시대에 살아남는 DESIGN의 힘』) — F-012 노트 틀 ──
   {
+    slug: 'design-power-color-grid',
+    area: 'Design',
+    course: '디자인의 힘',
+    lesson: '2장',
+    date: '2026.11.11',
+    title: '한글 타이포 · 컬러 · 그리드 — 한글 행간 · 색의 3속성 · 60 : 30 : 10 · 그리드',
+    summary:
+      '한글은 한글 기준(행간 170% 안팎, 자간 조이지 않기)으로 다루고, 색은 3속성과 60 : 30 : 10 비율로, 배치는 그리드로 정해 AI 에게도 감이 아니라 수치로 지시할 수 있다.',
+    points: [
+      '한글은 네모 블록이 꽉 차서 영문처럼 자간을 조이면 충돌한다. 본문 행간은 170% 안팎에서 시작한다',
+      '가독성은 색상이 아니라 명도 차이가 결정한다. 강조색은 10% 자리에 하나만',
+      '그리드는 모든 요소의 시작점과 간격을 맞추는 보이지 않는 선이다. 웹은 12컬럼을 많이 쓴다',
+    ],
+    learned: [],
+    sections: [
+      {
+        title: '커닝 · 자간은 맥락에 따라',
+        body: '같은 글자 쌍이라도 글자 크기 · 용도에 따라 알맞은 간격이 다르다. 큰 제목은 글자 사이 빈 공간도 함께 커져 벌어져 보이니 좁히고, 작은 본문은 글자끼리 뭉쳐 보이니 기본값 근처에 두거나 살짝 넓힌다. 크기에 따른 조정은 실무에서 주로 자간(트래킹)으로 한다.',
+        why: 'AI 와 자동 커닝은 글자 쌍의 평균값을 줄 뿐, "이 크기 · 이 용도에서는?" 이라는 판단은 사람이 한다.',
+      },
+      {
+        title: '한글은 한글의 규칙으로',
+        body: '영문은 낱글자가 옆으로 이어지는 악보 같은 구조라 글자 폭이 달라 자연스러운 리듬이 있고, 한글은 자음 · 모음이 모여 네모 블록을 꽉 채우는 바둑판 구조다. 그래서 한글은 영문처럼 자간을 조이면 글자끼리 부딪히고, 줄 사이에도 틈이 없어 본문 행간을 영문(1.2~1.5배)보다 넓은 170% 안팎에서 시작한다. 알맞은 자간은 서체마다 달라서, Pretendard 같은 웹 고딕은 본문 0% 근처에서 눈으로 맞춘다.',
+        why: '영문 중심으로 학습된 AI 툴은 한글에도 영문 기준 자간 · 행간을 적용하기 쉬워서, 기본값을 그대로 쓰면 답답해 보인다.',
+      },
+      {
+        title: '색의 3속성 — 색상 · 명도 · 채도',
+        body: '색상(Hue)은 색의 종류로 감정을 만든다 — 빨강은 열정 · 긴급, 파랑은 신뢰 · 안정, 초록은 자연 · 건강. 명도는 밝고 어두운 정도로 무게를 정하고, 어두울수록 진지하고 고급스럽다. 채도는 선명한 정도로 강도를 조절하고, 높으면 강렬하고 낮으면 차분하다.',
+        why: '가독성은 색상이 아니라 명도 차이가 결정해서, 색을 고를 때 색상만 보지 않고 명도 · 채도까지 확인한다.',
+      },
+      {
+        title: '60 : 30 : 10 — 색보다 비율을 먼저',
+        body: '한 화면의 색을 주도 60 · 보조 30 · 강조 10 으로 나눈다. 주도색은 배경처럼 눈이 쉴 넓은 면, 보조색은 텍스트 · 주요 영역, 강조색은 구매 버튼 · 핵심 수치 한 곳에 쓴다. 화면에서는 면적을 재기 어려우니 역할로 나누고, 브랜드 컬러는 보통 10% 자리에 둔다.',
+        why: '비율이 없으면 모든 색이 주인공이 되려고 싸운다 — 강조색이 20% 가 되면 더 이상 강조가 아니다.',
+      },
+      {
+        title: '세련된 팔레트 3원칙 — 덜어내기',
+        body: '좋은 팔레트는 대부분 3가지 이하, 많아도 4가지다. 원색에 가까운 강한 색은 강조 한 곳에만 쓰고 나머지는 채도를 낮춘다. 따뜻한 계열(빨강 · 주황 · 노랑)과 차가운 계열(파랑 · 보라 · 회청) 중 하나로 색 온도를 맞춘다.',
+        why: '"이 색을 빼면 부족한가, 더 나아지는가?" 를 물으면 대부분 빼는 쪽이 낫다. 채도 낮은 색끼리는 싸우지 않고 공존한다.',
+      },
+      {
+        title: 'AI 팔레트는 출발점',
+        body: 'AI 는 색상환 이론상의 조화와 비슷한 업종의 사용 통계를 조합해서 그럴싸한 팔레트를 준다. 하지만 누구에게 말을 거는지(타깃), 어떤 감정을 원하는지, 경쟁 브랜드와 어떻게 달라야 하는지 같은 맥락은 모른다. 그래서 업종에서 가장 흔한 조합이 나오기 쉽고, 매대에서 경쟁 제품과 구별되지 않는다.',
+        why: '"이 색이 우리 브랜드의 이야기를 하고 있는가?" 는 사람이 판단하고, 지시는 "흰색 60%, 네이비 30%, 오렌지 10%" 처럼 비율로 한다.',
+      },
+      {
+        title: '그리드 — 보이지 않는 뼈대',
+        body: '그리드는 화면에 보이지 않는 선을 그어 요소가 놓일 위치를 미리 정하는 틀이다. 세로로 나누는 컬럼 그리드(웹 · 잡지), 가로 · 세로 모두 나눈 모듈 그리드(피드 · 상품 목록), 일정 간격 가로선인 기준선 그리드(긴 본문)가 있다. 웹에서 12컬럼을 많이 쓰는 건 2 · 3 · 4 · 6 으로 모두 나누어떨어져 반반 · 삼등분 · 1:2 배치를 한 그리드로 만들 수 있어서다.',
+        why: '정렬은 예측 가능성을, 예측 가능성은 안도감과 신뢰를 만든다. AI 는 요소를 그럴싸하게 놓지만 전체를 관통하는 정렬 기준은 없다.',
+      },
+    ],
+    pitfalls: [
+      '색상이 달라도 명도가 비슷하면 안 읽힌다(진한 파랑 배경 + 검정 글자) — 본문은 대비율 4.5 : 1 이상',
+      '브랜드 컬러를 배경에 넓게 깔면 강조할 곳이 사라진다 — 브랜드 컬러는 10% 자리에',
+      '고채도 색을 여러 개 동시에 쓰면 서로 눈에 들어오려고 싸워 피로해진다',
+      '따뜻한 색과 차가운 색을 섞으면 불안정해 보인다',
+      '요소마다 왼쪽 여백이 다르면(20 · 35 · 40px) 정렬 기준이 없다는 신호다 — 그리드를 정하고 시작점을 맞춘다',
+      '그리드를 깨는 건 그리드를 정한 뒤에 의도적으로만 한다',
+    ],
+    tags: ['디자인 원칙', '타이포', '컬러', '그리드'],
+    keywords:
+      'design korean typography kerning tracking leading line height hue brightness value saturation color contrast 60 30 10 rule dominant secondary accent palette earth tone color temperature warm cool ai palette brand context grid column modular baseline 12 column gutter margin wcag 한글 자간 행간 색상 명도 채도 주도색 보조색 강조색 팔레트 색 온도 어스톤 그리드 컬럼 정렬',
+  },
+  {
     slug: 'design-power-basics',
     area: 'Design',
     course: '디자인의 힘',
@@ -719,6 +785,23 @@ export const DESIGN_NOTES: StudyNote[] = [
     ],
     tags: ['피그마', '디자인 연습', '모바일'],
     keywords: 'figma design practice mobile app real estate home dark mode 부동산 앱 홈 다크 모드 디자인 연습',
+  },
+  {
+    slug: 'design-practice-2026-11-11',
+    area: 'Design',
+    course: '디자인 연습',
+    lesson: '11.11',
+    date: '2026.11.11',
+    title: '부동산 앱 홈 화면 연습 — 라이트 · 다크',
+    summary: '피그마로 부동산 앱의 홈 화면을 밝은 배경과 어두운 배경 두 가지 모바일 크기로 그렸다.',
+    points: ['라이트 · 다크 홈 모바일 화면 2장'],
+    learned: [],
+    practice: [
+      { image: realestateHomeLightV2, caption: '부동산 앱 홈 (라이트)', how: '피그마 모바일 화면' },
+      { image: realestateHomeDarkV2, caption: '부동산 앱 홈 (다크)', how: '피그마 모바일 화면' },
+    ],
+    tags: ['피그마', '디자인 연습', '모바일'],
+    keywords: 'figma design practice mobile app real estate home light dark mode 부동산 앱 홈 라이트 다크 모드 디자인 연습',
   },
   {
     slug: 'design-basics-communication',

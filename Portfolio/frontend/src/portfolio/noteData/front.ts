@@ -2,7 +2,480 @@ import type { StudyNote } from '../notes'
 
 // Front 공부 노트 — 노션 학습노트 > 학습 폴더 > 프론트엔드, AI와 학습(화면 쪽)
 export const FRONT_NOTES: StudyNote[] = [
+  // ── 타입스크립트 (책 · 최신 편부터) — F-012 노트 틀 ──
+  {
+    slug: 'fe-ts-type-handling',
+    area: 'Front',
+    course: '타입스크립트',
+    lesson: '2편',
+    date: '2026.11.11',
+    title: '타입 다루기 — any · unknown · 집합으로 보는 대입 · 제네릭 · 조건부 타입',
+    summary:
+      '타입을 값의 집합으로 보고 어떤 값이 어떤 자리에 들어가는지 판단하고, 밖에서 들어온 데이터는 unknown 으로 받아 경계에서 한 번 검증해 안쪽 코드가 확실한 타입만 다루게 할 수 있다.',
+    points: [
+      'TS 검사는 코드를 짤 때만 일어난다 — as 는 검사 없이 믿는 것이고, 실행 중 확인은 typeof · instanceof · Zod',
+      '좁은 타입은 넓은 자리에 들어가고 반대는 안 된다. 객체는 속성이 많을수록 좁다',
+      '제네릭은 타입을 받는 빈칸이고 extends 로 범위를 제한한다. 조건부 타입은 유니온을 하나씩 나눠 검사한다',
+    ],
+    learned: [],
+    sections: [
+      {
+        title: 'any 와 unknown',
+        body: 'any 는 타입 검사를 포기하는 타입이라 숫자에 toUpperCase() 를 불러도 통과하고, 실수는 실행할 때 터진다. 게다가 any 에서 꺼낸 값도 any 가 되어 계속 번진다. unknown 도 무엇이든 받지만, typeof · instanceof 로 확인하기 전에는 아무 동작도 못 하게 막는다.',
+        why: '확인을 빼먹으면 실행 중이 아니라 코드를 짤 때 빨간 줄로 보여서, 불확실한 값은 any 대신 unknown 으로 받는다.',
+        code: {
+          lang: 'typescript',
+          caption: 'any 는 통과, unknown 은 좁힌 뒤에만 — tsc --strict 로 타입 검사 통과',
+          source: `const a: any = 123;
+a.toUpperCase();                            // 통과 — 실행하면 터진다
+
+const u: unknown = 123;
+// @ts-expect-error — 확인 전엔 못 쓴다
+u.toUpperCase();
+if (typeof u === 'string') u.toUpperCase(); // 좁힌 뒤에는 OK
+
+const parsed = JSON.parse('{"n":1}');       // any — n 도 any 로 번진다
+const n = parsed.n;`,
+        },
+      },
+      {
+        title: '컴파일 타임과 런타임 — as 는 검사가 아니다',
+        body: 'TS 의 검사는 코드를 짤 때만 일어나고, 실행할 때는 타입이 다 지워진 자바스크립트로 돈다. 그래서 as 단언과 ! 는 "이 타입이라고 믿어" 일 뿐 아무것도 확인하지 않고, 컴파일 뒤에 사라진다. 실행 중에 진짜 확인하는 건 typeof · instanceof 처럼 자바스크립트 코드로 남는 것이다.',
+        why: '서버 응답처럼 밖에서 들어오는 값은 TS 가 볼 수 없어서, 타입만 적어 두면 다른 모양이 와도 그대로 통과한다.',
+        code: {
+          lang: 'typescript',
+          caption: 'strict 모드에서 catch 의 error 는 unknown — instanceof 로 확인하고 쓴다',
+          source: `try {
+  throw new Error('x');
+} catch (e) {
+  // @ts-expect-error — 확인 전엔 message 를 못 꺼낸다
+  e.message;
+  if (e instanceof Error) console.log(e.message); // 실제로 검사하고 쓰기
+}`,
+        },
+      },
+      {
+        title: '타입은 값의 집합 — 좁은 것은 넓은 자리에',
+        body: '타입을 값의 집합으로 보면 대입 규칙이 한 번에 정리된다. 좁은 타입(리터럴)은 넓은 타입(string) 자리에 들어가고 반대는 안 된다. unknown 은 전체집합이라 뭐든 받고, never 는 공집합이라 어디든 들어간다. 객체는 조건(속성)이 많을수록 만족하는 값이 적어서 좁은 타입이다.',
+        why: '"이 값이 이 자리에 들어가나?" 를 외우지 않고 "더 좁은가?" 하나로 판단할 수 있다.',
+        code: {
+          lang: 'typescript',
+          caption: '속성이 많은 B 가 더 좁다 — B → A 는 OK, A → B 는 에러',
+          source: `type A = { name: string };
+type B = { name: string; age: number };
+
+const b: B = { name: 'b', age: 2 };
+const toA: A = b;              // 좁은(B) → 넓은(A) OK
+
+const a: A = { name: 'a' };
+// @ts-expect-error — age 가 없을 수 있다
+const toB: B = a;`,
+        },
+      },
+      {
+        title: '구조적 타이핑과 잉여 속성 검사',
+        body: 'TS 는 타입의 이름이 아니라 모양을 본다. 그래서 { amount: number } 모양이 같은 Money 와 Liter 는 서로 대입된다. 다만 객체 리터럴을 그 자리에서 바로 넣을 때만 타입에 없는 속성을 에러로 잡고(잉여 속성 검사), 변수로 넣으면 필요한 속성만 있으면 통과한다. 섞이면 안 되는 같은 모양 타입은 브랜딩으로 일부러 모양을 다르게 만든다.',
+        why: '리터럴에 남는 속성은 오타일 가능성이 높고, 변수는 다른 데서도 쓰는 큰 객체일 수 있어서 기준이 다르다.',
+        code: {
+          lang: 'typescript',
+          caption: '리터럴은 깐깐하게, 변수는 모양만 — 브랜딩으로 같은 number 도 구분',
+          source: `interface Person { name: string; age: number }
+
+// @ts-expect-error — 리터럴을 바로 넣으면 hobby 를 잡는다
+const p1: Person = { name: 'a', age: 1, hobby: '축구' };
+const obj = { name: 'a', age: 1, hobby: '축구' };
+const p2: Person = obj;        // 변수로 넣으면 통과
+
+type Money = number & { __brand: 'money' };
+type Liter = number & { __brand: 'liter' };
+const money = 100 as Money;
+// @ts-expect-error — 모양이 달라 서로 대입 불가
+const liter: Liter = money;`,
+        },
+      },
+      {
+        title: 'interface 와 type',
+        body: '둘 다 객체 모양에 이름을 붙일 수 있다. interface 는 같은 이름으로 두 번 선언하면 자동으로 합쳐지고, extends 로 확장하다 속성이 충돌하면 바로 에러로 알려 준다. type 은 유니온 · 튜플 · 매핑된 객체 타입까지 표현할 수 있고, & 로 확장한다.',
+        why: '기능이 많이 겹쳐서 "객체는 interface, 나머지는 type" 처럼 팀에서 하나로 정해 일관되게 쓰는 게 핵심이다.',
+      },
+      {
+        title: '타입에서 타입 꺼내기 — keyof · 인덱스 접근 · 매핑',
+        body: 'keyof Person 은 키 이름들(\'name\' | \'age\'), Person[\'name\'] 은 그 속성의 값 타입을 꺼낸다. 매핑된 객체 타입 { [K in keyof T]: ... } 는 키를 하나씩 돌며 새 객체 타입을 만든다. Partial · Readonly · Pick · Record 같은 내장 유틸리티 타입이 이 문법으로 만들어져 있다.',
+        why: '원래 타입에서 가져다 쓰니 Person 이 바뀌면 따라 바뀌고, AI 가 짠 코드의 유틸리티 타입 정의를 직접 읽을 수 있다.',
+        code: {
+          lang: 'typescript',
+          caption: 'Partial 을 직접 만들어 보기 — 수정 API 처럼 일부 필드만 보낼 때',
+          source: `interface User { id: number; name: string; email: string }
+
+type Keys = keyof User;                 // 'id' | 'name' | 'email'
+type Name = User['name'];               // string
+type MyPartial<T> = { [K in keyof T]?: T[K] };
+
+const patch: MyPartial<User> = { name: '새 이름' }; // 일부만 OK
+const same: Partial<User> = patch;                  // 내장 Partial 과 같은 모양`,
+        },
+      },
+      {
+        title: '제네릭과 제약',
+        body: '제네릭은 함수가 값을 매개변수로 받듯 타입을 매개변수로 받는 문법이다. 그냥 <T> 면 T 가 뭔지 몰라 함수 안에서 x.length 도 못 꺼내서, <T extends { length: number }> 처럼 들어올 수 있는 범위를 제한한다. 여기서 extends 는 상속이 아니라 "이 타입에 대입될 수 있어야 한다" 는 뜻이다.',
+        why: '겹치는 부분은 한 번만 쓰고 달라지는 칸만 채우면서도, 안에서 쓸 기능은 안심하고 쓸 수 있다.',
+        code: {
+          lang: 'typescript',
+          caption: 'length 가 있는 것만 받는다',
+          source: `function len<T extends { length: number }>(x: T) {
+  return x.length;
+}
+len('abc');   // 3
+len([1, 2]);  // 2
+// @ts-expect-error — number 에는 length 가 없다
+len(123);`,
+        },
+      },
+      {
+        title: '조건부 타입과 분배 법칙',
+        body: 'T extends X ? A : B 는 타입의 삼항 연산자다. 제네릭 T 에 유니온을 넣으면 하나씩 쪼개 검사한 뒤 다시 합치고(분배 법칙), [T] extends [X] 처럼 대괄호로 감싸면 한 덩어리로 검사한다. T extends X ? T : never 가 보이면 "유니온에서 X 인 것만 남기는 필터" 로 읽으면 되고, 내장 Extract · Exclude 가 이렇게 생겼다.',
+        why: '유틸리티 타입이 왜 유니온에서 일부만 걸러 내는지 원리로 설명할 수 있다.',
+        code: {
+          lang: 'typescript',
+          caption: '같은 유니온, 쪼개느냐 덩어리로 보느냐',
+          source: `type IsString<T> = T extends string ? 'yes' : 'no';
+type R1 = IsString<string | number>;   // 'yes' | 'no' — 하나씩 검사
+
+type NoDist<T> = [T] extends [string] ? 'yes' : 'no';
+type R2 = NoDist<string | number>;     // 'no' — 한 덩어리로 검사
+
+const r1: R1 = 'yes';
+// @ts-expect-error — R2 는 'no' 하나뿐
+const r2: R2 = 'yes';`,
+        },
+      },
+      {
+        title: '경계에서 한 번 검증하기',
+        body: 'fetch 의 res.json() 과 JSON.parse() 는 지금도 any 를 돌려준다. 그래서 데이터가 들어오는 입구에서 unknown 으로 받고, Zod 같은 검증 라이브러리로 실제 모양을 확인한 뒤에만 앱 안쪽으로 넘긴다. Zod 는 스키마 하나로 실행 중 검사와 TS 타입을 함께 만들어 준다(백엔드의 Pydantic 과 같은 역할).',
+        why: 'any 를 여기저기 흘려보내지 않고 입구에서 한 번에 끊으면, 안쪽 코드는 타입 걱정 없이 쓸 수 있다.',
+        code: {
+          lang: 'typescript',
+          caption: '스키마에서 타입을 뽑고, 모양이 다르면 parse 에서 에러 — zod 3 으로 타입 검사 통과',
+          source: `import { z } from 'zod';
+
+const UserSchema = z.object({ id: z.number(), name: z.string() });
+type User = z.infer<typeof UserSchema>;     // { id: number; name: string }
+
+async function getUser(id: number): Promise<User> {
+  const res = await fetch(\`/api/users/\${id}\`);
+  const json: unknown = await res.json();   // any 를 바로 unknown 으로
+  return UserSchema.parse(json);            // 다르면 여기서 에러
+}`,
+        },
+      },
+    ],
+    pitfalls: [
+      'as 와 ! 는 검사가 아니다 — 컴파일 뒤에 사라져서 실행 중에는 아무것도 막지 않는다',
+      'instanceof 는 클래스로 만든 값(Error · Date)에만 쓴다 — 서버에서 온 평범한 객체는 typeof · in · Zod 로 확인한다',
+      '함수 선언문은 항상 throw 해도 반환 타입이 void 로 추론된다 — never 가 필요하면 직접 적는다(표현식 · 화살표 함수는 never)',
+      'type 의 & 는 속성이 충돌해도 에러 없이 그 속성이 never 가 된다 — interface 의 extends 는 바로 에러를 낸다',
+      '잉여 속성 검사는 리터럴을 바로 넣을 때만 한다 — 변수로 넣으면 남는 속성이 있어도 통과한다',
+      'TS 의 private 은 컴파일 때만 막는다 — 실행 중에도 숨기려면 자바스크립트의 #name 을 쓴다',
+    ],
+    tags: ['프론트엔드', 'TypeScript', '제네릭', 'unknown'],
+    keywords:
+      'typescript any unknown never void type assertion as non-null instanceof typeof compile time runtime set assignability structural typing excess property check branding interface type alias declaration merging namespace keyof indexed access mapped type partial pick record generic constraint extends conditional type distributive extract exclude zod schema parse covariance contravariance class access modifier 타입 단언 집합 구조적 타이핑 잉여 속성 제네릭 조건부 타입 분배 법칙 런타임 검증',
+  },
+  {
+    slug: 'fe-ts-type-basics',
+    area: 'Front',
+    course: '타입스크립트',
+    lesson: '1편',
+    date: '2026.11.10',
+    title: '타입 붙이기 — 추론 · 리터럴 타입 · 튜플 · 유니온과 좁히기',
+    summary:
+      '타입은 매개변수처럼 추론이 안 되는 자리에만 적고, 리터럴 · 튜플 · 유니온으로 들어올 값을 좁혀 오타와 순서 실수를 코드 짤 때 잡을 수 있다.',
+    points: [
+      '매개변수는 거의 항상 적고, 변수 · 반환값은 대부분 추론에 맡긴다',
+      'const 는 값 그대로(리터럴 타입), let 은 넓혀서(string) 추론한다',
+      '대문자 String 대신 소문자 string 을 쓰고, {} 는 빈 객체가 아니라 null · undefined 를 뺀 모든 값이다',
+    ],
+    learned: [],
+    sections: [
+      {
+        title: '타입은 어디에 붙이나 — 나머지는 추론',
+        body: '타입은 변수 · 함수 매개변수 · 반환값 세 자리에 붙인다. 매개변수는 부르는 쪽이 무엇을 넣을지 TS 가 알 수 없어서 거의 항상 적고, 변수와 반환값은 오른쪽 값이나 return 에서 추론되므로 대부분 생략한다. 빈 배열처럼 추론이 애매한 곳에만 직접 적는다.',
+        why: '추론되는 곳까지 전부 적으면 코드만 길어진다 — 추론이 안 되거나 틀린 곳에만 쓴다.',
+        code: {
+          lang: 'typescript',
+          caption: '매개변수만 적고 나머지는 추론',
+          source: `function plus(x: number, y: number) {  // 매개변수는 직접
+  return x + y;                          // 반환값은 number 로 추론
+}
+const result = plus(1, 2);               // number
+const ids: number[] = [];                // 빈 배열은 적어 준다`,
+        },
+      },
+      {
+        title: '리터럴 타입과 리터럴 유니온',
+        body: '\'hello\' · 123 · false 처럼 값 하나만 허용하는 타입이 리터럴 타입이다. const 는 다시 못 바꾸니 값 그대로 추론되고, let 은 나중에 다른 값이 들어올 수 있어 string 으로 넓혀 추론된다. 리터럴을 유니온으로 묶은 \'todo\' | \'done\' 은 정해진 값 말고는 못 넣는 드롭다운 같은 타입이다.',
+        why: '상태값 · 버튼 종류처럼 값이 정해진 곳에 쓰면 오타를 코드 짤 때 바로 잡는다 — enum 대신 많이 쓰는 실무 패턴이다.',
+        code: {
+          lang: 'typescript',
+          caption: 'const 와 let 의 추론 차이, 리터럴 유니온',
+          source: `const c = 'hello';          // 'hello'
+let l = 'hello';            // string
+// @ts-expect-error — let 은 string 으로 넓어져 'hello' 자리에 못 들어감
+const ll: 'hello' = l;
+
+type Status = 'todo' | 'doing' | 'done';
+let status: Status = 'todo';
+// @ts-expect-error — 정해진 값이 아니다
+status = 'finished';`,
+        },
+      },
+      {
+        title: '{} · object · 대문자 타입',
+        body: '{} 와 대문자 Object 는 빈 객체가 아니라 null · undefined 를 뺀 모든 값이라 숫자 · 문자열도 통과한다. 소문자 object 는 객체 · 배열 · 함수만 받고, 실무에서는 { name: string } 처럼 모양을 직접 적는다. String · Number · Boolean 같은 대문자는 new String() 래퍼 객체의 타입이라 쓰지 않고 소문자를 쓴다.',
+        why: '너무 넓은 타입을 쓰면 객체를 받으려던 자리에 숫자가 들어와도 막지 못한다.',
+        code: {
+          lang: 'typescript',
+          caption: '{} 는 숫자도 받는다 / String 객체는 string 자리에 못 들어간다',
+          source: `let anyButNull: {} = 123;    // 통과
+// @ts-expect-error — null 만 거부
+anyButNull = null;
+
+const wrapper: String = new String('x');
+// @ts-expect-error — 래퍼 객체는 string 자리에 못 들어감
+const bad: string = wrapper;`,
+        },
+      },
+      {
+        title: '배열 · 튜플 · readonly',
+        body: 'number[] 와 Array<number> 는 같은 뜻이고, 꺾쇠 안에 타입을 넣는 쪽을 제네릭이라 부른다. 튜플은 길이와 자리별 타입이 정해진 배열로, useState 가 돌려주는 [값, 바꾸는 함수] 가 튜플이다. 뒤에 ? 를 붙이면 옵셔널 자리, ...number[] 는 그 뒤로 몇 개든 온다는 뜻이다.',
+        why: '자리마다 의미가 다른 값을 순서 실수 없이 다루고, readonly · as const 로 실수로 바꾸는 일까지 막는다.',
+        code: {
+          lang: 'typescript',
+          caption: 'readonly 가 없으면 튜플도 push 가 통과한다',
+          source: `const t: [number, string] = [1, 'a'];
+t.push(3 as any);                         // 일반 튜플은 통과
+const rt: readonly [number, string] = [1, 'a'];
+// @ts-expect-error — readonly 튜플엔 push 가 없다
+rt.push(3);
+
+const r: [string, ...number[]] = ['합계', 1, 2, 3];
+const o: [number, number?] = [1];
+
+const config = { mode: 'dark' } as const;  // 모든 속성 readonly + 리터럴
+// @ts-expect-error
+config.mode = 'light';`,
+        },
+      },
+      {
+        title: '유니온과 타입 좁히기',
+        body: 'string | number 는 둘 중 하나라는 유니온 타입이다. 유니온인 채로는 둘 다 가진 기능만 쓸 수 있어서, typeof · Array.isArray · instanceof · in 같은 검사로 지금 어느 쪽인지 줄여 가야 하고 이 과정을 타입 좁히기라고 한다.',
+        why: 'v.toFixed() 처럼 한쪽에만 있는 기능을 안전하게 쓰려면 TS 에게 지금 어떤 타입인지 알려 줘야 한다.',
+        code: {
+          lang: 'typescript',
+          caption: '분기마다 v 의 타입이 바뀐다',
+          source: `function len(v: string | number) {
+  if (typeof v === 'string') return v.length;  // 여기서 v: string
+  return v.toFixed(0).length;                  // 여기서 v: number
+}`,
+        },
+      },
+      {
+        title: '값과 타입은 다른 자리',
+        body: '리터럴 값은 타입 자리에 쓸 수 있지만, 변수 이름은 타입 자리에 쓸 수 없다. const value = 1 이 있으면 x: value 는 에러이고, typeof value 로 값에서 타입을 뽑아 써야 한다. Date · Map · Error 같은 내장 객체는 원래 대문자라 그대로 타입으로 쓴다.',
+        why: '값의 세계와 타입의 세계를 구분해야 typeof · keyof 같은 다음 단계 문법이 읽힌다.',
+        code: {
+          lang: 'typescript',
+          caption: '변수는 typeof 를 붙여야 타입이 된다',
+          source: `const value = 1;
+// @ts-expect-error — 'value' refers to a value, but is being used as a type
+const x: value = 1;
+const y: typeof value = 1;   // OK — 타입은 1`,
+        },
+      },
+    ],
+    pitfalls: [
+      '{} 와 Object 는 빈 객체 타입이 아니다 — 숫자 · 문자열까지 통과하니 객체는 모양을 적는다',
+      'String · Number 같은 대문자 타입은 래퍼 객체 타입이다 — 소문자 string · number 를 쓴다',
+      'readonly 없는 튜플은 push 가 에러 없이 통과한다 — 길이를 지키려면 readonly 를 붙인다',
+      '유니온을 선언하는 것 자체가 타입 좁히기는 아니다 — typeof 등으로 하나로 줄여 가는 과정이 좁히기다',
+      'typeof null 은 \'object\' 다 — 객체로 좁힐 때 null 을 따로 걸러야 한다',
+    ],
+    tags: ['프론트엔드', 'TypeScript', '타입 추론', '유니온'],
+    keywords:
+      'typescript type annotation inference literal type const let widening union narrowing typeof instanceof in array isarray tuple readonly optional rest as const object empty object wrapper type string number boolean symbol generic array syntax enum 타입 추론 리터럴 타입 튜플 유니온 타입 좁히기 래퍼 객체',
+  },
+
   // ── React (같은 날짜는 위에 적은 순서대로 보이므로 최신 편부터) ──
+  {
+    slug: 'fe-zustand-tanstack-query',
+    area: 'Front',
+    course: 'React',
+    lesson: '6편',
+    date: '2026.11.10',
+    title: 'Zustand · TanStack Query — 상태 위치 정하기 · 캐시 · 무효화 · 낙관적 업데이트',
+    summary:
+      '상태를 원본이 어디 있느냐로 나눠 서버 데이터는 TanStack Query, 멀리 공유하는 화면 값은 Zustand, 한 곳 값은 useState, 공유 · 새로고침에 남길 값은 쿼리 파라미터에 둘 수 있다.',
+    points: [
+      '서버 데이터를 Zustand 에 복사하면 원본이 두 군데가 되어 어긋난다 — 바뀐 뒤엔 해당 queryKey 를 무효화해 다시 받는다',
+      'queryKey 에는 queryFn 이 쓰는 값을 전부 넣는다. staleTime 은 "다시 받을까", gcTime 은 "지워도 될까"',
+      'Zustand 는 셀렉터로 고른 값이 바뀔 때만 다시 그린다 — 구조 분해로 꺼내면 스토어 전체 구독',
+    ],
+    learned: [],
+    sections: [
+      {
+        title: '상태는 원본이 어디 있느냐로 나눈다',
+        body: '원본이 서버에 있으면(상품 목록 · 프로필 · 찜 수) 서버 상태라 TanStack Query 에 맡긴다. 서버에 없는 화면 값은 새로고침 · 링크 공유에도 남아야 하면 쿼리 파라미터(?sort=price), 멀리 떨어진 여러 컴포넌트가 같이 쓰면 Zustand, 한 컴포넌트에서만 쓰면 useState 에 둔다.',
+        why: '서버 상태는 다른 사람이 바꿀 수 있어 "언제 낡았나 · 언제 다시 받나" 를 따로 관리해야 해서 전용 도구가 있다.',
+      },
+      {
+        title: 'Zustand 셀렉터 — 고른 값만 구독',
+        body: '셀렉터 (s) => s.theme 으로 필요한 값만 꺼내면, 상태가 바뀔 때 Zustand 가 셀렉터 결과를 이전 값과 비교(Object.is)해 달라진 컴포넌트만 다시 그린다. 셀렉터 없이 useAppStore() 를 부르면 스토어 전체를 구독해서 다른 값이 바뀌어도 다시 그려진다.',
+        why: '프롭 드릴링 없이 바로 꺼내 쓰면서도, 상관없는 변경으로 화면이 다시 그려지는 걸 막는다.',
+        code: {
+          lang: 'typescript',
+          caption: 'theme 만 구독하는 헤더 — zustand 5 로 타입 검사 통과(브라우저 실행은 못 함)',
+          source: `import { create } from 'zustand';
+
+type AppState = {
+  theme: 'light' | 'dark';
+  isLoggedIn: boolean;
+  toggleTheme: () => void;
+};
+
+export const useAppStore = create<AppState>()((set) => ({
+  theme: 'light',
+  isLoggedIn: false,
+  toggleTheme: () => set((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' })), // 새 객체로 교체
+}));
+
+export function Header() {
+  const theme = useAppStore((s) => s.theme);             // theme 이 바뀔 때만 다시 그림
+  const toggleTheme = useAppStore((s) => s.toggleTheme);
+  return <button onClick={toggleTheme}>현재 {theme}</button>;
+}`,
+        },
+      },
+      {
+        title: 'queryKey 는 캐시의 이름표',
+        body: 'useQuery 는 queryKey 로 캐시(사물함)를 찾아, 신선한 데이터가 있으면 바로 주고 없거나 낡았으면 queryFn 으로 서버에 요청한다. 사물함에는 데이터와 함께 로딩 · 에러 상태, 언제 받아 왔는지까지 들어 있다. 캐시는 브라우저 메모리(RAM)에 있어서 새로고침하면 비워진다.',
+        why: '[\'products\', sort] 처럼 정렬마다 사물함이 따로 생겨, 이미 본 정렬은 요청 없이 바로 보여 준다.',
+        code: {
+          lang: 'typescript',
+          caption: '정렬값을 키에 넣고 5분 동안은 다시 요청하지 않는다 — @tanstack/react-query 5 로 타입 검사 통과',
+          source: `import { useQuery } from '@tanstack/react-query';
+
+type Product = { id: number; name: string; price: number };
+
+async function fetchProducts(sort: string): Promise<Product[]> {
+  const res = await fetch(\`/api/products?sort=\${sort}\`);
+  if (!res.ok) throw new Error(\`HTTP \${res.status}\`); // fetch 는 404 도 에러로 안 본다
+  return res.json();
+}
+
+export function ProductList({ sort }: { sort: string }) {
+  const { data, isPending, isError } = useQuery({
+    queryKey: ['products', sort],          // 정렬마다 사물함 따로
+    queryFn: () => fetchProducts(sort),
+    staleTime: 5 * 60 * 1000,              // 5분 동안은 캐시만 사용
+  });
+  if (isPending) return <p>불러오는 중...</p>;
+  if (isError) return <p>불러오지 못했어요</p>;
+  return <ul>{data.map((p) => <li key={p.id}>{p.name}</li>)}</ul>;
+}`,
+        },
+      },
+      {
+        title: 'staleTime · gcTime · enabled — 언제 요청하나',
+        body: 'staleTime 은 받은 데이터를 몇 동안 신선하다고 볼지(기본 0 — 화면에 다시 들어올 때마다 재요청), gcTime 은 쓰는 컴포넌트가 다 사라진 캐시를 언제 버릴지(기본 5분)다. 낡았다고 바로 지우지 않고 일단 보여 준 뒤 뒤에서 새로 받는다. enabled 는 지금 요청을 시작해도 되는지 정하는 스위치로, ID 가 늦게 들어올 때 enabled: !!id 로 기다리게 한다.',
+        why: '훅은 조건문 안에서 부를 수 없어서, 조건은 if 로 감싸지 않고 enabled 옵션으로 건다.',
+        code: {
+          lang: 'typescript',
+          caption: 'ID 가 없는 동안엔 products/undefined 로 요청이 나가지 않는다',
+          source: `import { useQuery } from '@tanstack/react-query';
+
+export function ProductDetail({ id }: { id?: string }) {
+  const { data } = useQuery({
+    queryKey: ['product', id],
+    queryFn: async (): Promise<{ name: string }> => (await fetch(\`/api/products/\${id}\`)).json(),
+    enabled: !!id,                         // ID 가 있을 때만 요청
+  });
+  return <h1>{data?.name ?? '...'}</h1>;
+}`,
+        },
+      },
+      {
+        title: '무효화 — 바뀐 뒤엔 다시 받는다',
+        body: 'useMutation 으로 서버 데이터를 바꾼 뒤 queryClient.invalidateQueries 로 그 키를 낡음으로 표시하면, 지금 화면에 있는 쿼리는 바로 다시 불러오고 화면에 없는 쿼리는 다음에 열릴 때 다시 불러온다. 키는 앞부분이 같으면 한꺼번에 무효화되어 [\'products\'] 하나로 [\'products\', \'price\'] 까지 낡음 처리된다.',
+        why: '새 상태 계산은 서버가 하고 프론트는 다시 받아 오기만 해서, 원본이 한 곳에만 있게 된다.',
+        code: {
+          lang: 'typescript',
+          caption: '삭제 성공 → 목록 키 무효화, 응답을 기다리는 동안 버튼 비활성화',
+          source: `import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+export function DeleteButton({ id }: { id: string }) {
+  const queryClient = useQueryClient();
+  const remove = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(\`/api/posts/\${id}\`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('삭제 실패');
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['posts'] }),
+  });
+  return (
+    <button onClick={() => remove.mutate()} disabled={remove.isPending}>
+      {remove.isPending ? '삭제 중...' : '삭제'}
+    </button>
+  );
+}`,
+        },
+      },
+      {
+        title: '낙관적 업데이트 — 화면부터 바꾸고 실패하면 되돌리기',
+        body: 'onMutate 에서 진행 중인 불러오기를 멈추고 이전 값을 보관한 뒤 캐시를 먼저 바꾼다. 실패하면 onError 에서 보관한 값으로 되돌리고, 성공이든 실패든 onSettled 에서 무효화해 서버 값과 맞춘다. 좋아요 · 찜처럼 되돌려도 괜찮은 동작에 쓰고, 결제 · 송금처럼 실패하면 안 되는 동작은 응답을 기다리고 버튼을 비활성화한다.',
+        why: '무효화 후 다시 받는 동안 예전 숫자가 보여 버튼이 굼뜨게 느껴지는 걸 없앤다.',
+        code: {
+          lang: 'typescript',
+          caption: 'onMutate → onError → onSettled 흐름',
+          source: `import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+type Product = { id: number; name: string; likes: number };
+
+export function LikeButton({ id }: { id: string }) {
+  const queryClient = useQueryClient();
+  const key = ['product', id];
+  const like = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(\`/api/products/\${id}/like\`, { method: 'POST' });
+      if (!res.ok) throw new Error('찜 실패');
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: key });     // 진행 중인 불러오기가 덮어쓰지 않게
+      const prev = queryClient.getQueryData<Product>(key);    // 되돌릴 값 보관
+      queryClient.setQueryData<Product>(key, (old) => old && { ...old, likes: old.likes + 1 });
+      return { prev };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.prev) queryClient.setQueryData(key, context.prev); // 실패하면 되돌리기
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: key }), // 서버 값과 맞추기
+  });
+  return <button onClick={() => like.mutate()}>찜하기</button>;
+}`,
+        },
+      },
+    ],
+    pitfalls: [
+      '서버 데이터를 Zustand 에 복사해 직접 +1 하면 원본이 두 군데로 나뉘어 어긋난다 — 서버 상태는 TanStack Query 에만 둔다',
+      'const { theme } = useAppStore() 는 theme 만 쓰는 것 같아도 스토어 전체 구독이다 — 셀렉터로 고른다',
+      '셀렉터에서 객체를 새로 만들어 꺼내면 매번 바뀐 것으로 보여 v5 에서 무한 렌더링이 날 수 있다 — useShallow 로 감싼다',
+      'queryKey 에 정렬 · ID 를 빠뜨리면 정렬을 바꿔도 예전 목록이 보인다',
+      '폴링(몇 초마다 재요청)은 낭비가 크고 반영도 늦다 — 내가 바꾼 데이터는 무효화로 갱신한다',
+      '삭제 후 이동은 router.push 보다 replace — 뒤로 가기로 삭제된 글에 돌아가지 않는다',
+    ],
+    tags: ['프론트엔드', 'React', 'Zustand', 'TanStack Query'],
+    keywords:
+      'zustand tanstack query react query client state server state selector useshallow querykey queryfn queryclient querycache usequery usemutation invalidatequeries staletime gctime enabled optimistic update onmutate onerror onsettled cancelqueries setquerydata prop drilling flux redux query parameter path parameter polling 상태 관리 서버 상태 클라이언트 상태 캐시 무효화 낙관적 업데이트 셀렉터 프롭 드릴링',
+  },
   {
     slug: 'fe-router-cors-redux',
     area: 'Front',

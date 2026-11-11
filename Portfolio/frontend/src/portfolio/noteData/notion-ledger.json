@@ -90,7 +90,11 @@
     "410df951bf808182b817c83061f88ba3": "ps-neon-photo",
     "412df951bf8081b39eb6c95ecbdbb0b9": "be-env-enroll-deploy",
     "412df951bf8081bb9436f3fb924f0ac1": "be-jwt-login",
-    "40edf951bf808103b07ac58ab2fa4ea1": "design-power-basics"
+    "40edf951bf808103b07ac58ab2fa4ea1": "design-power-basics",
+    "414df951bf8081d0bc99d8c4af626799": "fe-zustand-tanstack-query",
+    "414df951bf8081e6b8e4d5415b00eba6": "fe-ts-type-basics",
+    "415df951bf8081a08fa3d1c39831f231": "fe-ts-type-handling",
+    "415df951bf80815b9d31c2373493abc7": "design-power-color-grid"
   },
   "skipped": {
     "3efdf951bf8080beb779ecde4838b7ce": "포토샵 1. — 6강 이후 요약본에 합쳐진 앞 회차 초안",

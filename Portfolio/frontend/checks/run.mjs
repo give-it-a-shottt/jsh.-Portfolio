@@ -104,6 +104,33 @@ try {
   }
   check('없는 노트 주소는 그대로', resolveNoteSlug('없는-노트'), '없는-노트')
 
+  // ── Study 홈 대표 강의(F-004 8차): 최신 노트 날짜 포함 7일(차이 0~6일) 안 강의, 최소 2 · 최대 4
+  const { FEATURED_COURSES, pickFeatured } = await server.ssrLoadModule('/src/portfolio/notes.ts')
+  check(
+    '노트 날짜는 YYYY.MM.DD 이고 실제 있는 날짜',
+    NOTES.filter((n) => {
+      const m = /^(\d{4})\.(\d{2})\.(\d{2})$/.exec(n.date)
+      if (!m) return true
+      const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]))
+      return d.getUTCMonth() !== +m[2] - 1 || d.getUTCDate() !== +m[3]
+    }).map((n) => `${n.slug} ${n.date}`),
+    [],
+  )
+  check('실제 대표 강의는 2~4개', FEATURED_COURSES.length >= 2 && FEATURED_COURSES.length <= 4, true)
+  check('실제 대표 강의 이름은 겹치지 않는다', new Set(FEATURED_COURSES.map((c) => c.course)).size, FEATURED_COURSES.length)
+  // 강의 하나 = 최신 노트 날짜 하나. 입력은 최근 공부한 순
+  const pick = (...dates) => pickFeatured(dates.map((date) => ({ notes: [{ date }] }))).map((c) => c.notes[0].date)
+  check('대표 강의 · 강의가 없으면 빈 목록', pick(), [])
+  check('대표 강의 · 강의가 1개뿐이면 1개', pick('2026.11.11'), ['2026.11.11'])
+  check('대표 강의 · 최근 강의가 1개여도 최소 2개', pick('2026.11.11', '2026.10.01', '2026.09.01'), ['2026.11.11', '2026.10.01'])
+  check('대표 강의 · 차이 6일은 넣고 딱 7일은 뺀다', pick('2026.11.11', '2026.11.08', '2026.11.05', '2026.11.04'), ['2026.11.11', '2026.11.08', '2026.11.05'])
+  check('대표 강의 · 달이 바뀌어도 날짜 차이로 센다', pick('2026.12.01', '2026.11.28', '2026.11.25', '2026.11.24'), ['2026.12.01', '2026.11.28', '2026.11.25'])
+  check(
+    '대표 강의 · 최근 강의가 많아도 최대 4개',
+    pick('2026.11.11', '2026.11.10', '2026.11.10', '2026.11.09', '2026.11.08', '2026.11.07'),
+    ['2026.11.11', '2026.11.10', '2026.11.10', '2026.11.09'],
+  )
+
   // ── techlearn → 미니 인프런(D-006): 프로젝트 카드와 예전 주소가 배포 사이트로 간다
   const { MINI_INFLEARN_LIVE } = data
   const { isOldTechlearnPath } = routes
