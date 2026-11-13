@@ -15,7 +15,7 @@ import { projectHref } from './routes'
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-card border border-light bg-default shadow-[0_1px_2px_rgb(45_42_37/0.06)] hover:shadow-[0_2px_4px_rgb(45_42_37/0.08)]">
+    <article className="group relative flex h-full translate-y-0 flex-col overflow-hidden rounded-card border border-light bg-default shadow-[0_1px_2px_rgb(45_42_37/0.06)] transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-[0_2px_4px_rgb(45_42_37/0.08)] motion-reduce:transition-none motion-reduce:hover:translate-y-0">
       <ProjectCover cover={project.cover} name={project.name} rounded="rounded-none" loading="lazy" />
       <div className="flex flex-1 flex-col gap-2 p-4">
         <RoleChips roles={project.roles} />
@@ -102,7 +102,7 @@ export default function HomePage({ onReplayIntro }: HomePageProps) {
               <button
                 type="button"
                 onClick={onReplayIntro}
-                className="inline-flex h-12 items-center gap-1.5 rounded-button border border-black bg-default px-5 text-16 font-semibold text-main hover:bg-light"
+                className="inline-flex h-12 items-center gap-1.5 rounded-button border border-regular bg-default px-5 text-16 font-semibold text-sub hover:bg-light"
               >
                 <span aria-hidden="true">▶</span> 자기소개 영상 (1분)
               </button>

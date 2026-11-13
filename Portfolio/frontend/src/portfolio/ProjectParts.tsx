@@ -17,7 +17,7 @@ export function ButtonLink({
   const sizeClass = size === 'lg' ? 'h-12 px-5 text-16' : 'h-10 px-4 text-15'
   const styleClass = primary
     ? 'bg-portfolio text-white hover:bg-portfolio-strong'
-    : 'border border-black bg-default text-main hover:bg-light'
+    : 'border border-regular bg-default text-sub hover:bg-light'
   return (
     <a
       href={href}
