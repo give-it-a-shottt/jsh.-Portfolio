@@ -43,13 +43,14 @@
 - 헤더(`PortfolioHeader.tsx`): 모든 화면에 40px 작은 검색창(`SearchBox` `sm`) + Main(`#/`) / Study(`#/study`) 두 탭.
 - GitHub 잔디: 바깥 이미지 서비스(ghchart)가 응답하지 않아, `npm run github:sync`(`scripts/github-sync.mjs`)가 github.com 공개 잔디 페이지를 받아 `githubContributions.json`에 저장하고 `GitHubHeatmap.tsx`가 그려요. 받기에 실패하면 기존 파일을 그대로 둬요. 스킬 · 레포 · 연락처는 `profile.ts`.
 - 새 이미지: 미니 인프런(배포 사이트 홈 · 로그인)과 Nightly(홈 · 대시보드 · 코치) 화면을 1440px로 찍어 webp로 넣었어요. 미니 인프런 강의 목록 · 상세는 배포 API가 3분 넘게 응답하지 않아 못 찍었어요.
+- 3차(2026-11-16, 사용자 요청): 첫 방문 인트로 영상과 홈 소개의 '자기소개 영상 (1분)' 버튼을 뺐어요. `IntroVideo.tsx` · `IntroVideo.css` · `intro-paper.mp4`는 지웠고 git 621fee0에 남아 있어요. 인트로용으로만 받던 JetBrains Mono 글꼴 링크(`index.html`)도 뺐어요. 대신 나중에 자소서 형식의 랜딩 페이지를 만들 예정이에요(설계 의도 받기 전). 이제 `#/`로 들어오면 바로 홈이 떠요.
 - 2차 수정(리뷰 수용): 대표 레포 · 잔디 저장본 검사 6개(check 188개), 홈 카드 이미지 lazy, `DESIGN_PREVIEW_MAX`, sync가 기여 수를 0으로 잘못 읽으면 저장 거부.
 - 확인(1차 시점): `npm run check` 182/182(프로젝트 slug 중복 · 피그마 링크 · 디자인 섹션 시안 · 미니 인프런 링크 추가), lint · build 통과, `search:eval` MRR 0.94(변화 없음), Playwright로 홈(1440 · 390) · 프로젝트 페이지 3개 · Study 가로 스크롤 없음, 콘솔 오류 0.
 - 설계 의도와 다른 점
   - 검색 결과 화면의 탭(전체 · Design · Fullstack · Study)은 그대로 뒀어요. 헤더 탭만 Main / Study로 합쳤어요 — 사용자 확인(2026-11-08, Q-006 → D-007).
 
 ## 리뷰
-- [review/SUMMARY.md](review/SUMMARY.md): 1차(2026-11-08) [주의] 위험 0 · 주의 3 · 제안 9 → 수용분 수정 → 2차 R1 · R3 [통과] 제안 1(회차 안 해결). 판정 완료(사용자 확인).
+- [review/SUMMARY.md](review/SUMMARY.md): 1차(2026-11-08) [주의] 위험 0 · 주의 3 · 제안 9 → 수용분 수정 → 2차 R1 · R3 [통과] 제안 1(회차 안 해결). 판정 완료(사용자 확인). 3차(2026-11-16, 인트로 영상 제거) R1~R4 [통과] 제안 1(회차 안 해결) — 판정 완료(사용자 확인).
 
 ## 열린 질문
 - 없음 (Q-006 닫힘)

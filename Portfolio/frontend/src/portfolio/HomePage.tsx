@@ -44,12 +44,7 @@ function SectionTitle({ id, en, title, sub }: { id: string; en: string; title: s
   )
 }
 
-interface HomePageProps {
-  /** 인트로의 자기소개 영상을 다시 튼다 */
-  onReplayIntro: () => void
-}
-
-export default function HomePage({ onReplayIntro }: HomePageProps) {
+export default function HomePage() {
   const reduceMotion = useReducedMotion()
   const rise = (order: number) =>
     reduceMotion
@@ -99,13 +94,6 @@ export default function HomePage({ onReplayIntro }: HomePageProps) {
               실제 업무에서 마주칠 문제를 풀고, 그 과정에서 공부한 내용까지 함께 기록했습니다.
             </motion.p>
             <motion.div {...rise(3)} className="flex flex-wrap gap-2 pt-3">
-              <button
-                type="button"
-                onClick={onReplayIntro}
-                className="inline-flex h-12 items-center gap-1.5 rounded-button border border-regular bg-default px-5 text-16 font-semibold text-sub hover:bg-light"
-              >
-                <span aria-hidden="true">▶</span> 자기소개 영상 (1분)
-              </button>
               <button
                 type="button"
                 onClick={() => scrollTo('projects')}
