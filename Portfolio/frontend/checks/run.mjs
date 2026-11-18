@@ -140,6 +140,58 @@ try {
     check(`예전 주소 ${old} → 배포 사이트로`, isOldTechlearnPath(old), true)
   for (const other of ['/', '/techlearnx', '/nightly', '/project/accio'])
     check(`${other} 는 techlearn 주소가 아니다`, isOldTechlearnPath(other), false)
+
+  // ── 자소서형 랜딩(F-014): 첫 방문 판단(탭마다 한 번, Q-007) · 저장소를 못 쓸 때 · 글 데이터
+  const { shouldShowLanding, markLandingSeen } = await server.ssrLoadModule('/src/portfolio/landing/landingSeen.ts')
+  const memoryStorage = () => {
+    const box = new Map()
+    return { getItem: (k) => (box.has(k) ? box.get(k) : null), setItem: (k, v) => box.set(k, String(v)) }
+  }
+  const realStorage = globalThis.sessionStorage
+  try {
+    globalThis.sessionStorage = memoryStorage()
+    check('랜딩 · 처음이면 보여 준다', shouldShowLanding(), true)
+    markLandingSeen()
+    check('랜딩 · 기록한 뒤에는 안 보여 준다', shouldShowLanding(), false)
+    globalThis.sessionStorage = { getItem: () => { throw new Error('blocked') }, setItem: () => { throw new Error('blocked') } }
+    check('랜딩 · 저장소가 막히면 보여 준다', shouldShowLanding(), true)
+    let threw = false
+    try { markLandingSeen() } catch { threw = true }
+    check('랜딩 · 저장소가 막혀도 기록이 오류를 내지 않는다', threw, false)
+    delete globalThis.sessionStorage
+    check('랜딩 · 저장소가 아예 없으면 보여 준다', shouldShowLanding(), true)
+    threw = false
+    try { markLandingSeen() } catch { threw = true }
+    check('랜딩 · 저장소가 아예 없어도 기록이 오류를 내지 않는다', threw, false)
+  } finally {
+    if (realStorage === undefined) delete globalThis.sessionStorage
+    else globalThis.sessionStorage = realStorage
+  }
+
+  // Q-008: 처음 연 화면이 홈이 아니면 '봤음' 기록 — App.tsx 의 첫 주소 비교가 남아 있는지 (지우면 다른 화면을 거쳐 홈에 올 때 랜딩이 다시 뜬다)
+  const appSource = readFileSync(join(ROOT, 'src/App.tsx'), 'utf8')
+  check('랜딩 · 첫 주소가 홈이 아니면 봤음으로 기록한다(App.tsx)', /if \(entryPath !== "\/"\) markLandingSeen\(\)/.test(appSource), true)
+
+  // 랜딩을 못 그리면(조각 못 받음 · 그리다 오류) 빈 화면 대신 홈으로 — 오류 경계의 세 단계를 직접 불러 확인
+  const { default: LandingBoundary } = await server.ssrLoadModule('/src/portfolio/landing/LandingBoundary.tsx')
+  let failCalls = 0
+  const boundary = new LandingBoundary({ onFail: () => failCalls++, children: '랜딩' })
+  check('랜딩 경계 · 평소에는 랜딩을 그린다', boundary.render(), '랜딩')
+  check('랜딩 경계 · 오류가 나면 실패 상태로', LandingBoundary.getDerivedStateFromError(new Error('chunk')), { failed: true })
+  boundary.state = LandingBoundary.getDerivedStateFromError(new Error('chunk'))
+  boundary.componentDidCatch(new Error('chunk'))
+  check('랜딩 경계 · 실패하면 아무것도 그리지 않는다', boundary.render(), null)
+  check('랜딩 경계 · 실패하면 홈으로 넘기라고 한 번 알린다', failCalls, 1)
+
+  const { CHAPTERS, CLOSING, QUOTE } = await server.ssrLoadModule('/src/portfolio/landing/landingContent.ts')
+  check('랜딩 · 장 id 가 겹치지 않는다', new Set(CHAPTERS.map((c) => c.id)).size, CHAPTERS.length)
+  check('랜딩 · 장마다 문장이 있다', CHAPTERS.filter((c) => c.sentences.length === 0).map((c) => c.id), [])
+  check('랜딩 · 장 안 링크는 사이트 안 주소', CHAPTERS.filter((c) => c.link && isExternal(c.link.href)).map((c) => c.id), [])
+  check('랜딩 · 성공 기준 강조 단어가 문장 안에 있다', QUOTE.accent.filter((w) => !QUOTE.lines.flat().includes(w)), [])
+  // 사용자 결정(2026-11-18)으로 뺀 문단(생산 라인 · 영상 기획 · 회사 지원)이 다시 들어오지 않았는지
+  const allText = [...CHAPTERS.flatMap((c) => c.sentences), ...CLOSING.sentences, CLOSING.last].join(' ')
+  for (const word of ['생산', '의료기기', '영상', '두어스', '지원'])
+    check(`랜딩 · 뺀 문단 단어 '${word}' 가 없다`, allText.includes(word), false)
 } finally {
   await server.close()
 }

@@ -1,6 +1,7 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import PortfolioApp from "./portfolio/PortfolioApp";
 import { MINI_INFLEARN_LIVE } from "./portfolio/data";
+import { markLandingSeen } from "./portfolio/landing/landingSeen";
 import { isOldTechlearnPath } from "./portfolio/routes";
 import { MAESTRO_BASE } from "./projects/maestro/routes";
 import { FLASEEK_BASE } from "./projects/flaseek/routes";
@@ -29,6 +30,13 @@ function ExternalRedirect({ href }: { href: string }) {
 
 function App() {
   const route = useHashRoute();
+
+  // 자소서형 랜딩(F-014, Q-008): 이 탭에서 처음 연 화면이 홈이 아니면, 나중에 어떤 길로 홈에 와도 랜딩을 띄우지 않는다.
+  // 첫 주소만 기억하고(이후 이동은 따라가지 않음), 홈이 아니면 '봤음'으로 기록한다.
+  const [entryPath] = useState(() => route.split("?")[0]);
+  useEffect(() => {
+    if (entryPath !== "/") markLandingSeen();
+  }, [entryPath]);
 
   // 해시 라우팅은 페이지를 바꿔도 스크롤이 유지되므로 맨 위로 올린다
   useEffect(() => {

@@ -18,6 +18,7 @@
 | Nightly 수면 코칭 | 피그마 「AI 수면」 파일 · 「Design · Liquid Glass」 페이지의 'PC · Liquid Glass · 수정안' 01 · 04 · 05 (2026-10-31부터, 주소는 공개 문서에 적지 않아요). 모바일은 수정안이 없어 기존 모바일 배치에 수정안 색 · 유리 스타일을 맞췄어요 — 색은 `index.css`의 `nt-*` 토큰(피그마 변수 값 그대로) |
 | 포트폴리오 홈 리뉴얼 | 피그마 「jsh」 파일 · 「01 Home — Light 리뉴얼」 프레임 (주소는 공개 문서에 적지 않아요) |
 | Study 노션형 (F-004) | 피그마 「jsh」 파일 · Page 2 「05 Study 홈 — PC 1440」 · 「06 Study 상세 — 노션 문서형 PC 1440」 · 「Study Components」(`Study/TreeRow` → `StudyLayout.tsx`, `Study/ConceptChip` · `Study/ConceptCard` → `StudyHome.tsx`) — 색은 `jsh` 변수 Ivory 모드 = `index.css` Ivory · `study` 토큰 |
+| 자소서형 랜딩 (F-014) | 피그마 「Untitled」 파일 · Page 2 「Landing — PC 1440」 · 「Landing — MO 390」 · 「Motion — 장면별 상태」 · 「Motion 규칙」 · 「Landing Components」(`ChapterLabel` Size=PC/MO → `CoverLanding.tsx`의 `ChapterLabel`, `ReviewerCard` · `MemoChip` · `NotePage` → `LandingStages.tsx`) (주소는 공개 문서에 적지 않아요) — 색은 `Landing · Ivory` 변수 = `index.css` Ivory, 글자는 `KR/*` 텍스트 스타일 + 첫 화면 예외 `Landing/Hero/*` |
 
 ### 포트폴리오 포커스 표시 (2026-11-03, F-004 5차)
 - 키보드 포커스는 `portfolio` 파랑 솔리드 링 2px + 간격 2px다. 디자인 md의 Focus/Ring(#5B8CFF 40% 헤일로 3px)과 다른데, md 6-5의 접근성 예외(간격 2 + 링 2)를 따랐다. 헤일로만으로는 흰 배경 대비가 3:1이 안 된다. 위치는 `index.css` `@layer base`의 `[data-theme="ivory"] :is(a, button, summary):focus-visible`, 가로 스크롤 탭만 안쪽에 그린다.

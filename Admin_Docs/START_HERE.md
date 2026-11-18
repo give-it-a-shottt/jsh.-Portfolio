@@ -13,7 +13,7 @@
 
 - 공개 중: 검색형 포트폴리오(프로젝트 페이지 4개 포함), 마에스트로(리뉴얼), Accio(따로 배포 · 링크만), FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn(미니 인프런으로 따로 배포 · 링크만), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
 - 리뷰: F-001·F-006·F-009·F-010 판정 완료([주의]). F-004 8차 · F-008 · F-011 · F-012는 판정 일부 대기, F-007은 리뷰 전, F-002·F-003·F-005는 백로그예요.
-- 진행: 됨 9 · 일부 4 · 다음 1, 열린 질문 0개 ([STATUS.md](STATUS.md), 사용자 확인 완료)
+- 진행: 됨 10 · 일부 4 · 다음 0, 열린 질문 0개 ([STATUS.md](STATUS.md), 사용자 확인 완료)
 
 **읽는 순서** (면접 전에는 이것만 읽어도 돼요)
 
@@ -104,5 +104,6 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-010](features/F-010-maestro-renewal/feature.md) | 마에스트로 리뉴얼 (지금 열린 식당 3곳 · Zustand · 유미 real + 저장본) | [주의] 판정 완료 |
 | [F-011](features/F-011-portfolio-restructure/feature.md) | 포트폴리오 개편 (탭 Design · Fullstack · Study · 홈 대표 4개 · 프로젝트 페이지 · Accio 링크만) | [통과] 2차 · 판정 일부 대기 |
 | [F-013](features/F-013-landing-main/feature.md) | 첫 화면을 프로젝트 중심 긴 페이지로 (카드 8개 · GitHub · 연락처 · 스킬 · 헤더 검색 · Main / Study) | [통과] 3차(인트로 영상 제거) · 판정 완료 |
+| [F-014](features/F-014-cover-letter-landing/feature.md) | 자소서형 랜딩 (첫 방문 때 홈 대신 자기소개서 스크롤 페이지) | [통과] 2차 · 판정 완료 |
 
-최종 수정: 2026-11-08 · 관련: D-001~D-006, F-001~F-012, Q-001~Q-006
+최종 수정: 2026-11-18 · 관련: D-001~D-007, F-001~F-014, Q-001~Q-008
