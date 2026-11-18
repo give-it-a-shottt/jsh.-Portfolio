@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react'
-import { motion, useMotionTemplate, useTransform, type MotionValue } from 'motion/react'
+import { AnimatePresence, motion, useMotionTemplate, useTransform, type MotionValue } from 'motion/react'
 import { EASE_OUT } from '../motion'
 import type { StageKind } from './landingContent'
-import { useStep } from './useScrollProgress'
+import { easeOutCurve, useStep } from './useScrollProgress'
 
 // 자소서형 랜딩(F-014)의 오른쪽 무대. 모두 장식이라 화면 읽기 도구에서는 숨기고(aria-hidden), 내용은 왼쪽 글이 전한다.
 // p = 이 장의 진행값(0 → 1). 피그마 'Motion — 장면별 상태'의 시작 · 중간 · 끝이 p 0 · 0.5 · 1 쯤이다.
 
-/** 칸 · 메모 · 카드가 '등장'할 때만 쓰는 짧은 전환 (Motion 규칙 7) */
-const APPEAR = { duration: 0.2, ease: EASE_OUT }
+/** 칸 · 메모 · 카드가 '등장'할 때만 쓰는 전환 (Motion 규칙 7) — 0.2초는 '뿅' 하고 튀어 보여서 늘렸다 */
+const APPEAR = { duration: 0.45, ease: EASE_OUT }
 
 export default function LandingStage({ kind, p }: { kind: StageKind; p: MotionValue<number> }) {
   return (
@@ -32,6 +32,11 @@ const HAND_CELLS = 10
 const SCHEDULE_STEPS = [...Array.from({ length: HAND_CELLS }, (_, i) => 0.1 + i * 0.045), 0.6]
 /** 이번 주(위 네 줄)는 파랗게, 다음 주(아래 두 줄)는 회색으로 미리 채워진다 */
 const THIS_WEEK_ROWS = 4
+/**
+ * 자동으로 채워질 때 칸마다 두는 시간차(ms). 한꺼번에 바뀌면 '확' 튀어 보여서,
+ * 왼쪽 위에서 오른쪽 아래로 (줄 + 칸) × 이 값만큼 늦게 — 표 전체가 약 1초 동안 물결처럼 채워진다
+ */
+const WAVE_MS = 45
 
 function ScheduleStage({ p }: { p: MotionValue<number> }) {
   const step = useStep(p, SCHEDULE_STEPS)
@@ -42,7 +47,7 @@ function ScheduleStage({ p }: { p: MotionValue<number> }) {
         <span lang="en" className="text-13 font-semibold text-sub lg:text-14">
           근무표.xlsm
         </span>
-        <span className={`rounded-thumb-sm bg-portfolio-soft px-3 py-1.5 text-13 font-semibold text-portfolio transition-opacity duration-200 lg:text-15 ${auto ? 'opacity-100' : 'opacity-30'}`}>
+        <span className={`rounded-thumb-sm bg-portfolio-soft px-3 py-1.5 text-13 font-semibold text-portfolio transition-opacity duration-500 ease-out lg:text-15 ${auto ? 'opacity-100' : 'opacity-30'}`}>
           자동으로 채우기
         </span>
       </div>
@@ -70,16 +75,26 @@ function ScheduleRow({ row, step, auto }: { row: number; step: number; auto: boo
       </span>
       {DAYS.map((d, c) => {
         const index = row * DAYS.length + c
+        const byHand = thisWeek && index < HAND_CELLS
         const filled = thisWeek ? auto || index < step : auto
+        // 손으로 채운 칸은 이미 채워져 있으니 바로, 자동으로 채워지는 칸만 물결 시간차를 둔다(되감을 때는 한 번에 비운다)
+        const delay = auto && !byHand ? `${(row + c) * WAVE_MS}ms` : '0ms'
         return (
           <span
             key={d}
             lang="en"
-            className={`flex h-9 items-center justify-center border border-light text-13 font-medium transition-colors duration-200 lg:h-13 lg:text-15 ${
+            style={{ transitionDelay: delay }}
+            className={`flex h-9 items-center justify-center border border-light text-13 font-medium transition-colors duration-500 ease-out motion-reduce:transition-none lg:h-13 lg:text-15 ${
               filled && thisWeek ? 'bg-portfolio-soft text-portfolio' : 'bg-default text-disabled'
             }`}
           >
-            {filled ? SHIFT_NAMES[(row + c) % SHIFT_NAMES.length] : ''}
+            {/* 글자도 갑자기 생기지 않게 — 늘 그려 두고 투명도 · 위치만 바꾼다 */}
+            <span
+              style={{ transitionDelay: delay }}
+              className={`transition-[opacity,translate] duration-500 ease-out motion-reduce:transition-none ${filled ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}
+            >
+              {SHIFT_NAMES[(row + c) % SHIFT_NAMES.length]}
+            </span>
           </span>
         )
       })}
@@ -92,9 +107,9 @@ const CODE_LINES = ["const res = await fetch('/api/search', {", "  method: 'POST
 const MEMOS = ['왜 이 구조?', '왜 POST?', '왜 여기서 상태를?']
 
 function CodeStage({ p }: { p: MotionValue<number> }) {
-  const blur = useTransform(p, [0.1, 0.7], [8, 0])
+  const blur = useTransform(p, [0.1, 0.7], [8, 0], { ease: easeOutCurve })
   const filter = useMotionTemplate`blur(${blur}px)`
-  const opacity = useTransform(p, [0.1, 0.7], [0.4, 1])
+  const opacity = useTransform(p, [0.1, 0.7], [0.4, 1], { ease: easeOutCurve })
   const memos = useStep(p, [0.35, 0.5, 0.65])
   return (
     <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:items-start">
@@ -130,15 +145,20 @@ const LOOP = ['지적 없음', '이유 쓰기', '다시 확인']
 const CARD_CHECKS = ['지적', '이유', '다시 확인']
 /** 격자 간격(gap-3 = 12px)의 절반 — 겹쳐 있을 때 네 장이 정확히 가운데서 만난다 */
 const HALF_GAP_PX = 6
+/** 카드가 펼쳐지는 진행 구간과, 한 장씩 늦게 출발하는 간격 — 마지막(4번째) 카드는 0.5 + 3 × 0.05 = 0.65 에 다 펼쳐진다 */
+const SPREAD_START = 0.1
+const SPREAD_END = 0.5
+const CARD_STAGGER = 0.05
+/** 아래 '지적 없음 → 이유 쓰기 → 다시 확인'은 마지막 카드가 거의 펼쳐질 즈음(0.6)부터 하나씩 켜진다 */
+const LOOP_STEPS = [0.6, 0.67, 0.74]
 
 function ReviewerStage({ p }: { p: MotionValue<number> }) {
-  const spread = useTransform(p, [0.1, 0.5], [0, 1])
-  const loop = useStep(p, [0.55, 0.62, 0.7])
+  const loop = useStep(p, LOOP_STEPS)
   return (
     <div className="flex w-full flex-col items-center gap-5 lg:w-125">
       <div className="grid w-full grid-cols-2 gap-3">
-        {REVIEWERS.map((r) => (
-          <ReviewerCard key={r.code} {...r} spread={spread} />
+        {REVIEWERS.map((r, i) => (
+          <ReviewerCard key={r.code} {...r} p={p} order={i} />
         ))}
       </div>
       <div className="flex items-center gap-1.5 lg:gap-2.5">
@@ -160,7 +180,9 @@ function ReviewerStage({ p }: { p: MotionValue<number> }) {
   )
 }
 
-function ReviewerCard({ code, name, sx, sy, rot, spread }: (typeof REVIEWERS)[number] & { spread: MotionValue<number> }) {
+function ReviewerCard({ code, name, sx, sy, rot, p, order }: (typeof REVIEWERS)[number] & { p: MotionValue<number>; order: number }) {
+  // 네 장이 한꺼번에 움직이면 기계적이라, 한 장씩 조금 늦게 출발한다
+  const spread = useTransform(p, [SPREAD_START + order * CARD_STAGGER, SPREAD_END + order * CARD_STAGGER], [0, 1], { ease: easeOutCurve })
   // 펼쳐지기 전에는 네 장이 격자 가운데에 겹쳐 있다 — 카드 크기의 절반 + 간격의 절반만큼 안쪽으로 당긴다
   const x = useTransform(spread, (v) => `calc(${(1 - v) * sx * 50}% + ${(1 - v) * sx * HALF_GAP_PX}px)`)
   const y = useTransform(spread, (v) => `calc(${(1 - v) * sy * 50}% + ${(1 - v) * sy * HALF_GAP_PX}px)`)
@@ -189,8 +211,8 @@ const DIDIM_START = 5
 
 function DidimStage({ p }: { p: MotionValue<number> }) {
   const used = useStep(p, [0.3, 0.6])
-  const middle = useTransform(p, [0.2, 0.7], [0.3, 1])
-  const line = useTransform(p, [0.2, 0.7], [96, 36])
+  const middle = useTransform(p, [0.2, 0.7], [0.3, 1], { ease: easeOutCurve })
+  const line = useTransform(p, [0.2, 0.7], [96, 36], { ease: easeOutCurve })
   return (
     <div className="flex w-full flex-col items-center gap-4 lg:w-auto lg:flex-row lg:gap-9">
       <div className="flex w-full flex-col gap-3 rounded-card border border-regular bg-default p-5 lg:w-75 lg:gap-3.5 lg:p-6">
@@ -201,7 +223,21 @@ function DidimStage({ p }: { p: MotionValue<number> }) {
         ))}
         <span className="flex items-center justify-between rounded-thumb bg-portfolio-soft px-3.5 py-2.5">
           <span className="text-14 font-semibold text-sub">오늘 남은 첨삭</span>
-          <span className="text-18 font-semibold text-portfolio">{DIDIM_START - used}회</span>
+          {/* 숫자가 바뀔 때 위에서 내려오며 바뀐다 — 그냥 바꾸면 깜빡여 보인다 */}
+          <span className="relative h-6.5 overflow-hidden">
+            <AnimatePresence initial={false} mode="popLayout">
+              <motion.span
+                key={DIDIM_START - used}
+                initial={{ y: -14, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 14, opacity: 0 }}
+                transition={APPEAR}
+                className="block text-18 font-semibold text-portfolio"
+              >
+                {DIDIM_START - used}회
+              </motion.span>
+            </AnimatePresence>
+          </span>
         </span>
         <span className="flex h-14 items-center justify-center rounded-card-sm bg-portfolio text-16 font-semibold text-white">첨삭 받기</span>
       </div>

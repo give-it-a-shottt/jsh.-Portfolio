@@ -1,10 +1,10 @@
 import { Fragment, useEffect, useRef, useState, type MouseEvent } from 'react'
-import { motion, MotionConfig, useInView, useMotionValue, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
+import { motion, MotionConfig, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react'
 import { CONTACT_EMAIL, GITHUB_URL, GITHUB_USER } from '../profile'
 import LandingStage from './LandingStages'
 import { CHAPTERS, CLOSING, HERO_LINE, QUOTE, type LandingChapter } from './landingContent'
 import { markLandingSeen } from './landingSeen'
-import { useScrollProgress } from './useScrollProgress'
+import { easeOutCurve, SCROLL_SPRING, useScrollProgress } from './useScrollProgress'
 
 interface CoverLandingProps {
   /** 건너뛰기 · '포트폴리오 보러 가기' — 홈으로 */
@@ -18,14 +18,17 @@ export default function CoverLanding({ onDone }: CoverLandingProps) {
   const heroRef = useRef<HTMLElement>(null)
   const reduce = useReducedMotion()
   const { scrollYProgress: heroRaw } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const { scrollYProgress: pageProgress } = useScroll()
+  const heroSmooth = useSpring(heroRaw, SCROLL_SPRING)
+  const { scrollYProgress: pageRaw } = useScroll()
+  const pageProgress = useSpring(pageRaw, SCROLL_SPRING)
   const still = useMotionValue(0)
   // 움직임 줄이기면 첫 문장은 제자리에 그대로 둔다. 위에 붙는 한 줄은 나타나기만 하는 것이라 그대로 쓴다.
-  const heroP = reduce ? still : heroRaw
-  const headScale = useTransform(heroP, [0, 0.8], [1, 0.72])
-  const headY = useTransform(heroP, [0, 0.8], [0, -60])
-  const headOpacity = useTransform(heroP, [0.3, 0.8], [1, 0])
-  const docked = useTransform(heroRaw, [0.75, 0.95], [0, 1])
+  const heroP = reduce ? still : heroSmooth
+  // 첫 문장은 스크롤보다 느리게 위로 밀려나며(깊이감) 천천히 옅어진다 — 크기는 바꾸지 않는다(글자가 줄면 어색함)
+  const headY = useTransform(heroP, [0, 1], [0, -140], { ease: easeOutCurve })
+  const headOpacity = useTransform(heroP, [0.1, 0.8], [1, 0], { ease: easeOutCurve })
+  const hintOpacity = useTransform(heroP, [0, 0.25], [1, 0])
+  const docked = useTransform(heroSmooth, [0.7, 0.95], [0, 1])
   const [active, setActive] = useState(-1)
 
   // 탭마다 한 번(Q-007) — 화면에 뜬 순간 '봤음'으로 기록해서, 새로고침하거나 링크로 나갔다 와도 다시 띄우지 않는다
@@ -60,8 +63,8 @@ export default function CoverLanding({ onDone }: CoverLandingProps) {
             </p>
             <div className="flex flex-1 items-center">
               <motion.h1
-                style={{ scale: headScale, y: headY, opacity: headOpacity }}
-                className="origin-left text-[44px] leading-[1.25] font-semibold tracking-[-0.03em] break-keep text-main lg:text-[88px] lg:leading-[1.2]"
+                style={{ y: headY, opacity: headOpacity }}
+                className="text-[44px] leading-[1.25] font-semibold tracking-[-0.03em] break-keep text-main lg:text-[88px] lg:leading-[1.2]"
               >
                 귀찮은 일을
                 <br />
@@ -70,10 +73,10 @@ export default function CoverLanding({ onDone }: CoverLandingProps) {
                 <br className="hidden lg:inline" /> 편입니다.
               </motion.h1>
             </div>
-            <p className="flex items-center gap-3 text-13 text-sub-weak lg:text-14">
+            <motion.p style={{ opacity: hintOpacity }} className="flex items-center gap-3 text-13 text-sub-weak lg:text-14">
               <span aria-hidden="true" className="h-8 w-0.5 bg-portfolio lg:h-10" />
               스크롤해서 읽기
-            </p>
+            </motion.p>
           </section>
 
           {CHAPTERS.map((chapter, i) => (
@@ -133,10 +136,12 @@ function ChapterLabel({ num, label, id }: { num: string; label: string; id?: str
 // ---------- 문장 하이라이트: 화면 아래에서 올라오며 회색 → 진한 글자 ----------
 function Sentence({ text, className }: { text: string; className: string }) {
   const ref = useRef<HTMLParagraphElement>(null)
-  const p = useScrollProgress(ref, ['start 0.88', 'start 0.6'])
-  const opacity = useTransform(p, [0, 1], [0.28, 1])
+  const p = useScrollProgress(ref, ['start 0.92', 'start 0.62'])
+  const opacity = useTransform(p, [0, 1], [0.28, 1], { ease: easeOutCurve })
+  // 진해지면서 살짝 떠오른다 — 같은 자리에서 색만 바뀌면 딱딱해 보인다
+  const y = useTransform(p, [0, 1], [10, 0], { ease: easeOutCurve })
   return (
-    <motion.p ref={ref} style={{ opacity }} className={className}>
+    <motion.p ref={ref} style={{ opacity, y }} className={className}>
       {text}
     </motion.p>
   )
@@ -146,8 +151,8 @@ function Sentence({ text, className }: { text: string; className: string }) {
 function ChapterSection({ chapter, index, onActive }: { chapter: LandingChapter; index: number; onActive: (i: number) => void }) {
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
-  // 무대가 2/3쯤 보일 때 시작해서, 위로 거의 지나갈 때 끝 — 움직임이 화면 안에서 보이게 (PC · 모바일 같은 기준)
-  const stageP = useScrollProgress(stageRef, ['start 0.65', 'end 0.8'])
+  // 무대 윗부분이 보이기 시작할 때 시작해서, 다 보인 뒤 위로 올라갈 때 끝 — 구간을 넓게 잡아 휠 한 칸에 조금씩만 변하게 (PC · 모바일 같은 기준)
+  const stageP = useScrollProgress(stageRef, ['start 0.8', 'end 0.7'])
   const inView = useInView(sectionRef, { margin: '-45% 0px -45% 0px' })
   useEffect(() => {
     if (inView) onActive(index)
@@ -205,9 +210,13 @@ function QuoteSection() {
   )
 }
 
+/** 한 단어가 진해지는 데 쓰는 진행 구간. 시작점은 0 ~ (1 - WORD_SPAN) 사이에 나눠 놓아서 마지막 단어도 1 안에서 끝난다 */
+const WORD_SPAN = 0.3
+
 function Word({ word, p, index, total, accent }: { word: string; p: MotionValue<number>; index: number; total: number; accent: boolean }) {
-  const start = (index / total) * 0.8
-  const opacity = useTransform(p, [start, start + 0.8 / total], [0.2, 1])
+  // 단어마다 구간을 조금씩 겹쳐서, 한 단어씩 딱딱 켜지지 않고 물결처럼 이어지게
+  const start = (index / total) * (1 - WORD_SPAN)
+  const opacity = useTransform(p, [start, start + WORD_SPAN], [0.2, 1], { ease: easeOutCurve })
   return (
     <>
       <motion.span style={{ opacity }} className={accent ? 'text-portfolio' : undefined}>
