@@ -11,8 +11,6 @@ export interface LandingChapter {
   short: string
   sentences: string[]
   stage: StageKind
-  /** 글 아래 링크 (프로젝트 페이지 등) */
-  link?: { label: string; href: string }
 }
 
 export const HERO_LINE = '귀찮은 일을 그냥 두지 못하는 편입니다.'
@@ -37,7 +35,6 @@ export const CHAPTERS: LandingChapter[] = [
     label: '크래프톤 정글 · 5개월',
     short: '정글',
     stage: 'code',
-    link: { label: 'Accio 프로젝트 보기 →', href: '#/project/accio' },
     sentences: [
       '이후 크래프톤 정글 부트캠프에서 5개월간 개발을 배웠습니다.',
       '팀 프로젝트로 AI 자연어 검색 쇼핑몰 Accio를 만들었고, 저는 디자인과 퍼블리싱을 맡았습니다.',

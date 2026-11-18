@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState, type MouseEvent } from 'react'
+import { Fragment, memo, useEffect, useRef, useState, type MouseEvent } from 'react'
 import { motion, MotionConfig, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react'
 import { CONTACT_EMAIL, GITHUB_URL, GITHUB_USER } from '../profile'
 import LandingStage from './LandingStages'
@@ -148,7 +148,9 @@ function Sentence({ text, className }: { text: string; className: string }) {
 }
 
 // ---------- 각 장: 왼쪽 글 + 오른쪽 무대(PC는 글 옆, 글이 길면 무대가 붙어 따라옴 · 모바일은 글 아래) ----------
-function ChapterSection({ chapter, index, onActive }: { chapter: LandingChapter; index: number; onActive: (i: number) => void }) {
+// 지금 읽는 장(active)이 바뀌면 CoverLanding 이 다시 그려진다 — 장 · 성공 기준 · 마무리는 받는 값이 늘 같아서 memo 로 건너뛴다.
+// (안 그러면 장 경계를 넘을 때마다 여섯 장과 무대 그림을 전부 다시 그려 멈칫한다 — 측정: CPU 4배 감속에서 70ms 프레임)
+const ChapterSection = memo(function ChapterSection({ chapter, index, onActive }: { chapter: LandingChapter; index: number; onActive: (i: number) => void }) {
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   // 무대 윗부분이 보이기 시작할 때 시작해서, 다 보인 뒤 위로 올라갈 때 끝 — 구간을 넓게 잡아 휠 한 칸에 조금씩만 변하게 (PC · 모바일 같은 기준)
@@ -169,11 +171,6 @@ function ChapterSection({ chapter, index, onActive }: { chapter: LandingChapter;
               <Sentence key={s} text={s} className="text-16 font-medium break-keep text-main lg:text-20" />
             ))}
           </div>
-          {chapter.link && (
-            <a href={chapter.link.href} className="w-fit text-16 font-semibold text-portfolio hover:underline underline-offset-4">
-              {chapter.link.label}
-            </a>
-          )}
         </div>
         <div className="mt-8 lg:mt-0">
           <div ref={stageRef} className="lg:sticky lg:top-[calc(50vh-280px)]">
@@ -183,10 +180,10 @@ function ChapterSection({ chapter, index, onActive }: { chapter: LandingChapter;
       </div>
     </section>
   )
-}
+})
 
 // ---------- 03-b 성공 기준: 단어 단위로 진해지고 'AI 없이'만 파랗게 ----------
-function QuoteSection() {
+const QuoteSection = memo(function QuoteSection() {
   const ref = useRef<HTMLElement>(null)
   const p = useScrollProgress(ref, ['start 0.8', 'end 0.65'])
   const total = QUOTE.lines.flat().length
@@ -208,7 +205,7 @@ function QuoteSection() {
       </div>
     </section>
   )
-}
+})
 
 /** 한 단어가 진해지는 데 쓰는 진행 구간. 시작점은 0 ~ (1 - WORD_SPAN) 사이에 나눠 놓아서 마지막 단어도 1 안에서 끝난다 */
 const WORD_SPAN = 0.3
@@ -227,7 +224,7 @@ function Word({ word, p, index, total, accent }: { word: string; p: MotionValue<
 }
 
 // ---------- 06 마무리: 그림 없이 문장 하이라이트만 ----------
-function ClosingSection({ onDone }: { onDone: () => void }) {
+const ClosingSection = memo(function ClosingSection({ onDone }: { onDone: () => void }) {
   return (
     <section aria-labelledby="landing-closing-title" className="px-5 pt-30 pb-12 sm:px-10 lg:px-30 lg:pt-50 lg:pb-30">
       <div className="mx-auto flex max-w-300 flex-col gap-7 lg:gap-10">
@@ -260,4 +257,4 @@ function ClosingSection({ onDone }: { onDone: () => void }) {
       </div>
     </section>
   )
-}
+})

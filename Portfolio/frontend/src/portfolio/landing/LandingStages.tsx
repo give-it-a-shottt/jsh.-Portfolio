@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { AnimatePresence, motion, useMotionTemplate, useTransform, type MotionValue } from 'motion/react'
+import { AnimatePresence, motion, useTransform, type MotionValue } from 'motion/react'
 import { EASE_OUT } from '../motion'
 import type { StageKind } from './landingContent'
 import { easeOutCurve, useStep } from './useScrollProgress'
@@ -80,18 +80,20 @@ function ScheduleRow({ row, step, auto }: { row: number; step: number; auto: boo
         // 손으로 채운 칸은 이미 채워져 있으니 바로, 자동으로 채워지는 칸만 물결 시간차를 둔다(되감을 때는 한 번에 비운다)
         const delay = auto && !byHand ? `${(row + c) * WAVE_MS}ms` : '0ms'
         return (
-          <span
-            key={d}
-            lang="en"
-            style={{ transitionDelay: delay }}
-            className={`flex h-9 items-center justify-center border border-light text-13 font-medium transition-colors duration-500 ease-out motion-reduce:transition-none lg:h-13 lg:text-15 ${
-              filled && thisWeek ? 'bg-portfolio-soft text-portfolio' : 'bg-default text-disabled'
-            }`}
-          >
+          <span key={d} lang="en" className="relative flex h-9 items-center justify-center border border-light bg-default text-13 font-medium lg:h-13 lg:text-15">
+            {/* 파란 막 — 배경색을 바꾸면 물결 순간에 칸 수십 개를 다시 칠해서 멈칫한다(측정: 100ms 넘는 프레임).
+                막을 깔아 두고 투명도만 바꾸면 다시 칠하지 않고 합성만 한다 */}
+            {thisWeek && (
+              <span
+                aria-hidden="true"
+                style={{ transitionDelay: delay }}
+                className={`absolute inset-0 bg-portfolio-soft transition-opacity duration-500 ease-out motion-reduce:transition-none ${filled ? 'opacity-100' : 'opacity-0'}`}
+              />
+            )}
             {/* 글자도 갑자기 생기지 않게 — 늘 그려 두고 투명도 · 위치만 바꾼다 */}
             <span
               style={{ transitionDelay: delay }}
-              className={`transition-[opacity,translate] duration-500 ease-out motion-reduce:transition-none ${filled ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}
+              className={`relative transition-[opacity,translate] duration-500 ease-out motion-reduce:transition-none ${thisWeek ? 'text-portfolio' : 'text-disabled'} ${filled ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}
             >
               {SHIFT_NAMES[(row + c) % SHIFT_NAMES.length]}
             </span>
@@ -106,16 +108,25 @@ function ScheduleRow({ row, step, auto }: { row: number; step: number; auto: boo
 const CODE_LINES = ["const res = await fetch('/api/search', {", "  method: 'POST',", '  body: JSON.stringify({ q }),', '})', 'const items = await res.json()', 'setResults(items)']
 const MEMOS = ['왜 이 구조?', '왜 POST?', '왜 여기서 상태를?']
 
+/** 코드 카드 모양 — 선명한 원본과 흐린 사본이 같은 모양이어야 겹쳤을 때 어긋나지 않는다 */
+const CODE_CARD = 'rounded-card bg-main p-4.5 text-12 leading-[1.6] text-white lg:p-7 lg:text-14'
+
 function CodeStage({ p }: { p: MotionValue<number> }) {
-  const blur = useTransform(p, [0.1, 0.7], [8, 0], { ease: easeOutCurve })
-  const filter = useMotionTemplate`blur(${blur}px)`
-  const opacity = useTransform(p, [0.1, 0.7], [0.4, 1], { ease: easeOutCurve })
+  // 흐림 값(filter: blur)을 스크롤마다 바꾸면 매 프레임 그 영역을 다시 그려서 버벅인다(측정: CPU 4배 감속에서 이 장만 긴 프레임 6번).
+  // 그래서 미리 흐리게 그린 사본과 선명한 원본을 겹쳐 두고 투명도만 바꾼다 — 투명도는 다시 그리지 않고 합성만 한다.
+  const sharp = useTransform(p, [0.1, 0.7], [0, 1], { ease: easeOutCurve })
+  const blurry = useTransform(p, [0.1, 0.7], [0.4, 0], { ease: easeOutCurve })
   const memos = useStep(p, [0.35, 0.5, 0.65])
   return (
     <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:items-start">
-      <motion.pre style={{ filter, opacity }} className="overflow-x-auto rounded-card bg-main p-4.5 text-12 leading-[1.6] text-white lg:p-7 lg:text-14">
-        <code lang="en">{CODE_LINES.join('\n')}</code>
-      </motion.pre>
+      <div className="relative">
+        <motion.pre style={{ opacity: sharp }} className={`overflow-x-auto will-change-[opacity] ${CODE_CARD}`}>
+          <code lang="en">{CODE_LINES.join('\n')}</code>
+        </motion.pre>
+        <motion.pre aria-hidden="true" style={{ opacity: blurry }} className={`pointer-events-none absolute inset-0 overflow-hidden blur-[8px] will-change-[opacity] ${CODE_CARD}`}>
+          <code lang="en">{CODE_LINES.join('\n')}</code>
+        </motion.pre>
+      </div>
       <div className="relative z-10 flex flex-wrap gap-2 lg:-ml-8 lg:flex-col lg:gap-4 lg:pt-3">
         {MEMOS.map((m, i) => (
           <motion.span
@@ -188,7 +199,8 @@ function ReviewerCard({ code, name, sx, sy, rot, p, order }: (typeof REVIEWERS)[
   const y = useTransform(spread, (v) => `calc(${(1 - v) * sy * 50}% + ${(1 - v) * sy * HALF_GAP_PX}px)`)
   const rotate = useTransform(spread, (v) => v * rot)
   return (
-    <motion.div style={{ x, y, rotate }} className="flex flex-col gap-2.5 rounded-card border border-regular bg-default p-4 shadow-[0_8px_24px_rgb(28_26_22/0.08)] lg:p-6">
+    // 그림자 있는 카드 4장이 움직일 때마다 다시 그려지지 않게 따로 떼어 움직이는 층으로 둔다
+    <motion.div style={{ x, y, rotate }} className="flex flex-col gap-2.5 rounded-card border border-regular will-change-transform bg-default p-4 shadow-[0_8px_24px_rgb(28_26_22/0.08)] lg:p-6">
       <span lang="en" className="text-13 font-semibold text-portfolio">
         {code}
       </span>

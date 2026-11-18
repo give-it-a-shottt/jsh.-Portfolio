@@ -186,7 +186,6 @@ try {
   const { CHAPTERS, CLOSING, QUOTE } = await server.ssrLoadModule('/src/portfolio/landing/landingContent.ts')
   check('랜딩 · 장 id 가 겹치지 않는다', new Set(CHAPTERS.map((c) => c.id)).size, CHAPTERS.length)
   check('랜딩 · 장마다 문장이 있다', CHAPTERS.filter((c) => c.sentences.length === 0).map((c) => c.id), [])
-  check('랜딩 · 장 안 링크는 사이트 안 주소', CHAPTERS.filter((c) => c.link && isExternal(c.link.href)).map((c) => c.id), [])
   check('랜딩 · 성공 기준 강조 단어가 문장 안에 있다', QUOTE.accent.filter((w) => !QUOTE.lines.flat().includes(w)), [])
   // 사용자 결정(2026-11-18)으로 뺀 문단(생산 라인 · 영상 기획 · 회사 지원)이 다시 들어오지 않았는지
   const allText = [...CHAPTERS.flatMap((c) => c.sentences), ...CLOSING.sentences, CLOSING.last].join(' ')
