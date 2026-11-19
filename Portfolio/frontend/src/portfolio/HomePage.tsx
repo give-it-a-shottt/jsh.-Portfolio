@@ -9,7 +9,7 @@ import RoleChips from './RoleChips'
 import { projectHref } from './routes'
 
 // 첫 화면(F-013) — 스크롤 한 번으로 나를 다 보는 긴 페이지.
-// 소개(+ 한눈에: 숫자 · 이메일 · GitHub) → 프로젝트(PROJECT_LIST 전부, 작은 카드) → 스킬 → GitHub → 공부 기록.
+// 소개(+ 한눈에: 숫자 · 이메일 · GitHub) → 프로젝트(메인 큰 카드 → '그 밖의 작업' 작은 카드, D-008) → 스킬 → GitHub → 공부 기록.
 // 연락처는 맨 위 '한눈에' 칸 한 곳에만 둔다 — 아래에 다시 두면 겹친다(사용자 결정).
 // 검색은 헤더로 옮겼다. 프로젝트를 추가할 때는 projects.ts 의 PROJECT_LIST 에 하나 넣으면 카드가 생긴다.
 
@@ -25,6 +25,24 @@ function ProjectCard({ project }: { project: Project }) {
           </a>
         </h3>
         <p className="line-clamp-2 text-13 break-keep text-sub">{project.card.desc}</p>
+      </div>
+    </article>
+  )
+}
+
+// 메인(대표) 카드 — 한 줄 3칸, 서브 카드보다 큰 글자 · 설명 세 줄(D-008, F-015)
+function MainProjectCard({ project }: { project: Project }) {
+  return (
+    <article className="group relative flex h-full translate-y-0 flex-col overflow-hidden rounded-card border border-light bg-default shadow-[0_1px_2px_rgb(45_42_37/0.06)] transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-[0_2px_4px_rgb(45_42_37/0.08)] motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+      <ProjectCover cover={project.cover} name={project.name} rounded="rounded-none" loading="lazy" />
+      <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
+        <RoleChips roles={project.roles} />
+        <h3 className="text-18 font-semibold break-keep text-main sm:text-20">
+          <a href={projectHref(project.slug)} className="after:absolute after:inset-0 group-hover:text-portfolio">
+            {project.card.title}
+          </a>
+        </h3>
+        <p className="line-clamp-3 text-14 break-keep text-sub sm:text-15">{project.card.desc}</p>
       </div>
     </article>
   )
@@ -69,6 +87,9 @@ export default function HomePage() {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     document.getElementById(id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
   }
+
+  const mainProjects = PROJECT_LIST.filter((p) => p.tier === 'main')
+  const subProjects = PROJECT_LIST.filter((p) => p.tier === 'sub')
 
   const glance = [
     { value: `${PROJECT_LIST.length}개`, label: '프로젝트' },
@@ -133,7 +154,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 프로젝트 — 목록 전부, 작은 카드 */}
+      {/* 프로젝트 — 메인(대표 3개, 큰 카드) → 그 밖의 작업(작은 카드) */}
       <section id="projects" aria-labelledby="projects-title" className="scroll-mt-4 bg-light px-5 py-16 sm:px-10 lg:py-20">
         <div className="mx-auto flex w-full max-w-300 flex-col gap-7">
           <motion.div {...reveal(0)}>
@@ -144,13 +165,31 @@ export default function HomePage() {
               sub="카드를 누르면 그 서비스의 디자인 · 프론트 · 백엔드를 한 페이지에서 볼 수 있어요."
             />
           </motion.div>
-          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {PROJECT_LIST.map((project, i) => (
-              <motion.li key={project.slug} {...reveal(i % 4)}>
-                <ProjectCard project={project} />
-              </motion.li>
-            ))}
-          </ul>
+          {/* 떠오르는 순서(reveal)는 lg 한 줄의 칸 수(메인 3 · 서브 4)마다 처음부터 — 줄마다 왼쪽에서 오른쪽으로 */}
+          {mainProjects.length > 0 && (
+            <ul aria-label="대표 프로젝트" className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {mainProjects.map((project, i) => (
+                <motion.li key={project.slug} {...reveal(i % 3)}>
+                  <MainProjectCard project={project} />
+                </motion.li>
+              ))}
+            </ul>
+          )}
+          {/* 비면 제목까지 그리지 않는다(프로젝트 페이지처럼 — 칸이 비면 섹션을 그리지 않음) */}
+          {subProjects.length > 0 && (
+            <>
+              <motion.h3 {...reveal(0)} id="projects-sub-title" className="pt-5 text-18 font-semibold break-keep text-main sm:text-20">
+                그 밖의 작업
+              </motion.h3>
+              <ul aria-labelledby="projects-sub-title" className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {subProjects.map((project, i) => (
+                  <motion.li key={project.slug} {...reveal(i % 4)}>
+                    <ProjectCard project={project} />
+                  </motion.li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       </section>
 

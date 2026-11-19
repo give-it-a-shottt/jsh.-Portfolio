@@ -87,6 +87,7 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [D-005](decisions/D-005-accio-separate-service.md) | Accio를 포트폴리오 밖 서비스로 분리하고 링크만 | 확인 완료 |
 | [D-006](decisions/D-006-techlearn-mini-inflearn-link.md) | techlearn 시안을 지우고 미니 인프런 배포 사이트로 링크만 | 확인 완료 |
 | [D-007](decisions/D-007-main-study-landing.md) | 첫 화면 긴 페이지 · 헤더 Main / Study · 피그마 공개 링크 | 확인 완료 |
+| [D-008](decisions/D-008-main-sub-projects.md) | 홈 프로젝트를 메인(디딤 · Accio · 마에스트로, 큰 카드) · 서브로 나눔 | 확인 완료 |
 
 ### 기능
 
@@ -105,5 +106,6 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-011](features/F-011-portfolio-restructure/feature.md) | 포트폴리오 개편 (탭 Design · Fullstack · Study · 홈 대표 4개 · 프로젝트 페이지 · Accio 링크만) | [통과] 2차 · 판정 일부 대기 |
 | [F-013](features/F-013-landing-main/feature.md) | 첫 화면을 프로젝트 중심 긴 페이지로 (카드 8개 · GitHub · 연락처 · 스킬 · 헤더 검색 · Main / Study) | [통과] 3차(인트로 영상 제거) · 판정 완료 |
 | [F-014](features/F-014-cover-letter-landing/feature.md) | 자소서형 랜딩 (첫 방문 때 홈 대신 자기소개서 스크롤 페이지) | [통과] 6차 · 3차 판정 · Q-009 대기 |
+| [F-015](features/F-015-main-sub-projects/feature.md) | 프로젝트 메인 · 서브 + 디딤 프로젝트 페이지 | [통과] 1차 · 판정 대기 |
 
-최종 수정: 2026-11-18 · 관련: D-001~D-007, F-001~F-014, Q-001~Q-009
+최종 수정: 2026-11-19 · 관련: D-001~D-008, F-001~F-015, Q-001~Q-009

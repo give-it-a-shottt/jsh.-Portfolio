@@ -1,3 +1,7 @@
+import dmDraft from './assets/design/didim/screen-02-draft.webp'
+import dmAnalysis from './assets/design/didim/screen-03-analysis.webp'
+import dmCard from './assets/design/didim/screen-04-card.webp'
+import dmReport from './assets/design/didim/screen-05-report.webp'
 import acHome from './assets/design/accio/screen-01-home.webp'
 import acList from './assets/design/accio/screen-02-list.webp'
 import acDetail from './assets/design/accio/screen-03-detail.webp'
@@ -26,10 +30,12 @@ import flPcMain from './assets/design/flaseek/pc-01-main.webp'
 import flPcList from './assets/design/flaseek/pc-02-list.webp'
 import flPcDetail from './assets/design/flaseek/pc-03-detail.webp'
 import flPcLogin from './assets/design/flaseek/pc-04-login.webp'
-import { ACCIO_LIVE, CASES, MINI_INFLEARN_LIVE, PLANFORME_LIVE, REMIND_LIVE, type DesignVariant, type Role } from './data'
+import { ACCIO_LIVE, CASES, DIDIM_GITHUB, DIDIM_LIVE, MINI_INFLEARN_LIVE, PLANFORME_LIVE, REMIND_LIVE, type DesignVariant, type Role } from './data'
 
 // 프로젝트 페이지(#/project/{slug}) 데이터 — F-011. 홈 '프로젝트' 카드도 이 목록 순서대로 만든다(F-013) —
 // 프로젝트를 추가할 때는 PROJECT_LIST 에 하나 넣으면 홈 카드 · 프로젝트 페이지 · '다음 프로젝트'가 같이 생긴다.
+// tier 'main'(대표 · 큰 카드)을 목록 앞에, 'sub'(그 밖의 작업)를 뒤에 둔다 — 홈은 tier 로 나눠 그리고, 목록은 하나라
+// '다음 프로젝트'는 메인 → 서브로 한 바퀴 돈다(D-008, F-015).
 // 틀은 피그마 jsh 파일 Page 3 「Project · Accio · PC 1440」. 칸이 비면 그 섹션을 그리지 않는다.
 // 글은 기록(Admin_Docs · Accio 포트폴리오용 기록 · data.ts 사례)에 있는 사실만 옮긴다.
 // 배포 주소는 data.ts 상수를 같이 쓴다. 역할(roles)은 사례와 맞추되, Accio 만 다르다 —
@@ -55,6 +61,8 @@ export interface ProjectTrouble {
 
 export interface Project {
   slug: string
+  /** 홈에서 메인(대표 · 큰 카드) / 서브('그 밖의 작업') — D-008 */
+  tier: 'main' | 'sub'
   name: string
   title: string
   summary: string
@@ -118,7 +126,102 @@ export function designPreview(slug: string, count = 6): DesignVariant[] {
 
 export const PROJECT_LIST: Project[] = [
   {
+    // 글은 디딤 레포의 README · 결정(D-003 · D-005 · D-031 · D-033 · D-034) · 평가 회차 2026-11-17 · 트러블슈팅에서 옮겼다(사용자 승인 2026-11-19, F-015).
+    slug: 'didim',
+    tier: 'main',
+    name: '디딤',
+    title: '디딤 — 문장마다 근거가 달린 자소서',
+    summary:
+      '공부 기록(마크다운 · 노션)을 퀴즈로 복습하고, 그 기록에서 경험 카드를 뽑아 공고에 맞는 자소서 초안과 면접 연습까지 이어 주는 서비스. AI가 쓴 문장에는 어느 카드의 어느 칸에서 왔는지 근거를 붙이고, 기록에 없는 문장에는 밑줄을 긋는다.',
+    roles: ['Design', 'Front', 'Back', 'DB'],
+    info: [
+      { label: '역할', value: '개인 작업 · 기여도 100%' },
+      { label: '기간', value: '2026.11.08 – 11.19' },
+      { label: '팀', value: '1명' },
+      { label: '스택', value: 'Next.js 16 · FastAPI · PostgreSQL · NVIDIA Nemotron' },
+    ],
+    links: [
+      { label: 'GitHub', href: DIDIM_GITHUB },
+      { label: '평가 리포트', href: `${DIDIM_LIVE}/report` },
+      { label: '샘플 체험', href: `${DIDIM_LIVE}/demo` },
+    ],
+    cover: { images: [dmDraft], device: 'desktop' },
+    structure: {
+      title: '화면에서 구조까지',
+      steps: [
+        { key: 'WEB', name: 'Next.js 16', desc: '공개 화면(랜딩 · 리포트)은 미리 그리고, 회원 화면은 서버에서 로그인을 확인한다' },
+        { key: 'API', name: 'FastAPI · Vercel Services', desc: '화면과 같은 주소의 /api/* 로 받는다. 모든 조회에 사용자 조건을 건다' },
+        { key: 'AI', name: 'NVIDIA Nemotron', desc: '정해진 형식으로 받고, 인용이 원문에 글자 그대로 없으면 버린다' },
+        { key: 'DB', name: 'PostgreSQL (Neon 싱가포르)', desc: '키워드 검색(pg_trgm). 구조는 Alembic 버전 파일로만 바꾼다' },
+      ],
+      note: 'AI 기능은 허용한 이메일만 쓴다. 공개 사이트에서는 실제 AI 결과를 넣어 둔 샘플 계정으로 같은 화면을 둘러본다.',
+    },
+    numbers: [
+      { value: '100%', label: '지어낸 문장 경고율', note: 'AI 초안에서 기록에 없는 문장에 모두 경고했다' },
+      { value: '100%', label: '심은 경험 찾은 비율', note: '노트에 심어 둔 경험 20개를 모두 카드 후보로 찾았다' },
+      { value: '94.1%', label: '매칭 적중률', note: '공고 요구 역량과 내 카드 맞추기. 없는 근거로 만든 매칭이 5개 남았다' },
+      { value: '75%', label: '심은 질문 잡은 비율', note: '지어낸 전제를 심은 면접 질문을 걸러 낸 비율. 남은 과제다' },
+    ],
+    why: '공부 기록은 계속 쌓이는데, 복습도 지원서도 매번 처음부터 다시 했다. 기록을 다시 읽지 않으니 배운 것이 남지 않고, 자소서를 쓸 때는 “그때 뭘 했더라”를 기억에 기대어 다시 찾았다. AI에게 자소서를 맡기면 빨리 쓸 수는 있다. 하지만 그럴듯한 문장 사이에 내가 하지 않은 일과 내지 않은 성과가 섞여 들어온다. 면접에서 그 문장을 물어보면 답할 수 없다. 그래서 AI가 지어낸 부분을 잡아내는 것을 가장 중요한 설계 목표로 두고, 그 설계가 실제로 얼마나 잡아내는지를 평가 수치로 공개했다.',
+    decisions: [
+      {
+        code: 'D-1',
+        title: '근거 없는 내용은 저장하지 않고 드러낸다',
+        body: '퀴즈, 카드, 자소서 문장, 면접 질문마다 출처(노트 · 카드와 위치)를 함께 저장하고 화면에 보여 준다. 경험 카드 칸은 원문 인용이 있어야 채우고, 기록에 없으면 빈칸으로 둔다. 자소서 문장에 근거가 없으면 ‘근거 없음’, 카드에 없는 숫자 · 낱말이면 ‘확인 필요’를 띄운다.',
+      },
+      {
+        code: 'D-2',
+        title: '공개 사이트의 AI는 나만 쓰고, 다른 사람은 샘플 체험으로 본다',
+        body: '디딤의 AI는 NVIDIA의 무료 API를 쓴다. 무료 체험판이라 보낸 내용과 받은 답이 기록되고 모델 개선에 쓰일 수 있다. 내 기록을 보낼 때는 괜찮지만, 다른 사람이 가입해 공부 기록과 경험을 올리면 그 내용이 그대로 넘어간다. “타인의 개인정보는 AI에 보내지 않는다”는 원칙과 부딪혀서, 공개 사이트에서는 남이 AI를 부르지 않게 했다. 대신 같은 기능을 그대로 볼 수 있게 했다. 가상 지원자의 기록을 실제 AI로 처리한 결과를 넣은 샘플 계정이 있고, 로그인 없이 기록 · 퀴즈 · 경험 카드 · 공고 매칭 · 근거 달린 자소서 · 면접 질문을 둘러볼 수 있다. 읽기만 되고, 쓰기와 AI 호출은 서버가 막는다. 막는 곳은 화면이 아니라 서버다. 구글 로그인 뒤 서버가 허용 목록의 이메일만 받는다. 버튼을 숨기는 것만으로는 막히지 않아서다. 데이터를 기록하지 않는 AI로 바꾸면 공개 범위를 다시 정한다.',
+      },
+      {
+        code: 'D-3',
+        title: '정답을 먼저 심은 가상 데이터로 잰다',
+        body: '기능마다 정답을 정해 두고 쓴 가상 노트와 공고로 채점한다. 결과는 같은 요약 파일에서 /report 와 README 표로 공개한다. 사람 판정이 끝나지 않은 수치는 ‘판정 대기’로 두고 미리 채우지 않는다.',
+      },
+      {
+        code: 'D-4',
+        title: '화면과 백엔드를 한 주소로',
+        body: 'Vercel Services로 Next.js와 FastAPI를 한 프로젝트에 올리고, /api/* 만 백엔드로 보낸다. 로그인 쿠키가 한 주소에 묶여서 주소가 다른 서버끼리 쿠키를 주고받는 설정이 필요 없다. DB는 Neon(싱가포르)이고 함수도 같은 지역에 둔다.',
+      },
+    ],
+    // 막힌 것: 펼쳐 보는 대표 1건(T-5)을 먼저, 나머지는 한 줄 요약 — Accio와 같은 방식
+    troubles: [
+      {
+        code: 'T-5',
+        title: '배포: 지역 설정이 먹지 않아 함수가 미국에 있었다',
+        problem: '설정 파일에 싱가포르를 적었지만, Services 방식에서는 적용되지 않았다. 그래서 함수는 미국, DB는 싱가포르에 있었고, 요청마다 태평양을 왕복했다.',
+        solution: '응답 머리말(x-vercel-id)로 함수 지역을 확인하고 대시보드에서 싱가포르로 고정했다.',
+        lesson: '설정 파일에 적은 값이 실제로 먹었는지는 배포 결과로 확인한다.',
+      },
+      { code: 'T-1', title: 'AI는 1분 넘게 걸리는데 프록시는 30초에 끊었다', summary: '화면은 실패로 보이는데 서버는 문제를 저장하는 어긋남이 생길 수 있었다. 기다리는 시간을 AI 전체 상한에 맞췄고, 배포 때는 Vercel 상한(120초)에 맞춰 AI 전체를 100초로 낮췄다.' },
+      { code: 'T-2', title: '무료 AI API 한도 안에서 평가 돌리기', summary: '연달아 부르면 500 · 429 · 하루 한도 · 시간 초과가 났다. 호출 사이에 쉬고, 다시 시도하고, 노트마다 바로 저장해 중간에 멈춰도 결과가 남게 했다.' },
+      { code: 'T-3', title: '검색 색인이 PostgreSQL 17에서 먹지 않았다', summary: '리뷰가 제안한 방법이 효과가 없었고, 값을 묶어 보내면 DB가 느린 방법을 골랐다. 후보를 한 번만 고르게 쿼리를 바꾸고 색인을 ‘사용자 + 본문’ 하나로 합쳤다.' },
+      { code: 'T-4', title: '리포트 응답의 모양을 배열인지만 봤다', summary: '칸이 빠진 응답이 오면 랜딩까지 통째로 깨질 수 있었다. 테스트가 찾았고, 화면이 읽는 칸의 모양까지 검사해 수치 칸만 숨게 했다.' },
+    ],
+    screens: {
+      device: 'desktop',
+      items: [
+        { image: dmDraft, label: '근거 달린 자소서' },
+        { image: dmAnalysis, label: '공고 분석 · 내 근거' },
+        { image: dmCard, label: '경험 카드 · 원문 인용' },
+        { image: dmReport, label: '평가 리포트' },
+      ],
+    },
+    next: [
+      { title: '평가 수치 캐시', body: '첫 방문 때 랜딩 수치 칸이 늦게 뜬다' },
+      { title: '공개 범위 다시 정하기', body: '데이터를 기록하지 않는 AI로 바꾸면 공개 범위를 다시 정한다. 사용자별 비용 상한과 ‘무엇을 AI에 보내는지’ 안내를 함께 정한다' },
+      { title: '노션 연결 운영 적용', body: '노션 연결을 운영에도 적용한다' },
+    ],
+    card: {
+      title: '디딤 — 문장마다 근거가 달린 자소서',
+      desc: '공부 기록에서 경험 카드를 뽑아, 문장마다 근거가 붙은 자소서와 면접 질문을 만든다. 기록에 없는 문장은 밑줄로 잡아낸다.',
+    },
+    figma: 'https://www.figma.com/design/QmJiFtWEruu2JEpNixaOop/Didim?node-id=0-1',
+  },
+  {
     slug: 'accio',
+    tier: 'main',
     name: 'Accio',
     title: 'Accio — AI 자연어 검색 쇼핑몰',
     summary:
@@ -207,6 +310,7 @@ export const PROJECT_LIST: Project[] = [
   },
   {
     slug: 'maestro',
+    tier: 'main',
     name: '마에스트로',
     title: '마에스트로 — 지금 열린 식당 3곳을 근거와 함께',
     summary:
@@ -266,6 +370,7 @@ export const PROJECT_LIST: Project[] = [
   },
   {
     slug: 'planforme',
+    tier: 'sub',
     name: 'PlanForMe',
     title: 'PlanForMe — 하루 할당량을 계산해 주는 플래너',
     summary:
@@ -324,6 +429,7 @@ export const PROJECT_LIST: Project[] = [
   },
   {
     slug: 'mini-inflearn',
+    tier: 'sub',
     name: '미니 인프런',
     title: '미니 인프런 — 포인트로 수강신청하는 강의 서비스',
     summary:
@@ -391,6 +497,7 @@ export const PROJECT_LIST: Project[] = [
   },
   {
     slug: 'remind',
+    tier: 'sub',
     name: 'remind',
     title: 'remind — 노션 학습노트 복습 퀴즈 앱',
     summary:
@@ -441,6 +548,7 @@ export const PROJECT_LIST: Project[] = [
   },
   {
     slug: 'nightly',
+    tier: 'sub',
     name: 'Nightly',
     title: 'Nightly — AI 수면 코칭 시안',
     summary:
@@ -488,6 +596,7 @@ export const PROJECT_LIST: Project[] = [
   },
   {
     slug: 'gameprobe',
+    tier: 'sub',
     name: 'GAMEPROBE',
     title: 'GAMEPROBE — 발로란트 전적 · 공략 웹 서비스 설계',
     summary: findCase('gameprobe').description,
@@ -526,6 +635,7 @@ export const PROJECT_LIST: Project[] = [
   },
   {
     slug: 'flaseek',
+    tier: 'sub',
     name: 'FLASEEK',
     title: 'FLASEEK — 자사몰 리뉴얼 시안',
     summary: findCase('flaseek-renewal').description,

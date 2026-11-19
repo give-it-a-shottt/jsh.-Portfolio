@@ -63,6 +63,19 @@ try {
   check('빈 slug', findProject(''), undefined)
   const order = PROJECT_LIST.map((p) => p.slug)
   check('다음 프로젝트는 홈 카드 순서로 돈다', order.map((slug) => nextProject(slug)?.slug), [...order.slice(1), order[0]])
+  // 메인 · 서브(D-008, F-015): 메인 3개를 목록 앞에, 첫 번째는 디딤
+  const tiers = PROJECT_LIST.map((p) => p.tier)
+  check('모든 프로젝트에 tier 가 main · sub 중 하나', tiers.filter((t) => t !== 'main' && t !== 'sub').length, 0)
+  check('메인은 디딤 · Accio · 마에스트로 순', PROJECT_LIST.filter((p) => p.tier === 'main').map((p) => p.slug), ['didim', 'accio', 'maestro'])
+  // 메인 기댓값(위 slug 3개)은 사용자가 정한 순서라 고정한다 — 메인을 바꾸면 여기도 같이 바꾼다(D-008)
+  const mainCount = tiers.filter((t) => t === 'main').length
+  check('메인이 목록 앞에 모여 있고 서브는 그 뒤에만', tiers.every((t, i) => (i < mainCount ? t === 'main' : t === 'sub')), true)
+  check('서브가 1개 이상', tiers.length - mainCount > 0, true)
+  check('디딤 링크는 GitHub · 평가 리포트 · 샘플 체험(마지막 = 주 버튼)', findProject('didim')?.links, [
+    { label: 'GitHub', href: 'https://github.com/give-it-a-shottt/Didim' },
+    { label: '평가 리포트', href: 'https://didim-gamma.vercel.app/report' },
+    { label: '샘플 체험', href: 'https://didim-gamma.vercel.app/demo' },
+  ])
   const caseHrefs = new Set(CASES.map((c) => c.href).filter(Boolean))
   for (const p of PROJECT_LIST) {
     check(`${p.slug} · 왜 만들었나 있음`, p.why.length > 0, true)

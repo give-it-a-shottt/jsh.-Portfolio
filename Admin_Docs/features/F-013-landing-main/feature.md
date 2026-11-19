@@ -38,7 +38,7 @@
 ## 결과 (AI 작성 — 구현 후)
 - 첫 화면: `SearchHome.tsx` → `HomePage.tsx`로 이름을 바꾸고 다시 짰어요. 소개(글 + 한눈에: 프로젝트 수 · 공부 노트 수 · GitHub 기여 수 · 이메일 · GitHub) → 프로젝트 8개(작은 카드, 1 · 2 · 4열) → 스킬 5묶음 → GitHub(잔디 + 대표 레포 6개) → 공부 기록(Study로). 아래쪽 연락처 섹션과 GitHub 섹션의 'GitHub 프로필' 버튼은 맨 위 '한눈에' 칸과 겹쳐서 뺐어요(사용자 결정, 2026-11-08) — 연락처는 '한눈에' 칸 한 곳이에요.
 - 스킬: 사용자 확인으로 Illustrator · Pydantic을 뺐어요(2026-11-08). Pydantic은 FastAPI와 겹쳐요. '어디서부터 볼까요' 3칸과 '진행 중인 프로젝트' 칩(`data.ts` `PROJECTS`)은 지웠어요.
-- 프로젝트 데이터(`projects.ts`): 미니 인프런 · Nightly · GAMEPROBE · FLASEEK 4개를 더했어요. 홈 카드는 `PROJECT_LIST` 순서 그대로라, 프로젝트를 하나 넣으면 카드 · 프로젝트 페이지 · '다음 프로젝트'가 같이 생겨요(`FEATURED_SLUGS` 삭제). 카드 숫자 3개(`card.metrics`)는 화면에서 빠져서 데이터도 지웠어요.
+- 프로젝트 데이터(`projects.ts`): 미니 인프런 · Nightly · GAMEPROBE · FLASEEK 4개를 더했어요. 홈 카드는 `PROJECT_LIST` 순서 그대로라, 프로젝트를 하나 넣으면 카드 · 프로젝트 페이지 · '다음 프로젝트'가 같이 생겨요(`FEATURED_SLUGS` 삭제). 카드 숫자 3개(`card.metrics`)는 화면에서 빠져서 데이터도 지웠어요. → 덧붙임(2026-11-19): 홈 카드는 [F-015](../F-015-main-sub-projects/feature.md) · [D-008](../../decisions/D-008-main-sub-projects.md)에서 메인(대표 3개, 큰 카드) · '그 밖의 작업'으로 나뉨(목록은 그대로 하나).
 - 프로젝트 페이지(`ProjectPage.tsx`): '왜 만들었나' 다음에 '디자인' 섹션을 넣었어요. 같은 서비스의 Design 사례 시안 최대 6장(아래 '화면'과 겹치는 그림은 뺌) + '디자인 과정 전체 보기' + '피그마에서 보기 ↗'. 구조 패널 · 숫자가 없는 프로젝트(GAMEPROBE)는 그 칸을 그리지 않아요. 위치 표시에서 'Fullstack'을 뺐어요.
 - 헤더(`PortfolioHeader.tsx`): 모든 화면에 40px 작은 검색창(`SearchBox` `sm`) + Main(`#/`) / Study(`#/study`) 두 탭.
 - GitHub 잔디: 바깥 이미지 서비스(ghchart)가 응답하지 않아, `npm run github:sync`(`scripts/github-sync.mjs`)가 github.com 공개 잔디 페이지를 받아 `githubContributions.json`에 저장하고 `GitHubHeatmap.tsx`가 그려요. 받기에 실패하면 기존 파일을 그대로 둬요. 스킬 · 레포 · 연락처는 `profile.ts`.
