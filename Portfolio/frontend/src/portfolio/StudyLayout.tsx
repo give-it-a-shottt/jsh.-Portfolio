@@ -99,7 +99,7 @@ export default function StudyLayout({ current, children }: StudyNavProps & { chi
   return (
     <div className="flex flex-1">
       <aside className="hidden w-70 shrink-0 border-r border-regular bg-light lg:block">
-        <div className="sticky top-0 max-h-svh overflow-y-auto px-4 pt-6 pb-10">
+        <div className="scrollbar-soft sticky top-0 max-h-svh overflow-y-auto overscroll-contain px-4 pt-6 pb-10">
           <StudyNav current={current} />
         </div>
       </aside>

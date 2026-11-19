@@ -347,6 +347,17 @@
   scrollbar-color: rgb(255 255 255 / 0.22) transparent;
 }
 
+/* 밝은 배경(Study 사이드바) 위 스크롤바 — 트랙은 투명, 막대는 얇고 옅게. 마우스를 올렸을 때만 조금 진해진다 */
+@utility scrollbar-soft {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  scrollbar-gutter: stable;
+
+  &:hover {
+    scrollbar-color: rgb(0 0 0 / 0.18) transparent;
+  }
+}
+
 @layer base {
   html {
     font-family: var(--font-sans);
