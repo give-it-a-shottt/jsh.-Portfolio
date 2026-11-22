@@ -57,20 +57,27 @@ try {
   check('사례 roles 는 Design · Front · Back · DB 만', CASES.flatMap((c) => c.roles ?? []).filter((r) => !['Design', 'Front', 'Back', 'DB'].includes(r)), [])
 
   // ── 프로젝트 데이터
-  const { PROJECT_LIST, findProject, nextProject, designPreview } = projects
+  const { PROJECT_LIST, findProject, nextProject, designPreview, mainGridLayout } = projects
   check('프로젝트 slug 는 겹치지 않는다', new Set(PROJECT_LIST.map((p) => p.slug)).size, PROJECT_LIST.length)
   check('없는 slug', findProject('없는-프로젝트'), undefined)
   check('빈 slug', findProject(''), undefined)
   const order = PROJECT_LIST.map((p) => p.slug)
   check('다음 프로젝트는 홈 카드 순서로 돈다', order.map((slug) => nextProject(slug)?.slug), [...order.slice(1), order[0]])
-  // 메인 · 서브(D-008, F-015): 메인 3개를 목록 앞에, 첫 번째는 디딤
+  // 메인 · 서브(D-008, F-015 · F-016): 메인 4개를 목록 앞에, 첫 번째는 Agora AI 토론장
   const tiers = PROJECT_LIST.map((p) => p.tier)
   check('모든 프로젝트에 tier 가 main · sub 중 하나', tiers.filter((t) => t !== 'main' && t !== 'sub').length, 0)
-  check('메인은 디딤 · Accio · 마에스트로 순', PROJECT_LIST.filter((p) => p.tier === 'main').map((p) => p.slug), ['didim', 'accio', 'maestro'])
-  // 메인 기댓값(위 slug 3개)은 사용자가 정한 순서라 고정한다 — 메인을 바꾸면 여기도 같이 바꾼다(D-008)
+  check('메인은 Agora · 디딤 · Accio · 마에스트로 순', PROJECT_LIST.filter((p) => p.tier === 'main').map((p) => p.slug), ['agora', 'didim', 'accio', 'maestro'])
+  // 메인 기댓값(위 slug 4개)은 사용자가 정한 순서라 고정한다 — 메인을 바꾸면 여기도 같이 바꾼다(D-008)
   const mainCount = tiers.filter((t) => t === 'main').length
   check('메인이 목록 앞에 모여 있고 서브는 그 뒤에만', tiers.every((t, i) => (i < mainCount ? t === 'main' : t === 'sub')), true)
   check('서브가 1개 이상', tiers.length - mainCount > 0, true)
+  // 메인 큰 카드 줄(F-016): 4개면 2칸(2×2), 그 밖엔 3칸 — 4개를 3칸에 두면 하나가 혼자 남는다
+  check('메인 4개면 2칸, 그 밖엔 3칸', [1, 2, 3, 4, 5, 6].map((n) => mainGridLayout(n).cols), [3, 3, 3, 2, 3, 3])
+  check('지금 메인 개수의 칸 수', mainGridLayout(mainCount).cols, mainCount === 4 ? 2 : 3)
+  check('Agora 링크는 GitHub · 서비스 보기(마지막 = 주 버튼)', findProject('agora')?.links, [
+    { label: 'GitHub', href: 'https://github.com/give-it-a-shottt/AgoraAI' },
+    { label: '서비스 보기', href: 'https://agora-ai-seven.vercel.app' },
+  ])
   check('디딤 링크는 GitHub · 평가 리포트 · 샘플 체험(마지막 = 주 버튼)', findProject('didim')?.links, [
     { label: 'GitHub', href: 'https://github.com/give-it-a-shottt/Didim' },
     { label: '평가 리포트', href: 'https://didim-gamma.vercel.app/report' },

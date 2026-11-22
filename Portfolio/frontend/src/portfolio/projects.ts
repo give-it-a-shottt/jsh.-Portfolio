@@ -1,3 +1,7 @@
+import agStage from './assets/design/agora/screen-01-stage.webp'
+import agPredict from './assets/design/agora/screen-02-predict.webp'
+import agResult from './assets/design/agora/screen-03-result.webp'
+import agHome from './assets/design/agora/screen-04-home.webp'
 import dmDraft from './assets/design/didim/screen-02-draft.webp'
 import dmAnalysis from './assets/design/didim/screen-03-analysis.webp'
 import dmCard from './assets/design/didim/screen-04-card.webp'
@@ -30,7 +34,7 @@ import flPcMain from './assets/design/flaseek/pc-01-main.webp'
 import flPcList from './assets/design/flaseek/pc-02-list.webp'
 import flPcDetail from './assets/design/flaseek/pc-03-detail.webp'
 import flPcLogin from './assets/design/flaseek/pc-04-login.webp'
-import { ACCIO_LIVE, CASES, DIDIM_GITHUB, DIDIM_LIVE, MINI_INFLEARN_LIVE, PLANFORME_LIVE, REMIND_LIVE, type DesignVariant, type Role } from './data'
+import { ACCIO_LIVE, AGORA_GITHUB, AGORA_LIVE, CASES, DIDIM_GITHUB, DIDIM_LIVE, MINI_INFLEARN_LIVE, PLANFORME_LIVE, REMIND_LIVE, type DesignVariant, type Role } from './data'
 
 // 프로젝트 페이지(#/project/{slug}) 데이터 — F-011. 홈 '프로젝트' 카드도 이 목록 순서대로 만든다(F-013) —
 // 프로젝트를 추가할 때는 PROJECT_LIST 에 하나 넣으면 홈 카드 · 프로젝트 페이지 · '다음 프로젝트'가 같이 생긴다.
@@ -124,7 +128,105 @@ export function designPreview(slug: string, count = 6): DesignVariant[] {
   ].slice(0, count)
 }
 
+/** 홈 메인 큰 카드 줄 — 4개를 한 줄 3칸에 두면 하나가 혼자 남아서 4개면 2×2(F-016, 디자인은 사용자 확인).
+ * 칸 수(cols)와 Tailwind 클래스를 한곳에서 정한다 — 클래스 문자열은 그대로 적어야 Tailwind가 찾는다. */
+export function mainGridLayout(count: number): { cols: 2 | 3; className: string } {
+  return count === 4 ? { cols: 2, className: 'md:grid-cols-2' } : { cols: 3, className: 'md:grid-cols-2 lg:grid-cols-3' }
+}
+
 export const PROJECT_LIST: Project[] = [
+  {
+    // 글은 AgoraAI 레포의 기획(agora-design.md §0) · 결정(D-003 · D-005) · 트러블슈팅(T-003) · 운영 DB 실측(2026-11-22)에서 옮겼다(사용자 승인 2026-11-22, F-016).
+    slug: 'agora',
+    tier: 'main',
+    name: 'Agora AI 토론장',
+    title: 'Agora AI 토론장 — AI 캐릭터들이 밸런스 게임으로 맞붙는 무대',
+    summary:
+      '밸런스 게임 주제(예: 평생 짜장 vs 평생 짬뽕)를 한국 AI(EXAONE) 냥냥이와 해외 AI(Gemini) 펭펭이가 3라운드로 토론하고, 발언의 핵심 한 구절이 예능 자막처럼 뜨는 서비스. 보기 전에 승부를 예측하고, 끝나면 AI 심판의 판정과 토론 품질 지표를 내 예측과 비교한다.',
+    roles: ['Design', 'Front', 'Back', 'DB'],
+    info: [
+      { label: '역할', value: '개인 작업 · 기여도 100%' },
+      { label: '기간', value: '2026.11.20 – 11.22' },
+      { label: '팀', value: '1명' },
+      { label: '스택', value: 'React · Vite · FastAPI · PostgreSQL · EXAONE · Gemini · Groq' },
+    ],
+    links: [
+      { label: 'GitHub', href: AGORA_GITHUB },
+      { label: '서비스 보기', href: AGORA_LIVE },
+    ],
+    cover: { images: [agStage], device: 'desktop' },
+    structure: {
+      title: '화면에서 구조까지',
+      steps: [
+        { key: 'WEB', name: 'React · Vite', desc: '화면은 DB만 읽는다. 토론이 만들어지는 중이면 새 발언을 몇 초마다 확인한다' },
+        { key: 'API', name: 'FastAPI · Vercel(싱가포르)', desc: '발언 1개 = 요청 1번. 같은 순번은 DB 고유 제약과 생성 잠금으로 한 번만 저장한다' },
+        { key: 'AI', name: 'EXAONE · Gemini · Groq', desc: '냥냥이 EXAONE → Groq Qwen, 펭펭이 Gemini → Groq gpt-oss. 앞이 막히면 그 발언만 다음 AI가 대신한다' },
+        { key: 'DB', name: 'PostgreSQL (Neon 싱가포르)', desc: '하루 한도는 UPDATE … WHERE used < limit 한 문장으로 자리를 먼저 잡는다' },
+      ],
+      note: '보기 · 예측 · 공감은 로그인 없이 된다. 토론 만들기만 로그인(구글 · 카카오)이 필요하다.',
+    },
+    numbers: [
+      { value: '98.9%', label: '반박률', note: '실제 AI 토론 18개 평균. 목표(70% 이상)를 넘었다' },
+      { value: '1.1%', label: '동의율', note: '상대 말에 그냥 맞장구친 비율. 목표(20% 이하) 안' },
+      { value: '0개', label: '멈춘 토론', note: '실제 AI로 18개를 만드는 동안 Gemini가 24번 붐볐지만 다른 AI가 대신 말했다' },
+      { value: '10 → 3', label: '동시 요청 통과', note: '하루 한도 3에 같은 계정으로 10건을 동시에 보냈을 때 운영 DB에서 정확히 3건만 통과' },
+    ],
+    why: 'AI끼리 토론하는 서비스는 영어권에만 있었고, 혼자 넣고 혼자 보는 도구라 같이 보는 재미가 없었다. AI끼리는 쉽게 동의해서 토론이 금방 심심해지기도 한다. 그래서 한국어 토론에 예능 자막을 붙이고, 보기 전에 승부를 예측하게 해 같이 보는 재미를 만들었다. 2라운드부터는 반박을 의무로 두고, 제대로 맞붙은 발언의 비율(반박률)을 화면에 숫자로 공개했다.',
+    decisions: [
+      {
+        code: 'D-1',
+        title: '발언 1개 = 요청 1번',
+        body: '서버리스 함수는 60초 제한이 있어서 6발언을 한 번에 만들 수 없다. 발언을 하나씩 만들어 DB에 저장하고 화면은 DB만 읽는다. 같은 순번이 두 번 저장되지 않게 DB 고유 제약과 생성 잠금을 걸었다.',
+      },
+      {
+        code: 'D-2',
+        title: 'AI가 막혀도 토론은 멈추지 않는다',
+        body: '냥냥이는 EXAONE(키 2개) → Groq Qwen, 펭펭이는 Gemini → Groq gpt-oss 순서로, 앞이 막히면 그 발언만 다음 AI가 대신 만든다.',
+      },
+      {
+        code: 'D-3',
+        title: '하루 한도는 “세고 나서”가 아니라 “자리부터”',
+        body: '처음엔 오늘 만든 수를 센 뒤 몇 초짜리 AI 확인을 하고 저장했는데, 리뷰에서 동시 요청이면 한도를 넘는다는 [위험] 지적을 받았다. UPDATE … WHERE used < limit 한 문장으로 자리를 먼저 잡고, 거절되거나 실패하면 돌려준다.',
+      },
+      {
+        code: 'D-4',
+        title: '키가 없으면 가짜 AI로',
+        body: '키 없이도 개발 · 테스트 · 화면 확인을 끝까지 했고, 실제 키는 배포 때 붙였다.',
+      },
+    ],
+    // 막힌 것: 펼쳐 보는 대표 1건을 먼저, 나머지는 한 줄 요약 — 디딤 · Accio와 같은 방식
+    troubles: [
+      {
+        code: 'T-1',
+        title: '운영 DB에서만 마이그레이션이 실패했다',
+        problem: '로컬(SQLite)은 참/거짓 칸 기본값 0을 받아 줬지만 Postgres는 거부했다. 테스트가 SQLite에서만 돌아서 못 잡았다.',
+        solution: '기본값을 고치고, Postgres용 SQL을 접속 없이 만들어 검사하는 테스트를 추가했다.',
+        lesson: '운영과 다른 DB로만 테스트하면 그 차이는 배포 때 터진다.',
+      },
+      { code: 'T-2', title: '쓰던 무료 AI 모델이 새 사용자에게 닫혔다', summary: 'gemini-2.5-flash가 새 사용자에게 닫혀서 "-latest" 별칭으로 바꿨다.' },
+      { code: 'T-3', title: 'NVIDIA 무료 모델은 60초 안에 답하지 못했다', summary: '답하기 전에 생각부터 해서 70~83초가 걸렸다. 직접 재 보고 EXAONE을 골랐다.' },
+      { code: 'T-4', title: '미리보기 배포까지 운영으로 판단했다', summary: '운영 비밀값을 복사하게 만들 뻔했다(리뷰 2차). 운영 판단 기준을 고쳤다.' },
+    ],
+    screens: {
+      device: 'desktop',
+      items: [
+        { image: agStage, label: '무대 · 자막 박스' },
+        { image: agPredict, label: '승부 예측' },
+        { image: agResult, label: '결과 · 토론 품질' },
+        { image: agHome, label: '홈 · 오늘의 토론' },
+      ],
+    },
+    next: [
+      { title: '심판 쏠림 고치기', body: 'AI 심판이 마지막 발언자(B편)를 편드는 쏠림이 있다(18개 중 17개)' },
+      { title: '토론 만들기 열기', body: '로그인 키를 연결해 토론 만들기를 연다' },
+      { title: '사람 분류와의 일치율', body: '‘사람 분류와의 일치율’ 지표를 잰다' },
+    ],
+    card: {
+      title: 'Agora AI 토론장 — AI가 밸런스 게임으로 맞붙는다',
+      desc: '한국 AI와 해외 AI가 3라운드로 토론하고, 발언의 핵심 한 구절이 예능 자막처럼 뜬다. 보기 전에 승부를 예측하고 AI 심판과 비교한다.',
+    },
+    figma: 'https://www.figma.com/design/QXz9VONI8xqLfc1c3moxGO/AI-%ED%86%A0%EB%A1%A0?node-id=17-461',
+  },
   {
     // 글은 디딤 레포의 README · 결정(D-003 · D-005 · D-031 · D-033 · D-034) · 평가 회차 2026-11-17 · 트러블슈팅에서 옮겼다(사용자 승인 2026-11-19, F-015).
     slug: 'didim',

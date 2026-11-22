@@ -3,7 +3,7 @@ import GitHubHeatmap from './GitHubHeatmap'
 import { EASE_OUT } from './motion'
 import { NOTES, studyHref } from './notes'
 import { CONTACT_EMAIL, CONTRIBUTIONS, GITHUB_URL, REPOS, SKILLS, repoUrl } from './profile'
-import { PROJECT_LIST, type Project } from './projects'
+import { PROJECT_LIST, type Project, mainGridLayout } from './projects'
 import { ProjectCover } from './ProjectParts'
 import RoleChips from './RoleChips'
 import { projectHref } from './routes'
@@ -30,7 +30,7 @@ function ProjectCard({ project }: { project: Project }) {
   )
 }
 
-// 메인(대표) 카드 — 한 줄 3칸, 서브 카드보다 큰 글자 · 설명 세 줄(D-008, F-015)
+// 메인(대표) 카드 — 한 줄 3칸(4개면 2×2), 서브 카드보다 큰 글자 · 설명 세 줄(D-008, F-015 · F-016)
 function MainProjectCard({ project }: { project: Project }) {
   return (
     <article className="group relative flex h-full translate-y-0 flex-col overflow-hidden rounded-card border border-light bg-default shadow-[0_1px_2px_rgb(45_42_37/0.06)] transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-[0_2px_4px_rgb(45_42_37/0.08)] motion-reduce:transition-none motion-reduce:hover:translate-y-0">
@@ -89,6 +89,7 @@ export default function HomePage() {
   }
 
   const mainProjects = PROJECT_LIST.filter((p) => p.tier === 'main')
+  const mainGrid = mainGridLayout(mainProjects.length) // 4개면 2×2, 그 밖엔 한 줄 3칸(F-016)
   const subProjects = PROJECT_LIST.filter((p) => p.tier === 'sub')
 
   const glance = [
@@ -154,7 +155,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 프로젝트 — 메인(대표 3개, 큰 카드) → 그 밖의 작업(작은 카드) */}
+      {/* 프로젝트 — 메인(대표, 큰 카드) → 그 밖의 작업(작은 카드) */}
       <section id="projects" aria-labelledby="projects-title" className="scroll-mt-4 bg-light px-5 py-16 sm:px-10 lg:py-20">
         <div className="mx-auto flex w-full max-w-300 flex-col gap-7">
           <motion.div {...reveal(0)}>
@@ -165,11 +166,11 @@ export default function HomePage() {
               sub="카드를 누르면 그 서비스의 디자인 · 프론트 · 백엔드를 한 페이지에서 볼 수 있어요."
             />
           </motion.div>
-          {/* 떠오르는 순서(reveal)는 lg 한 줄의 칸 수(메인 3 · 서브 4)마다 처음부터 — 줄마다 왼쪽에서 오른쪽으로 */}
+          {/* 떠오르는 순서(reveal)는 lg 한 줄의 칸 수(메인 3, 4개면 2 · 서브 4)마다 처음부터 — 줄마다 왼쪽에서 오른쪽으로 */}
           {mainProjects.length > 0 && (
-            <ul aria-label="대표 프로젝트" className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <ul aria-label="대표 프로젝트" className={`grid grid-cols-1 gap-5 ${mainGrid.className}`}>
               {mainProjects.map((project, i) => (
-                <motion.li key={project.slug} {...reveal(i % 3)}>
+                <motion.li key={project.slug} {...reveal(i % mainGrid.cols)}>
                   <MainProjectCard project={project} />
                 </motion.li>
               ))}

@@ -201,6 +201,9 @@ export const REMIND_LIVE = 'https://remind-flame-ten.vercel.app/'
 /** 디딤 배포 주소(F-015) — 공개는 평가 리포트 · 샘플 체험, AI 기능은 허용한 이메일만 */
 export const DIDIM_LIVE = 'https://didim-gamma.vercel.app'
 export const DIDIM_GITHUB = 'https://github.com/give-it-a-shottt/Didim'
+/** Agora AI 토론장 배포 주소(F-016) — 로그인 없이 관람 · 예측, 토론 만들기만 로그인 */
+export const AGORA_LIVE = 'https://agora-ai-seven.vercel.app'
+export const AGORA_GITHUB = 'https://github.com/give-it-a-shottt/AgoraAI'
 
 /** 분류 점 색 — Back 은 포인트 파랑, Front 는 회색, Design 은 주황, 공부 노트(Study)는 인디고 */
 export const TYPE_DOT_CLASS: Record<CaseType | 'Study', string> = {
