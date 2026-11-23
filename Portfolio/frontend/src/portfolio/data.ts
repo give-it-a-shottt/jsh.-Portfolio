@@ -204,6 +204,9 @@ export const DIDIM_GITHUB = 'https://github.com/give-it-a-shottt/Didim'
 /** Agora AI 토론장 배포 주소(F-016) — 로그인 없이 관람 · 예측, 토론 만들기만 로그인 */
 export const AGORA_LIVE = 'https://agora-ai-seven.vercel.app'
 export const AGORA_GITHUB = 'https://github.com/give-it-a-shottt/AgoraAI'
+/** 거기붐벼? 배포 주소(F-017) — 로그인 없음. 서울 주요 121곳의 혼잡도를 5분마다 수집한다 */
+export const GEOGI_LIVE = 'https://geogi-boombyeo.shop'
+export const GEOGI_GITHUB = 'https://github.com/give-it-a-shottt/geogi-boombyeo'
 
 /** 분류 점 색 — Back 은 포인트 파랑, Front 는 회색, Design 은 주황, 공부 노트(Study)는 인디고 */
 export const TYPE_DOT_CLASS: Record<CaseType | 'Study', string> = {

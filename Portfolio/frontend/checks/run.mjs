@@ -57,23 +57,44 @@ try {
   check('사례 roles 는 Design · Front · Back · DB 만', CASES.flatMap((c) => c.roles ?? []).filter((r) => !['Design', 'Front', 'Back', 'DB'].includes(r)), [])
 
   // ── 프로젝트 데이터
-  const { PROJECT_LIST, findProject, nextProject, designPreview, mainGridLayout } = projects
+  const { PROJECT_LIST, findProject, nextProject, designPreview, mainGridLayout, hasDesign, projectSections } = projects
   check('프로젝트 slug 는 겹치지 않는다', new Set(PROJECT_LIST.map((p) => p.slug)).size, PROJECT_LIST.length)
   check('없는 slug', findProject('없는-프로젝트'), undefined)
   check('빈 slug', findProject(''), undefined)
   const order = PROJECT_LIST.map((p) => p.slug)
   check('다음 프로젝트는 홈 카드 순서로 돈다', order.map((slug) => nextProject(slug)?.slug), [...order.slice(1), order[0]])
-  // 메인 · 서브(D-008, F-015 · F-016): 메인 4개를 목록 앞에, 첫 번째는 Agora AI 토론장
+  // 메인 · 서브(D-008, F-015 ~ F-017): 메인 5개를 목록 앞에, 첫 번째는 거기붐벼?
   const tiers = PROJECT_LIST.map((p) => p.tier)
   check('모든 프로젝트에 tier 가 main · sub 중 하나', tiers.filter((t) => t !== 'main' && t !== 'sub').length, 0)
-  check('메인은 Agora · 디딤 · Accio · 마에스트로 순', PROJECT_LIST.filter((p) => p.tier === 'main').map((p) => p.slug), ['agora', 'didim', 'accio', 'maestro'])
-  // 메인 기댓값(위 slug 4개)은 사용자가 정한 순서라 고정한다 — 메인을 바꾸면 여기도 같이 바꾼다(D-008)
+  check('메인은 거기붐벼? · Agora · 디딤 · Accio · 마에스트로 순', PROJECT_LIST.filter((p) => p.tier === 'main').map((p) => p.slug), ['geogi', 'agora', 'didim', 'accio', 'maestro'])
+  // 메인 기댓값(위 slug 5개)은 사용자가 정한 순서라 고정한다 — 메인을 바꾸면 여기도 같이 바꾼다(D-008)
   const mainCount = tiers.filter((t) => t === 'main').length
   check('메인이 목록 앞에 모여 있고 서브는 그 뒤에만', tiers.every((t, i) => (i < mainCount ? t === 'main' : t === 'sub')), true)
   check('서브가 1개 이상', tiers.length - mainCount > 0, true)
   // 메인 큰 카드 줄(F-016): 4개면 2칸(2×2), 그 밖엔 3칸 — 4개를 3칸에 두면 하나가 혼자 남는다
   check('메인 4개면 2칸, 그 밖엔 3칸', [1, 2, 3, 4, 5, 6].map((n) => mainGridLayout(n).cols), [3, 3, 3, 2, 3, 3])
   check('지금 메인 개수의 칸 수', mainGridLayout(mainCount).cols, mainCount === 4 ? 2 : 3)
+  check('메인 5개는 한 줄 3칸(위 3 · 아래 2, F-017)', [mainCount, mainGridLayout(mainCount).cols], [5, 3])
+  check('거기붐벼? 링크는 GitHub · 서비스 보기(마지막 = 주 버튼)', findProject('geogi')?.links, [
+    { label: 'GitHub', href: 'https://github.com/give-it-a-shottt/geogi-boombyeo' },
+    { label: '서비스 보기', href: 'https://geogi-boombyeo.shop' },
+  ])
+  // 피그마 링크(F-017): 공개하지 않기로 한 프로젝트만 비운다 — 실수로 빠뜨린 것을 잡으려고 목록을 고정한다
+  check('피그마 링크가 없는 프로젝트는 거기붐벼?뿐', PROJECT_LIST.filter((p) => !p.figma).map((p) => p.slug), ['geogi'])
+  check('디자인 섹션 — 피그마 링크만 있음', hasDesign({ figma: 'https://www.figma.com/design/x' }), true)
+  check('디자인 섹션 — Design 사례만 있음', hasDesign({ designCase: 'remind' }), true)
+  check('디자인 섹션 — 둘 다 없으면 그리지 않는다', hasDesign({}), false)
+  check('디자인 섹션 — 빈 문자열도 없는 것으로 본다', hasDesign({ figma: '' }), false)
+  check('거기붐벼?는 디자인 섹션이 없다', hasDesign(findProject('geogi')), false)
+  // 목차(F-017): 섹션 번호는 목차 순서에서 나온다 — id 가 겹치거나 '디자인' 줄과 섹션이 어긋나면 번호가 틀어진다
+  const sectionIds = (p) => projectSections(p).map((s) => s.id)
+  check('목차 섹션 id 는 프로젝트 안에서 겹치지 않는다', PROJECT_LIST.filter((p) => new Set(sectionIds(p)).size !== sectionIds(p).length).map((p) => p.slug), [])
+  check("목차의 '디자인' 줄은 디자인 섹션이 있을 때만", PROJECT_LIST.filter((p) => sectionIds(p).includes('design') !== hasDesign(p)).map((p) => p.slug), [])
+  check('거기붐벼? 목차는 왜 · 결정 · 막힌 것 · 화면 · 다음', sectionIds(findProject('geogi')), ['why', 'decisions', 'troubles', 'screens', 'next'])
+  // 거기붐벼? 글은 승인받은 초안 그대로다(F-017) — 줄을 빠뜨리거나 더하면 여기서 잡힌다
+  const geogi = findProject('geogi')
+  check('거기붐벼? 숫자 4 · 결정 4 · 막힌 것 5 · 화면 4 · 다음 3', [geogi.numbers.length, geogi.decisions.length, geogi.troubles.length, geogi.screens.items.length, geogi.next.length], [4, 4, 5, 4, 3])
+  check('거기붐벼? 결정 · 막힌 것 번호', [geogi.decisions.map((d) => d.code), geogi.troubles.map((t) => t.code)], [['D-1', 'D-2', 'D-3', 'D-4'], ['T-1', 'T-2', 'T-3', 'T-4', 'T-5']])
   check('Agora 링크는 GitHub · 서비스 보기(마지막 = 주 버튼)', findProject('agora')?.links, [
     { label: 'GitHub', href: 'https://github.com/give-it-a-shottt/AgoraAI' },
     { label: '서비스 보기', href: 'https://agora-ai-seven.vercel.app' },
@@ -89,7 +110,7 @@ try {
     check(`${p.slug} · 버튼 1개 이상`, p.links.length > 0, true)
     check(`${p.slug} · 대표 화면 있음`, p.cover.images.length > 0 && p.cover.images.every(Boolean), true)
     check(`${p.slug} · 홈 카드 제목 · 설명 있음`, Boolean(p.card.title && p.card.desc), true)
-    check(`${p.slug} · 피그마 공개 링크`, /^https:\/\/www\.figma\.com\/design\//.test(p.figma) && !p.figma.includes('t='), true)
+    if (p.figma !== undefined) check(`${p.slug} · 피그마 공개 링크`, /^https:\/\/www\.figma\.com\/design\//.test(p.figma) && !p.figma.includes('t='), true)
     if (p.designCase) check(`${p.slug} · 디자인 섹션 시안 있음`, designPreview(p.designCase).length > 0, true)
     check(
       `${p.slug} · 막힌 것의 사례 링크가 실제 사례`,

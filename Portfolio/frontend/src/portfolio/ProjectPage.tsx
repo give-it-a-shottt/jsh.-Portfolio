@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ChevronRightIcon, MinusIcon, PlusIcon } from '../shared/icons'
-import { designPreview, findProject, nextProject, type Project, type ProjectTrouble } from './projects'
+import { designPreview, findProject, hasDesign, nextProject, projectSections, type Project, type ProjectTrouble } from './projects'
 import { ButtonLink, ProjectCover } from './ProjectParts'
 import RoleChips from './RoleChips'
 import { caseHref, projectHref } from './routes'
@@ -8,24 +8,6 @@ import { caseHref, projectHref } from './routes'
 // 프로젝트 페이지(F-011) — 피그마 jsh Page 3 「Project · Accio · PC 1440」.
 // 위: 화면(7칸) | 구조(5칸) → 정보 띠 → 숫자 → 목차(3칸) + 본문(9칸) → 다음 프로젝트.
 // 서비스 하나의 디자인 · 프론트 · 백엔드를 한 장에서 보도록, 본문에 '디자인'(시안 + 피그마)과 '막힌 것과 해결'(Front · Back 사례)을 함께 둔다(F-013).
-
-interface Section {
-  id: string
-  title: string
-}
-
-/** 데이터가 있는 섹션만 목차에 올린다 */
-function sectionsOf(p: Project): Section[] {
-  return [
-    { id: 'why', title: '왜 만들었나' },
-    { id: 'design', title: '디자인' },
-    p.decisions && { id: 'decisions', title: '중요한 결정' },
-    p.chart && { id: 'chart', title: '검색 정확도' },
-    p.troubles && { id: 'troubles', title: '막힌 것과 해결' },
-    { id: 'screens', title: '화면' },
-    p.next && { id: 'next', title: '다음 단계' },
-  ].filter(Boolean) as Section[]
-}
 
 /** 해시 라우팅이라 목차는 주소(#…)를 바꾸지 않고 스크롤만 한다 */
 function scrollToSection(id: string) {
@@ -113,7 +95,14 @@ function TroubleItem({ trouble, open }: { trouble: ProjectTrouble; open: boolean
 /** 디자인 섹션에 보여 줄 시안 수 */
 const DESIGN_PREVIEW_MAX = 6
 
-/** 디자인 — 같은 서비스의 Design 사례 시안 몇 장 + 피그마 공개 링크. 사례가 없으면 피그마 버튼만 */
+/** 디자인 섹션 제목 아래 한 줄 — 시안이 있는지, 피그마 원본을 열 수 있는지에 맞춘다 */
+function designSub(hasPreview: boolean, hasFigma: boolean): string {
+  if (!hasPreview) return '피그마 원본 파일을 열어 볼 수 있어요.'
+  return hasFigma ? '피그마로 설계한 화면과 기준이에요. 원본 파일도 열어 볼 수 있어요.' : '피그마로 설계한 화면과 기준이에요.'
+}
+
+/** 디자인 — 같은 서비스의 Design 사례 시안 몇 장 + 피그마 공개 링크. 사례가 없으면 피그마 버튼만,
+ * 피그마 링크가 없으면 시안만. 둘 다 없으면 이 섹션을 부르지 않는다(hasDesign) */
 function DesignSection({ project, index }: { project: Project; index: number }) {
   // 아래 '화면' 섹션에 이미 있는 그림은 빼고 고른다 — 디자인만 한 프로젝트는 둘이 겹치기 쉬워서,
   // 빼고도 DESIGN_PREVIEW_MAX 장이 남도록 두 배를 받아 거른다
@@ -128,7 +117,7 @@ function DesignSection({ project, index }: { project: Project; index: number }) 
       <SectionHeading
         index={index}
         title="디자인"
-        sub={preview.length > 0 ? '피그마로 설계한 화면과 기준이에요. 원본 파일도 열어 볼 수 있어요.' : '피그마 원본 파일을 열어 볼 수 있어요.'}
+        sub={designSub(preview.length > 0, Boolean(project.figma))}
       />
       {preview.length > 0 && (
         <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -145,7 +134,7 @@ function DesignSection({ project, index }: { project: Project; index: number }) 
       )}
       <div className="flex flex-wrap gap-2">
         {project.designCase && <ButtonLink href={caseHref(project.designCase)} label="디자인 과정 전체 보기" />}
-        <ButtonLink href={project.figma} label="피그마에서 보기" />
+        {project.figma && <ButtonLink href={project.figma} label="피그마에서 보기" />}
       </div>
     </section>
   )
@@ -153,7 +142,7 @@ function DesignSection({ project, index }: { project: Project; index: number }) 
 
 export default function ProjectPage({ slug }: { slug: string }) {
   const project = findProject(slug)
-  const sections = project ? sectionsOf(project) : []
+  const sections = project ? projectSections(project) : []
   const active = useActiveSection(sections.map((s) => s.id))
 
   if (!project) {
@@ -306,7 +295,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
               <p className="text-16 break-keep text-sub">{project.why}</p>
             </section>
 
-            <DesignSection project={project} index={indexOf('design')} />
+            {hasDesign(project) && <DesignSection project={project} index={indexOf('design')} />}
 
             {project.decisions && (
               <section id="project-decisions" className="flex scroll-mt-6 flex-col gap-5">

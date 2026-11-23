@@ -1,3 +1,7 @@
+import ggHome from './assets/design/geogi/screen-01-home.webp'
+import ggDetail from './assets/design/geogi/screen-02-detail.webp'
+import ggNearby from './assets/design/geogi/screen-03-nearby.webp'
+import ggSearch from './assets/design/geogi/screen-04-search.webp'
 import agStage from './assets/design/agora/screen-01-stage.webp'
 import agPredict from './assets/design/agora/screen-02-predict.webp'
 import agResult from './assets/design/agora/screen-03-result.webp'
@@ -34,7 +38,7 @@ import flPcMain from './assets/design/flaseek/pc-01-main.webp'
 import flPcList from './assets/design/flaseek/pc-02-list.webp'
 import flPcDetail from './assets/design/flaseek/pc-03-detail.webp'
 import flPcLogin from './assets/design/flaseek/pc-04-login.webp'
-import { ACCIO_LIVE, AGORA_GITHUB, AGORA_LIVE, CASES, DIDIM_GITHUB, DIDIM_LIVE, MINI_INFLEARN_LIVE, PLANFORME_LIVE, REMIND_LIVE, type DesignVariant, type Role } from './data'
+import { ACCIO_LIVE, AGORA_GITHUB, AGORA_LIVE, CASES, DIDIM_GITHUB, DIDIM_LIVE, GEOGI_GITHUB, GEOGI_LIVE, MINI_INFLEARN_LIVE, PLANFORME_LIVE, REMIND_LIVE, type DesignVariant, type Role } from './data'
 
 // 프로젝트 페이지(#/project/{slug}) 데이터 — F-011. 홈 '프로젝트' 카드도 이 목록 순서대로 만든다(F-013) —
 // 프로젝트를 추가할 때는 PROJECT_LIST 에 하나 넣으면 홈 카드 · 프로젝트 페이지 · '다음 프로젝트'가 같이 생긴다.
@@ -89,8 +93,9 @@ export interface Project {
   next?: { title: string; body: string }[]
   /** 홈 카드 — 한 줄 제목 · 두 줄 설명 */
   card: { title: string; desc: string }
-  /** 피그마 공개 링크(보기 전용, F-013) — 프로젝트 페이지 '디자인' 섹션의 버튼 */
-  figma: string
+  /** 피그마 공개 링크(보기 전용, F-013) — 프로젝트 페이지 '디자인' 섹션의 버튼.
+   * 공개하지 않기로 한 프로젝트는 비워 둔다(F-017). 비우면 버튼을 그리지 않는다 */
+  figma?: string
   /** 같은 서비스의 Design 사례 slug — 프로젝트 페이지 '디자인' 섹션에 시안을 함께 보여 준다(F-013) */
   designCase?: string
 }
@@ -114,6 +119,31 @@ function designProblem(slug: string) {
   return problem
 }
 
+/** 프로젝트 페이지에 '디자인' 섹션을 그릴지 — 피그마 링크나 Design 사례 중 하나는 있어야 보여 줄 것이 있다(F-017).
+ * 전제: Design 사례를 건 프로젝트는 그 사례에 시안이 1장 이상 있다. 없으면 피그마 링크가 없을 때 제목만 남는
+ * 빈 섹션이 되므로, npm run check 가 프로젝트마다 '디자인 섹션 시안 있음'으로 확인한다 */
+export function hasDesign(project: Pick<Project, 'figma' | 'designCase'>): boolean {
+  return Boolean(project.figma || project.designCase)
+}
+
+export interface ProjectSection {
+  id: string
+  title: string
+}
+
+/** 프로젝트 페이지 목차 — 데이터가 있는 섹션만 올린다. 화면(ProjectPage)과 검사(checks/run.mjs)가 같은 목록을 쓴다 */
+export function projectSections(p: Project): ProjectSection[] {
+  return [
+    { id: 'why', title: '왜 만들었나' },
+    hasDesign(p) && { id: 'design', title: '디자인' },
+    p.decisions && { id: 'decisions', title: '중요한 결정' },
+    p.chart && { id: 'chart', title: '검색 정확도' },
+    p.troubles && { id: 'troubles', title: '막힌 것과 해결' },
+    { id: 'screens', title: '화면' },
+    p.next && { id: 'next', title: '다음 단계' },
+  ].filter(Boolean) as ProjectSection[]
+}
+
 /** Design 사례의 시안을 장표 → 화면 → 기획 · 시스템 순으로 모아 앞에서 몇 장 — 프로젝트 페이지 '디자인' 섹션용 */
 export function designPreview(slug: string, count = 6): DesignVariant[] {
   const d = findCase(slug).design
@@ -129,12 +159,105 @@ export function designPreview(slug: string, count = 6): DesignVariant[] {
 }
 
 /** 홈 메인 큰 카드 줄 — 4개를 한 줄 3칸에 두면 하나가 혼자 남아서 4개면 2×2(F-016, 디자인은 사용자 확인).
+ * 5개는 한 줄 3칸이라 위 3개 · 아래 2개로 놓인다(F-017, 사용자 선택).
  * 칸 수(cols)와 Tailwind 클래스를 한곳에서 정한다 — 클래스 문자열은 그대로 적어야 Tailwind가 찾는다. */
 export function mainGridLayout(count: number): { cols: 2 | 3; className: string } {
   return count === 4 ? { cols: 2, className: 'md:grid-cols-2' } : { cols: 3, className: 'md:grid-cols-2 lg:grid-cols-3' }
 }
 
 export const PROJECT_LIST: Project[] = [
+  {
+    // 글은 geogi-boombyeo 레포의 디자인 md(§0 브리프) · 결정(D-001 · D-002 · D-004 · D-009 · D-011) · 트러블슈팅(T-001 · T-004 ~ T-006 · T-008) · 실측(2026-11-23)에서 옮겼다(사용자 승인 2026-11-23, F-017).
+    slug: 'geogi',
+    tier: 'main',
+    name: '거기붐벼?',
+    title: '거기붐벼? — 몇 시에 가면 덜 붐비는지 한 문장으로',
+    summary:
+      '서울 주요 121곳의 혼잡도를 5분마다 모아, “오후 4시부터 6시까지 여유로울 거예요”처럼 언제 가면 되는지를 가장 큰 글자로 답하는 모바일 웹. 지금 붐비면 근처의 덜 붐비는 곳을 가까운 순으로 보여 준다.',
+    roles: ['Design', 'Front', 'Back', 'DB'],
+    info: [
+      { label: '역할', value: '개인 작업 · 기여도 100%' },
+      { label: '기간', value: '2026.11.23' },
+      { label: '팀', value: '1명' },
+      { label: '스택', value: 'Next.js 16 · FastAPI · PostgreSQL · Docker · GitHub Actions' },
+    ],
+    links: [
+      { label: 'GitHub', href: GEOGI_GITHUB },
+      { label: '서비스 보기', href: GEOGI_LIVE },
+    ],
+    cover: { images: [ggHome, ggDetail, ggNearby], device: 'mobile' },
+    structure: {
+      title: '화면에서 구조까지',
+      steps: [
+        { key: 'WEB', name: 'Next.js 16', desc: '장소 121곳의 페이지를 미리 만들고 1분마다 갱신한다. 브라우저는 같은 주소의 /api로만 요청한다' },
+        { key: 'API', name: 'FastAPI', desc: '읽기만 한다. 답 한 줄, 여유 순위, 근처 대안을 계산한다' },
+        { key: 'WORKER', name: '수집 워커', desc: '5분마다 121곳을 한 번에 10개씩 가져온다. 웹 서버와 따로 한 개만 띄운다' },
+        { key: 'DB', name: 'PostgreSQL', desc: '쌓이는 기록과 최신 상태를 다른 표에 둔다' },
+      ],
+      note: '서버 한 대(메모리 1GB)라 빌드는 깃허브 Actions가 하고, 서버는 이미지를 내려받아 켜기만 한다.',
+    },
+    numbers: [
+      { value: '121곳', label: '5분마다 수집', note: '실제 인증키로 한 바퀴 2.3초, 성공 121 · 실패 0' },
+      { value: '103개', label: '백엔드 테스트', note: '답 문장 규칙의 줄마다, 이상한 응답 · 끝나지 않는 응답 · 저장 실패까지' },
+      { value: '1건', label: '리뷰가 찾은 [위험]', note: '테스트와 실제 수집이 통과한 뒤에, 리뷰어가 코드를 읽고 찾았다' },
+      { value: '1GB', label: '서버 메모리', note: '프로그램 다섯 개를 켜고 여유 363MB. 빌드는 깃허브에서 한다' },
+    ],
+    why: '서울시 공식 사이트는 121곳의 혼잡도를 한눈에 보여 주지만, 그래서 언제 가야 하는지는 사용자가 판단해야 한다. 가 보고 나서야 붐비는 걸 알고, 현장에서는 대안을 찾기 어렵다. 그래서 정보를 펼쳐 놓는 대신 “언제 가면 되는지”를 한 문장으로 먼저 답하고, 붐비면 근처의 덜 붐비는 곳을 알려 주는 서비스를 만들었다. 서울시 API는 한 번에 한 곳만, 지금 값만 준다. 그래서 수집을 따로 돌려 DB에 쌓고, 화면은 우리 DB만 읽게 했다.',
+    decisions: [
+      {
+        code: 'D-1',
+        title: '수집 워커를 웹 서버와 분리',
+        body: '웹 서버는 여러 개를 띄우는데, 그 안에 수집을 넣으면 서버 수만큼 같은 값을 여러 번 받아 온다. 그래서 수집은 따로 띄우는 프로그램 하나가 맡는다.',
+      },
+      {
+        code: 'D-2',
+        title: '쌓이는 기록과 최신 상태를 다른 표로',
+        body: '화면은 최신 상태 121줄만 읽는다. 기록이 계속 쌓여도 화면은 느려지지 않는다.',
+      },
+      {
+        code: 'D-3',
+        title: '답 한 줄은 서버의 순수 함수',
+        body: 'DB도 시계도 쓰지 않고 넣은 값만으로 문장을 만든다. 그래서 문구 규칙의 줄마다 테스트로 확인할 수 있다.',
+      },
+      {
+        code: 'D-4',
+        title: '응답의 장소 코드를 물어본 장소와 대조',
+        body: '체험용 인증키는 어떤 장소를 물어도 한 곳의 값만 돌려준다. 확인 없이 저장하면 121곳이 모두 같은 값이 되는데 겉으로는 정상처럼 보인다.',
+      },
+    ],
+    // 막힌 것: 펼쳐 보는 대표 1건을 먼저, 나머지는 한 줄 요약 — Agora · 디딤 · Accio와 같은 방식
+    troubles: [
+      {
+        code: 'T-1',
+        title: '이상한 응답 하나가 수집 한 바퀴 전체를 멈췄다',
+        problem: '121곳을 다 모은 뒤에 저장하는 구조라, 한 곳의 응답 모양이 예상과 다르면 그 예외가 전체를 깨뜨려 121곳 모두 저장되지 않았다. 테스트도 실제 수집도 통과한 상태였다.',
+        solution: '응답의 모양을 먼저 확인하고, 그래도 생기는 예상 밖의 오류는 그 장소만의 실패로 기록한다. 장소 하나에 쓰는 전체 시간에도 한도를 두었다.',
+        lesson: '“한 곳의 실패가 다른 곳을 막지 않는다”는 약속은 실패를 일부러 만들어 봐야 확인된다.',
+      },
+      { code: 'T-2', title: '통신 라이브러리가 인증키가 든 주소를 로그에 찍었다', summary: '서울시 API는 인증키를 주소에 넣는다. 테스트가 로그에서 키를 찾아냈고, 수집 코드를 불러오는 순간 주소 로그를 끄게 했다.' },
+      { code: 'T-3', title: '없는 장소 주소가 404가 아니라 200으로 응답했다', summary: '페이지 껍데기가 먼저 나간 뒤라 상태 코드가 이미 정해져 있었다. 요청이 페이지에 닿기 전에 121곳 목록과 비교해 걸렀다.' },
+      { code: 'T-4', title: '“다시 시도”를 눌러도 같은 화면이 나왔다', summary: '서버가 1분 동안 기억해 둔 결과가 다시 나왔다. 버튼이 그 기억을 먼저 지우게 했다.' },
+      { code: 'T-5', title: '아무것도 안 띄운 서버가 메모리를 절반 넘게 썼다', summary: '많이 쓰는 순서로 뽑아 보니 가상 서버에서는 쓸모없는 펌웨어 업데이트 프로그램이 200MB였다. 끄고 여유를 455MB에서 629MB로 늘렸다.' },
+    ],
+    screens: {
+      device: 'mobile',
+      items: [
+        { image: ggHome, label: '홈 · 여유 TOP 5' },
+        { image: ggDetail, label: '장소 상세 · 12시간 그래프' },
+        { image: ggNearby, label: '근처 덜 붐비는 곳' },
+        { image: ggSearch, label: '검색 · 별칭' },
+      ],
+    },
+    next: [
+      { title: '요일 · 시간대 패턴', body: '수집 기록이 쌓이면 “성수는 토요일 몇 시가 덜 붐빈다” 같은 패턴을 만든다' },
+      { title: 'TOP 5 둘째 줄 문구', body: 'TOP 5 둘째 줄 문구를 장소마다 다르게 한다' },
+      { title: '편하게 서울', body: '승강기 정보를 더해 유모차 · 휠체어 이용자가 쓰기 편하게 한다' },
+    ],
+    card: {
+      title: '거기붐벼? — 몇 시에 가면 덜 붐비는지',
+      desc: '서울 121곳의 혼잡도를 5분마다 모아 “언제 가면 되는지”를 한 문장으로 답한다. 붐비면 근처의 덜 붐비는 곳을 알려 준다.',
+    },
+  },
   {
     // 글은 AgoraAI 레포의 기획(agora-design.md §0) · 결정(D-003 · D-005) · 트러블슈팅(T-003) · 운영 DB 실측(2026-11-22)에서 옮겼다(사용자 승인 2026-11-22, F-016).
     slug: 'agora',
