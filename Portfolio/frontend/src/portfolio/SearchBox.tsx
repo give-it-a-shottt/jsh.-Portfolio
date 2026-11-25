@@ -19,7 +19,7 @@ const SIZE = {
     option: 'px-4 text-16',
     placeholder: '문제, 기술, 공부한 내용을 검색해 보세요',
   },
-  // 헤더: 40px 알약 — 모든 화면에 작게 둔다(F-013)
+  // 헤더: 40px 알약 - 모든 화면에 작게 둔다(F-013)
   sm: {
     bar: 'h-10 gap-2 pr-1 pl-4',
     icon: 16,
@@ -53,7 +53,7 @@ interface SearchBoxProps {
   onSearch: (query: string) => void
 }
 
-// 자동완성 검색창 — 포커스하면 추천/자동완성 목록이 열리고 ↑↓ 로 고르고 Enter 로 검색, Esc 로 닫는다.
+// 자동완성 검색창 - 포커스하면 추천/자동완성 목록이 열리고 ↑↓ 로 고르고 Enter 로 검색, Esc 로 닫는다.
 export default function SearchBox({ size, defaultValue = '', glow = false, onSearch }: SearchBoxProps) {
   const style = SIZE[size]
   const listId = useId()
@@ -79,7 +79,7 @@ export default function SearchBox({ size, defaultValue = '', glow = false, onSea
           e.preventDefault()
           search(suggestions[active]?.text ?? value)
         }}
-        className={`flex items-center rounded-full border bg-default ${style.bar} ${glow ? 'search-glow border-transparent' : focused ? 'border-black shadow-[0_8px_24px_rgba(45,42,37,0.06)] transition-shadow' : 'border-regular transition-shadow'}`}
+        className={`flex items-center rounded-full border bg-default ${style.bar} ${glow ? 'search-glow border-transparent' : focused ? 'border-black shadow-[0_8px_24px_rgba(42,42,55,0.06)] transition-[border-color,box-shadow] duration-200' : 'border-regular transition-[border-color,box-shadow] duration-200 hover:border-hover'}`}
       >
         <SearchIcon size={style.icon} className="shrink-0 text-icon-main" />
         <input
@@ -151,7 +151,7 @@ export default function SearchBox({ size, defaultValue = '', glow = false, onSea
 
       {open && (
         <div
-          className={`absolute inset-x-0 z-10 rounded-card border border-regular bg-default p-2 shadow-[0_12px_32px_rgba(45,42,37,0.08)] ${style.dropdown}`}
+          className={`absolute inset-x-0 z-10 rounded-card border border-regular bg-default p-2 shadow-[0_12px_32px_rgba(42,42,55,0.08)] ${style.dropdown}`}
         >
           <p className="px-4 pt-2 pb-1 text-12 font-medium text-sub-weak">{value.trim() ? '자동완성' : '추천 검색어'}</p>
           <ul id={listId} role="listbox" aria-label="검색어 제안">

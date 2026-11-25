@@ -1,60 +1,72 @@
 import { motion, useReducedMotion } from 'motion/react'
 import GitHubHeatmap from './GitHubHeatmap'
+import ProjectShowcase from './home/ProjectShowcase'
+import { scrollToShowcase } from './home/scrollToShowcase'
 import { EASE_OUT } from './motion'
 import { NOTES, studyHref } from './notes'
-import { CONTACT_EMAIL, CONTRIBUTIONS, GITHUB_URL, REPOS, SKILLS, repoUrl } from './profile'
-import { PROJECT_LIST, type Project, mainGridLayout } from './projects'
-import { ProjectCover } from './ProjectParts'
-import RoleChips from './RoleChips'
+import { ACTIVE_DAYS, CONTACT_EMAIL, CONTRIBUTIONS, GITHUB_URL, REPOS, SKILLS, repoUrl } from './profile'
+import { PROJECT_LIST, showcaseProjects, type Project, type ShowcaseProject } from './projects'
+import { CoverPlate } from './ProjectParts'
 import { projectHref } from './routes'
+import useReveal from './useReveal'
 
-// 첫 화면(F-013) — 스크롤 한 번으로 나를 다 보는 긴 페이지.
-// 소개(+ 한눈에: 숫자 · 이메일 · GitHub) → 프로젝트(메인 큰 카드 → '그 밖의 작업' 작은 카드, D-008) → 스킬 → GitHub → 공부 기록.
-// 연락처는 맨 위 '한눈에' 칸 한 곳에만 둔다 — 아래에 다시 두면 겹친다(사용자 결정).
-// 검색은 헤더로 옮겼다. 프로젝트를 추가할 때는 projects.ts 의 PROJECT_LIST 에 하나 넣으면 카드가 생긴다.
+// 홈(F-018 · D-009) - 첫 문장 + 대표 프로젝트 목차 → 메인 5개 스크롤 섹션 → 그 밖의 작업 → 스킬 → GitHub → 공부 기록.
+// 연락처는 첫 화면 한 곳에만 둔다 - 아래에 다시 두면 겹친다(사용자 결정).
+// 프로젝트를 추가할 때는 projects.ts 의 PROJECT_LIST 에 하나 넣으면 된다. 메인이면 showcase 칸도 채운다.
 
-function ProjectCard({ project }: { project: Project }) {
+const MAIN_PROJECTS = showcaseProjects(PROJECT_LIST)
+const SUB_PROJECTS = PROJECT_LIST.filter((p) => p.tier === 'sub')
+
+const GLANCE = [
+  { value: `${PROJECT_LIST.length}개`, label: '프로젝트' },
+  { value: `${NOTES.length}개`, label: '공부 노트' },
+  { value: `${CONTRIBUTIONS.total.toLocaleString()}건`, label: 'GitHub 기여 (최근 1년)' },
+]
+
+/** 첫 화면 아래 목차 - 누르면 그 프로젝트 섹션으로 스크롤한다(PC 만, 모바일은 바로 아래에 섹션이 이어진다) */
+function IndexCard({ project, index }: { project: ShowcaseProject; index: number }) {
   return (
-    <article className="group relative flex h-full translate-y-0 flex-col overflow-hidden rounded-card border border-light bg-default shadow-[0_1px_2px_rgb(45_42_37/0.06)] transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-[0_2px_4px_rgb(45_42_37/0.08)] motion-reduce:transition-none motion-reduce:hover:translate-y-0">
-      <ProjectCover cover={project.cover} name={project.name} rounded="rounded-none" loading="lazy" />
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <RoleChips roles={project.roles} />
-        <h3 className="text-16 font-semibold break-keep text-main">
-          <a href={projectHref(project.slug)} className="after:absolute after:inset-0 group-hover:text-portfolio">
-            {project.card.title}
-          </a>
-        </h3>
-        <p className="line-clamp-2 text-13 break-keep text-sub">{project.card.desc}</p>
-      </div>
-    </article>
+    <button type="button" onClick={() => scrollToShowcase(project.slug)} className="lift group flex w-full flex-col gap-3 text-left">
+      <CoverPlate cover={project.cover} rounded="rounded-thumb" />
+      <span className="flex flex-col gap-0.5">
+        <span className="text-13 font-semibold text-portfolio tabular-nums">{String(index + 1).padStart(2, '0')}</span>
+        <span className="text-16 font-semibold break-keep text-main">{project.name}</span>
+      </span>
+    </button>
   )
 }
 
-// 메인(대표) 카드 — 한 줄 3칸(4개면 2×2), 서브 카드보다 큰 글자 · 설명 세 줄(D-008, F-015 · F-016)
-function MainProjectCard({ project }: { project: Project }) {
+function SubCard({ project }: { project: Project }) {
   return (
-    <article className="group relative flex h-full translate-y-0 flex-col overflow-hidden rounded-card border border-light bg-default shadow-[0_1px_2px_rgb(45_42_37/0.06)] transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-[0_2px_4px_rgb(45_42_37/0.08)] motion-reduce:transition-none motion-reduce:hover:translate-y-0">
-      <ProjectCover cover={project.cover} name={project.name} rounded="rounded-none" loading="lazy" />
-      <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
-        <RoleChips roles={project.roles} />
-        <h3 className="text-18 font-semibold break-keep text-main sm:text-20">
-          <a href={projectHref(project.slug)} className="after:absolute after:inset-0 group-hover:text-portfolio">
-            {project.card.title}
-          </a>
-        </h3>
-        <p className="line-clamp-3 text-14 break-keep text-sub sm:text-15">{project.card.desc}</p>
+    <a href={projectHref(project.slug)} className="lift group flex h-full items-center gap-4 sm:flex-col sm:items-stretch">
+      <CoverPlate cover={project.cover} className="w-32 shrink-0 sm:w-auto" />
+      <div className="flex min-w-0 flex-col gap-1.5">
+        <h3 className="text-16 font-semibold break-keep text-main sm:text-18">{project.name}</h3>
+        <p lang="en" className="hidden text-13 font-medium tracking-normal text-sub-weak sm:block">
+          {project.roles.join(' · ')}
+        </p>
+        <p className="line-clamp-2 text-13 break-keep text-sub sm:text-14">{project.card.desc}</p>
       </div>
-    </article>
+    </a>
   )
 }
 
-function SectionTitle({ id, en, title, sub }: { id: string; en: string; title: string; sub?: string }) {
+interface SectionTitleProps {
+  id: string
+  en: string
+  title: string
+  sub?: string
+  /** 회색 구역이면 작은 빨강 글자를 한 단계 진하게 */
+  panel?: boolean
+}
+
+function SectionTitle({ id, en, title, sub, panel = false }: SectionTitleProps) {
   return (
     <div className="flex flex-col gap-2">
-      <span lang="en" className="text-14 font-semibold tracking-normal text-portfolio">
+      <span lang="en" className={`text-14 font-semibold tracking-normal ${panel ? 'text-portfolio-strong' : 'text-portfolio'}`}>
         {en}
       </span>
-      <h2 id={id} className="text-24 font-semibold break-keep text-main sm:text-32">
+      <h2 id={id} className="text-28 font-semibold break-keep text-main sm:text-40">
         {title}
       </h2>
       {sub && <p className="text-15 break-keep text-sub sm:text-16">{sub}</p>}
@@ -64,154 +76,122 @@ function SectionTitle({ id, en, title, sub }: { id: string; en: string; title: s
 
 export default function HomePage() {
   const reduceMotion = useReducedMotion()
+  const reveal = useReveal()
+  // 첫 화면은 들어오자마자 위에서부터 차례로 떠오른다
   const rise = (order: number) =>
     reduceMotion
       ? {}
       : {
           initial: { opacity: 0, y: 16 },
           animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.6, delay: 0.15 + order * 0.08, ease: EASE_OUT },
+          transition: { duration: 0.6, delay: 0.1 + order * 0.07, ease: EASE_OUT },
         }
-  // 아래 영역은 스크롤해서 화면에 들어올 때 한 번만 떠오른다
-  const reveal = (order: number) =>
-    reduceMotion
-      ? {}
-      : {
-          initial: { opacity: 0, y: 16 },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true, amount: 0.15 },
-          transition: { duration: 0.5, delay: order * 0.05, ease: EASE_OUT },
-        }
-
-  const scrollTo = (id: string) => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    document.getElementById(id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
-  }
-
-  const mainProjects = PROJECT_LIST.filter((p) => p.tier === 'main')
-  const mainGrid = mainGridLayout(mainProjects.length) // 4개면 2×2, 그 밖엔 한 줄 3칸(F-016)
-  const subProjects = PROJECT_LIST.filter((p) => p.tier === 'sub')
-
-  const glance = [
-    { value: `${PROJECT_LIST.length}개`, label: '프로젝트' },
-    { value: `${NOTES.length}개`, label: '공부 노트' },
-    { value: `${CONTRIBUTIONS.total.toLocaleString()}건`, label: 'GitHub 기여 (최근 1년)' },
-  ]
 
   return (
     <main className="flex flex-1 flex-col">
-      {/* 소개 — 글(7) | 한눈에(5) */}
-      <section className="px-5 py-16 sm:px-10 lg:py-20">
-        <div className="mx-auto grid w-full max-w-300 grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-6">
-          <div className="flex flex-col gap-5 lg:col-span-7">
-            <motion.p {...rise(0)} lang="en" className="text-16 font-medium tracking-normal text-portfolio sm:text-18">
-              Design · Fullstack
-            </motion.p>
-            <motion.h1 {...rise(1)} className="text-32 font-semibold break-keep text-main sm:text-40 lg:text-48">
-              화면에서 구조까지,
+      {/* 첫 화면 - 문장 | 소개 · 숫자 · 연락처, 아래에 대표 프로젝트 목차 */}
+      <section className="px-5 pt-14 pb-16 sm:px-10 lg:pt-22 lg:pb-20">
+        <div className="mx-auto flex w-full max-w-300 flex-col gap-16 lg:gap-20">
+          <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+            <motion.h1
+              {...rise(0)}
+              className="text-[44px] leading-[1.25] font-semibold tracking-[-0.03em] break-keep text-main sm:text-[64px] lg:leading-[1.2] xl:text-[88px]"
+            >
+              귀찮은 일을
               <br />
-              하나의 경험으로.
+              그냥 두지
+              <br className="sm:hidden" /> 못하는
+              <br className="hidden sm:inline" /> 편입니다<span className="text-portfolio">.</span>
             </motion.h1>
-            <motion.p {...rise(2)} className="text-16 break-keep text-sub sm:text-20">
-              실제 업무에서 마주칠 문제를 풀고, 그 과정에서 공부한 내용까지 함께 기록했습니다.
-            </motion.p>
-            <motion.div {...rise(3)} className="flex flex-wrap gap-2 pt-3">
-              <button
-                type="button"
-                onClick={() => scrollTo('projects')}
-                className="inline-flex h-12 items-center rounded-button bg-portfolio px-5 text-16 font-semibold text-white hover:bg-portfolio-strong"
-              >
-                프로젝트 보기
-              </button>
+
+            <motion.div {...rise(2)} className="flex shrink-0 flex-col gap-7 lg:w-110 lg:gap-8">
+              <p className="text-16 break-keep text-sub lg:text-20">
+                실제 업무에서 마주칠 문제를 풀고,
+                <br />그 과정에서 공부한 내용까지 함께 기록했습니다.
+              </p>
+              <dl className="flex flex-wrap gap-x-7 gap-y-4 sm:gap-x-10">
+                {GLANCE.map(({ value, label }) => (
+                  <div key={label} className="flex flex-col-reverse gap-1">
+                    <dt className="text-13 font-medium break-keep text-sub-weak">{label}</dt>
+                    <dd className="text-28 font-semibold tracking-normal text-main">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+              <ul className="flex flex-col gap-2 border-t border-regular pt-6 text-15 lg:pt-8">
+                <li className="flex flex-wrap gap-x-3">
+                  <span className="w-13 shrink-0 font-medium text-sub-weak">이메일</span>
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold break-all text-main hover:text-portfolio">
+                    {CONTACT_EMAIL}
+                  </a>
+                </li>
+                <li className="flex flex-wrap gap-x-3">
+                  <span lang="en" className="w-13 shrink-0 font-medium text-sub-weak">
+                    GitHub
+                  </span>
+                  <a href={GITHUB_URL} target="_blank" rel="noopener" className="font-semibold break-all text-main hover:text-portfolio">
+                    {GITHUB_URL.replace('https://', '')} ↗<span className="sr-only"> (새 탭)</span>
+                  </a>
+                </li>
+              </ul>
             </motion.div>
           </div>
 
-          <motion.aside {...rise(4)} aria-label="한눈에 보기" className="flex flex-col gap-6 rounded-card bg-light p-6 sm:p-8 lg:col-span-5">
-            <dl className="grid grid-cols-3 gap-4">
-              {glance.map(({ value, label }) => (
-                <div key={label} className="flex flex-col-reverse gap-1">
-                  <dt className="text-12 break-keep text-sub-weak">{label}</dt>
-                  <dd className="text-20 font-semibold tracking-normal text-main sm:text-24">{value}</dd>
-                </div>
-              ))}
-            </dl>
-            <ul className="flex flex-col gap-2 border-t border-regular pt-5 text-14">
-              <li className="flex flex-wrap gap-x-3">
-                <span className="w-14 shrink-0 text-sub-weak">이메일</span>
-                <a href={`mailto:${CONTACT_EMAIL}`} className="font-medium break-all text-main hover:text-portfolio">
-                  {CONTACT_EMAIL}
-                </a>
-              </li>
-              <li className="flex flex-wrap gap-x-3">
-                <span lang="en" className="w-14 shrink-0 text-sub-weak">
-                  GitHub
-                </span>
-                <a href={GITHUB_URL} target="_blank" rel="noopener" className="font-medium break-all text-main hover:text-portfolio">
-                  {GITHUB_URL.replace('https://', '')} ↗<span className="sr-only"> (새 탭)</span>
-                </a>
-              </li>
-            </ul>
-          </motion.aside>
+          {MAIN_PROJECTS.length > 0 && (
+            <nav aria-label="대표 프로젝트 목차" className="hidden lg:block">
+              <ol className="grid grid-cols-5 gap-4">
+                {MAIN_PROJECTS.map((project, i) => (
+                  <motion.li key={project.slug} {...rise(3 + i)}>
+                    <IndexCard project={project} index={i} />
+                  </motion.li>
+                ))}
+              </ol>
+            </nav>
+          )}
         </div>
       </section>
 
-      {/* 프로젝트 — 메인(대표, 큰 카드) → 그 밖의 작업(작은 카드) */}
-      <section id="projects" aria-labelledby="projects-title" className="scroll-mt-4 bg-light px-5 py-16 sm:px-10 lg:py-20">
-        <div className="mx-auto flex w-full max-w-300 flex-col gap-7">
-          <motion.div {...reveal(0)}>
-            <SectionTitle
-              id="projects-title"
-              en="Projects"
-              title="프로젝트"
-              sub="카드를 누르면 그 서비스의 디자인 · 프론트 · 백엔드를 한 페이지에서 볼 수 있어요."
-            />
-          </motion.div>
-          {/* 떠오르는 순서(reveal)는 lg 한 줄의 칸 수(메인 3, 4개면 2 · 서브 4)마다 처음부터 — 줄마다 왼쪽에서 오른쪽으로 */}
-          {mainProjects.length > 0 && (
-            <ul aria-label="대표 프로젝트" className={`grid grid-cols-1 gap-5 ${mainGrid.className}`}>
-              {mainProjects.map((project, i) => (
-                <motion.li key={project.slug} {...reveal(i % mainGrid.cols)}>
-                  <MainProjectCard project={project} />
+      <ProjectShowcase projects={MAIN_PROJECTS} />
+
+      {/* 그 밖의 작업 - 비면 제목까지 그리지 않는다 */}
+      {SUB_PROJECTS.length > 0 && (
+        <section aria-labelledby="projects-sub-title" className="px-5 py-18 sm:px-10 lg:py-35">
+          <div className="mx-auto flex w-full max-w-300 flex-col gap-8 sm:gap-12">
+            <motion.div {...reveal()}>
+              <SectionTitle id="projects-sub-title" en="Projects" title="그 밖의 작업" />
+            </motion.div>
+            <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3">
+              {SUB_PROJECTS.map((project, i) => (
+                <motion.li key={project.slug} {...reveal(i % 3)}>
+                  <SubCard project={project} />
                 </motion.li>
               ))}
             </ul>
-          )}
-          {/* 비면 제목까지 그리지 않는다(프로젝트 페이지처럼 — 칸이 비면 섹션을 그리지 않음) */}
-          {subProjects.length > 0 && (
-            <>
-              <motion.h3 {...reveal(0)} id="projects-sub-title" className="pt-5 text-18 font-semibold break-keep text-main sm:text-20">
-                그 밖의 작업
-              </motion.h3>
-              <ul aria-labelledby="projects-sub-title" className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {subProjects.map((project, i) => (
-                  <motion.li key={project.slug} {...reveal(i % 4)}>
-                    <ProjectCard project={project} />
-                  </motion.li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* 스킬 */}
-      <section aria-labelledby="skills-title" className="px-5 py-16 sm:px-10 lg:py-20">
-        <div className="mx-auto flex w-full max-w-300 flex-col gap-7">
-          <motion.div {...reveal(0)}>
-            <SectionTitle id="skills-title" en="Skills" title="스킬" sub="실제 프로젝트에서 써 본 것만 적었어요." />
+      <section aria-labelledby="skills-title" className="bg-regular px-5 py-16 sm:px-10 lg:py-30">
+        <div className="mx-auto grid w-full max-w-300 gap-10 lg:grid-cols-[384px_1fr] lg:gap-6">
+          <motion.div {...reveal()}>
+            <SectionTitle id="skills-title" en="Skills" title="스킬" sub="실제 프로젝트에서 써 본 것만 적었어요." panel />
           </motion.div>
-          <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {SKILLS.map(({ title, where, items }, i) => (
-              <motion.li key={title} {...reveal(i % 3)} className="flex flex-col gap-3 rounded-card border border-regular bg-default p-6">
+          <ul className="flex flex-col">
+            {SKILLS.map(({ title, where, items }) => (
+              <motion.li
+                key={title}
+                {...reveal()}
+                className="grid gap-4 border-t border-regular py-6 first:border-t-0 first:pt-0 last:pb-0 sm:grid-cols-[220px_1fr] sm:gap-6"
+              >
                 <div className="flex flex-col gap-1">
                   <h3 lang="en" className="text-18 font-semibold text-main">
                     {title}
                   </h3>
-                  <p className="text-13 break-keep text-sub-weak">{where}</p>
+                  <p className="text-13 font-medium break-keep text-sub">{where}</p>
                 </div>
-                <ul className="flex flex-wrap gap-2">
+                <ul className="flex flex-wrap content-start gap-2">
                   {items.map((item) => (
-                    <li key={item} className="rounded-full border border-regular bg-light px-3 py-1 text-13 font-medium text-main">
+                    <li key={item} className="rounded-full border border-regular bg-default px-3.5 py-2 text-15 font-medium text-main">
                       {item}
                     </li>
                   ))}
@@ -222,63 +202,67 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* GitHub — 잔디 + 대표 레포 */}
-      <section aria-labelledby="github-title" className="bg-light px-5 py-16 sm:px-10 lg:py-20">
-        <div className="mx-auto flex w-full max-w-300 flex-col gap-7">
-          <motion.div {...reveal(0)}>
+      {/* GitHub - 잔디 + 대표 레포 */}
+      <section aria-labelledby="github-title" className="px-5 py-16 sm:px-10 lg:py-30">
+        <div className="mx-auto flex w-full max-w-300 flex-col gap-8 lg:gap-10">
+          <motion.div {...reveal()} className="flex flex-wrap items-end justify-between gap-4">
             <SectionTitle id="github-title" en="GitHub" title="코드와 기록" />
+            <p className="flex flex-col gap-1 sm:items-end">
+              <span className="text-16 font-semibold text-main">최근 1년 기여 {CONTRIBUTIONS.total.toLocaleString()}건</span>
+              <span className="text-13 font-medium text-sub-weak">
+                기여한 날 {ACTIVE_DAYS}일 · {CONTRIBUTIONS.syncedAt} 기준
+              </span>
+            </p>
           </motion.div>
-          <motion.div {...reveal(1)} className="rounded-card border border-regular bg-default p-6 sm:p-8">
+          <motion.div {...reveal()} className="min-w-0">
             <GitHubHeatmap />
           </motion.div>
-          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 sm:gap-y-8 lg:grid-cols-3">
             {REPOS.map(({ name, desc, project }, i) => (
-              <motion.li key={name} {...reveal(i % 3)} className="flex flex-col gap-2 rounded-card border border-regular bg-default p-5">
-                <a
-                  href={repoUrl(name)}
-                  target="_blank"
-                  rel="noopener"
-                  lang="en"
-                  className="w-fit text-15 font-semibold break-all text-main hover:text-portfolio"
-                >
-                  {name} ↗<span className="sr-only"> (새 탭)</span>
-                </a>
-                <p className="text-13 break-keep text-sub">{desc}</p>
-                {project && (
-                  <a href={projectHref(project)} className="mt-auto w-fit pt-1 text-13 font-medium text-sub hover:text-main hover:underline underline-offset-4">
-                    프로젝트 페이지 →
+              <motion.li key={name} {...reveal(i % 3)}>
+                <div className="lift flex h-full flex-col gap-2 border-t border-regular pt-5 [--lift:2px]">
+                  <a
+                    href={repoUrl(name)}
+                    target="_blank"
+                    rel="noopener"
+                    lang="en"
+                    className="w-fit text-15 font-semibold break-all text-main hover:text-portfolio"
+                  >
+                    {name} ↗<span className="sr-only"> (새 탭)</span>
                   </a>
-                )}
+                  <p className="text-14 break-keep text-sub">{desc}</p>
+                  {project && (
+                    <a href={projectHref(project)} className="w-fit text-13 font-medium text-sub underline-offset-4 hover:text-main hover:underline">
+                      프로젝트 페이지 →
+                    </a>
+                  )}
+                </div>
               </motion.li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* 공부 기록 — Study 로 가는 길 */}
-      <section aria-labelledby="study-title" className="px-5 py-16 sm:px-10 lg:py-20">
-        <motion.div
-          {...reveal(0)}
-          className="mx-auto flex w-full max-w-300 flex-wrap items-center justify-between gap-6 rounded-card border border-regular bg-default p-6 sm:p-8"
-        >
+      {/* 공부 기록 - Study 로 가는 길 */}
+      <section aria-labelledby="study-title" className="bg-regular px-5 py-12 sm:px-10 lg:py-20">
+        <motion.div {...reveal()} className="mx-auto flex w-full max-w-300 flex-wrap items-center justify-between gap-6">
           <div className="flex flex-col gap-2">
-            <span lang="en" className="text-14 font-semibold tracking-normal text-study-strong">
+            <span lang="en" className="text-14 font-semibold tracking-normal text-portfolio-strong">
               Study
             </span>
-            <h2 id="study-title" className="text-22 font-semibold break-keep text-main sm:text-24">
+            <h2 id="study-title" className="text-24 font-semibold break-keep text-main sm:text-28">
               매일 공부한 기록 · 노트 {NOTES.length}개
             </h2>
-            <p className="text-15 break-keep text-sub">강의 · 코딩테스트 · 디자인 툴을 공부하며 정리한 노트를 모았어요.</p>
+            <p className="text-15 break-keep text-sub sm:text-16">강의 · 코딩테스트 · 디자인 툴을 공부하며 정리한 노트를 모았어요.</p>
           </div>
           <a
             href={studyHref()}
-            className="inline-flex h-12 items-center rounded-button border border-black bg-default px-5 text-16 font-semibold text-main hover:bg-light"
+            className="lift inline-flex h-12 w-full items-center justify-center rounded-button border border-black bg-default px-5 text-16 font-semibold text-main [--lift:2px] sm:w-auto"
           >
             공부 노트 보기 →
           </a>
         </motion.div>
       </section>
-
     </main>
   )
 }

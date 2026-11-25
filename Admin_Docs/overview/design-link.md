@@ -19,9 +19,10 @@
 | 포트폴리오 홈 리뉴얼 | 피그마 「jsh」 파일 · 「01 Home — Light 리뉴얼」 프레임 (주소는 공개 문서에 적지 않아요) |
 | Study 노션형 (F-004) | 피그마 「jsh」 파일 · Page 2 「05 Study 홈 — PC 1440」 · 「06 Study 상세 — 노션 문서형 PC 1440」 · 「Study Components」(`Study/TreeRow` → `StudyLayout.tsx`, `Study/ConceptChip` · `Study/ConceptCard` → `StudyHome.tsx`) — 색은 `jsh` 변수 Ivory 모드 = `index.css` Ivory · `study` 토큰 |
 | 자소서형 랜딩 (F-014) | 피그마 「Untitled」 파일 · Page 2 「Landing — PC 1440」 · 「Landing — MO 390」 · 「Motion — 장면별 상태」 · 「Motion 규칙」 · 「Storyboard — 10초 예고편 (첫 화면)」(PC · MO 각 5컷 — 사용자 결정으로 코드에서 뺌, 피그마에만 남김) · 「Landing Components」(`ChapterLabel` Size=PC/MO → `CoverLanding.tsx`의 `ChapterLabel`, `ReviewerCard` · `MemoChip` · `NotePage` → `LandingStages.tsx`) (주소는 공개 문서에 적지 않아요) — 색은 `Landing · Ivory` 변수 = `index.css` Ivory, 글자는 `KR/*` 텍스트 스타일 + 첫 화면 예외 `Landing/Hero/*` |
+| 홈 개편 (F-018) | 피그마 「Untitled」 파일 · 「새로운 버전」 페이지 「Home - PC 1440」 · 「Home - MO 390」 · 「Motion - 장면별 상태」 · 「Motion 규칙」 · 「Home Components」(`SceneText` → `home/ProjectShowcase.tsx`의 `ShowcaseText`, `Rail` → 같은 파일의 현재 위치 점, `SubCard` · `IndexCard` → `HomePage.tsx`, `RoleChip` → `RoleChips.tsx`) (주소는 공개 문서에 적지 않아요) - 색은 `Portfolio · White` 변수 = `index.css` 기본 토큰 + `portfolio` 토큰. F-014 랜딩은 코드에서 지웠고 피그마에만 남아요 |
 
 ### 포트폴리오 포커스 표시 (2026-11-03, F-004 5차)
-- 키보드 포커스는 `portfolio` 파랑 솔리드 링 2px + 간격 2px다. 디자인 md의 Focus/Ring(#5B8CFF 40% 헤일로 3px)과 다른데, md 6-5의 접근성 예외(간격 2 + 링 2)를 따랐다. 헤일로만으로는 흰 배경 대비가 3:1이 안 된다. 위치는 `index.css` `@layer base`의 `[data-theme="ivory"] :is(a, button, summary):focus-visible`, 가로 스크롤 탭만 안쪽에 그린다.
+- 키보드 포커스는 `portfolio` 포인트 색(F-018부터 빨강) 솔리드 링 2px + 간격 2px다. 디자인 md의 Focus/Ring(#5B8CFF 40% 헤일로 3px)과 다른데, md 6-5의 접근성 예외(간격 2 + 링 2)를 따랐다. 헤일로만으로는 흰 배경 대비가 3:1이 안 된다. 위치는 `index.css` `@layer base`의 `[data-theme="portfolio"] :is(a, button, summary):focus-visible`, 가로 스크롤 탭만 안쪽에 그린다.
 
 ### 디자인 md · 토큰 원본
 | 무엇 | 위치 |
@@ -29,7 +30,7 @@
 | 공통 디자인 시스템 기준 | [My_DesignSystem_v1.md](../../My_DesignSystem_v1.md) (예전 이름 MyDesign.md, 2026-11-03 링크 수정 — 사용자 확인) |
 | 이커머스 기준 (FLASEEK 상품 카드 등) | [MyDesign(E-commerce).md](<../../MyDesign(E-commerce).md>) |
 | 마에스트로 리뉴얼 (브리프 · IA · 대비 판정 ①②③ · 시스템 밖 결정) | [maestro-design.md](../../maestro-design.md) |
-| 토큰 코드 (Tailwind 4 `@theme`, 포트폴리오 Ivory `[data-theme="ivory"]`) | [index.css](../../Portfolio/frontend/src/index.css) |
+| 토큰 코드 (Tailwind 4 `@theme`, 포트폴리오 `[data-theme="portfolio"]`) | [index.css](../../Portfolio/frontend/src/index.css) |
 | 시안 캡처 이미지 (프로젝트별 폴더) | [portfolio/assets/design/](../../Portfolio/frontend/src/portfolio/assets/design/) |
 | FLASEEK 디자인 근거(진단·3안 비교·대비) | [data.ts](../../Portfolio/frontend/src/portfolio/data.ts)의 `flaseek-renewal` 사례 |
 | 피그마 내보내기 파일 | [design_import/](../../design_import/), [figmaCSS.txt](../../figmaCSS.txt) — ❓ 어느 프로젝트 원본인지 확인 필요 |
@@ -74,4 +75,4 @@
 | Empty · Error · Skeleton · Toast | `components.tsx` `EmptyState` · `ErrorInline` · `SkeletonCards` · `Toast` | – |
 | Data Table (표로 비교) | `screens/ResultScreen.tsx` `CompareTable` | – |
 
-최종 수정: 2026-11-01 · 관련: F-001, F-006, F-010
+최종 수정: 2026-11-25 · 관련: F-001, F-006, F-010

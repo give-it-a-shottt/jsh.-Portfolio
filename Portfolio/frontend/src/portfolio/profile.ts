@@ -37,18 +37,18 @@ export const SKILLS: SkillGroup[] = [
 export interface Repo {
   name: string
   desc: string
-  /** 같은 프로젝트의 프로젝트 페이지 slug — 있으면 카드에 함께 링크 */
+  /** 같은 프로젝트의 프로젝트 페이지 slug - 있으면 카드에 함께 링크 */
   project?: string
 }
 
-/** 첫 화면에 보여 줄 대표 공개 레포 — 나머지는 GitHub 프로필에서 */
+/** 첫 화면에 보여 줄 대표 공개 레포 - 나머지는 GitHub 프로필에서 */
 export const REPOS: Repo[] = [
-  { name: 'jsh.-Portfolio', desc: '이 사이트 — 검색형 포트폴리오 · 공부 노트 · 사례 데모' },
+  { name: 'jsh.-Portfolio', desc: '이 사이트 - 검색형 포트폴리오 · 공부 노트 · 사례 데모' },
   { name: 'Accio', desc: 'AI 자연어 검색 쇼핑몰을 무료 스택 위에 다시 만든 것', project: 'accio' },
   { name: 'mini-inflearn', desc: 'Next.js · FastAPI · PostgreSQL 강의 수강신청 서비스', project: 'mini-inflearn' },
   { name: 'PlanForMe', desc: '하루 할당량을 계산해 주는 플래너', project: 'planforme' },
   { name: 'remind', desc: '노션 노트 복습 퀴즈 앱', project: 'remind' },
-  { name: 'my-nightly-project', desc: 'Nightly — AI 수면 코칭 & 구독 커머스', project: 'nightly' },
+  { name: 'my-nightly-project', desc: 'Nightly - AI 수면 코칭 & 구독 커머스', project: 'nightly' },
 ]
 
 export function repoUrl(name: string) {
@@ -63,3 +63,6 @@ export interface ContributionDay {
 }
 
 export const CONTRIBUTIONS: { syncedAt: string; total: number; days: ContributionDay[] } = contributions
+
+/** 기여한 날 수 - 홈 GitHub 구역의 요약과 잔디의 화면 낭독기 문장이 같이 쓴다 */
+export const ACTIVE_DAYS = CONTRIBUTIONS.days.filter((day) => day.count > 0).length

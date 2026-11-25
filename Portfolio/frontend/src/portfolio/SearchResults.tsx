@@ -6,11 +6,11 @@ import NoteCard from './NoteCard'
 import NoteMeta from './NoteMeta'
 import { appliedCases, noteHref, studyHref, type StudyNote } from './notes'
 import { searchHref, type ResultTab } from './routes'
-// '전체' 탭에서 사례 몇 개 뒤에 노트 묶음을 끼울지 — 채점기도 같은 값으로 순서를 재서 search.ts 에 둔다
+// '전체' 탭에서 사례 몇 개 뒤에 노트 묶음을 끼울지 - 채점기도 같은 값으로 순서를 재서 search.ts 에 둔다
 import { NOTES_AFTER, NOTES_IN_MODULE, search } from './search'
 import { didYouMean, relatedSearches } from './related'
 
-// 검색어 없이 Study 노트를 보러 가면 Study 홈(#/study)으로 — 헤더 Study 탭과 같은 곳.
+// 검색어 없이 Study 노트를 보러 가면 Study 홈(#/study)으로 - 헤더 Study 탭과 같은 곳.
 // 검색어가 있으면 Study 홈엔 검색이 없으니 결과 안의 Study 탭에 둔다
 function studyTabHref(query: string) {
   return query ? searchHref(query, 'study') : studyHref()
@@ -30,7 +30,7 @@ function KeywordChips({ exclude }: { exclude?: string }) {
         <li key={label}>
           <a
             href={searchHref(label)}
-            className="block rounded-full border border-regular bg-default px-4 py-2 text-14 font-medium text-main hover:bg-light"
+            className="lift block rounded-full border border-regular bg-default px-4 py-2 text-14 font-medium text-main [--lift:2px]"
           >
             {label}
           </a>
@@ -40,15 +40,15 @@ function KeywordChips({ exclude }: { exclude?: string }) {
   )
 }
 
-// 사례 한 줄 — 목록(리스트 아이템) B 스케일: 제목 20, 설명 14. 갈 곳(href)이 있는 사례만 행 전체가 링크다.
+// 사례 한 줄 - 목록(리스트 아이템) B 스케일: 제목 20, 설명 14. 갈 곳(href)이 있는 사례만 행 전체가 링크다.
 function ResultRow({ item }: { item: PortfolioCase }) {
   return (
-    <li className="relative flex gap-6 border-b border-light py-6">
+    <li className={`flex gap-6 border-b border-light py-6 ${item.href ? 'lift' : 'relative'}`}>
       <div className="flex min-w-0 flex-1 flex-col">
         <CaseMeta item={item} />
         <h2 className="mt-2 text-18 font-semibold break-keep text-main sm:text-20">
           {item.href ? (
-            <a href={item.href} className="hover:text-portfolio after:absolute after:inset-0">
+            <a href={item.href} className="after:absolute after:inset-0">
               {item.title}
             </a>
           ) : (
@@ -95,7 +95,7 @@ function ResultRow({ item }: { item: PortfolioCase }) {
           {item.image ? (
             <img src={item.image} alt="" className="size-full object-cover object-top" />
           ) : (
-            // 아직 캡처가 없는 사례 — 자리표시 이미지로 대신한다
+            // 아직 캡처가 없는 사례 - 자리표시 이미지로 대신한다
             <img src={screenshotPlaceholder} alt="" className="size-full object-cover" />
           )}
         </div>
@@ -104,17 +104,17 @@ function ResultRow({ item }: { item: PortfolioCase }) {
   )
 }
 
-// 노트 한 줄 — Study 탭 목록. 사례 행과 같은 B 스케일이고, 실습 결과물이 있으면 첫 장을 썸네일로 둔다.
+// 노트 한 줄 - Study 탭 목록. 사례 행과 같은 B 스케일이고, 실습 결과물이 있으면 첫 장을 썸네일로 둔다.
 function NoteRow({ note }: { note: StudyNote }) {
   const applied = appliedCases(note)
   const thumb = note.practice?.[0]
 
   return (
-    <li className="relative flex gap-6 border-b border-light py-6">
+    <li className="lift flex gap-6 border-b border-light py-6">
       <div className="flex min-w-0 flex-1 flex-col">
         <NoteMeta note={note} />
         <h2 className="mt-2 text-18 font-semibold break-keep text-main sm:text-20">
-          <a href={noteHref(note.slug)} className="hover:text-study-strong after:absolute after:inset-0">
+          <a href={noteHref(note.slug)} className="after:absolute after:inset-0">
             {note.title}
           </a>
         </h2>
@@ -139,7 +139,7 @@ function NoteRow({ note }: { note: StudyNote }) {
   )
 }
 
-// '전체' 탭 결과 사이에 끼우는 노트 묶음 — 사례를 묻지 않으면서 같은 키워드로 공부한 것을 함께 보여준다
+// '전체' 탭 결과 사이에 끼우는 노트 묶음 - 사례를 묻지 않으면서 같은 키워드로 공부한 것을 함께 보여준다
 function NotesModule({ notes, query }: { notes: StudyNote[]; query: string }) {
   return (
     <section aria-labelledby="notes-module-title" className="my-6 rounded-card border border-regular bg-default p-5">
@@ -170,9 +170,9 @@ interface SearchResultsProps {
 }
 
 export default function SearchResults({ query, tab }: SearchResultsProps) {
-  // 사례는 레벨 높은 것부터(rank.ts), 노트는 최신순(notes.ts) — 찾는 규칙은 search.ts
+  // 사례는 레벨 높은 것부터(rank.ts), 노트는 최신순(notes.ts) - 찾는 규칙은 search.ts
   const { cases: matched, notes: matchedNotes, corrections } = search(query)
-  // Design · Fullstack 탭은 사례만 — 공부 노트는 Study 홈(#/study)이 따로 생겨 Study 탭과 '전체' 탭에서만 보여 준다(F-004).
+  // Design · Fullstack 탭은 사례만 - 공부 노트는 Study 홈(#/study)이 따로 생겨 Study 탭과 '전체' 탭에서만 보여 준다(F-004).
   // Front · Back 사례는 Fullstack 한 탭에 함께 둔다(F-011)
   const casesOf = (tab: ResultTab) => matched.filter((item) => caseTab(item) === tab)
   const counts: Record<ResultTab, number> = {
@@ -185,7 +185,7 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
   // 관련 검색어는 지금 결과의 태그에서 고른다(related.ts). 검색어가 없거나 고를 태그가 없으면 추천 키워드
   const fromResults = query ? relatedSearches(query, matched, matchedNotes) : []
   const related = fromResults.length > 0 ? fromResults : KEYWORDS.filter(({ label }) => label !== query).slice(0, 5).map(({ label }) => label)
-  // 어느 탭에도 결과가 없을 때만 — 결과가 있는 낱말만 남긴 검색어를 권한다
+  // 어느 탭에도 결과가 없을 때만 - 결과가 있는 낱말만 남긴 검색어를 권한다
   const suggestion = query && counts.all === 0 ? didYouMean(query) : null
   const isStudy = tab === 'study'
   // 노트 묶음은 '전체' 탭에서만. 사례가 적으면 목록 끝에, 사례가 없으면 빈 안내 대신 노트를 보여준다
@@ -211,7 +211,7 @@ export default function SearchResults({ query, tab }: SearchResultsProps) {
                 key={id}
                 href={id === 'study' ? studyTabHref(query) : searchHref(query, id)}
                 aria-current={active ? 'page' : undefined}
-                // 가로 스크롤 줄이라 바깥 포커스 테두리가 잘린다 — 안쪽으로 그린다
+                // 가로 스크롤 줄이라 바깥 포커스 테두리가 잘린다 - 안쪽으로 그린다
                 className={`flex shrink-0 items-center gap-2 border-b-2 pt-4 pb-3 text-15 tracking-normal focus-visible:-outline-offset-2 ${active ? 'border-black font-semibold text-main' : 'border-transparent font-medium text-sub-weak hover:text-main'}`}
               >
                 {id === 'study' && <span aria-hidden="true" className="size-1.5 rounded-full bg-study" />}

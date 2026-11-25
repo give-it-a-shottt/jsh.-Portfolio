@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
 import { ChevronRightIcon, MinusIcon, PlusIcon } from '../shared/icons'
 import { designPreview, findProject, hasDesign, nextProject, projectSections, type Project, type ProjectTrouble } from './projects'
 import { ButtonLink, ProjectCover } from './ProjectParts'
 import RoleChips from './RoleChips'
 import { caseHref, projectHref } from './routes'
+import useReveal from './useReveal'
 
-// 프로젝트 페이지(F-011) — 피그마 jsh Page 3 「Project · Accio · PC 1440」.
+// 프로젝트 페이지(F-011) - 피그마 jsh Page 3 「Project · Accio · PC 1440」.
 // 위: 화면(7칸) | 구조(5칸) → 정보 띠 → 숫자 → 목차(3칸) + 본문(9칸) → 다음 프로젝트.
 // 서비스 하나의 디자인 · 프론트 · 백엔드를 한 장에서 보도록, 본문에 '디자인'(시안 + 피그마)과 '막힌 것과 해결'(Front · Back 사례)을 함께 둔다(F-013).
 
@@ -15,7 +17,7 @@ function scrollToSection(id: string) {
   document.getElementById(`project-${id}`)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
 }
 
-/** 지금 화면 위쪽에 걸친 섹션 — 목차의 현재 위치 표시 */
+/** 지금 화면 위쪽에 걸친 섹션 - 목차의 현재 위치 표시 */
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState(ids[0])
   const key = ids.join(',')
@@ -74,7 +76,7 @@ function TroubleItem({ trouble, open }: { trouble: ProjectTrouble; open: boolean
         {rows.length > 0 ? (
           rows.map(([k, v]) => (
             <p key={k} className="grid gap-1 text-14 break-keep sm:grid-cols-[64px_1fr] sm:gap-4">
-              <span className={`font-semibold ${k === '배운 점' ? 'text-portfolio' : 'text-main'}`}>{k}</span>
+              <span className={`font-semibold ${k === '배운 점' ? 'text-portfolio-strong' : 'text-main'}`}>{k}</span>
               <span className="text-sub">{v}</span>
             </p>
           ))
@@ -95,16 +97,17 @@ function TroubleItem({ trouble, open }: { trouble: ProjectTrouble; open: boolean
 /** 디자인 섹션에 보여 줄 시안 수 */
 const DESIGN_PREVIEW_MAX = 6
 
-/** 디자인 섹션 제목 아래 한 줄 — 시안이 있는지, 피그마 원본을 열 수 있는지에 맞춘다 */
+/** 디자인 섹션 제목 아래 한 줄 - 시안이 있는지, 피그마 원본을 열 수 있는지에 맞춘다 */
 function designSub(hasPreview: boolean, hasFigma: boolean): string {
   if (!hasPreview) return '피그마 원본 파일을 열어 볼 수 있어요.'
   return hasFigma ? '피그마로 설계한 화면과 기준이에요. 원본 파일도 열어 볼 수 있어요.' : '피그마로 설계한 화면과 기준이에요.'
 }
 
-/** 디자인 — 같은 서비스의 Design 사례 시안 몇 장 + 피그마 공개 링크. 사례가 없으면 피그마 버튼만,
+/** 디자인 - 같은 서비스의 Design 사례 시안 몇 장 + 피그마 공개 링크. 사례가 없으면 피그마 버튼만,
  * 피그마 링크가 없으면 시안만. 둘 다 없으면 이 섹션을 부르지 않는다(hasDesign) */
 function DesignSection({ project, index }: { project: Project; index: number }) {
-  // 아래 '화면' 섹션에 이미 있는 그림은 빼고 고른다 — 디자인만 한 프로젝트는 둘이 겹치기 쉬워서,
+  const reveal = useReveal()
+  // 아래 '화면' 섹션에 이미 있는 그림은 빼고 고른다 - 디자인만 한 프로젝트는 둘이 겹치기 쉬워서,
   // 빼고도 DESIGN_PREVIEW_MAX 장이 남도록 두 배를 받아 거른다
   const shown = new Set(project.screens.items.map((s) => s.image))
   const preview = project.designCase
@@ -113,7 +116,7 @@ function DesignSection({ project, index }: { project: Project; index: number }) 
         .slice(0, DESIGN_PREVIEW_MAX)
     : []
   return (
-    <section id="project-design" className="flex scroll-mt-6 flex-col gap-5">
+    <motion.section {...reveal()} id="project-design" className="flex scroll-mt-6 flex-col gap-5">
       <SectionHeading
         index={index}
         title="디자인"
@@ -136,7 +139,7 @@ function DesignSection({ project, index }: { project: Project; index: number }) 
         {project.designCase && <ButtonLink href={caseHref(project.designCase)} label="디자인 과정 전체 보기" />}
         {project.figma && <ButtonLink href={project.figma} label="피그마에서 보기" />}
       </div>
-    </section>
+    </motion.section>
   )
 }
 
@@ -144,6 +147,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
   const project = findProject(slug)
   const sections = project ? projectSections(project) : []
   const active = useActiveSection(sections.map((s) => s.id))
+  const reveal = useReveal()
 
   if (!project) {
     return (
@@ -197,9 +201,9 @@ export default function ProjectPage({ slug }: { slug: string }) {
           </div>
 
           {project.structure && (
-            <aside aria-labelledby="structure-title" className="flex h-fit flex-col gap-5 rounded-card bg-light p-6 sm:p-8 lg:col-span-5">
+            <aside aria-labelledby="structure-title" className="flex h-fit flex-col gap-5 rounded-card bg-regular p-6 sm:p-8 lg:col-span-5">
               <div className="flex flex-col gap-1">
-                <span lang="en" className="text-14 font-semibold tracking-normal text-portfolio">
+                <span lang="en" className="text-14 font-semibold tracking-normal text-portfolio-strong">
                   Architecture
                 </span>
                 <h2 id="structure-title" className="text-24 font-semibold text-main">
@@ -217,7 +221,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
                     <div className="flex items-center gap-4 rounded-button border border-regular bg-default p-4">
                       <span
                         lang="en"
-                        className="flex h-8 w-14 shrink-0 items-center justify-center rounded-badge bg-portfolio-soft text-12 font-semibold tracking-normal text-portfolio"
+                        className="flex h-8 w-14 shrink-0 items-center justify-center rounded-badge bg-regular text-12 font-semibold tracking-normal text-main"
                       >
                         {step.key}
                       </span>
@@ -246,20 +250,20 @@ export default function ProjectPage({ slug }: { slug: string }) {
 
         {/* 숫자 */}
         {project.numbers.length > 0 && (
-          <section aria-labelledby="numbers-title" className="flex flex-col gap-7 py-20">
+          <motion.section {...reveal()} aria-labelledby="numbers-title" className="flex flex-col gap-7 py-20">
             <h2 id="numbers-title" className="text-24 font-semibold text-main sm:text-32">
               숫자로 보는 결과
             </h2>
             <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {project.numbers.map(({ value, label, note }) => (
-                <li key={label} className="flex flex-col gap-2 rounded-card bg-light p-6">
+                <li key={label} className="flex flex-col gap-2 rounded-card bg-regular p-6">
                   <span className="text-24 font-semibold tracking-normal text-main sm:text-28">{value}</span>
                   <span className="text-15 font-semibold break-keep text-main">{label}</span>
                   <span className="text-13 break-keep text-sub">{note}</span>
                 </li>
               ))}
             </ul>
-          </section>
+          </motion.section>
         )}
       </div>
 
@@ -277,9 +281,9 @@ export default function ProjectPage({ slug }: { slug: string }) {
                     type="button"
                     onClick={() => scrollToSection(s.id)}
                     aria-current={on ? 'true' : undefined}
-                    className={`flex items-center gap-2 border-l-2 px-3 py-2 text-left text-14 ${on ? 'border-portfolio bg-portfolio-soft font-semibold text-portfolio' : 'border-transparent text-sub hover:text-main'}`}
+                    className={`flex items-center gap-2 border-l-2 px-3 py-2 text-left text-14 ${on ? 'border-portfolio font-semibold text-main' : 'border-transparent text-sub hover:text-main'}`}
                   >
-                    <span lang="en" className={`font-medium tracking-normal ${on ? '' : 'text-sub-weak'}`}>
+                    <span lang="en" className={`font-medium tracking-normal ${on ? 'text-portfolio' : 'text-sub-weak'}`}>
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     {s.title}
@@ -290,15 +294,15 @@ export default function ProjectPage({ slug }: { slug: string }) {
           </nav>
 
           <div className="flex min-w-0 flex-col gap-16 lg:col-span-9">
-            <section id="project-why" className="flex scroll-mt-6 flex-col gap-5">
+            <motion.section {...reveal()} id="project-why" className="flex scroll-mt-6 flex-col gap-5">
               <SectionHeading index={indexOf('why')} title="왜 만들었나" />
               <p className="text-16 break-keep text-sub">{project.why}</p>
-            </section>
+            </motion.section>
 
             {hasDesign(project) && <DesignSection project={project} index={indexOf('design')} />}
 
             {project.decisions && (
-              <section id="project-decisions" className="flex scroll-mt-6 flex-col gap-5">
+              <motion.section {...reveal()} id="project-decisions" className="flex scroll-mt-6 flex-col gap-5">
                 <SectionHeading index={indexOf('decisions')} title="중요한 결정" sub="결정 하나마다 상황 → 고른 것 → 이유를 남겼어요." />
                 <ul>
                   {project.decisions.map((d) => (
@@ -311,13 +315,13 @@ export default function ProjectPage({ slug }: { slug: string }) {
                     </li>
                   ))}
                 </ul>
-              </section>
+              </motion.section>
             )}
 
             {project.chart && (
-              <section id="project-chart" className="flex scroll-mt-6 flex-col gap-5">
+              <motion.section {...reveal()} id="project-chart" className="flex scroll-mt-6 flex-col gap-5">
                 <SectionHeading index={indexOf('chart')} title={project.chart.title} sub={project.chart.sub} />
-                <div className="flex flex-col gap-4 rounded-card bg-light p-6 sm:p-8">
+                <div className="flex flex-col gap-4 rounded-card bg-regular p-6 sm:p-8">
                   <ul className="flex flex-col gap-4">
                     {project.chart.bars.map(([label, value], i) => {
                       const first = i === 0
@@ -325,13 +329,13 @@ export default function ProjectPage({ slug }: { slug: string }) {
                       return (
                         <li key={label} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 sm:grid-cols-[208px_1fr_auto]">
                           <span className={`text-14 break-keep text-main ${last ? 'font-semibold' : ''}`}>{label}</span>
-                          <span aria-hidden="true" className="order-last col-span-2 h-3 overflow-hidden rounded-full bg-regular sm:order-none sm:col-span-1">
+                          <span aria-hidden="true" className="order-last col-span-2 h-3 overflow-hidden rounded-full bg-default sm:order-none sm:col-span-1">
                             <span
                               className={`block h-full rounded-full ${first ? 'bg-icon-disabled' : 'bg-portfolio'}`}
                               style={{ width: `${value * 100}%` }}
                             />
                           </span>
-                          <span className={`text-14 font-semibold tracking-normal tabular-nums ${first ? 'text-sub' : 'text-portfolio'}`}>
+                          <span className={`text-14 font-semibold tracking-normal tabular-nums ${first ? 'text-sub' : 'text-portfolio-strong'}`}>
                             {value.toFixed(3)}
                           </span>
                         </li>
@@ -347,21 +351,21 @@ export default function ProjectPage({ slug }: { slug: string }) {
                   </ul>
                   <p className="text-13 break-keep text-sub">{project.chart.note}</p>
                 </div>
-              </section>
+              </motion.section>
             )}
 
             {project.troubles && (
-              <section id="project-troubles" className="flex scroll-mt-6 flex-col gap-5">
+              <motion.section {...reveal()} id="project-troubles" className="flex scroll-mt-6 flex-col gap-5">
                 <SectionHeading index={indexOf('troubles')} title="막힌 것과 해결" sub="문제가 생긴 순간과 고친 방법을 그대로 남겼어요." />
                 <div className="overflow-hidden rounded-card border border-regular">
                   {project.troubles.map((t, i) => (
                     <TroubleItem key={t.code} trouble={t} open={i === 0} />
                   ))}
                 </div>
-              </section>
+              </motion.section>
             )}
 
-            <section id="project-screens" className="flex scroll-mt-6 flex-col gap-5">
+            <motion.section {...reveal()} id="project-screens" className="flex scroll-mt-6 flex-col gap-5">
               <SectionHeading index={indexOf('screens')} title="화면" />
               <ul className={`grid gap-6 ${mobileScreens ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2'}`}>
                 {project.screens.items.map(({ image, label }) => (
@@ -375,12 +379,12 @@ export default function ProjectPage({ slug }: { slug: string }) {
                   </li>
                 ))}
               </ul>
-            </section>
+            </motion.section>
 
             {project.next && (
-              <section id="project-next" className="flex scroll-mt-6 flex-col gap-5">
+              <motion.section {...reveal()} id="project-next" className="flex scroll-mt-6 flex-col gap-5">
                 <SectionHeading index={indexOf('next')} title="다음 단계" />
-                <ul className="flex flex-col gap-3 rounded-card bg-light p-6">
+                <ul className="flex flex-col gap-3 rounded-card bg-regular p-6">
                   {project.next.map(({ title, body }) => (
                     <li key={title} className="grid gap-1 text-15 break-keep sm:grid-cols-[180px_1fr] sm:gap-4">
                       <span className="font-semibold text-main">{title}</span>
@@ -388,7 +392,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
                     </li>
                   ))}
                 </ul>
-              </section>
+              </motion.section>
             )}
           </div>
         </div>
@@ -398,7 +402,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
         <div className="mx-auto w-full max-w-300 px-5 pb-20 sm:px-10">
           <a
             href={projectHref(next.slug)}
-            className="group flex flex-wrap items-center justify-between gap-4 rounded-card bg-light p-6 hover:bg-regular sm:p-8"
+            className="lift flex flex-wrap items-center justify-between gap-4 rounded-card border border-transparent bg-regular p-6 sm:p-8"
           >
             <span className="flex flex-col gap-1">
               <span className="text-13 font-medium text-sub">다음 프로젝트</span>

@@ -184,54 +184,46 @@ import dsMoDetail from './assets/design/jsh-ds/g-mo-detail.webp'
 import dsMoEmptyCart from './assets/design/jsh-ds/g-mo-empty-cart.webp'
 import type { Level } from './rank'
 
-// 검색형 포트폴리오 데이터 — 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
+// 검색형 포트폴리오 데이터 - 기준: 「검색형 포트폴리오 구상안」 Search Portfolio.dc.html
 // 실제로 한 사례만 둔다. 새 사례는 CASES 에, 추천 검색어는 KEYWORDS 에 더한다.
 // 목록 순서는 level(rank.ts) → 날짜로 정해진다. 여기 적는 순서는 그 둘이 같을 때만 쓴다.
 // Front·Back 사례의 상세(문제·해결·코드)는 caseDetails.ts 에 slug 로 적는다.
 
 export type CaseType = 'Front' | 'Back' | 'Design'
 
-/** 다시 만든 Accio 배포 주소 — 사이트 안 앱(#/accio)은 지우고 링크만 둔다(F-011) */
+/** 다시 만든 Accio 배포 주소 - 사이트 안 앱(#/accio)은 지우고 링크만 둔다(F-011) */
 export const ACCIO_LIVE = 'https://accio-two.vercel.app/'
-/** techlearn 시안을 실제로 만든 미니 인프런 배포 주소 — 사이트 안 시안(#/techlearn)은 지우고 링크만 둔다(D-006) */
+/** techlearn 시안을 실제로 만든 미니 인프런 배포 주소 - 사이트 안 시안(#/techlearn)은 지우고 링크만 둔다(D-006) */
 export const MINI_INFLEARN_LIVE = 'https://mini-inflearn.vercel.app/'
-/** 배포 주소 — 사례(CASES)와 프로젝트 페이지(projects.ts)가 함께 쓴다 */
+/** 배포 주소 - 사례(CASES)와 프로젝트 페이지(projects.ts)가 함께 쓴다 */
 export const PLANFORME_LIVE = 'https://planforme-web.vercel.app/'
 export const REMIND_LIVE = 'https://remind-flame-ten.vercel.app/'
-/** 디딤 배포 주소(F-015) — 공개는 평가 리포트 · 샘플 체험, AI 기능은 허용한 이메일만 */
+/** 디딤 배포 주소(F-015) - 공개는 평가 리포트 · 샘플 체험, AI 기능은 허용한 이메일만 */
 export const DIDIM_LIVE = 'https://didim-gamma.vercel.app'
 export const DIDIM_GITHUB = 'https://github.com/give-it-a-shottt/Didim'
-/** Agora AI 토론장 배포 주소(F-016) — 로그인 없이 관람 · 예측, 토론 만들기만 로그인 */
+/** Agora AI 토론장 배포 주소(F-016) - 로그인 없이 관람 · 예측, 토론 만들기만 로그인 */
 export const AGORA_LIVE = 'https://agora-ai-seven.vercel.app'
 export const AGORA_GITHUB = 'https://github.com/give-it-a-shottt/AgoraAI'
-/** 거기붐벼? 배포 주소(F-017) — 로그인 없음. 서울 주요 121곳의 혼잡도를 5분마다 수집한다 */
+/** 거기붐벼? 배포 주소(F-017) - 로그인 없음. 서울 주요 121곳의 혼잡도를 5분마다 수집한다 */
 export const GEOGI_LIVE = 'https://geogi-boombyeo.shop'
 export const GEOGI_GITHUB = 'https://github.com/give-it-a-shottt/geogi-boombyeo'
 
-/** 분류 점 색 — Back 은 포인트 파랑, Front 는 회색, Design 은 주황, 공부 노트(Study)는 인디고 */
+/** 분류 점 색 - Back 은 검정, Front 는 회색, Design 은 주황, 공부 노트(Study)는 인디고 */
 export const TYPE_DOT_CLASS: Record<CaseType | 'Study', string> = {
-  Back: 'bg-portfolio',
+  Back: 'bg-main',
   Front: 'bg-icon-disabled',
   Design: 'bg-accent',
   Study: 'bg-study',
 }
 
-/** 실제로 맡은 부분 — 카드의 역할 칩(F-011). 사례에 roles 가 없으면 분류(type)로 정한다 */
+/** 실제로 맡은 부분 - 카드의 역할 칩(F-011). 사례에 roles 가 없으면 분류(type)로 정한다 */
 export type Role = 'Design' | 'Front' | 'Back' | 'DB'
-
-/** 역할 칩 색 — My Design System 12 Badge Soft (Design 보라 · Front 파랑 · Back 남색 · DB 초록) */
-export const ROLE_BADGE_CLASS: Record<Role, string> = {
-  Design: 'bg-role-design-soft text-role-design',
-  Front: 'bg-role-front-soft text-role-front',
-  Back: 'bg-role-back-soft text-role-back',
-  DB: 'bg-role-db-soft text-role-db',
-}
 
 export function caseRoles(item: { type: CaseType; roles?: Role[] }): Role[] {
   return item.roles ?? [item.type]
 }
 
-/** 사례가 어느 탭에 들어가는지 — Front · Back 은 Fullstack 한 탭으로 합친다(F-011) */
+/** 사례가 어느 탭에 들어가는지 - Front · Back 은 Fullstack 한 탭으로 합친다(F-011) */
 export function caseTab(item: { type: CaseType }): 'design' | 'fullstack' {
   return item.type === 'Design' ? 'design' : 'fullstack'
 }
@@ -247,7 +239,7 @@ export interface DesignVariant {
   height?: number
 }
 
-/** 제목을 직접 붙인 화면 묶음 한 칸 — 디자인 시스템처럼 페이지가 많아 분류별로 나눠 보여줄 때 쓴다 */
+/** 제목을 직접 붙인 화면 묶음 한 칸 - 디자인 시스템처럼 페이지가 많아 분류별로 나눠 보여줄 때 쓴다 */
 export interface DesignSection {
   title: string
   description: string
@@ -257,7 +249,7 @@ export interface DesignSection {
 }
 
 /**
- * Design 사례 — 같은 화면을 여러 안으로 고친 과정(variants), 또는 앱 전체 화면 구성(screens)과
+ * Design 사례 - 같은 화면을 여러 안으로 고친 과정(variants), 또는 앱 전체 화면 구성(screens)과
  * 디자인 시스템(system). 대표 화면은 실제 동작하는 데모로 함께 보여준다(demos/index.ts).
  */
 export interface DesignCase {
@@ -294,19 +286,19 @@ export interface PortfolioCase {
   type: CaseType
   code: string
   date: string
-  /** 중요도 1~4 — 높은 것부터 보여준다. 화면에는 보이지 않는다(기준은 rank.ts) */
+  /** 중요도 1~4 - 높은 것부터 보여준다. 화면에는 보이지 않는다(기준은 rank.ts) */
   level: Level
   title: string
   description: string
   metrics: { label: string; value: string }[]
-  /** 실제로 맡은 부분. 없으면 [type] — 여러 부분을 함께 한 사례만 적는다 */
+  /** 실제로 맡은 부분. 없으면 [type] - 여러 부분을 함께 한 사례만 적는다 */
   roles?: Role[]
   tags: string[]
   /** 화면에 보이지 않는 추가 검색어 */
   keywords: string
   /** Front 썸네일. 없으면 자리표시 이미지(assets/screenshot-placeholder.webp)를 보여준다 */
   image?: string
-  /** 눌렀을 때 갈 곳 — 보통 사례 상세 `#/case/{slug}`. 없으면 링크 없이 보여준다 */
+  /** 눌렀을 때 갈 곳 - 보통 사례 상세 `#/case/{slug}`. 없으면 링크 없이 보여준다 */
   href?: string
   /** href 말고 따로 열어볼 곳(실제 화면, 이전 버전 등). 새 탭으로 연다 */
   links?: { label: string; href: string }[]
@@ -322,7 +314,7 @@ export const CASES: PortfolioCase[] = [
     code: 'PROJECT 02',
     date: '2026.11',
     level: 3,
-    title: '마에스트로 — 지금 열린 식당 3곳을 근거와 함께',
+    title: '마에스트로 - 지금 열린 식당 3곳을 근거와 함께',
     description:
       '낯선 서울 동네에서 동네·상황만 고르면 지금 열려 있는 식당 3곳을 지도와 영업시간 막대, 날짜 붙은 근거로 비교해 주는 모바일 웹. 결과는 Zustand 스토어 하나에 두고 목록·지도·상세·자리 물어보기가 함께 쓴다. YUMITHON 해커톤에 출품하려고 했던 앱을 리뉴얼.',
     metrics: [
@@ -343,13 +335,13 @@ export const CASES: PortfolioCase[] = [
     type: 'Front',
     code: 'PROJECT 01',
     date: '2025.11',
-    // Front 대표 프로젝트 — 맨 위에 둔다. 전체에서는 더 최신인 Design 대표(jsh-design-system) 다음
+    // Front 대표 프로젝트 - 맨 위에 둔다. 전체에서는 더 최신인 Design 대표(jsh-design-system) 다음
     level: 4,
-    title: 'Accio — AI 자연어 검색 쇼핑몰',
+    title: 'Accio - AI 자연어 검색 쇼핑몰',
     description:
       '“USB 여러 개 꽂는 거”처럼 모호한 말도 알아듣는 쇼핑몰. 디자인 시스템을 정의하고 대화형 검색부터 장바구니·주문까지 구현.',
     metrics: [
-      { label: '기간', value: '2025.10 – 11' },
+      { label: '기간', value: '2025.10 - 11' },
       { label: '팀', value: '5명' },
     ],
     // 2025 팀 프로젝트(5명)에서 맡은 부분. 혼자 다시 만든 쪽(Design · Front · Back · DB)은 projects.ts 의 accio
@@ -370,7 +362,7 @@ export const CASES: PortfolioCase[] = [
     code: 'PROJECT 03',
     date: '2026.10',
     level: 2,
-    title: '검색형 포트폴리오 — 모든 작업을 싣고 중요한 것부터',
+    title: '검색형 포트폴리오 - 모든 작업을 싣고 중요한 것부터',
     description:
       '포트폴리오를 검색 결과처럼 탐색하는 이 사이트. 작은 작업까지 전부 싣되 내부 레벨로 중요한 사례를 위에 올리고, 검색어·탭을 주소에 남겨 공유와 뒤로가기가 되게 함.',
     metrics: [
@@ -416,7 +408,7 @@ export const CASES: PortfolioCase[] = [
     code: 'PROJECT 06',
     date: '2026.10',
     level: 3,
-    title: '플랜 등록 후 다시 열면 지난 화면이 남던 문제 — Next 16 화면 보관',
+    title: '플랜 등록 후 다시 열면 지난 화면이 남던 문제 - Next 16 화면 보관',
     description:
       'PlanForMe 에서 플랜을 등록하고 다시 +를 누르면 방금 쓴 3단계 화면이 그대로 나옴. Next 16 이 떠난 화면을 숨겨 보관하는 걸 확인하고, 상태마다 유지·초기화를 정해 끝난 폼과 열린 시트만 비움.',
     metrics: [
@@ -548,7 +540,7 @@ export const CASES: PortfolioCase[] = [
     code: 'CASE 07',
     date: '2026.10',
     level: 3,
-    title: '재계산해도 “밀린 분량” 배너가 남던 문제 — 기록은 두고 기준 시점만 저장',
+    title: '재계산해도 “밀린 분량” 배너가 남던 문제 - 기록은 두고 기준 시점만 저장',
     description:
       'PlanForMe 에서 남은 분량을 다시 나눠도 밀림 배너가 사라지지 않음. 지난 기록을 지우는 대신 마지막 재계산 시작일(rebased_on)을 저장해, 그 이후의 미완료만 밀림으로 세고 회귀 테스트로 고정.',
     metrics: [
@@ -567,7 +559,7 @@ export const CASES: PortfolioCase[] = [
     code: 'CASE 08',
     date: '2026.10',
     level: 2,
-    title: '하루 할당량 계산을 순수 함수로 — 기획서 예시가 곧 테스트',
+    title: '하루 할당량 계산을 순수 함수로 - 기획서 예시가 곧 테스트',
     description:
       '총분량·기간·요일로 하루 분량을 정하는 규칙을 DB 없는 함수로 분리. 피그마 계산 로직 페이지의 예시(100p를 3일 → 34·34·32 등)를 그대로 pytest 로 옮겨 기획과 코드가 어긋나지 않게 함.',
     metrics: [
@@ -616,9 +608,9 @@ export const CASES: PortfolioCase[] = [
     type: 'Design',
     code: 'DESIGN 08',
     date: '2026.10',
-    // Design 대표 프로젝트 — Design 탭과 홈 '먼저 보면 좋은 사례' 맨 앞에 둔다
+    // Design 대표 프로젝트 - Design 탭과 홈 '먼저 보면 좋은 사례' 맨 앞에 둔다
     level: 4,
-    title: '나만의 디자인 시스템 — 쇼핑몰·서비스·기업 사이트 90%를 덮는 기준',
+    title: '나만의 디자인 시스템 - 쇼핑몰·서비스·기업 사이트 90%를 덮는 기준',
     description:
       '피그마로 만든 개인 디자인 시스템 v0.1. 컬러·타이포·간격·그리드 토큰부터 버튼·팝업·GNB·빌보드·빈 상태까지 정리하고, 그 컴포넌트만으로 PC·모바일 샘플 화면을 조립해 검증한 27개 페이지.',
     metrics: [
@@ -632,7 +624,7 @@ export const CASES: PortfolioCase[] = [
     image: dsThumb,
     href: '#/case/jsh-design-system',
     design: {
-      app: 'My Design System — 쇼핑몰·서비스·기업 사이트 90% 커버를 목표로 한 개인 디자인 시스템 (v0.1 · PC / MO · Pretendard)',
+      app: 'My Design System - 쇼핑몰·서비스·기업 사이트 90% 커버를 목표로 한 개인 디자인 시스템 (v0.1 · PC / MO · Pretendard)',
       problem:
         '쇼핑몰·서비스·기업 사이트에서 반복되는 화면 부품을 프로젝트마다 새로 정하지 않도록, 값은 모두 변수(토큰)로 묶고 테마 4종·글꼴 3종·라운드 3종을 모드로 바꿔 끼울 수 있게 설계했다. 수업 자료의 컴포넌트 규칙을 기준으로 삼고, 자료가 없는 부분은 국내 서비스 공통 패턴으로 채웠다.',
       sections: [
@@ -640,7 +632,7 @@ export const CASES: PortfolioCase[] = [
           title: '표지 · 목차',
           description: 'A 기초부터 G 검증까지 7개 그룹, 27개 페이지의 지도예요.',
           items: [
-            { label: '표지', image: dsCover, note: 'v0.1 · 2026.10 · PC / MO · Pretendard — 쇼핑몰·서비스·기업 사이트 90% 커버가 목표', width: 1920, height: 1080 },
+            { label: '표지', image: dsCover, note: 'v0.1 · 2026.10 · PC / MO · Pretendard - 쇼핑몰·서비스·기업 사이트 90% 커버가 목표', width: 1920, height: 1080 },
             { label: '목차', image: dsIndex, note: '그룹 7개(기초 · 기본 · 조합 · 레이아웃 · 콘텐츠 · 상태 · 검증)와 페이지마다 완료 상태', width: 1920, height: 2455 },
           ],
         },
@@ -651,14 +643,14 @@ export const CASES: PortfolioCase[] = [
             { label: '01 Color · Neutral', image: dsNeutral, note: '순수 그레이 11단계(50~950) + base. 글자·배경·테두리·구분선에 사용', width: 1440, height: 1326 },
             { label: '01 Color · Semantic', image: dsSemantic, note: '성공·경고·오류·정보 4종. 색마다 배경·아이콘·글자 3단계, 브랜드와 상관없이 고정', width: 1440, height: 939 },
             { label: '01 Color · Theme', image: dsTheme, note: '같은 토큰 이름에 모드별 값만 다른 테마 4종(Light · Ivory · Dark · Warm Dark)', width: 1440, height: 1094 },
-            { label: '01 Color · Brand Blue', image: dsBrandBlue, note: '브랜드 01 #5B8CFF — 시원하고 친근한 신뢰감. 서비스·핀테크·교육·IT 쇼핑몰용', width: 1440, height: 1863 },
+            { label: '01 Color · Brand Blue', image: dsBrandBlue, note: '브랜드 01 #5B8CFF - 시원하고 친근한 신뢰감. 서비스·핀테크·교육·IT 쇼핑몰용', width: 1440, height: 1863 },
             { label: '02 Typography · Pretendard', image: dsTypePretendard, note: '폰트 4종(산스·명조·한글 보수형·영문 지오메트릭)과 크기·굵기 스케일', width: 1440, height: 3982 },
             { label: '02 Typography · Noto Sans KR', image: dsTypeNotoSans, note: '같은 레이어에 Typography 모드만 Noto Sans KR로 바꾼 것', width: 1440, height: 4034 },
             { label: '02 Typography · Noto Serif KR', image: dsTypeNotoSerif, note: '같은 레이어에 모드만 명조(Noto Serif KR)로 바꾼 것', width: 1440, height: 3967 },
             { label: '03 Spacing', image: dsSpacing, note: '4는 최소 단위, 8은 주 리듬. 4배수는 전부 토큰이라 값을 직접 입력할 일이 없게', width: 1440, height: 3963 },
             { label: '04 Resolution', image: dsResolution, note: '시안은 375 · 768 · 1440 세 개만, 나머지 너비는 구간 규칙으로. 기기 이름이 아니라 너비로 나눔', width: 1440, height: 2605 },
-            { label: '04 반응형 데모', image: dsResponsiveDemo, note: '같은 구조에 Responsive 모드만 MO · Tablet · PC — 카드 12개가 2 · 4 · 6단으로', width: 2839, height: 2020 },
-            { label: '05 Layout Grid', image: dsLayoutGrid, note: '컬럼 너비는 정하는 값이 아니라 계산되는 값 — (콘텐츠 − 거터 × (컬럼 수 − 1)) ÷ 컬럼 수', width: 1440, height: 3147 },
+            { label: '04 반응형 데모', image: dsResponsiveDemo, note: '같은 구조에 Responsive 모드만 MO · Tablet · PC - 카드 12개가 2 · 4 · 6단으로', width: 2839, height: 2020 },
+            { label: '05 Layout Grid', image: dsLayoutGrid, note: '컬럼 너비는 정하는 값이 아니라 계산되는 값 - (콘텐츠 − 거터 × (컬럼 수 − 1)) ÷ 컬럼 수', width: 1440, height: 3147 },
             { label: '06 Radius · Shadow', image: dsRadiusShadow, note: '라운드는 브랜드 성격을 가장 크게 바꾸는 값이라 모드 3개(Default · Sharp · Round). 그림자는 떠 있다는 힌트만', width: 1440, height: 2865 },
             { label: '07 Icon', image: dsIcon, note: 'Phosphor(MIT) 한 세트 60개 × 5스타일. 직접 그리지 않고 검증된 세트 하나로 선 두께·모서리 통일', width: 1440, height: 3652 },
             { label: '07 Icon Library', image: dsIconLibrary, note: '아이콘 60개를 스타일 5종으로 모은 라이브러리', width: 2920, height: 960 },
@@ -668,7 +660,7 @@ export const CASES: PortfolioCase[] = [
           title: 'B. 기본 컴포넌트',
           description: '버튼·입력·선택처럼 화면 어디에나 들어가는 부품이에요. 크기·상태를 모두 변수에 연결했어요.',
           items: [
-            { label: '08 Button', image: dsButton, note: '스타일 6 · 사이즈 5 · 상태 6을 변수로 연결 — 테마와 라운드 모드를 바꾸면 버튼 전체가 같이 바뀜', width: 1440, height: 6067 },
+            { label: '08 Button', image: dsButton, note: '스타일 6 · 사이즈 5 · 상태 6을 변수로 연결 - 테마와 라운드 모드를 바꾸면 버튼 전체가 같이 바뀜', width: 1440, height: 6067 },
             { label: '09 Input Box', image: dsInput, note: '7가지 타입을 스타일(Line · Filled · Underline) · 라벨 위치 · 모서리 3개 축으로. 높이는 버튼과 같게', width: 1440, height: 4560 },
             { label: '10 Select Box', image: dsSelect, note: '닫힌 칸은 Input과 같은 규칙, 목록은 PC 드롭다운 · MO 바텀시트, 날짜는 Date Picker', width: 1440, height: 4889 },
             { label: '11 Form Control', image: dsFormControl, note: '체크박스 · 라디오 · 토글 · 수량. 칸과 글자를 한 덩어리로 눌리게 해 작은 칸도 누르기 쉽게', width: 1440, height: 3752 },
@@ -683,7 +675,7 @@ export const CASES: PortfolioCase[] = [
             { label: '14 Tab · Accordion', image: dsTabAccordion, note: '탭 4종(Line · Chip · Box · Segment)과 접고 펼치는 Accordion. 높이는 버튼과 같은 56 · 48 · 40 · 32', width: 1440, height: 3426 },
             { label: '15 Popup', image: dsPopup, note: 'Alert · Layer Popup · Bottom Sheet · Full Popup · Drawer와 쓸 때 · 쓰지 말 때', width: 1440, height: 6019 },
             { label: '16 Table · List', image: dsTableList, note: '정보 표 · 목록 · 게시형 메뉴 · 데이터 표. 가독성이 먼저, 산만한 요소는 빼기', width: 1440, height: 3937 },
-            { label: '17 Pagination · Stepper · Indicator', image: dsPagination, note: '지금 어디쯤인지 알려주는 UI — 페이지 번호 · 더보기, 진행 단계, 슬라이드 위치', width: 1440, height: 3801 },
+            { label: '17 Pagination · Stepper · Indicator', image: dsPagination, note: '지금 어디쯤인지 알려주는 UI - 페이지 번호 · 더보기, 진행 단계, 슬라이드 위치', width: 1440, height: 3801 },
             { label: '18 Card · Thumbnail', image: dsCard, note: '상품 · 콘텐츠 카드와 그 안의 이미지. 실무 쇼핑몰 카드 기준', width: 1440, height: 5830 },
             { label: '19 Image', image: dsImage, note: '이미지 넣는 원칙 6가지, 규격, 누끼 배경, 대체 이미지, 시스템 전용 3D 아이콘 레시피', width: 1440, height: 4518 },
           ],
@@ -692,10 +684,10 @@ export const CASES: PortfolioCase[] = [
           title: 'D · E. 레이아웃 · 콘텐츠 블록',
           description: '화면의 뼈대가 되는 메뉴·푸터·하단 탭바와, 메인을 채우는 배너예요.',
           items: [
-            { label: '20 GNB', image: dsGnb, note: '어디서든 맨 위에 붙는 메뉴 줄 — 메인 · 서브 · 검색, PC 3단', width: 1440, height: 4133 },
+            { label: '20 GNB', image: dsGnb, note: '어디서든 맨 위에 붙는 메뉴 줄 - 메인 · 서브 · 검색, PC 3단', width: 1440, height: 4133 },
             { label: '21 Footer', image: dsFooter, note: '회사 정보 · 약관 · 고객센터. 쇼핑몰 법정 표시 항목을 담아 PC 3타입 × 테마 2', width: 1440, height: 3739 },
             { label: '22 Dock Bar', image: dsDockBar, note: 'MO 맨 아래 고정 탭 메뉴. 비슷하게 중요한 최상위 메뉴 3~5개', width: 1440, height: 3051 },
-            { label: '23 Billboard', image: dsBillboard, note: '고객과의 첫 만남인 메인 배너 — 5초 안에 각인되도록 목적 3가지부터 정리', width: 1440, height: 5918 },
+            { label: '23 Billboard', image: dsBillboard, note: '고객과의 첫 만남인 메인 배너 - 5초 안에 각인되도록 목적 3가지부터 정리', width: 1440, height: 5918 },
             { label: '24 Line Banner', image: dsLineBanner, note: '놓치면 안 되는 혜택 · 공지를 한 줄로 전하는 띠배너 3종', width: 1440, height: 3316 },
           ],
         },
@@ -734,7 +726,7 @@ export const CASES: PortfolioCase[] = [
     code: 'DESIGN 09',
     date: '2026.11',
     level: 3,
-    title: '마에스트로 리뉴얼 — 지금 열려 있고 믿을 만한 식당 3곳',
+    title: '마에스트로 리뉴얼 - 지금 열려 있고 믿을 만한 식당 3곳',
     description:
       '해커톤 출품하려고 했던 일정 기반 플랜 B 앱을 다시 설계. 낯선 서울 동네에서 지금 열린 식당 3곳을 같은 축의 영업시간 막대와 날짜가 붙은 근거로 비교하게 하고, IA·유저 플로우부터 디자인 시스템, 모바일·PC·상태·투표 화면까지 피그마로 그리고 구현.',
     metrics: [
@@ -749,13 +741,13 @@ export const CASES: PortfolioCase[] = [
     href: '#/case/maestro-redesign',
     links: [{ label: '실제 화면 보기', href: '#/maestro' }],
     design: {
-      app: '마에스트로 — 낯선 서울 동네에서 지금 갈 식당 3곳을 근거와 함께 골라 주는 모바일 웹 (해커톤 출품하려고 했던 앱의 리뉴얼)',
+      app: '마에스트로 - 낯선 서울 동네에서 지금 갈 식당 3곳을 근거와 함께 골라 주는 모바일 웹 (해커톤 출품하려고 했던 앱의 리뉴얼)',
       problem:
         '예전 화면은 대안 식당 하나를 보려면 일정부터 다 입력해야 해서 약 11탭이 걸렸고, 대안은 가로 캐러셀에 숨어 비교가 안 됐다. 믿을 만한 이유는 노포·교차검증 같은 뜻 모를 태그로만 보였고, 보라 버튼 위 흰 글자 대비는 4.38 : 1이었으며 빈·오류 상태와 PC 화면도 없었다. 그래서 헤이유미 식당 데이터만 남기고 목적부터 다시 정해, 홈에서 한 번만 누르면 지금 열린 3곳을 같은 축의 영업시간 막대와 날짜 붙은 근거로 비교하게 했다.',
       role: '개인 작업 · 기여도 100%',
       sections: [
         {
-          title: '기획 — IA · 유저 플로우',
+          title: '기획 - IA · 유저 플로우',
           description: '예전 화면을 분석한 뒤 정보 구조와 명세표, 네 가지 사용 흐름을 먼저 정했어요.',
           items: [
             { label: 'IA 구조도', image: mrPlanIa, note: '홈 · 결과 · 식당 상세 · 투표 4개 영역. 일정 입력·악보 보기는 지우고 당일 모드·변주 결과·실시간 문의는 합침', width: 1448, height: 1248 },
@@ -776,8 +768,8 @@ export const CASES: PortfolioCase[] = [
             { label: '표로 비교', image: mrMoTable, note: '탭만 바꿔 지금·거리·웨이팅·가격대·분위기·근거를 3열로. 열마다 [여기로]', width: 375, height: 812 },
             { label: '식당 상세', image: mrMoDetail, note: '별점 대신 "믿을 이유"를 날짜 붙은 체크리스트로. 아래에 [길 찾기] · [자리 물어보기]', width: 375, height: 1128 },
             { label: '자리 물어보기', image: mrMoSeatAsk, note: '인원과 지금 바로 / 30분 뒤를 고르는 바텀시트. 시연용 mock 응답이라고 미리 알려 줌', width: 375, height: 812 },
-            { label: '응답 기다리기', image: mrMoSeatWait, note: '사장님께 묻는 중 — 진행 막대와 [그만 묻기]', width: 375, height: 812 },
-            { label: '응답 · 가능', image: mrMoSeatOk, note: '"2명, 지금 바로 앉을 수 있대요" — [길 찾기]가 주 버튼으로 바뀜', width: 375, height: 812 },
+            { label: '응답 기다리기', image: mrMoSeatWait, note: '사장님께 묻는 중 - 진행 막대와 [그만 묻기]', width: 375, height: 812 },
+            { label: '응답 · 가능', image: mrMoSeatOk, note: '"2명, 지금 바로 앉을 수 있대요" - [길 찾기]가 주 버튼으로 바뀜', width: 375, height: 812 },
             { label: '응답 · 불가', image: mrMoSeatFull, note: '토스트로 알리고 다음 후보의 상세로 바로 넘김', width: 375, height: 812 },
           ],
         },
@@ -816,8 +808,8 @@ export const CASES: PortfolioCase[] = [
           items: [
             { label: '개요', image: mrOverview, note: '브리프와 모드 선택(Light · Lavender · Pretendard · Card UI), 한 서비스에서 하나로 통일한 컴포넌트, 이 프로젝트만의 원칙', width: 1166, height: 1600 },
             { label: '브랜드 · Lavender', image: mrBrand, note: 'main #7D6AFB · accent #F9AB24 스케일과 의미 토큰. 앰버는 "지금" 마커에만', width: 1426, height: 2400 },
-            { label: '대비 — 세 묶음', image: mrContrast, note: '반드시 맞춘 것 · 일부러 낮춘 것 · 쓰는 곳을 막은 것. 확정 4색은 그대로 두고 쓰는 곳을 제한', width: 1440, height: 1962 },
-            { label: '시그니처 컴포넌트', image: mrSignature, note: '영업시간 막대 · 이니셜 지도 핀 · 근거 블록 · 결과 카드 — 시스템에 없어 새로 만든 것과 그 이유', width: 1085, height: 1600 },
+            { label: '대비 - 세 묶음', image: mrContrast, note: '반드시 맞춘 것 · 일부러 낮춘 것 · 쓰는 곳을 막은 것. 확정 4색은 그대로 두고 쓰는 곳을 제한', width: 1440, height: 1962 },
+            { label: '시그니처 컴포넌트', image: mrSignature, note: '영업시간 막대 · 이니셜 지도 핀 · 근거 블록 · 결과 카드 - 시스템에 없어 새로 만든 것과 그 이유', width: 1085, height: 1600 },
             { label: 'UI 컴포넌트', image: mrComponents, note: 'GNB · 조건 칩 · 배지 · 버튼 · 바텀시트 · 빈 상태 · 스켈레톤 · 토스트 · 표 · 팝업', width: 1440, height: 3265 },
           ],
         },
@@ -830,7 +822,7 @@ export const CASES: PortfolioCase[] = [
     code: 'DESIGN 06',
     date: '2026.10',
     level: 3,
-    title: 'Accio 리디자인 — AI 쇼핑몰 화면·디자인 시스템 설계',
+    title: 'Accio 리디자인 - AI 쇼핑몰 화면·디자인 시스템 설계',
     description:
       '팀 프로젝트였던 AI 자연어 검색 쇼핑몰을 다시 설계. 디자인 시스템부터 쇼핑·AI 대화·마이페이지·판매자센터의 PC·모바일 화면, 빈 상태·오류 같은 상태 화면까지 피그마로 그리고 그대로 구현.',
     metrics: [
@@ -845,7 +837,7 @@ export const CASES: PortfolioCase[] = [
     href: '#/case/accio-redesign',
     links: [{ label: '서비스 열기', href: ACCIO_LIVE }],
     design: {
-      app: 'Accio — 상품 이름을 몰라도 말로 찾는 AI 쇼핑몰 (팀 프로젝트 리디자인)',
+      app: 'Accio - 상품 이름을 몰라도 말로 찾는 AI 쇼핑몰 (팀 프로젝트 리디자인)',
       problem:
         '쇼핑·AI 대화·마이페이지·판매자센터까지 화면이 50개 가까이 되고 PC·모바일을 모두 맞춰야 했다. 화면마다 값을 정하면 금방 어긋나서, 오렌지는 클릭할 곳과 AI 순간에만 쓴다는 규칙과 토큰을 먼저 정하고 모든 화면을 그 위에서 그렸다. 빈 상태·오류·로그인 필요처럼 놓치기 쉬운 상태 화면도 따로 모아 설계했다.',
       device: 'desktop',
@@ -885,7 +877,7 @@ export const CASES: PortfolioCase[] = [
     code: 'DESIGN 07',
     date: '2026.10',
     level: 3,
-    title: 'FLASEEK 자사몰 리뉴얼 시안 — 증거로 보여주고, 기준으로 고르게',
+    title: 'FLASEEK 자사몰 리뉴얼 시안 - 증거로 보여주고, 기준으로 고르게',
     description:
       '보정속옷·압박스타킹 자사몰의 문제 4가지(왼쪽 쏠림·버튼 중복·정보 없는 카드·끝없이 펼쳐진 상세)와 핑크 대비를 진단하고, Before/After 히어로·정보 카드·접히는 상세로 PC·모바일 화면과 디자인 시스템을 제안.',
     metrics: [
@@ -900,13 +892,13 @@ export const CASES: PortfolioCase[] = [
     href: '#/case/flaseek-renewal',
     links: [{ label: '실제 화면 보기', href: '#/flaseek' }],
     design: {
-      app: 'FLASEEK — 다리라인·체형 보정 제품을 파는 보정속옷·압박스타킹 자사몰 (리뉴얼 제안 시안)',
+      app: 'FLASEEK - 다리라인·체형 보정 제품을 파는 보정속옷·압박스타킹 자사몰 (리뉴얼 제안 시안)',
       problem:
         '왼쪽 고정 사이드바 때문에 콘텐츠가 한쪽으로 쏠리고, 멤버십·쿠폰·문의 버튼이 사이드바·퀵메뉴·헤더·푸터에 겹쳐 진입점이 11곳이었다. 상품 카드에는 할인율·별점·세트 장당가가 없어 고를 근거가 부족했고, 상세는 이미지와 리뷰가 한 번에 펼쳐져 22,400px까지 길어져 구매 버튼을 잃어버렸다. 브랜드 핑크(#FA78A8) 버튼 위 흰 글자는 대비가 2.53 : 1로 기준(4.5 : 1)에 못 미쳤다.',
-      role: '개인 작업 · 기여도 100% — 현재 몰 진단, 기획(IA·유저 플로우), 3안 비교와 선택, 디자인 시스템, PC·모바일 화면까지 판단과 디자인은 모두 직접 했어요. Claude는 근거 수치 정리·피그마 조립 같은 반복 작업을, Figma AI는 연출용 Before/After·상세 이미지 2장을 보조했고 화면에 AI 이미지라고 표기했어요.',
+      role: '개인 작업 · 기여도 100% - 현재 몰 진단, 기획(IA·유저 플로우), 3안 비교와 선택, 디자인 시스템, PC·모바일 화면까지 판단과 디자인은 모두 직접 했어요. Claude는 근거 수치 정리·피그마 조립 같은 반복 작업을, Figma AI는 연출용 Before/After·상세 이미지 2장을 보조했고 화면에 AI 이미지라고 표기했어요.',
       device: 'desktop',
       story: [
-        { label: '표지', image: flStoryCover, note: '증거로 보여주고, 기준으로 고르게 — 기간 2일, 진단부터 PC·모바일 화면과 디자인 시스템까지', width: 1920, height: 1080 },
+        { label: '표지', image: flStoryCover, note: '증거로 보여주고, 기준으로 고르게 - 기간 2일, 진단부터 PC·모바일 화면과 디자인 시스템까지', width: 1920, height: 1080 },
         { label: '한눈에 보기', image: flStorySummary, note: '문제 4가지와 브랜드 핑크 대비를 근거·개선·결과 한 표로', width: 1920, height: 1080 },
         { label: '문제 1 · 레이아웃', image: flStoryLayout, note: '왼쪽 250px 고정 사이드바를 걷어내고 상단 GNB + 1200px 가운데 12칼럼으로', width: 1920, height: 1080 },
         { label: '문제 2 · 버튼 중복', image: flStoryEntry, note: '혜택·고객센터를 한 페이지씩으로 묶고 퀵메뉴를 줄여 진입점 11곳 → 3곳', width: 1920, height: 1080 },
@@ -915,7 +907,7 @@ export const CASES: PortfolioCase[] = [
         { label: '컬러 접근성', image: flStoryContrast, note: '브랜드 핑크는 지키고 버튼 #D90855 · 장식 #FA78A8 · 글자 #CA074F 세 역할로 나눠 대비 5.10 : 1', width: 1920, height: 1080 },
         { label: '디자인 과정', image: flStoryProcess, note: '올리브영·에이블리·W컨셉·29CM·마켓컬리 벤치마킹 후 3안을 직접 그려 A안 선택', width: 1920, height: 1080 },
         { label: '디자인 시스템', image: flStorySystem, note: '개인 디자인 시스템 위에 컬러 변수 21개·텍스트 스타일 28개, 프로젝트 값만 바꿈', width: 1920, height: 1080 },
-        { label: '모바일', image: flStoryMobile, note: '엄지로 고르고 엄지로 산다 — 가로 스크롤 칩, 필터 바텀시트, 하단 고정 구매바', width: 1920, height: 1080 },
+        { label: '모바일', image: flStoryMobile, note: '엄지로 고르고 엄지로 산다 - 가로 스크롤 칩, 필터 바텀시트, 하단 고정 구매바', width: 1920, height: 1080 },
         { label: 'AI 활용 · 참여 범위', image: flStoryAiRole, note: '단계별로 내가 판단한 것과 AI가 보조한 것을 나눠 적음', width: 1920, height: 1080 },
         { label: '기대 효과', image: flStoryImpact, note: '세트 구매 비중·구매 클릭률·리뷰 도달률·문의 경로를 오픈 후 A/B 테스트로 확인할 계획', width: 1920, height: 1080 },
       ],
@@ -935,7 +927,7 @@ export const CASES: PortfolioCase[] = [
       ],
       system: [
         { label: '기획 보드', image: flPlanBoard, note: '현재 몰 진단, 정보 구조(IA) 현재 vs 개선, 핵심 유저 플로우', width: 1610, height: 4096 },
-        { label: 'A안 · 증거로 파는 몰', image: flOptionA, note: '선택. Before/After 히어로에 B안의 두께 섹션을 더함 — 회사가 받아들이기 쉽고 이틀 안에 완성 가능', width: 1440, height: 2028 },
+        { label: 'A안 · 증거로 파는 몰', image: flOptionA, note: '선택. Before/After 히어로에 B안의 두께 섹션을 더함 - 회사가 받아들이기 쉽고 이틀 안에 완성 가능', width: 1440, height: 2028 },
         { label: 'B안 · 두께로 고르는 몰', image: flOptionB, note: '컨덴스드 영문 두께 선택기. 이 선택기만 A안 메인 중간과 리스트 위로 가져감', width: 1440, height: 1420 },
         { label: 'C안 · 블랙 박스 몰', image: flOptionC, note: '패키지 모티프 다크 테마. 흰 배경 상품 사진을 다시 손봐야 해서 제외', width: 1440, height: 1455 },
         { label: '컴포넌트', image: flComponents, note: '버튼·탭·필터 칩·태그·상품 카드·카테고리/두께 카드·헤더·구매바를 PC·MO로', width: 4096, height: 1427 },
@@ -952,7 +944,7 @@ export const CASES: PortfolioCase[] = [
     code: 'DESIGN 02',
     date: '2026.10',
     level: 3,
-    title: 'GAMEPROBE — 발로란트 전적·공략 웹 서비스 설계',
+    title: 'GAMEPROBE - 발로란트 전적·공략 웹 서비스 설계',
     description:
       '전적 검색부터 매치 분석, 메타 통계, 라인업·스모크 공략, 관리자 편집까지 10개 영역의 화면과 디자인 시스템을 피그마로 설계.',
     metrics: [
@@ -966,7 +958,7 @@ export const CASES: PortfolioCase[] = [
     href: '#/case/gameprobe',
     links: [{ label: '실제 서비스 보기', href: 'https://valorant-platform.vercel.app/' }],
     design: {
-      app: 'GAMEPROBE — 발로란트 플레이어가 전적을 검색하고 메타·라인업·스모크 공략을 찾아보는 웹 서비스 (팬 프로젝트)',
+      app: 'GAMEPROBE - 발로란트 플레이어가 전적을 검색하고 메타·라인업·스모크 공략을 찾아보는 웹 서비스 (팬 프로젝트)',
       problem:
         '전적, 메타 통계, 라인업 공략이 서로 다른 사이트에 흩어져 있어 한 경기를 돌아보려면 여러 곳을 오가야 했다. 검색 → 매치 분석 → 공략까지 한 서비스 안에서 이어지도록 화면과 디자인 시스템을 함께 설계했다.',
       device: 'desktop',
@@ -976,11 +968,11 @@ export const CASES: PortfolioCase[] = [
         { label: '매치 상세', image: gpMatch, note: '우리 팀·상대 팀 스코어보드를 나누고 내 행을 강조. 라운드·경제·비교는 탭으로 분리', width: 1440, height: 1431 },
         { label: '랭킹', image: gpRanking, note: '공식 리더보드를 순위·티어·RR 중심의 긴 표로 정리', width: 1440, height: 3218 },
         { label: '메타 통계', image: gpMeta, note: 'S~C 티어 보드로 한눈에 보고, 아래 표에서 승률·픽률·KDA로 다시 정렬', width: 1440, height: 2660 },
-        { label: '게임 정보', image: gpAgent, note: '요원 상세 — 역할과 스킬 정보를 한 페이지에 정리', width: 1440, height: 2050 },
+        { label: '게임 정보', image: gpAgent, note: '요원 상세 - 역할과 스킬 정보를 한 페이지에 정리', width: 1440, height: 2050 },
         { label: '마이페이지', image: gpMy, note: '로그인 전에는 계정 연동으로 얻는 이점만 짧게 보여주고 로그인 버튼 하나로 이어지게 함', width: 1440, height: 717 },
         { label: '라인업', image: gpLineup, note: '맵·요원·스킬을 고르면 미니맵에 던지는 위치가 뜨고, 오른쪽에 서는 위치→조준→발사 단계를 보여줌', width: 1440, height: 1117 },
         { label: '스모크 가이드', image: gpSmoke, note: '맵에서 연막 도착 위치를 고르면 서는 위치·조준·설치 순서가 펼쳐짐', width: 1440, height: 1763 },
-        { label: '관리자', image: gpAdmin, note: '공략 편집 — 입력 폼과 지도 위 위치 지정을 나란히 두어 입력하면서 바로 확인', width: 1440, height: 1594 },
+        { label: '관리자', image: gpAdmin, note: '공략 편집 - 입력 폼과 지도 위 위치 지정을 나란히 두어 입력하면서 바로 확인', width: 1440, height: 1594 },
       ],
       system: [
         { label: '표지', image: gpCover, note: '가이드 목차와 디자인 원칙', width: 1440, height: 1673 },
@@ -999,7 +991,7 @@ export const CASES: PortfolioCase[] = [
     code: 'DESIGN 03',
     date: '2026.10',
     level: 3,
-    title: 'remind — 노션 학습노트 복습 퀴즈 앱 설계',
+    title: 'remind - 노션 학습노트 복습 퀴즈 앱 설계',
     description:
       '노션에 정리한 강의 노트를 객관식·OX·단답형·서술형 퀴즈로 복습하는 모바일 퍼스트 앱. 복습 흐름·오답노트·디자인 시스템을 피그마로 설계.',
     metrics: [
@@ -1013,14 +1005,14 @@ export const CASES: PortfolioCase[] = [
     href: '#/case/remind',
     links: [{ label: '실제 서비스 보기', href: REMIND_LIVE }],
     design: {
-      app: 'remind — 노션에 정리한 강의 노트를 퀴즈로 바꿔 매일 복습하는 웹 앱 (개인 프로젝트)',
+      app: 'remind - 노션에 정리한 강의 노트를 퀴즈로 바꿔 매일 복습하는 웹 앱 (개인 프로젝트)',
       problem:
         '노션에 강의 노트를 쌓아도 다시 펼쳐 보지 않으면 금방 잊어버렸다. 홈에서 탭 두 번 안에 오늘 복습을 시작하고, 틀린 문제는 연속으로 두 번 맞힐 때까지 오답노트에서 다시 나오도록 흐름을 설계했다.',
       screens: [
         { label: '홈', image: rmHome, note: '오늘 복습할 문제 수와 시작 버튼을 맨 위에 두고, 이어 풀기·이번 주 업데이트·트랙을 아래로', width: 390, height: 1424 },
         { label: '트랙', image: rmTrack, note: '토픽 수·진도·정답률 요약과 상태 필터, 토픽 목록', width: 390, height: 924 },
         { label: '토픽 · 개념', image: rmTopic, note: '노션 소제목 하나를 개념 카드 하나로. 개념·문제 목록 탭과 하단 고정 버튼', width: 390, height: 1257 },
-        { label: '퀴즈 · 객관식', image: rmChoice, note: '탭바 없는 집중 모드 — 위에는 닫기·진행바·문제 번호만 남김', width: 390, height: 844 },
+        { label: '퀴즈 · 객관식', image: rmChoice, note: '탭바 없는 집중 모드 - 위에는 닫기·진행바·문제 번호만 남김', width: 390, height: 844 },
         { label: '오답 피드백', image: rmFeedback, note: '채점 직후 정답·오답을 색·아이콘·문장으로 함께 보여주고, 보기마다 맞고 틀린 이유를 설명', width: 390, height: 1044 },
         { label: '퀴즈 · OX', image: rmOx, note: '누르는 즉시 채점해 정답 쪽과 내가 고른 쪽을 바로 표시', width: 390, height: 844 },
         { label: '퀴즈 · 서술형', image: rmSelfGrade, note: '모범답안·핵심 키워드와 비교해 몰랐음·애매함·알았음으로 직접 채점', width: 390, height: 844 },
@@ -1034,7 +1026,7 @@ export const CASES: PortfolioCase[] = [
         { label: '타이포그래피', image: rmTypography, note: '크기·굵기 스케일과 화면별 텍스트 위계', width: 1200, height: 3853 },
         { label: '레이아웃·간격', image: rmLayout, note: '간격 스케일과 컨테이너 규칙', width: 1200, height: 1311 },
         { label: '모서리·그림자', image: rmRadius, note: '요소별 모서리 반경과 그림자 단계', width: 1200, height: 672 },
-        { label: '브레이크포인트', image: rmBreakpoints, note: '모바일 퍼스트 — 390 · 768 · 1440 시안, 콘텐츠 최대 1200', width: 1200, height: 868 },
+        { label: '브레이크포인트', image: rmBreakpoints, note: '모바일 퍼스트 - 390 · 768 · 1440 시안, 콘텐츠 최대 1200', width: 1200, height: 868 },
         { label: '컴포넌트 규칙', image: rmComponents, note: '컴포넌트를 고르고 조합하는 기준', width: 1200, height: 1396 },
         { label: 'IA', image: rmIa, note: '화면 7개와 하단 탭바가 보이는 범위·이동 경로', width: 1200, height: 2108 },
         { label: '유저 플로우', image: rmUserFlow, note: '가장 자주 쓰는 매일 복습은 홈에서 탭 2번 안에 첫 문제가 나오도록', width: 1200, height: 2235 },
@@ -1049,7 +1041,7 @@ export const CASES: PortfolioCase[] = [
     code: 'DESIGN 04',
     date: '2026.10',
     level: 3,
-    title: 'PlanForMe — 하루 할당량을 계산해 주는 플래너 앱 설계',
+    title: 'PlanForMe - 하루 할당량을 계산해 주는 플래너 앱 설계',
     description:
       '총분량과 마감일만 넣으면 하루 할 일을 정해 주는 1인용 플래너. IA·유저 플로우·계산 규칙부터 모바일 화면 14개와 컴포넌트까지 피그마로 설계하고 그대로 구현·배포.',
     metrics: [
@@ -1064,7 +1056,7 @@ export const CASES: PortfolioCase[] = [
     href: '#/case/planforme',
     links: [{ label: '실제 서비스 보기', href: PLANFORME_LIVE }],
     design: {
-      app: 'PlanForMe — 총분량과 마감일만 입력하면 하루 할당량을 자동 계산해 일정에 등록해 주는 1인용 스마트 플래너 (개인 프로젝트)',
+      app: 'PlanForMe - 총분량과 마감일만 입력하면 하루 할당량을 자동 계산해 일정에 등록해 주는 1인용 스마트 플래너 (개인 프로젝트)',
       problem:
         '책·강의 계획은 세우는 것보다 지키는 게 어렵다. 하루 분량을 직접 나눠야 하고, 하루 이틀 밀리면 계산이 꼬인다. 유형마다 필요한 값만 받아 하루 분량을 정해 주고, 밀려도 실제 진행량을 받아 남은 기간에 다시 나눠 주도록 흐름과 계산 규칙을 먼저 정했다.',
       screens: [
@@ -1113,7 +1105,7 @@ export const CASES: PortfolioCase[] = [
     image: stayLoginV3,
     href: '#/case/stay-login',
     design: {
-      app: 'Accio — 저장한 여행지를 모아 보고 숙소를 예약하는 앱 (개인 콘셉트)',
+      app: 'Accio - 저장한 여행지를 모아 보고 숙소를 예약하는 앱 (개인 콘셉트)',
       problem:
         '첫 시안은 소셜 로그인이 맨 위에 있어 아이디로 로그인하는 사용자가 한 번 더 내려가야 했고, 둥근 입력창과 버튼이 비슷해 보여 무엇을 눌러야 할지 흐렸다.',
       variants: [
@@ -1135,7 +1127,7 @@ export const CASES: PortfolioCase[] = [
     code: 'DESIGN 05',
     date: '2026.10',
     level: 1,
-    title: '비밀번호 찾기 화면 — 첫 시안에서 세 방향으로 다듬기',
+    title: '비밀번호 찾기 화면 - 첫 시안에서 세 방향으로 다듬기',
     description:
       '휴대폰·이메일 중 하나를 골라 인증번호를 받는 화면. 어두운 첫 시안을 밝게 정리하고, 선택 표시·큰 제목·부드러운 안내 세 방향으로 나눠 비교한 연습.',
     metrics: [
@@ -1147,7 +1139,7 @@ export const CASES: PortfolioCase[] = [
     image: pwCard,
     href: '#/case/find-password',
     design: {
-      app: '비밀번호 찾기 — 가입한 휴대폰·이메일 중 하나를 골라 인증번호를 받는 화면 (디자인 연습)',
+      app: '비밀번호 찾기 - 가입한 휴대폰·이메일 중 하나를 골라 인증번호를 받는 화면 (디자인 연습)',
       problem:
         '첫 시안은 연락처 칸이 버튼만큼 크고 둥글어서, 연락처를 고르는 화면인데 무엇을 골랐는지, 무엇이 버튼인지가 흐렸다. 칸을 정리한 뒤 무엇을 더 앞세울지에 따라 세 방향으로 나눠 봤다.',
       variants: [

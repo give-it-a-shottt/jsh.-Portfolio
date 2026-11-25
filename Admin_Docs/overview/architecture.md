@@ -29,8 +29,9 @@
 ```
 Portfolio/frontend/src/
 ├─ App.tsx, main.tsx, index.css   진입·라우팅·디자인 토큰(@theme)
-├─ shared/                        여러 프로젝트가 같이 쓰는 것 (useHashRoute, MobileFrame, icons)
-├─ portfolio/                     검색형 포트폴리오 (data.ts, projects.ts, caseStories.ts, caseDetails.ts, notes.ts, rank.ts, search.ts, Search*, *Detail, ProjectPage)
+├─ shared/                        여러 프로젝트가 같이 쓰는 것 (useHashRoute, useMediaQuery, MobileFrame, icons)
+├─ portfolio/                     검색형 포트폴리오 (data.ts, projects.ts, caseStories.ts, caseDetails.ts, notes.ts, rank.ts, search.ts, Search*, *Detail, ProjectPage, useReveal)
+│  └─ home/                       홈 메인 스크롤 섹션 (ProjectShowcase, ShowcaseShots, showcaseMotion 위치 계산, scrollToShowcase) - F-018
 └─ projects/
    ├─ maestro/   (MaestroApp, routes, api, store(Zustand), hooks, components, MapView(Leaflet), format, styles, types, icons/, screens/)
    ├─ flaseek/   (FlaseekApp, routes, store, data, layout, ui, BeforeAfterSlider, pages/)
@@ -55,4 +56,4 @@ Portfolio/backend/accio/app/  main.py, core/(config, db: async SQLAlchemy 엔진
 - 프론트: `cd Portfolio/frontend && npm install && npm run dev`. 검사는 `npm run build`(tsc + vite), `npm run lint`
 - 마에스트로 API: `cd Portfolio/backend/maestro && uv sync && uv run fastapi dev app/main.py --port 8001` (`.env.example`을 복사해서 써요. 기본은 mock)
 
-최종 수정: 2026-11-05 · 관련: D-001, D-002, D-003, F-007, F-010, F-011
+최종 수정: 2026-11-25 · 관련: D-001, D-002, D-003, F-007, F-010, F-011, F-018

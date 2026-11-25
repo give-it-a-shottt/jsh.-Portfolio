@@ -3,6 +3,7 @@ import ggDetail from './assets/design/geogi/screen-02-detail.webp'
 import ggNearby from './assets/design/geogi/screen-03-nearby.webp'
 import ggSearch from './assets/design/geogi/screen-04-search.webp'
 import agStage from './assets/design/agora/screen-01-stage.webp'
+import agStageMo from './assets/design/agora/screen-05-stage-mo.webp'
 import agPredict from './assets/design/agora/screen-02-predict.webp'
 import agResult from './assets/design/agora/screen-03-result.webp'
 import agHome from './assets/design/agora/screen-04-home.webp'
@@ -11,12 +12,15 @@ import dmAnalysis from './assets/design/didim/screen-03-analysis.webp'
 import dmCard from './assets/design/didim/screen-04-card.webp'
 import dmReport from './assets/design/didim/screen-05-report.webp'
 import acHome from './assets/design/accio/screen-01-home.webp'
+import acLiveHome from './assets/design/accio/live-01-home.webp'
+import acLiveHomeMo from './assets/design/accio/live-02-home-mo.webp'
 import acList from './assets/design/accio/screen-02-list.webp'
 import acDetail from './assets/design/accio/screen-03-detail.webp'
 import acAi from './assets/design/accio/screen-04-ai.webp'
 import mrPcHome from './assets/design/maestro/pc-01-home.webp'
-import mrPcResult from './assets/design/maestro/pc-02-result.webp'
 import mrPcDetail from './assets/design/maestro/pc-03-detail.webp'
+import mrLiveResult from './assets/design/maestro/live-01-result.webp'
+import mrLiveResultMo from './assets/design/maestro/live-02-result-mo.webp'
 import pfmHome from './assets/design/planforme/screen-01-home.webp'
 import pfmReplan from './assets/design/planforme/screen-03-replan.webp'
 import pfmPreviewBook from './assets/design/planforme/screen-09-preview-book.webp'
@@ -40,15 +44,15 @@ import flPcDetail from './assets/design/flaseek/pc-03-detail.webp'
 import flPcLogin from './assets/design/flaseek/pc-04-login.webp'
 import { ACCIO_LIVE, AGORA_GITHUB, AGORA_LIVE, CASES, DIDIM_GITHUB, DIDIM_LIVE, GEOGI_GITHUB, GEOGI_LIVE, MINI_INFLEARN_LIVE, PLANFORME_LIVE, REMIND_LIVE, type DesignVariant, type Role } from './data'
 
-// 프로젝트 페이지(#/project/{slug}) 데이터 — F-011. 홈 '프로젝트' 카드도 이 목록 순서대로 만든다(F-013) —
-// 프로젝트를 추가할 때는 PROJECT_LIST 에 하나 넣으면 홈 카드 · 프로젝트 페이지 · '다음 프로젝트'가 같이 생긴다.
-// tier 'main'(대표 · 큰 카드)을 목록 앞에, 'sub'(그 밖의 작업)를 뒤에 둔다 — 홈은 tier 로 나눠 그리고, 목록은 하나라
+// 프로젝트 페이지(#/project/{slug}) 데이터 - F-011. 홈의 메인 섹션 · 목차 · '그 밖의 작업'도 이 목록 순서대로 만든다(F-018) -
+// 프로젝트를 추가할 때는 PROJECT_LIST 에 하나 넣으면 홈 · 프로젝트 페이지 · '다음 프로젝트'에 같이 생긴다.
+// tier 'main'(대표 · 스크롤 섹션)을 목록 앞에, 'sub'(그 밖의 작업)를 뒤에 둔다 - 홈은 tier 로 나눠 그리고, 목록은 하나라
 // '다음 프로젝트'는 메인 → 서브로 한 바퀴 돈다(D-008, F-015).
 // 틀은 피그마 jsh 파일 Page 3 「Project · Accio · PC 1440」. 칸이 비면 그 섹션을 그리지 않는다.
 // 글은 기록(Admin_Docs · Accio 포트폴리오용 기록 · data.ts 사례)에 있는 사실만 옮긴다.
-// 배포 주소는 data.ts 상수를 같이 쓴다. 역할(roles)은 사례와 맞추되, Accio 만 다르다 —
+// 배포 주소는 data.ts 상수를 같이 쓴다. 역할(roles)은 사례와 맞추되, Accio 만 다르다 -
 // 사례 accio 는 2025 팀 프로젝트에서 맡은 부분이고, 여기 accio 는 혼자 다시 만든 쪽이다.
-// 사례 slug 를 못 찾으면 모듈을 불러올 때 바로 오류를 낸다 — npm run check 가 빌드 전에 잡는다.
+// 사례 slug 를 못 찾으면 모듈을 불러올 때 바로 오류를 낸다 - npm run check 가 빌드 전에 잡는다.
 
 export interface ProjectScreen {
   image: string
@@ -67,21 +71,35 @@ export interface ProjectTrouble {
   href?: string
 }
 
+/** 홈 메인 섹션(F-018)의 글과 화면 */
+export interface ShowcaseContent {
+  /** 이름 아래 한 줄 */
+  tagline: string
+  /** 보여 줄 숫자 두 개 - numbers 의 label. 값은 numbers 에서 가져와 두 곳이 어긋나지 않게 한다 */
+  stats: [string, string]
+  /** 오른쪽 판에 올릴 화면 - 휴대폰 3장, 또는 PC 화면 위에 다른 화면을 하나 겹친 것 */
+  shots:
+    | { kind: 'phones'; images: [string, string, string] }
+    | { kind: 'screens'; main: string; overlay: string; overlayDevice: 'mobile' | 'desktop' }
+}
+
 export interface Project {
   slug: string
-  /** 홈에서 메인(대표 · 큰 카드) / 서브('그 밖의 작업') — D-008 */
+  /** 홈에서 메인(대표 · 스크롤 섹션) / 서브('그 밖의 작업') - D-008 · D-009 */
   tier: 'main' | 'sub'
+  /** 메인이면 꼭 있어야 한다 - 없으면 홈 메인 섹션에 나오지 않으므로 npm run check 가 잡는다 */
+  showcase?: ShowcaseContent
   name: string
   title: string
   summary: string
   roles: Role[]
-  /** 정보 띠 — 역할 · 기간 · 팀 · 스택 */
+  /** 정보 띠 - 역할 · 기간 · 팀 · 스택 */
   info: { label: string; value: string }[]
-  /** 버튼 — 마지막 하나가 주 버튼(Primary, 오른쪽) */
+  /** 버튼 - 마지막 하나가 주 버튼(Primary, 오른쪽) */
   links: { label: string; href: string }[]
   /** 대표 화면. mobile 이면 휴대폰 화면 여러 장을 나란히 */
   cover: { images: string[]; device: 'desktop' | 'mobile' }
-  /** 오른쪽 '구조' 패널 — 화면에서 DB까지 위에서 아래로. 디자인만 한 프로젝트처럼 없으면 대표 화면을 넓게 */
+  /** 오른쪽 '구조' 패널 - 화면에서 DB까지 위에서 아래로. 디자인만 한 프로젝트처럼 없으면 대표 화면을 넓게 */
   structure?: { title: string; steps: { key: string; name: string; desc: string }[]; note?: string }
   /** 숫자로 보는 결과. 비면 섹션을 그리지 않는다 */
   numbers: { value: string; label: string; note: string }[]
@@ -91,12 +109,12 @@ export interface Project {
   troubles?: ProjectTrouble[]
   screens: { device: 'desktop' | 'mobile'; items: ProjectScreen[] }
   next?: { title: string; body: string }[]
-  /** 홈 카드 — 한 줄 제목 · 두 줄 설명 */
+  /** 홈 카드 - 한 줄 제목 · 두 줄 설명 */
   card: { title: string; desc: string }
-  /** 피그마 공개 링크(보기 전용, F-013) — 프로젝트 페이지 '디자인' 섹션의 버튼.
+  /** 피그마 공개 링크(보기 전용, F-013) - 프로젝트 페이지 '디자인' 섹션의 버튼.
    * 공개하지 않기로 한 프로젝트는 비워 둔다(F-017). 비우면 버튼을 그리지 않는다 */
   figma?: string
-  /** 같은 서비스의 Design 사례 slug — 프로젝트 페이지 '디자인' 섹션에 시안을 함께 보여 준다(F-013) */
+  /** 같은 서비스의 Design 사례 slug - 프로젝트 페이지 '디자인' 섹션에 시안을 함께 보여 준다(F-013) */
   designCase?: string
 }
 
@@ -106,20 +124,20 @@ function findCase(slug: string) {
   return item
 }
 
-/** data.ts 사례를 '막힌 것' 줄로 — 제목 · 설명은 사례 그대로, 누르면 사례 상세 */
+/** data.ts 사례를 '막힌 것' 줄로 - 제목 · 설명은 사례 그대로, 누르면 사례 상세 */
 function fromCase(slug: string, code: string): ProjectTrouble {
   const item = findCase(slug)
   return { code, title: item.title, summary: item.description, href: item.href }
 }
 
-/** Design 사례에 적어 둔 '풀려던 문제' — 비어 있으면 '왜 만들었나'가 빈 섹션이 되므로 오류로 막는다 */
+/** Design 사례에 적어 둔 '풀려던 문제' - 비어 있으면 '왜 만들었나'가 빈 섹션이 되므로 오류로 막는다 */
 function designProblem(slug: string) {
   const problem = findCase(slug).design?.problem
   if (!problem) throw new Error(`사례에 design.problem 이 없어요: ${slug}`)
   return problem
 }
 
-/** 프로젝트 페이지에 '디자인' 섹션을 그릴지 — 피그마 링크나 Design 사례 중 하나는 있어야 보여 줄 것이 있다(F-017).
+/** 프로젝트 페이지에 '디자인' 섹션을 그릴지 - 피그마 링크나 Design 사례 중 하나는 있어야 보여 줄 것이 있다(F-017).
  * 전제: Design 사례를 건 프로젝트는 그 사례에 시안이 1장 이상 있다. 없으면 피그마 링크가 없을 때 제목만 남는
  * 빈 섹션이 되므로, npm run check 가 프로젝트마다 '디자인 섹션 시안 있음'으로 확인한다 */
 export function hasDesign(project: Pick<Project, 'figma' | 'designCase'>): boolean {
@@ -131,7 +149,7 @@ export interface ProjectSection {
   title: string
 }
 
-/** 프로젝트 페이지 목차 — 데이터가 있는 섹션만 올린다. 화면(ProjectPage)과 검사(checks/run.mjs)가 같은 목록을 쓴다 */
+/** 프로젝트 페이지 목차 - 데이터가 있는 섹션만 올린다. 화면(ProjectPage)과 검사(checks/run.mjs)가 같은 목록을 쓴다 */
 export function projectSections(p: Project): ProjectSection[] {
   return [
     { id: 'why', title: '왜 만들었나' },
@@ -144,7 +162,7 @@ export function projectSections(p: Project): ProjectSection[] {
   ].filter(Boolean) as ProjectSection[]
 }
 
-/** Design 사례의 시안을 장표 → 화면 → 기획 · 시스템 순으로 모아 앞에서 몇 장 — 프로젝트 페이지 '디자인' 섹션용 */
+/** Design 사례의 시안을 장표 → 화면 → 기획 · 시스템 순으로 모아 앞에서 몇 장 - 프로젝트 페이지 '디자인' 섹션용 */
 export function designPreview(slug: string, count = 6): DesignVariant[] {
   const d = findCase(slug).design
   if (!d) throw new Error(`Design 사례가 아니에요: ${slug}`)
@@ -158,11 +176,21 @@ export function designPreview(slug: string, count = 6): DesignVariant[] {
   ].slice(0, count)
 }
 
-/** 홈 메인 큰 카드 줄 — 4개를 한 줄 3칸에 두면 하나가 혼자 남아서 4개면 2×2(F-016, 디자인은 사용자 확인).
- * 5개는 한 줄 3칸이라 위 3개 · 아래 2개로 놓인다(F-017, 사용자 선택).
- * 칸 수(cols)와 Tailwind 클래스를 한곳에서 정한다 — 클래스 문자열은 그대로 적어야 Tailwind가 찾는다. */
-export function mainGridLayout(count: number): { cols: 2 | 3; className: string } {
-  return count === 4 ? { cols: 2, className: 'md:grid-cols-2' } : { cols: 3, className: 'md:grid-cols-2 lg:grid-cols-3' }
+export type ShowcaseProject = Project & { showcase: ShowcaseContent }
+
+/** 홈 메인 섹션에 나오는 프로젝트 - tier 'main' 중 showcase 가 있는 것, 목록 순서대로 */
+export function showcaseProjects(list: Project[]): ShowcaseProject[] {
+  return list.filter((p): p is ShowcaseProject => p.tier === 'main' && Boolean(p.showcase))
+}
+
+/** 메인 섹션의 숫자 두 개 - showcase.stats 의 label 로 numbers 에서 찾는다. 이름이 틀리면 그 칸은 빠진다(check 가 잡는다) */
+export function showcaseStats(project: ShowcaseProject): { value: string; label: string }[] {
+  return project.showcase.stats.flatMap((label) => project.numbers.filter((n) => n.label === label))
+}
+
+/** 서비스로 가는 버튼 - links 의 마지막이 주 버튼이다 */
+export function serviceLink(project: Pick<Project, 'links'>): { label: string; href: string } | undefined {
+  return project.links[project.links.length - 1]
 }
 
 export const PROJECT_LIST: Project[] = [
@@ -171,7 +199,7 @@ export const PROJECT_LIST: Project[] = [
     slug: 'geogi',
     tier: 'main',
     name: '거기붐벼?',
-    title: '거기붐벼? — 몇 시에 가면 덜 붐비는지 한 문장으로',
+    title: '거기붐벼? - 몇 시에 가면 덜 붐비는지 한 문장으로',
     summary:
       '서울 주요 121곳의 혼잡도를 5분마다 모아, “오후 4시부터 6시까지 여유로울 거예요”처럼 언제 가면 되는지를 가장 큰 글자로 답하는 모바일 웹. 지금 붐비면 근처의 덜 붐비는 곳을 가까운 순으로 보여 준다.',
     roles: ['Design', 'Front', 'Back', 'DB'],
@@ -186,6 +214,11 @@ export const PROJECT_LIST: Project[] = [
       { label: '서비스 보기', href: GEOGI_LIVE },
     ],
     cover: { images: [ggHome, ggDetail, ggNearby], device: 'mobile' },
+    showcase: {
+      tagline: '몇 시에 가면 덜 붐비는지 한 문장으로',
+      stats: ['5분마다 수집', '백엔드 테스트'],
+      shots: { kind: 'phones', images: [ggHome, ggDetail, ggNearby] },
+    },
     structure: {
       title: '화면에서 구조까지',
       steps: [
@@ -225,7 +258,7 @@ export const PROJECT_LIST: Project[] = [
         body: '체험용 인증키는 어떤 장소를 물어도 한 곳의 값만 돌려준다. 확인 없이 저장하면 121곳이 모두 같은 값이 되는데 겉으로는 정상처럼 보인다.',
       },
     ],
-    // 막힌 것: 펼쳐 보는 대표 1건을 먼저, 나머지는 한 줄 요약 — Agora · 디딤 · Accio와 같은 방식
+    // 막힌 것: 펼쳐 보는 대표 1건을 먼저, 나머지는 한 줄 요약 - Agora · 디딤 · Accio와 같은 방식
     troubles: [
       {
         code: 'T-1',
@@ -254,7 +287,7 @@ export const PROJECT_LIST: Project[] = [
       { title: '편하게 서울', body: '승강기 정보를 더해 유모차 · 휠체어 이용자가 쓰기 편하게 한다' },
     ],
     card: {
-      title: '거기붐벼? — 몇 시에 가면 덜 붐비는지',
+      title: '거기붐벼? - 몇 시에 가면 덜 붐비는지',
       desc: '서울 121곳의 혼잡도를 5분마다 모아 “언제 가면 되는지”를 한 문장으로 답한다. 붐비면 근처의 덜 붐비는 곳을 알려 준다.',
     },
   },
@@ -263,13 +296,13 @@ export const PROJECT_LIST: Project[] = [
     slug: 'agora',
     tier: 'main',
     name: 'Agora AI 토론장',
-    title: 'Agora AI 토론장 — AI 캐릭터들이 밸런스 게임으로 맞붙는 무대',
+    title: 'Agora AI 토론장 - AI 캐릭터들이 밸런스 게임으로 맞붙는 무대',
     summary:
       '밸런스 게임 주제(예: 평생 짜장 vs 평생 짬뽕)를 한국 AI(EXAONE) 냥냥이와 해외 AI(Gemini) 펭펭이가 3라운드로 토론하고, 발언의 핵심 한 구절이 예능 자막처럼 뜨는 서비스. 보기 전에 승부를 예측하고, 끝나면 AI 심판의 판정과 토론 품질 지표를 내 예측과 비교한다.',
     roles: ['Design', 'Front', 'Back', 'DB'],
     info: [
       { label: '역할', value: '개인 작업 · 기여도 100%' },
-      { label: '기간', value: '2026.11.20 – 11.22' },
+      { label: '기간', value: '2026.11.20 - 11.22' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'React · Vite · FastAPI · PostgreSQL · EXAONE · Gemini · Groq' },
     ],
@@ -278,6 +311,11 @@ export const PROJECT_LIST: Project[] = [
       { label: '서비스 보기', href: AGORA_LIVE },
     ],
     cover: { images: [agStage], device: 'desktop' },
+    showcase: {
+      tagline: 'AI가 밸런스 게임으로 맞붙는다',
+      stats: ['반박률', '동시 요청 통과'],
+      shots: { kind: 'screens', main: agStage, overlay: agStageMo, overlayDevice: 'mobile' },
+    },
     structure: {
       title: '화면에서 구조까지',
       steps: [
@@ -317,7 +355,7 @@ export const PROJECT_LIST: Project[] = [
         body: '키 없이도 개발 · 테스트 · 화면 확인을 끝까지 했고, 실제 키는 배포 때 붙였다.',
       },
     ],
-    // 막힌 것: 펼쳐 보는 대표 1건을 먼저, 나머지는 한 줄 요약 — 디딤 · Accio와 같은 방식
+    // 막힌 것: 펼쳐 보는 대표 1건을 먼저, 나머지는 한 줄 요약 - 디딤 · Accio와 같은 방식
     troubles: [
       {
         code: 'T-1',
@@ -345,7 +383,7 @@ export const PROJECT_LIST: Project[] = [
       { title: '사람 분류와의 일치율', body: '‘사람 분류와의 일치율’ 지표를 잰다' },
     ],
     card: {
-      title: 'Agora AI 토론장 — AI가 밸런스 게임으로 맞붙는다',
+      title: 'Agora AI 토론장 - AI가 밸런스 게임으로 맞붙는다',
       desc: '한국 AI와 해외 AI가 3라운드로 토론하고, 발언의 핵심 한 구절이 예능 자막처럼 뜬다. 보기 전에 승부를 예측하고 AI 심판과 비교한다.',
     },
     figma: 'https://www.figma.com/design/QXz9VONI8xqLfc1c3moxGO/AI-%ED%86%A0%EB%A1%A0?node-id=17-461',
@@ -355,13 +393,13 @@ export const PROJECT_LIST: Project[] = [
     slug: 'didim',
     tier: 'main',
     name: '디딤',
-    title: '디딤 — 문장마다 근거가 달린 자소서',
+    title: '디딤 - 문장마다 근거가 달린 자소서',
     summary:
       '공부 기록(마크다운 · 노션)을 퀴즈로 복습하고, 그 기록에서 경험 카드를 뽑아 공고에 맞는 자소서 초안과 면접 연습까지 이어 주는 서비스. AI가 쓴 문장에는 어느 카드의 어느 칸에서 왔는지 근거를 붙이고, 기록에 없는 문장에는 밑줄을 긋는다.',
     roles: ['Design', 'Front', 'Back', 'DB'],
     info: [
       { label: '역할', value: '개인 작업 · 기여도 100%' },
-      { label: '기간', value: '2026.11.08 – 11.19' },
+      { label: '기간', value: '2026.11.08 - 11.19' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'Next.js 16 · FastAPI · PostgreSQL · NVIDIA Nemotron' },
     ],
@@ -371,6 +409,11 @@ export const PROJECT_LIST: Project[] = [
       { label: '샘플 체험', href: `${DIDIM_LIVE}/demo` },
     ],
     cover: { images: [dmDraft], device: 'desktop' },
+    showcase: {
+      tagline: '문장마다 근거가 달린 자소서',
+      stats: ['지어낸 문장 경고율', '매칭 적중률'],
+      shots: { kind: 'screens', main: dmDraft, overlay: dmCard, overlayDevice: 'desktop' },
+    },
     structure: {
       title: '화면에서 구조까지',
       steps: [
@@ -410,7 +453,7 @@ export const PROJECT_LIST: Project[] = [
         body: 'Vercel Services로 Next.js와 FastAPI를 한 프로젝트에 올리고, /api/* 만 백엔드로 보낸다. 로그인 쿠키가 한 주소에 묶여서 주소가 다른 서버끼리 쿠키를 주고받는 설정이 필요 없다. DB는 Neon(싱가포르)이고 함수도 같은 지역에 둔다.',
       },
     ],
-    // 막힌 것: 펼쳐 보는 대표 1건(T-5)을 먼저, 나머지는 한 줄 요약 — Accio와 같은 방식
+    // 막힌 것: 펼쳐 보는 대표 1건(T-5)을 먼저, 나머지는 한 줄 요약 - Accio와 같은 방식
     troubles: [
       {
         code: 'T-5',
@@ -439,7 +482,7 @@ export const PROJECT_LIST: Project[] = [
       { title: '노션 연결 운영 적용', body: '노션 연결을 운영에도 적용한다' },
     ],
     card: {
-      title: '디딤 — 문장마다 근거가 달린 자소서',
+      title: '디딤 - 문장마다 근거가 달린 자소서',
       desc: '공부 기록에서 경험 카드를 뽑아, 문장마다 근거가 붙은 자소서와 면접 질문을 만든다. 기록에 없는 문장은 밑줄로 잡아낸다.',
     },
     figma: 'https://www.figma.com/design/QmJiFtWEruu2JEpNixaOop/Didim?node-id=0-1',
@@ -448,13 +491,13 @@ export const PROJECT_LIST: Project[] = [
     slug: 'accio',
     tier: 'main',
     name: 'Accio',
-    title: 'Accio — AI 자연어 검색 쇼핑몰',
+    title: 'Accio - AI 자연어 검색 쇼핑몰',
     summary:
       '“비 오는 날 신을 운동화”처럼 모호한 말도 알아듣는 쇼핑몰. 5인 팀 프로젝트에서 목업이던 AI 검색을, 실제로 검색어를 이해하도록 무료 스택 위에 다시 만들었다.',
     roles: ['Design', 'Front', 'Back', 'DB'],
     info: [
-      { label: '역할', value: '다시 만들기 1인 — 디자인 · 프론트 · 백엔드 · DB' },
-      { label: '기간', value: '2026.10 – 11 (팀 원본 2025.10 – 11)' },
+      { label: '역할', value: '다시 만들기 1인 - 디자인 · 프론트 · 백엔드 · DB' },
+      { label: '기간', value: '2026.10 - 11 (팀 원본 2025.10 - 11)' },
       { label: '팀', value: '원본 5명 → 다시 만들기 1명' },
       { label: '스택', value: 'React · FastAPI · Supabase · Gemini' },
     ],
@@ -463,12 +506,17 @@ export const PROJECT_LIST: Project[] = [
       { label: '디자인 사례', href: '#/case/accio-redesign' },
       { label: '서비스 열기', href: ACCIO_LIVE },
     ],
-    cover: { images: [acHome], device: 'desktop' },
+    cover: { images: [acLiveHome], device: 'desktop' },
+    showcase: {
+      tagline: 'AI 자연어 검색 쇼핑몰',
+      stats: ['검색 정확도 (상위 5개)', '운영비'],
+      shots: { kind: 'screens', main: acLiveHome, overlay: acLiveHomeMo, overlayDevice: 'mobile' },
+    },
     structure: {
       title: '화면에서 구조까지',
       steps: [
         { key: 'WEB', name: 'React · Vite', desc: '검색창 · AI 채팅 · “이렇게 이해했어요” 칩' },
-        { key: 'API', name: 'FastAPI · Vercel Services', desc: '/api/search · /api/chat — 6초 넘으면 키워드 검색으로' },
+        { key: 'API', name: 'FastAPI · Vercel Services', desc: '/api/search · /api/chat - 6초 넘으면 키워드 검색으로' },
         { key: 'AI', name: 'Gemini 3.5 Flash-Lite', desc: '검색어 → 종류 · 특징 · 가격 · 제외어. 연달아 늦으면 60초 차단' },
         { key: 'DB', name: 'Supabase Postgres', desc: '종류 · 가격은 필터, 낱말은 트라이그램 점수' },
       ],
@@ -489,7 +537,7 @@ export const PROJECT_LIST: Project[] = [
       { code: 'D-7', title: 'AI 채팅을 실제로 연결', body: 'Gemini 해석 → 헤더 검색과 같은 SQL → 상위 5개를 보고 답변. “5만원 이하로”, “접이식 말고” 같은 이어지는 말은 앞 조건에 합친다.' },
     ],
     chart: {
-      title: '검색 정확도 — 시험지 30문항',
+      title: '검색 정확도 - 시험지 30문항',
       sub: '상위 5개 중 조건(종류 · 가격 · 특징 · 제외)을 지킨 비율이에요.',
       bars: [
         ['S0 키워드 검색', 0.613],
@@ -503,9 +551,9 @@ export const PROJECT_LIST: Project[] = [
     troubles: [
       {
         code: 'T-5',
-        title: 'Gemini가 수십 초씩 느려진 날 — 규칙 해석 + 차단기',
+        title: 'Gemini가 수십 초씩 느려진 날 - 규칙 해석 + 차단기',
         problem: '같은 날 짧은 질문도 18 ~ 46초(처음엔 0.66초). 채팅 해석이 매번 6초 시간 초과로 키워드 검색으로 돌아갔고, “5만원 이하로” 같은 이어지는 말은 결과가 0개, 답 하나에 8초가 걸렸다.',
-        solution: '① Gemini가 안 될 때 규칙 해석 — 가격 · 제외 · 상품 종류를 읽고, 종류가 없으면 이전 대화 조건을 이어받는다. ② 차단기 — 연달아 2번 늦거나 실패하면 60초 동안 부르지 않고 바로 규칙 · 키워드 검색. 답 8.6초 → 2.1초.',
+        solution: '① Gemini가 안 될 때 규칙 해석 - 가격 · 제외 · 상품 종류를 읽고, 종류가 없으면 이전 대화 조건을 이어받는다. ② 차단기 - 연달아 2번 늦거나 실패하면 60초 동안 부르지 않고 바로 규칙 · 키워드 검색. 답 8.6초 → 2.1초.',
         lesson: '외부 LLM은 “느려질 수 있다”를 전제로 시간 초과 + 대체 경로 + 차단기를 같이 둬야 서비스가 멈추지 않는다.',
       },
       { code: 'T-1', title: '이미지와 상품 설명이 어긋남', summary: '사진마다 생김새 설명을 기록해 상품 생성 프롬프트에 함께 넘기고, Gemini가 상품마다 맞는 사진 번호를 고르게 했다. 사진당 6 ~ 7개로 고르게 분배.' },
@@ -527,7 +575,7 @@ export const PROJECT_LIST: Project[] = [
       { title: 'P5 리뷰 실제 요약', body: '생성한 리뷰를 Gemini가 요약해 숨겨 둔 “AI 리뷰 요약”을 다시 연다' },
     ],
     card: {
-      title: 'Accio — AI 자연어 검색 쇼핑몰',
+      title: 'Accio - AI 자연어 검색 쇼핑몰',
       desc: '“비 오는 날 신을 운동화”처럼 모호한 말도 알아듣는 쇼핑몰. Gemini가 검색어를 조건으로 바꾸고 SQL이 걸러 낸다.',
     },
     figma: 'https://www.figma.com/design/rDAy4sMyRqyF3lQ4baGLq2/ACCIO?node-id=464-2',
@@ -537,13 +585,13 @@ export const PROJECT_LIST: Project[] = [
     slug: 'maestro',
     tier: 'main',
     name: '마에스트로',
-    title: '마에스트로 — 지금 열린 식당 3곳을 근거와 함께',
+    title: '마에스트로 - 지금 열린 식당 3곳을 근거와 함께',
     summary:
       '낯선 서울 동네에서 동네 · 상황만 고르면 지금 열려 있는 식당 3곳을 지도와 영업시간 막대, 날짜 붙은 근거로 비교해 주는 모바일 웹. 해커톤에 출품하려던 앱을 리뉴얼했다.',
     roles: ['Design', 'Front', 'Back'],
     info: [
       { label: '역할', value: '개인 작업 · 기여도 100%' },
-      { label: '기간', value: '2026.10 – 11' },
+      { label: '기간', value: '2026.10 - 11' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'React · Zustand · Leaflet · FastAPI' },
     ],
@@ -551,7 +599,12 @@ export const PROJECT_LIST: Project[] = [
       { label: '디자인 사례', href: '#/case/maestro-redesign' },
       { label: '서비스 열기', href: '#/maestro' },
     ],
-    cover: { images: [mrPcResult], device: 'desktop' },
+    cover: { images: [mrLiveResult], device: 'desktop' },
+    showcase: {
+      tagline: '지금 열린 식당 3곳을 근거와 함께',
+      stats: ['첫 후보까지', '실패할 때 저장본'],
+      shots: { kind: 'screens', main: mrLiveResult, overlay: mrLiveResultMo, overlayDevice: 'mobile' },
+    },
     structure: {
       title: '화면에서 구조까지',
       steps: [
@@ -582,12 +635,12 @@ export const PROJECT_LIST: Project[] = [
       device: 'desktop',
       items: [
         { image: mrPcHome, label: '홈' },
-        { image: mrPcResult, label: '결과 — 목록 + 지도' },
+        { image: mrLiveResult, label: '결과 - 목록 + 지도' },
         { image: mrPcDetail, label: '식당 상세 패널' },
       ],
     },
     card: {
-      title: '마에스트로 — 지금 열린 식당 3곳',
+      title: '마에스트로 - 지금 열린 식당 3곳',
       desc: '낯선 서울 동네에서 동네 · 상황만 고르면 지금 열려 있는 식당 3곳을 지도와 날짜 붙은 근거로 비교해 준다.',
     },
     figma: 'https://www.figma.com/design/Tec5SHtst0FxyN5P1bm4UT/%EB%A7%88%EC%97%90%EC%8A%A4%ED%8A%B8%EB%A1%9C?node-id=66-113',
@@ -597,12 +650,12 @@ export const PROJECT_LIST: Project[] = [
     slug: 'planforme',
     tier: 'sub',
     name: 'PlanForMe',
-    title: 'PlanForMe — 하루 할당량을 계산해 주는 플래너',
+    title: 'PlanForMe - 하루 할당량을 계산해 주는 플래너',
     summary:
       '총분량과 마감일만 넣으면 하루 할 일을 정해 주는 1인용 플래너. IA · 유저 플로우 · 계산 규칙부터 모바일 화면 14개와 컴포넌트까지 피그마로 설계하고 그대로 구현 · 배포했다.',
     roles: ['Design', 'Front', 'Back'],
     info: [
-      { label: '역할', value: '개인 프로젝트 — 설계 · 디자인 · 구현 · 배포' },
+      { label: '역할', value: '개인 프로젝트 - 설계 · 디자인 · 구현 · 배포' },
       { label: '기간', value: '2026.10' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'Next.js 16 · FastAPI · SQLAlchemy · pytest' },
@@ -616,7 +669,7 @@ export const PROJECT_LIST: Project[] = [
       title: '화면에서 구조까지',
       steps: [
         { key: 'WEB', name: 'Next.js 16 · Vercel', desc: 'API 키는 서버 프록시에서만 붙여 브라우저에 노출하지 않는다' },
-        { key: 'API', name: 'FastAPI', desc: '하루 할당량 계산은 DB 없는 순수 함수 — 기획서 예시가 곧 테스트(8개)' },
+        { key: 'API', name: 'FastAPI', desc: '하루 할당량 계산은 DB 없는 순수 함수 - 기획서 예시가 곧 테스트(8개)' },
         { key: 'DB', name: 'SQLAlchemy', desc: '재계산 기준 시점(rebased_on)을 저장해 밀린 분량을 다시 센다' },
       ],
       note: '서버는 UTC라 “오늘”은 백엔드 · 프론트 모두 Asia/Seoul 기준 한 곳에서 구한다.',
@@ -646,7 +699,7 @@ export const PROJECT_LIST: Project[] = [
       ],
     },
     card: {
-      title: 'PlanForMe — 하루 할당량 플래너',
+      title: 'PlanForMe - 하루 할당량 플래너',
       desc: '총분량과 마감일만 넣으면 하루 할 일을 정해 주는 1인용 플래너. 피그마로 설계하고 그대로 구현 · 배포했다.',
     },
     figma: 'https://www.figma.com/design/yHn20tfa3RyUmmRYaRTYcl/PlanForMe?node-id=0-1',
@@ -656,13 +709,13 @@ export const PROJECT_LIST: Project[] = [
     slug: 'mini-inflearn',
     tier: 'sub',
     name: '미니 인프런',
-    title: '미니 인프런 — 포인트로 수강신청하는 강의 서비스',
+    title: '미니 인프런 - 포인트로 수강신청하는 강의 서비스',
     summary:
       '강의 목록 · 상세를 보고 포인트로 수강신청하는 작은 온라인 강의 서비스. 피그마 TechLearn 시안을 Next.js · FastAPI · PostgreSQL로 처음부터 직접 만들고 배포했다.',
     roles: ['Design', 'Front', 'Back', 'DB'],
     info: [
-      { label: '역할', value: '개인 학습 프로젝트 — 디자인 · 프론트 · 백엔드 · DB' },
-      { label: '기간', value: '2026.10 – 11' },
+      { label: '역할', value: '개인 학습 프로젝트 - 디자인 · 프론트 · 백엔드 · DB' },
+      { label: '기간', value: '2026.10 - 11' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'Next.js · TanStack Query · FastAPI · PostgreSQL' },
     ],
@@ -678,12 +731,12 @@ export const PROJECT_LIST: Project[] = [
         { key: 'API', name: 'FastAPI · Render', desc: 'JWT 로그인, 수강신청은 201 · 400 · 401 · 404 · 409로 답한다' },
         { key: 'DB', name: 'PostgreSQL · Neon', desc: 'UNIQUE (user_id, course_id) · CHECK (points >= 0)' },
       ],
-      note: '포인트 차감과 신청 기록은 한 트랜잭션 — 둘 다 성공해야 저장하고, 하나라도 실패하면 전부 되돌린다.',
+      note: '포인트 차감과 신청 기록은 한 트랜잭션 - 둘 다 성공해야 저장하고, 하나라도 실패하면 전부 되돌린다.',
     },
     numbers: [
       { value: '5가지', label: '수강신청 버튼 상태', note: '로그인 전 · 신청 가능 · 신청 중 · 수강 중 · 포인트 부족' },
       { value: '5가지', label: '수강신청 응답', note: '201 · 400(포인트 부족) · 401 · 404 · 409(이미 신청)' },
-      { value: '1시간', label: '토큰 유효기간', note: 'JWT exp — 토큰이 새도 영원히 쓰이지 않게' },
+      { value: '1시간', label: '토큰 유효기간', note: 'JWT exp - 토큰이 새도 영원히 쓰이지 않게' },
       { value: '60만 번', label: '비밀번호 해시 반복', note: 'PBKDF2 + 소금, 원문은 저장하지 않는다' },
     ],
     why: '인프런 공고에 올라온 기술을 익히려고 만들었다. Next.js · FastAPI · PostgreSQL을 처음부터 직접 만들며 요청이 화면에서 DB까지 어떻게 흘러가는지 익히는 학습 프로젝트다.',
@@ -694,7 +747,7 @@ export const PROJECT_LIST: Project[] = [
     troubles: [
       {
         code: 'T-1',
-        title: '서로 다른 강의를 동시에 신청하면 포인트가 덜 빠짐 — 갱신 손실',
+        title: '서로 다른 강의를 동시에 신청하면 포인트가 덜 빠짐 - 갱신 손실',
         problem: '35,000P로 33,000원 · 3,000원 강의를 동시에 신청하면, 잠금이 없을 때는 둘 다 성공하고 3,000P만 빠졌다.',
         solution: '유저 행을 SELECT … FOR UPDATE로 잠갔다. 잠금을 건 뒤에는 두 번째 요청이 400(포인트 부족)으로 막혔다. 동시 신청 스크립트로 재현해서 확인했다.',
       },
@@ -715,7 +768,7 @@ export const PROJECT_LIST: Project[] = [
       { title: '스키마 변경 관리', body: 'schema.sql 직접 실행 대신 Alembic 마이그레이션' },
     ],
     card: {
-      title: '미니 인프런 — 포인트 수강신청 강의 서비스',
+      title: '미니 인프런 - 포인트 수강신청 강의 서비스',
       desc: '피그마 시안을 Next.js · FastAPI · PostgreSQL로 직접 만든 강의 서비스. JWT 로그인과 동시 신청까지 막았다.',
     },
     figma: 'https://www.figma.com/design/WLnNcSmrkE1zDS9lFPpg9p/techlearn-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=28-2',
@@ -724,7 +777,7 @@ export const PROJECT_LIST: Project[] = [
     slug: 'remind',
     tier: 'sub',
     name: 'remind',
-    title: 'remind — 노션 학습노트 복습 퀴즈 앱',
+    title: 'remind - 노션 학습노트 복습 퀴즈 앱',
     summary:
       '노션에 정리한 강의 노트를 객관식 · OX · 단답형 · 서술형 퀴즈로 복습하는 모바일 퍼스트 앱. 복습 흐름 · 오답노트 · 디자인 시스템을 피그마로 설계했다.',
     roles: ['Design', 'Front'],
@@ -765,7 +818,7 @@ export const PROJECT_LIST: Project[] = [
       ],
     },
     card: {
-      title: 'remind — 노션 노트 복습 퀴즈 앱',
+      title: 'remind - 노션 노트 복습 퀴즈 앱',
       desc: '노션에 정리한 강의 노트를 객관식 · OX · 단답형 · 서술형 퀴즈로 복습하는 모바일 퍼스트 앱.',
     },
     figma: 'https://www.figma.com/design/F9bo9j2bIabfqRtZW87ua2/remind?node-id=0-1',
@@ -775,12 +828,12 @@ export const PROJECT_LIST: Project[] = [
     slug: 'nightly',
     tier: 'sub',
     name: 'Nightly',
-    title: 'Nightly — AI 수면 코칭 시안',
+    title: 'Nightly - AI 수면 코칭 시안',
     summary:
       '피그마 「AI 수면」 시안의 홈 · 수면 대시보드 · AI 수면 코치 화면을 가짜 데이터로 옮겼다. 백엔드를 공부하려고 만드는 프로젝트라, 실제 서비스는 따로 만들고 있다.',
     roles: ['Design', 'Front'],
     info: [
-      { label: '역할', value: '개인 프로젝트 — 디자인 · 프론트(시안)' },
+      { label: '역할', value: '개인 프로젝트 - 디자인 · 프론트(시안)' },
       { label: '기간', value: '2026.10' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'React · TypeScript · Tailwind CSS' },
@@ -814,7 +867,7 @@ export const PROJECT_LIST: Project[] = [
       ],
     },
     card: {
-      title: 'Nightly — AI 수면 코칭 시안',
+      title: 'Nightly - AI 수면 코칭 시안',
       desc: '수면 대시보드와 AI 코치를 피그마 시안대로 옮긴 화면. 실제 서비스는 백엔드 공부용으로 따로 만들고 있다.',
     },
     figma: 'https://www.figma.com/design/LByldIr3d9DfRfnAxblB32/AI-%EC%88%98%EB%A9%B4?node-id=0-1',
@@ -823,7 +876,7 @@ export const PROJECT_LIST: Project[] = [
     slug: 'gameprobe',
     tier: 'sub',
     name: 'GAMEPROBE',
-    title: 'GAMEPROBE — 발로란트 전적 · 공략 웹 서비스 설계',
+    title: 'GAMEPROBE - 발로란트 전적 · 공략 웹 서비스 설계',
     summary: findCase('gameprobe').description,
     roles: ['Design'],
     info: [
@@ -852,7 +905,7 @@ export const PROJECT_LIST: Project[] = [
       ],
     },
     card: {
-      title: 'GAMEPROBE — 발로란트 전적 · 공략',
+      title: 'GAMEPROBE - 발로란트 전적 · 공략',
       desc: '전적 검색부터 매치 분석, 메타 통계, 라인업 · 스모크 공략까지 10개 영역의 화면과 디자인 시스템을 설계했다.',
     },
     figma: 'https://www.figma.com/design/zMbn8YMcz2YgxuEatTZGlj/gameprobe?node-id=0-1',
@@ -862,7 +915,7 @@ export const PROJECT_LIST: Project[] = [
     slug: 'flaseek',
     tier: 'sub',
     name: 'FLASEEK',
-    title: 'FLASEEK — 자사몰 리뉴얼 시안',
+    title: 'FLASEEK - 자사몰 리뉴얼 시안',
     summary: findCase('flaseek-renewal').description,
     roles: ['Design', 'Front'],
     info: [
@@ -901,7 +954,7 @@ export const PROJECT_LIST: Project[] = [
       ],
     },
     card: {
-      title: 'FLASEEK — 자사몰 리뉴얼 시안',
+      title: 'FLASEEK - 자사몰 리뉴얼 시안',
       desc: '보정속옷 자사몰의 문제 4가지와 핑크 대비를 진단하고, PC · 모바일 화면과 디자인 시스템을 제안했다.',
     },
     figma: 'https://www.figma.com/design/Cv5stZORnc3A75SSvywqat/Untitled?node-id=0-1',
@@ -913,7 +966,7 @@ export function findProject(slug: string) {
   return PROJECT_LIST.find((p) => p.slug === slug)
 }
 
-/** 프로젝트 페이지 맨 아래 '다음 프로젝트' — 홈 카드 순서(PROJECT_LIST)로 돈다 */
+/** 프로젝트 페이지 맨 아래 '다음 프로젝트' - 홈 카드 순서(PROJECT_LIST)로 돈다 */
 export function nextProject(slug: string) {
   const i = PROJECT_LIST.findIndex((p) => p.slug === slug)
   return PROJECT_LIST[(i + 1) % PROJECT_LIST.length]

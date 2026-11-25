@@ -41,7 +41,7 @@ function BackLink({ item }: { item: PortfolioCase }) {
   )
 }
 
-/** 코드 패널 — 파일 탭 · 경로와 복사/GitHub · 하이라이트된 코드 · 설계 의도 */
+/** 코드 패널 - 파일 탭 · 경로와 복사/GitHub · 하이라이트된 코드 · 설계 의도 */
 function CodePanel({ samples, tall }: { samples: CodeSample[]; tall: boolean }) {
   const [active, setActive] = useState(0)
   const [copied, setCopied] = useState<'idle' | 'done' | 'failed'>('idle')
@@ -121,7 +121,7 @@ function CodePanel({ samples, tall }: { samples: CodeSample[]; tall: boolean }) 
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-white/10 px-4 py-2.5">
           <p lang="en" className="min-w-0 truncate font-mono text-12 tracking-normal text-white/50">
             {shownPath}
-            {sample.lines && ` · L${start}–${end}`}
+            {sample.lines && ` · L${start}-${end}`}
           </p>
           <div className="flex shrink-0 items-center gap-4 text-12 font-medium">
             <button type="button" onClick={copy} className="flex items-center gap-1 text-white/70 hover:text-white">
@@ -177,10 +177,10 @@ function CodePanel({ samples, tall }: { samples: CodeSample[]; tall: boolean }) 
   )
 }
 
-/** Front 사례의 대표 화면 — 세로로 긴 캡처라 윗부분만 보여주고, 누르면 원본을 연다 */
+/** Front 사례의 대표 화면 - 세로로 긴 캡처라 윗부분만 보여주고, 누르면 원본을 연다 */
 function Screenshot({ item }: { item: PortfolioCase }) {
   if (!item.image) {
-    // 아직 캡처가 없는 사례 — 결과 목록과 같은 자리표시 이미지로 대신한다
+    // 아직 캡처가 없는 사례 - 결과 목록과 같은 자리표시 이미지로 대신한다
     return (
       <figure className="h-80 overflow-hidden rounded-card border border-regular sm:h-110">
         <img src={screenshotPlaceholder} alt="" className="size-full object-cover" />
@@ -202,12 +202,12 @@ function Screenshot({ item }: { item: PortfolioCase }) {
   )
 }
 
-/** 그림 한 장 — 누르면 원본 크기로 새 탭에서 연다 */
+/** 그림 한 장 - 누르면 원본 크기로 새 탭에서 연다 */
 function Figure({ src, alt, caption, className = '' }: { src: string; alt: string; caption?: string; className?: string }) {
   return (
     <figure className={`flex flex-col gap-2 ${className}`}>
-      <a href={src} target="_blank" rel="noopener" aria-label={`${alt} 원본 크기로 보기`} className="block overflow-hidden rounded-card border border-regular bg-default">
-        <img src={src} alt={alt} loading="lazy" className="w-full" />
+      <a href={src} target="_blank" rel="noopener" aria-label={`${alt} 원본 크기로 보기`} className="lift block rounded-card border border-regular bg-default">
+        <img src={src} alt={alt} loading="lazy" className="w-full rounded-[inherit]" />
       </a>
       {caption && <figcaption className="text-13 break-keep text-sub-weak">{caption}</figcaption>}
     </figure>
@@ -215,7 +215,7 @@ function Figure({ src, alt, caption, className = '' }: { src: string; alt: strin
 }
 
 /**
- * 팀 프로젝트 원본 — 팀 저장소 README 를 옮긴 칸. 팀원 · 팀 기술 요약 · 시연 영상 · 아키텍처 · 포스터.
+ * 팀 프로젝트 원본 - 팀 저장소 README 를 옮긴 칸. 팀원 · 팀 기술 요약 · 시연 영상 · 아키텍처 · 포스터.
  * 시연 영상은 GIF 대신 소리 없는 mp4 로 돌리고, 움직임 줄이기 설정이면 자동 재생하지 않는다.
  */
 function TeamProjectSection({ team }: { team: TeamProject }) {
@@ -227,14 +227,14 @@ function TeamProjectSection({ team }: { team: TeamProject }) {
         <div className="flex flex-col gap-1.5">
           <p className="text-13 font-medium text-sub-weak">팀 프로젝트 원본 · {team.period}</p>
           <h2 id="team-project-title" className="text-20 font-semibold break-keep text-main sm:text-24">
-            <span lang="en">{team.name}</span> — {team.tagline}
+            <span lang="en">{team.name}</span> - {team.tagline}
           </h2>
         </div>
         <a
           href={team.repo}
           target="_blank"
           rel="noopener"
-          className="flex w-fit items-center gap-1 rounded-full border border-regular px-4 py-2 text-14 font-medium text-main hover:bg-light"
+          className="lift flex w-fit items-center gap-1 rounded-full border border-regular px-4 py-2 text-14 font-medium text-main [--lift:2px]"
         >
           <span>
             팀 저장소 <span lang="en">README</span> ↗
@@ -310,7 +310,7 @@ interface EngineeringCaseDetailProps {
 export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailProps) {
   const item = CASES.find((candidate) => candidate.slug === slug)
   if (!item) return null
-  // 글(caseStories)과 코드(caseDetails)는 파일이 나뉘어 있다 — 둘 다 있어야 상세를 보여준다
+  // 글(caseStories)과 코드(caseDetails)는 파일이 나뉘어 있다 - 둘 다 있어야 상세를 보여준다
   const story = CASE_STORIES[slug]
   const detail = story && CASE_DETAILS[slug] ? { ...story, ...CASE_DETAILS[slug] } : undefined
   const isBack = item.type === 'Back'
@@ -319,7 +319,7 @@ export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailPro
     <main className="mx-auto flex w-full max-w-300 flex-1 flex-col px-5 pt-6 pb-20 sm:px-10">
       <BackLink item={item} />
 
-      {/* 한 줄일 때도 열 폭을 화면에 묶어 둔다 — 안 그러면 긴 코드 줄만큼 열이 넓어진다 */}
+      {/* 한 줄일 때도 열 폭을 화면에 묶어 둔다 - 안 그러면 긴 코드 줄만큼 열이 넓어진다 */}
       <div className="mt-8 grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-12">
         <div className="flex min-w-0 flex-col gap-10">
           <header className="flex flex-col">
@@ -334,8 +334,8 @@ export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailPro
                     href={href}
                     target="_blank"
                     rel="noopener"
-                    className={`flex w-fit items-center gap-1 rounded-full px-4 py-2 text-14 font-medium ${
-                      index === 0 ? 'bg-main text-white hover:bg-icon-main' : 'border border-regular text-main hover:bg-light'
+                    className={`lift flex w-fit items-center gap-1 rounded-full px-4 py-2 text-14 font-medium [--lift:2px] ${
+                      index === 0 ? 'bg-main text-white hover:bg-icon-main' : 'border border-regular text-main'
                     }`}
                   >
                     {label} ↗
@@ -374,7 +374,7 @@ export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailPro
                     <li key={title} className="flex gap-4 rounded-card border border-regular p-5">
                       <span
                         aria-hidden="true"
-                        className="flex size-7 shrink-0 items-center justify-center rounded-full bg-portfolio-soft text-13 font-semibold text-portfolio"
+                        className="flex size-7 shrink-0 items-center justify-center rounded-full bg-portfolio-soft text-13 font-semibold text-portfolio-strong"
                       >
                         {index + 1}
                       </span>
@@ -388,7 +388,7 @@ export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailPro
               </section>
 
               {detail.result && (
-                <section className="flex flex-col gap-2 rounded-card bg-portfolio-soft p-5">
+                <section className="flex flex-col gap-2 rounded-card bg-regular p-5">
                   <h2 className="text-16 font-semibold text-main">결과</h2>
                   <p className="text-14 break-keep text-main">{detail.result}</p>
                 </section>
@@ -426,7 +426,7 @@ export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailPro
       <nav aria-label="다른 사례" className="mt-16 flex flex-wrap gap-3">
         <a
           href={listHref(item)}
-          className="flex w-fit items-center gap-1 rounded-full border border-regular px-5 py-3 text-14 font-medium text-main hover:bg-light"
+          className="lift flex w-fit items-center gap-1 rounded-full border border-regular px-5 py-3 text-14 font-medium text-main [--lift:2px]"
         >
           <span>
             다른 <span lang="en">Fullstack</span> 사례 보기
@@ -435,7 +435,7 @@ export default function EngineeringCaseDetail({ slug }: EngineeringCaseDetailPro
         </a>
         <a
           href={searchHref()}
-          className="flex w-fit items-center gap-1 rounded-full border border-regular px-5 py-3 text-14 font-medium text-main hover:bg-light"
+          className="lift flex w-fit items-center gap-1 rounded-full border border-regular px-5 py-3 text-14 font-medium text-main [--lift:2px]"
         >
           전체 사례 보기
           <ChevronRightIcon size={16} />

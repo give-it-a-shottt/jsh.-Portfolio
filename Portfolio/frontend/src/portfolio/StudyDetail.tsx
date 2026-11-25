@@ -16,7 +16,7 @@ interface ImageGalleryProps {
   items: StudyPractice[]
 }
 
-/** 이미지 카드 목록 — 누르면 라이트박스로 크게 띄우고 같은 목록 안을 넘겨 본다(Design 사례와 같은 뷰어) */
+/** 이미지 카드 목록 - 누르면 라이트박스로 크게 띄우고 같은 목록 안을 넘겨 본다(Design 사례와 같은 뷰어) */
 function ImageGallery({ id, title, description, items }: ImageGalleryProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const closeLightbox = useCallback(() => setOpenIndex(null), [])
@@ -34,14 +34,14 @@ function ImageGallery({ id, title, description, items }: ImageGalleryProps) {
               type="button"
               onClick={() => setOpenIndex(index)}
               aria-label={`${caption} 크게 보기`}
-              className="block cursor-zoom-in overflow-hidden rounded-thumb border border-regular bg-regular"
+              className="lift block cursor-zoom-in rounded-thumb border border-regular bg-regular"
             >
               <img
                 src={image}
                 alt={caption}
                 loading="lazy"
                 // 한 장뿐이면(가로로 긴 배너 등) 자르지 않고 그대로
-                className={items.length > 1 ? 'aspect-4/3 w-full object-cover' : 'h-auto w-full'}
+                className={`rounded-[inherit] ${items.length > 1 ? 'aspect-4/3 w-full object-cover' : 'h-auto w-full'}`}
               />
             </button>
             <div className="flex flex-col gap-0.5 px-1">
@@ -71,7 +71,7 @@ interface StudyDetailProps {
 }
 
 /**
- * 공부 노트 상세 — 노션 문서처럼(피그마 06): 속성 표 → 한 줄 요약 콜아웃 → 핵심 개념 → 배운 것(주제별) →
+ * 공부 노트 상세 - 노션 문서처럼(피그마 06): 속성 표 → 한 줄 요약 콜아웃 → 핵심 개념 → 배운 것(주제별) →
  * 실습 결과물 · 참고 예시(있을 때) → 써먹은 곳(실제로 쓴 사례가 있을 때). 틀렸던 문답 묶음은 visibleLearned 가 뺀다.
  * 왼쪽은 Study 사이드바, 넓은 화면에서는 오른쪽에 목차가 따라 내려온다.
  */
@@ -103,7 +103,7 @@ export default function StudyDetail({ slug }: StudyDetailProps) {
   const examples = note.examples ?? []
   const sections = note.sections ?? []
   const pitfalls = note.pitfalls ?? []
-  // NOTES 는 최신순 — 이전 노트는 더 오래된 쪽
+  // NOTES 는 최신순 - 이전 노트는 더 오래된 쪽
   const older = NOTES[index + 1]
   const newer = NOTES[index - 1]
   const toc = [
@@ -190,14 +190,14 @@ export default function StudyDetail({ slug }: StudyDetailProps) {
             </h2>
             {sections.length > 0 ? (
               <>
-                {/* 다룬 것 — 누르면 그 개념으로 내려간다 */}
+                {/* 다룬 것 - 누르면 그 개념으로 내려간다 */}
                 <ul aria-label="다룬 것" className="mt-3.5 flex flex-wrap gap-1.5">
                   {sections.map(({ title }, i) => (
                     <li key={title}>
                       <button
                         type="button"
                         onClick={() => scrollTo(`note-section-${i}`)}
-                        className="rounded-sm border border-regular bg-default px-2.5 py-1 text-13 font-medium break-keep text-sub hover:border-black hover:text-main"
+                        className="lift rounded-sm border border-regular bg-default px-2.5 py-1 text-13 font-medium break-keep text-sub [--lift:2px] hover:text-main"
                       >
                         {title}
                       </button>
@@ -336,17 +336,17 @@ export default function StudyDetail({ slug }: StudyDetailProps) {
             </section>
           )}
 
-          {/* 이전·다음은 내용이 아니라 이동이라 카드 대신 바닥 UI — 구분선 하나 위에 테두리 없이 둔다 */}
+          {/* 이전·다음은 내용이 아니라 이동이라 카드 대신 바닥 UI - 구분선 하나 위에 테두리 없이 둔다 */}
           {(older || newer) && (
             <nav aria-label="다른 노트" className="mt-14 grid gap-x-6 border-t border-regular sm:grid-cols-2">
               {older && (
-                <a href={noteHref(older.slug)} className="group flex flex-col gap-1 py-6">
+                <a href={noteHref(older.slug)} className="lift group flex flex-col gap-1 py-6 [--lift:2px]">
                   <span className="text-12 text-sub-weak">← 이전 노트</span>
                   <span className="text-14 font-medium break-keep text-main group-hover:text-study-strong">{older.title}</span>
                 </a>
               )}
               {newer && (
-                <a href={noteHref(newer.slug)} className="group flex flex-col gap-1 py-6 sm:col-start-2 sm:items-end sm:text-right">
+                <a href={noteHref(newer.slug)} className="lift group flex flex-col gap-1 py-6 [--lift:2px] sm:col-start-2 sm:items-end sm:text-right">
                   <span className="text-12 text-sub-weak">다음 노트 →</span>
                   <span className="text-14 font-medium break-keep text-main group-hover:text-study-strong">{newer.title}</span>
                 </a>

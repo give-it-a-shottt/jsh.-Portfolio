@@ -1,7 +1,7 @@
 import { studyHref } from './notes'
 import SearchBox from './SearchBox'
 
-/** 헤더 탭 — Design · Fullstack 을 합쳐 Main(첫 화면) / Study 둘로(F-013) */
+/** 헤더 탭 - Design · Fullstack 을 합쳐 Main(첫 화면) / Study 둘로(F-013) */
 export type HeaderTab = 'main' | 'study'
 
 const NAV: { tab: HeaderTab; label: string; href: string }[] = [
@@ -10,7 +10,7 @@ const NAV: { tab: HeaderTab; label: string; href: string }[] = [
 ]
 
 interface PortfolioHeaderProps {
-  /** 검색창 — 모든 화면에 작게 둔다(F-013). 결과 화면이면 지금 검색어를 채워 둔다 */
+  /** 검색창 - 모든 화면에 작게 둔다(F-013). 결과 화면이면 지금 검색어를 채워 둔다 */
   search: { query: string; onSearch: (query: string) => void }
   activeTab: HeaderTab
 }
@@ -24,9 +24,9 @@ export default function PortfolioHeader({ search, activeTab }: PortfolioHeaderPr
         {/* 로고 = 모노그램 + 'jsh.' 글자 */}
         <a href="#/" aria-label="jsh 포트폴리오 홈" className="flex shrink-0 items-center gap-3">
           <svg aria-hidden="true" viewBox="2 5 26 26" className="size-9" fill="none">
-            <rect x="2" y="5" width="26" height="26" rx="7" fill="#18181B" />
+            <rect x="2" y="5" width="26" height="26" rx="7" fill="#111111" />
             <path d="M12 11V21C12 23 10.5 24 8.5 24" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" />
-            <circle cx="21" cy="21" r="2" fill="#6366F1" />
+            <circle cx="21" cy="21" r="2" fill="#E60012" />
           </svg>
           <span className="block">
             <svg aria-hidden="true" viewBox="37 7 38 22" className="h-7 w-auto overflow-visible" fill="none">
@@ -37,9 +37,9 @@ export default function PortfolioHeader({ search, activeTab }: PortfolioHeaderPr
                 fontSize="19"
                 fontWeight="700"
                 letterSpacing="-0.6px"
-                fill="#09090B"
+                fill="#111111"
               >
-                jsh<tspan fill="#6366F1">.</tspan>
+                jsh<tspan fill="#E60012">.</tspan>
               </text>
             </svg>
           </span>

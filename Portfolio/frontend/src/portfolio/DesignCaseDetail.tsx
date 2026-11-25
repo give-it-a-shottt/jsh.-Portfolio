@@ -21,10 +21,10 @@ function BackLink() {
   )
 }
 
-/** 카드 사이 간격(gap-6) — 화살표로 카드 한 장씩 넘길 때 쓴다 */
+/** 카드 사이 간격(gap-6) - 화살표로 카드 한 장씩 넘길 때 쓴다 */
 const CARD_GAP = 24
 
-/** 카드를 누르면 크게 볼 수 있다고 알려 준다 — 데스크톱 카드는 윗부분만 보여서 특히 필요하다 */
+/** 카드를 누르면 크게 볼 수 있다고 알려 준다 - 데스크톱 카드는 윗부분만 보여서 특히 필요하다 */
 const OPEN_HINT = ' 누르면 크게 볼 수 있어요.'
 
 interface ScreenSectionProps {
@@ -32,7 +32,7 @@ interface ScreenSectionProps {
   title: string
   description: string
   items: DesignVariant[]
-  /** slide 는 16:9 케이스 스터디 장표 — 데스크톱 카드 폭에 자르지 않고 통째로 보여준다 */
+  /** slide 는 16:9 케이스 스터디 장표 - 데스크톱 카드 폭에 자르지 않고 통째로 보여준다 */
   device?: 'mobile' | 'desktop' | 'slide'
   /** 최종 배지를 달 위치. 시안 비교에만 쓴다 */
   finalIndex?: number
@@ -52,7 +52,7 @@ function ScreenSection({ id, title, description, items, device = 'mobile', final
   const [edges, setEdges] = useState({ atStart: true, atEnd: true })
   const reduceMotion = useReducedMotion()
 
-  // 지금 맨 앞·맨 끝인지 — 둘 다면 넘칠 게 없어서 화살표를 숨긴다
+  // 지금 맨 앞·맨 끝인지 - 둘 다면 넘칠 게 없어서 화살표를 숨긴다
   const updateEdges = useCallback(() => {
     const track = trackRef.current
     if (!track) return
@@ -90,7 +90,7 @@ function ScreenSection({ id, title, description, items, device = 'mobile', final
           </h2>
           <p className="mt-1 text-14 break-keep text-sub">{description}</p>
         </div>
-        {/* 화살표는 마우스를 쓰는 화면에만 — 휴대폰은 손가락으로 민다 */}
+        {/* 화살표는 마우스를 쓰는 화면에만 - 휴대폰은 손가락으로 민다 */}
         {overflows && (
           <div className="hidden shrink-0 gap-2 pointer-fine:flex">
             <ScrollArrow direction="prev" label={title} disabled={edges.atStart} onClick={() => move(-1)} />
@@ -101,7 +101,7 @@ function ScreenSection({ id, title, description, items, device = 'mobile', final
       <ol
         ref={trackRef}
         onScroll={updateEdges}
-        className="scrollbar-none -mx-5 mt-6 flex snap-x scroll-px-5 gap-6 overflow-x-auto px-5 pb-2 sm:mx-0 sm:scroll-px-0 sm:px-0"
+        className="scrollbar-none -mx-5 mt-4 flex snap-x scroll-px-5 gap-6 overflow-x-auto px-5 pt-2 pb-2 sm:mx-0 sm:scroll-px-0 sm:px-0"
       >
         {items.map((item, index) => {
           const isFinal = index === finalIndex
@@ -112,7 +112,7 @@ function ScreenSection({ id, title, description, items, device = 'mobile', final
               width={item.width ?? 400}
               height={item.height ?? 860}
               loading="lazy"
-              className={`w-full rounded-thumb border ${isFinal ? 'border-black' : 'border-regular'} ${
+              className={`w-full rounded-[inherit] ${
                 isDesktop ? 'aspect-4/3 object-cover object-top-left' : 'h-auto'
               }`}
             />
@@ -124,7 +124,7 @@ function ScreenSection({ id, title, description, items, device = 'mobile', final
                   type="button"
                   onClick={() => setOpenIndex(index)}
                   aria-label={`${item.label} 화면 크게 보기`}
-                  className="block cursor-zoom-in rounded-thumb text-left"
+                  className={`lift block cursor-zoom-in rounded-thumb border text-left ${isFinal ? 'border-black' : 'border-regular'}`}
                 >
                   {image}
                 </button>
@@ -158,7 +158,7 @@ function ScreenSection({ id, title, description, items, device = 'mobile', final
 
 interface ScrollArrowProps {
   direction: 'prev' | 'next'
-  /** 어느 목록의 화살표인지 — 화면 읽기 프로그램에 함께 읽어 준다 */
+  /** 어느 목록의 화살표인지 - 화면 읽기 프로그램에 함께 읽어 준다 */
   label: string
   disabled: boolean
   onClick: () => void
@@ -171,7 +171,7 @@ function ScrollArrow({ direction, label, disabled, onClick }: ScrollArrowProps) 
       onClick={onClick}
       disabled={disabled}
       aria-label={`${label} ${direction === 'prev' ? '이전' : '다음'} 화면`}
-      className="flex size-10 items-center justify-center rounded-full border border-regular text-main hover:bg-light disabled:cursor-default disabled:text-sub-weak disabled:hover:bg-transparent"
+      className="lift flex size-10 items-center justify-center rounded-full border border-regular text-main [--lift:2px] disabled:cursor-default disabled:text-sub-weak disabled:hover:border-regular"
     >
       <ChevronRightIcon size={18} className={direction === 'prev' ? 'rotate-180' : undefined} />
     </button>
@@ -182,7 +182,7 @@ interface DesignCaseDetailProps {
   slug: string
 }
 
-// Design 사례 상세 — 문제 정의 → 분류별 화면 묶음 → 케이스 스터디 장표 → 시안 비교 또는 화면 구성(가로 나열) → 모바일 화면
+// Design 사례 상세 - 문제 정의 → 분류별 화면 묶음 → 케이스 스터디 장표 → 시안 비교 또는 화면 구성(가로 나열) → 모바일 화면
 // → 디자인 시스템 → 대표 화면 실제 동작. 사례에 없는 칸은 건너뛴다.
 export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
   const item = CASES.find((candidate) => candidate.slug === slug && candidate.design)
@@ -236,7 +236,7 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
                 href={href}
                 target="_blank"
                 rel="noopener"
-                className="flex w-fit items-center gap-1 rounded-full border border-regular px-4 py-2 text-14 font-medium text-main hover:bg-light"
+                className="lift flex w-fit items-center gap-1 rounded-full border border-regular px-4 py-2 text-14 font-medium text-main [--lift:2px]"
               >
                 {label} ↗
               </a>
@@ -316,7 +316,7 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
             <p className="text-14 break-keep text-sub">{demo.note}</p>
             {demo.caveat && <p className="text-13 break-keep text-sub-weak">{demo.caveat}</p>}
           </div>
-          {/* 휴대폰 틀 — 400px 시안 폭을 넘지 않고, 좁은 화면에서는 줄어든다 */}
+          {/* 휴대폰 틀 - 400px 시안 폭을 넘지 않고, 좁은 화면에서는 줄어든다 */}
           <div className="w-full max-w-100 overflow-hidden rounded-[32px] border-[6px] border-black">
             <Demo />
           </div>
@@ -327,7 +327,7 @@ export default function DesignCaseDetail({ slug }: DesignCaseDetailProps) {
 
       <a
         href={DESIGN_LIST_HREF}
-        className="mt-16 flex w-fit items-center gap-1 rounded-full border border-regular px-5 py-3 text-14 font-medium text-main hover:bg-light"
+        className="mt-16 lift flex w-fit items-center gap-1 rounded-full border border-regular px-5 py-3 text-14 font-medium text-main [--lift:2px]"
       >
         <span>
           다른 <span lang="en">Design</span> 사례 보기

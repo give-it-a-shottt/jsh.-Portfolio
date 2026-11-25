@@ -1,9 +1,9 @@
-// 포트폴리오 확인 스크립트(F-011) — 테스트 러너 없이, 주소 해석과 프로젝트 데이터의 갈림길을 확인한다.
+// 포트폴리오 확인 스크립트(F-011) - 테스트 러너 없이, 주소 해석과 프로젝트 데이터의 갈림길을 확인한다.
 // 사이트 코드는 이미지·?raw 를 import 하므로 search-eval 처럼 Vite 로 불러온다.
 //
 //   npm run check        실패가 하나라도 있으면 종료 코드 1
 
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createServer } from 'vite'
@@ -30,7 +30,7 @@ function check(name, actual, expected) {
 try {
   const routes = await server.ssrLoadModule('/src/portfolio/routes.ts')
   const data = await server.ssrLoadModule('/src/portfolio/data.ts')
-  // projects.ts 는 사례 slug · design.problem 이 없으면 불러올 때 오류를 낸다 — 여기서 먼저 잡힌다
+  // projects.ts 는 사례 slug · design.problem 이 없으면 불러올 때 오류를 낸다 - 여기서 먼저 잡힌다
   const projects = await server.ssrLoadModule('/src/portfolio/projects.ts')
 
   // ── 탭 주소 해석: 새 탭 · 예전 탭(front · back) · 이상한 값
@@ -57,7 +57,7 @@ try {
   check('사례 roles 는 Design · Front · Back · DB 만', CASES.flatMap((c) => c.roles ?? []).filter((r) => !['Design', 'Front', 'Back', 'DB'].includes(r)), [])
 
   // ── 프로젝트 데이터
-  const { PROJECT_LIST, findProject, nextProject, designPreview, mainGridLayout, hasDesign, projectSections } = projects
+  const { PROJECT_LIST, findProject, nextProject, designPreview, hasDesign, projectSections, showcaseProjects, showcaseStats, serviceLink } = projects
   check('프로젝트 slug 는 겹치지 않는다', new Set(PROJECT_LIST.map((p) => p.slug)).size, PROJECT_LIST.length)
   check('없는 slug', findProject('없는-프로젝트'), undefined)
   check('빈 slug', findProject(''), undefined)
@@ -67,31 +67,55 @@ try {
   const tiers = PROJECT_LIST.map((p) => p.tier)
   check('모든 프로젝트에 tier 가 main · sub 중 하나', tiers.filter((t) => t !== 'main' && t !== 'sub').length, 0)
   check('메인은 거기붐벼? · Agora · 디딤 · Accio · 마에스트로 순', PROJECT_LIST.filter((p) => p.tier === 'main').map((p) => p.slug), ['geogi', 'agora', 'didim', 'accio', 'maestro'])
-  // 메인 기댓값(위 slug 5개)은 사용자가 정한 순서라 고정한다 — 메인을 바꾸면 여기도 같이 바꾼다(D-008)
+  // 메인 기댓값(위 slug 5개)은 사용자가 정한 순서라 고정한다 - 메인을 바꾸면 여기도 같이 바꾼다(D-008)
   const mainCount = tiers.filter((t) => t === 'main').length
   check('메인이 목록 앞에 모여 있고 서브는 그 뒤에만', tiers.every((t, i) => (i < mainCount ? t === 'main' : t === 'sub')), true)
   check('서브가 1개 이상', tiers.length - mainCount > 0, true)
-  // 메인 큰 카드 줄(F-016): 4개면 2칸(2×2), 그 밖엔 3칸 — 4개를 3칸에 두면 하나가 혼자 남는다
-  check('메인 4개면 2칸, 그 밖엔 3칸', [1, 2, 3, 4, 5, 6].map((n) => mainGridLayout(n).cols), [3, 3, 3, 2, 3, 3])
-  check('지금 메인 개수의 칸 수', mainGridLayout(mainCount).cols, mainCount === 4 ? 2 : 3)
-  check('메인 5개는 한 줄 3칸(위 3 · 아래 2, F-017)', [mainCount, mainGridLayout(mainCount).cols], [5, 3])
+  check('메인은 5개(F-017)', mainCount, 5)
+  // 메인 스크롤 섹션(F-018 · D-009): showcase 가 없으면 홈 메인에서 조용히 빠지므로, 메인 전부에 있는지 · 숫자 이름이 맞는지 본다
+  const showcase = showcaseProjects(PROJECT_LIST)
+  check('메인 모두 홈 스크롤 섹션에 나온다', showcase.map((p) => p.slug), PROJECT_LIST.filter((p) => p.tier === 'main').map((p) => p.slug))
+  check('서브에는 showcase 를 두지 않는다', PROJECT_LIST.filter((p) => p.tier === 'sub' && p.showcase).map((p) => p.slug), [])
+  for (const p of showcase) {
+    check(`${p.name} · 섹션 숫자 두 개를 numbers 에서 찾는다`, showcaseStats(p).map((s) => s.label), p.showcase.stats)
+    check(`${p.name} · 섹션 한 줄이 비어 있지 않다`, p.showcase.tagline.trim().length > 0, true)
+    check(`${p.name} · 섹션 화면이 모두 있다`, (p.showcase.shots.kind === 'phones' ? p.showcase.shots.images : [p.showcase.shots.main, p.showcase.shots.overlay]).every(Boolean), true)
+    check(`${p.name} · 서비스 버튼은 링크의 마지막`, serviceLink(p), p.links[p.links.length - 1])
+  }
+  check('숫자 이름이 틀리면 그 칸은 빠진다', showcaseStats({ ...showcase[0], showcase: { ...showcase[0].showcase, stats: ['없는 이름', showcase[0].showcase.stats[1]] } }).length, 1)
+  check('링크가 없으면 서비스 버튼도 없다', serviceLink({ links: [] }), undefined)
+
+  // 메인 스크롤 섹션의 움직임(F-018): 위치 계산은 순수 함수라 값으로 확인한다
+  const { activeIndex, easeInOut, stripPosition, textOffset, textOpacity } = await server.ssrLoadModule('/src/portfolio/home/showcaseMotion.ts')
+  check('곡선 · 0 과 1 에서 시작하고 끝난다(밖의 값은 자른다)', [-1, 0, 0.5, 1, 2].map(easeInOut), [0, 0, 0.5, 1, 1])
+  check('화면 띠 · 프로젝트마다 딱 맞게 선다', [0, 1, 2, 3, 4].map(stripPosition), [0, 1, 2, 3, 4])
+  check('화면 띠 · 앞뒤 15%는 멈춰 있다', [0.1, 0.9, 2.1].map(stripPosition), [0, 1, 2])
+  check('화면 띠 · 가운데에서 반을 지난다', stripPosition(1.5), 1.5)
+  const steps = Array.from({ length: 401 }, (_, i) => i / 100)
+  check('화면 띠 · 내리는 동안 거꾸로 가지 않는다', steps.every((x, i) => i === 0 || stripPosition(x) >= stripPosition(steps[i - 1])), true)
+  check('글 · 자기 자리에서 다 보이고 한 칸 떨어지면 안 보인다', [-1, 0, 1].map(textOpacity), [0, 1, 0])
+  check('글 · 멀리 떨어진 글은 안 보인다', [-4, -2, 2, 4].map(textOpacity), [0, 0, 0, 0])
+  check('글 · 넘어가는 동안 두 글이 다 사라지는 순간이 없다', steps.filter((x) => x <= 1).every((x) => textOpacity(x) + textOpacity(x - 1) > 0.05), true)
+  check('글 · 다 보일 때는 제자리', Math.abs(textOffset(0)), 0)
+  check('글 · 떠날 때는 위로, 들어올 때는 아래에서', [textOffset(0.4) < 0, textOffset(-0.4) > 0], [true, true])
+  check('현재 위치 · 반을 넘으면 다음, 스프링이 넘쳐도 범위 안', [-0.2, 0.49, 0.51, 3.6, 4.3].map((x) => activeIndex(x, 5)), [0, 0, 1, 4, 4])
   check('거기붐벼? 링크는 GitHub · 서비스 보기(마지막 = 주 버튼)', findProject('geogi')?.links, [
     { label: 'GitHub', href: 'https://github.com/give-it-a-shottt/geogi-boombyeo' },
     { label: '서비스 보기', href: 'https://geogi-boombyeo.shop' },
   ])
-  // 피그마 링크(F-017): 공개하지 않기로 한 프로젝트만 비운다 — 실수로 빠뜨린 것을 잡으려고 목록을 고정한다
+  // 피그마 링크(F-017): 공개하지 않기로 한 프로젝트만 비운다 - 실수로 빠뜨린 것을 잡으려고 목록을 고정한다
   check('피그마 링크가 없는 프로젝트는 거기붐벼?뿐', PROJECT_LIST.filter((p) => !p.figma).map((p) => p.slug), ['geogi'])
-  check('디자인 섹션 — 피그마 링크만 있음', hasDesign({ figma: 'https://www.figma.com/design/x' }), true)
-  check('디자인 섹션 — Design 사례만 있음', hasDesign({ designCase: 'remind' }), true)
-  check('디자인 섹션 — 둘 다 없으면 그리지 않는다', hasDesign({}), false)
-  check('디자인 섹션 — 빈 문자열도 없는 것으로 본다', hasDesign({ figma: '' }), false)
+  check('디자인 섹션 - 피그마 링크만 있음', hasDesign({ figma: 'https://www.figma.com/design/x' }), true)
+  check('디자인 섹션 - Design 사례만 있음', hasDesign({ designCase: 'remind' }), true)
+  check('디자인 섹션 - 둘 다 없으면 그리지 않는다', hasDesign({}), false)
+  check('디자인 섹션 - 빈 문자열도 없는 것으로 본다', hasDesign({ figma: '' }), false)
   check('거기붐벼?는 디자인 섹션이 없다', hasDesign(findProject('geogi')), false)
-  // 목차(F-017): 섹션 번호는 목차 순서에서 나온다 — id 가 겹치거나 '디자인' 줄과 섹션이 어긋나면 번호가 틀어진다
+  // 목차(F-017): 섹션 번호는 목차 순서에서 나온다 - id 가 겹치거나 '디자인' 줄과 섹션이 어긋나면 번호가 틀어진다
   const sectionIds = (p) => projectSections(p).map((s) => s.id)
   check('목차 섹션 id 는 프로젝트 안에서 겹치지 않는다', PROJECT_LIST.filter((p) => new Set(sectionIds(p)).size !== sectionIds(p).length).map((p) => p.slug), [])
   check("목차의 '디자인' 줄은 디자인 섹션이 있을 때만", PROJECT_LIST.filter((p) => sectionIds(p).includes('design') !== hasDesign(p)).map((p) => p.slug), [])
   check('거기붐벼? 목차는 왜 · 결정 · 막힌 것 · 화면 · 다음', sectionIds(findProject('geogi')), ['why', 'decisions', 'troubles', 'screens', 'next'])
-  // 거기붐벼? 글은 승인받은 초안 그대로다(F-017) — 줄을 빠뜨리거나 더하면 여기서 잡힌다
+  // 거기붐벼? 글은 승인받은 초안 그대로다(F-017) - 줄을 빠뜨리거나 더하면 여기서 잡힌다
   const geogi = findProject('geogi')
   check('거기붐벼? 숫자 4 · 결정 4 · 막힌 것 5 · 화면 4 · 다음 3', [geogi.numbers.length, geogi.decisions.length, geogi.troubles.length, geogi.screens.items.length, geogi.next.length], [4, 4, 5, 4, 3])
   check('거기붐벼? 결정 · 막힌 것 번호', [geogi.decisions.map((d) => d.code), geogi.troubles.map((t) => t.code)], [['D-1', 'D-2', 'D-3', 'D-4'], ['T-1', 'T-2', 'T-3', 'T-4', 'T-5']])
@@ -182,56 +206,25 @@ try {
   for (const other of ['/', '/techlearnx', '/nightly', '/project/accio'])
     check(`${other} 는 techlearn 주소가 아니다`, isOldTechlearnPath(other), false)
 
-  // ── 자소서형 랜딩(F-014): 첫 방문 판단(탭마다 한 번, Q-007) · 저장소를 못 쓸 때 · 글 데이터
-  const { shouldShowLanding, markLandingSeen } = await server.ssrLoadModule('/src/portfolio/landing/landingSeen.ts')
-  const memoryStorage = () => {
-    const box = new Map()
-    return { getItem: (k) => (box.has(k) ? box.get(k) : null), setItem: (k, v) => box.set(k, String(v)) }
+  // ── 홈 개편(F-018): 랜딩을 뺀 뒤 남은 조각이 없는지, 엔대시 · 엠대시가 다시 들어오지 않았는지
+  const sources = []
+  const walk = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const file = join(dir, entry.name)
+      if (entry.isDirectory()) walk(file)
+      else if (/\.(tsx?|css|json)$/.test(entry.name)) sources.push([file, readFileSync(file, 'utf8')])
+    }
   }
-  const realStorage = globalThis.sessionStorage
-  try {
-    globalThis.sessionStorage = memoryStorage()
-    check('랜딩 · 처음이면 보여 준다', shouldShowLanding(), true)
-    markLandingSeen()
-    check('랜딩 · 기록한 뒤에는 안 보여 준다', shouldShowLanding(), false)
-    globalThis.sessionStorage = { getItem: () => { throw new Error('blocked') }, setItem: () => { throw new Error('blocked') } }
-    check('랜딩 · 저장소가 막히면 보여 준다', shouldShowLanding(), true)
-    let threw = false
-    try { markLandingSeen() } catch { threw = true }
-    check('랜딩 · 저장소가 막혀도 기록이 오류를 내지 않는다', threw, false)
-    delete globalThis.sessionStorage
-    check('랜딩 · 저장소가 아예 없으면 보여 준다', shouldShowLanding(), true)
-    threw = false
-    try { markLandingSeen() } catch { threw = true }
-    check('랜딩 · 저장소가 아예 없어도 기록이 오류를 내지 않는다', threw, false)
-  } finally {
-    if (realStorage === undefined) delete globalThis.sessionStorage
-    else globalThis.sessionStorage = realStorage
-  }
-
-  // Q-008: 처음 연 화면이 홈이 아니면 '봤음' 기록 — App.tsx 의 첫 주소 비교가 남아 있는지 (지우면 다른 화면을 거쳐 홈에 올 때 랜딩이 다시 뜬다)
-  const appSource = readFileSync(join(ROOT, 'src/App.tsx'), 'utf8')
-  check('랜딩 · 첫 주소가 홈이 아니면 봤음으로 기록한다(App.tsx)', /if \(entryPath !== "\/"\) markLandingSeen\(\)/.test(appSource), true)
-
-  // 랜딩을 못 그리면(조각 못 받음 · 그리다 오류) 빈 화면 대신 홈으로 — 오류 경계의 세 단계를 직접 불러 확인
-  const { default: LandingBoundary } = await server.ssrLoadModule('/src/portfolio/landing/LandingBoundary.tsx')
-  let failCalls = 0
-  const boundary = new LandingBoundary({ onFail: () => failCalls++, children: '랜딩' })
-  check('랜딩 경계 · 평소에는 랜딩을 그린다', boundary.render(), '랜딩')
-  check('랜딩 경계 · 오류가 나면 실패 상태로', LandingBoundary.getDerivedStateFromError(new Error('chunk')), { failed: true })
-  boundary.state = LandingBoundary.getDerivedStateFromError(new Error('chunk'))
-  boundary.componentDidCatch(new Error('chunk'))
-  check('랜딩 경계 · 실패하면 아무것도 그리지 않는다', boundary.render(), null)
-  check('랜딩 경계 · 실패하면 홈으로 넘기라고 한 번 알린다', failCalls, 1)
-
-  const { CHAPTERS, CLOSING, QUOTE } = await server.ssrLoadModule('/src/portfolio/landing/landingContent.ts')
-  check('랜딩 · 장 id 가 겹치지 않는다', new Set(CHAPTERS.map((c) => c.id)).size, CHAPTERS.length)
-  check('랜딩 · 장마다 문장이 있다', CHAPTERS.filter((c) => c.sentences.length === 0).map((c) => c.id), [])
-  check('랜딩 · 성공 기준 강조 단어가 문장 안에 있다', QUOTE.accent.filter((w) => !QUOTE.lines.flat().includes(w)), [])
-  // 사용자 결정(2026-11-18)으로 뺀 문단(생산 라인 · 영상 기획 · 회사 지원)이 다시 들어오지 않았는지
-  const allText = [...CHAPTERS.flatMap((c) => c.sentences), ...CLOSING.sentences, CLOSING.last].join(' ')
-  for (const word of ['생산', '의료기기', '영상', '두어스', '지원'])
-    check(`랜딩 · 뺀 문단 단어 '${word}' 가 없다`, allText.includes(word), false)
+  walk(join(ROOT, 'src'))
+  sources.push(['index.html', readFileSync(join(ROOT, 'index.html'), 'utf8')])
+  check('랜딩 조각을 부르는 코드가 없다', sources.filter(([, text]) => /landing\/|CoverLanding|landingSeen/.test(text)).map(([file]) => file), [])
+  check('Ivory 테마 이름이 남아 있지 않다', sources.filter(([, text]) => /data-theme="ivory"|theme = 'ivory'/.test(text)).map(([file]) => file), [])
+  // 첫 화면 목차 · 현재 위치 점은 showcaseAnchor id 로 스크롤한다 - 붙잡는 화면과 펼친 화면 둘 다 그 id 를 그려야 눌렀을 때 움직인다
+  const showcaseSource = readFileSync(join(ROOT, 'src/portfolio/home/ProjectShowcase.tsx'), 'utf8').replace(/\r\n/g, '\n')
+  const part = (name) => showcaseSource.slice(showcaseSource.indexOf(`function ${name}(`), showcaseSource.indexOf('\n}\n', showcaseSource.indexOf(`function ${name}(`)))
+  for (const name of ['Pinned', 'Stacked']) check(`메인 섹션 · ${name} 이 목차가 찾아갈 자리를 그린다`, part(name).includes('id={showcaseAnchor(p.slug)}'), true)
+  check('메인 섹션 · 좁은 화면 · 낮은 창 · 움직임 줄이기에서는 붙잡지 않는다', /const PINNED = '\(min-width: 1024px\) and \(min-height: 700px\) and \(prefers-reduced-motion: no-preference\)'/.test(showcaseSource), true)
+  check('엔대시 · 엠대시를 쓰지 않는다', sources.filter(([, text]) => /[\u2013\u2014]/.test(text)).map(([file]) => file), [])
 } finally {
   await server.close()
 }
