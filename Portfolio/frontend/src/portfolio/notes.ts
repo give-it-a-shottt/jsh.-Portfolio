@@ -6,7 +6,7 @@ import { FRONT_NOTES } from './noteData/front'
 import { MONGODB_NOTES } from './noteData/mongodb'
 import { MYSQL_NOTES } from './noteData/mysql'
 
-// 공부 노트(Study) — 노션 학습노트를 직접 골라 요약해 옮긴다. 노션 원문 링크는 두지 않는다.
+// 공부 노트(Study) - 노션 학습노트를 직접 골라 요약해 옮긴다. 노션 원문 링크는 두지 않는다.
 // 사례(CASES)와 따로 두고, 실제로 화면·코드에 쓴 경우에만 applied 로 사례와 잇는다. 억지로 잇지 않는다.
 // 실습 이미지(practice)는 직접 만든 결과물만 싣는다. 직접 만들지 않은 예시는 사용자가 원할 때만 examples 칸에 따로 싣는다.
 // 노트 내용은 분야별로 noteData/*.ts 에 있다. 나중에는 노션 동기화(real-backend 로드맵)로 채운다.
@@ -29,7 +29,7 @@ export interface StudyApplied {
   used: string
 }
 
-/** 노트 속 코드 예시 — 직접 돌려 본 것만 싣는다(F-012) */
+/** 노트 속 코드 예시 - 직접 돌려 본 것만 싣는다(F-012) */
 export interface NoteCode {
   lang: 'sql' | 'python' | 'javascript' | 'typescript' | 'css' | 'markup' | 'bash' | 'json'
   source: string
@@ -37,12 +37,12 @@ export interface NoteCode {
   caption?: string
 }
 
-/** 새 노트 틀(F-012)의 개념 한 칸 — 설명 · 왜 이렇게 하나 · 코드 */
+/** 새 노트 틀(F-012)의 개념 한 칸 - 설명 · 왜 이렇게 하나 · 코드 */
 export interface NoteSection {
   title: string
   /** 설명 2~3문장 */
   body: string
-  /** 왜 이렇게 하나 — 한 줄 */
+  /** 왜 이렇게 하나 - 한 줄 */
   why?: string
   code?: NoteCode
 }
@@ -54,14 +54,14 @@ export interface StudyNote {
   /** 노션 폴더 기준 강의 묶음 */
   course: string
   lesson: string
-  /** 일 단위 'YYYY.MM.DD' — 사례와 달리 최신순 정렬에 쓴다 */
+  /** 일 단위 'YYYY.MM.DD' - 사례와 달리 최신순 정렬에 쓴다 */
   date: string
   title: string
   /** 노트를 한 문장으로 */
   summary: string
   /** 카드와 상세 '핵심 요약'에 보이는 포인트 2~3개 */
   points: string[]
-  /** 상세 '배운 것' — 주제별 묶음 */
+  /** 상세 '배운 것' - 주제별 묶음 */
   learned: { title: string; items: string[] }[]
   /** 없으면 상세의 '실습 결과물' 칸을 숨긴다 */
   practice?: StudyPractice[]
@@ -70,13 +70,13 @@ export interface StudyNote {
   /** 없으면 '써먹은 곳' 칸을 숨긴다 */
   applied?: StudyApplied[]
   /**
-   * 새 노트 틀(F-012) — 있으면 상세의 '핵심 개념'을 개념마다 설명 · 왜 · 코드로 그린다.
+   * 새 노트 틀(F-012) - 있으면 상세의 '핵심 개념'을 개념마다 설명 · 왜 · 코드로 그린다.
    * 얇은 강의 노트 여러 개를 합친 노트에 쓴다. 없으면 예전처럼 points 목록.
    */
   sections?: NoteSection[]
-  /** 자주 하는 실수 — 공식 문서로 확인한 것만 */
+  /** 자주 하는 실수 - 공식 문서로 확인한 것만 */
   pitfalls?: string[]
-  /** 이 노트로 합친 예전 노트 slug — 예전 주소가 이 노트로 열린다 */
+  /** 이 노트로 합친 예전 노트 slug - 예전 주소가 이 노트로 열린다 */
   replaces?: string[]
   tags: string[]
   /** 화면에 보이지 않는 추가 검색어 */
@@ -109,13 +109,13 @@ export function studyHref(course?: { area: CaseType; course: string }) {
 // 노트의 '막힌 것 · 바로잡은 것' 묶음은 내가 틀렸던 문답이라 화면과 검색에서 뺀다. 데이터는 다시 볼 수 있게 남겨 둔다.
 const HIDDEN_GROUP = /막힌|바로잡|헷갈/
 
-/** 화면에 보일 '배운 것' 묶음 — 틀렸던 문답 묶음은 뺀다 */
+/** 화면에 보일 '배운 것' 묶음 - 틀렸던 문답 묶음은 뺀다 */
 export function visibleLearned(note: StudyNote) {
   return note.learned.filter((group) => !HIDDEN_GROUP.test(group.title))
 }
 
 /**
- * 노트의 개념 묶음 — 새 틀(sections) 노트는 개념 한 칸이 한 묶음, 예전 노트는 화면에 보이는 '배운 것' 묶음.
+ * 노트의 개념 묶음 - 새 틀(sections) 노트는 개념 한 칸이 한 묶음, 예전 노트는 화면에 보이는 '배운 것' 묶음.
  * Study 홈 통계 · 개념 칩 · 검색이 두 틀을 같은 방식으로 읽게 한다(F-012).
  */
 export function conceptGroups(note: StudyNote): { title: string; items: string[] }[] {
@@ -123,7 +123,7 @@ export function conceptGroups(note: StudyNote): { title: string; items: string[]
   return visibleLearned(note)
 }
 
-/** '정리한 개념' 수 — 새 틀은 개념 칸 수, 예전 노트는 '배운 것' 항목 수 */
+/** '정리한 개념' 수 - 새 틀은 개념 칸 수, 예전 노트는 '배운 것' 항목 수 */
 export function conceptCount(note: StudyNote) {
   return note.sections ? note.sections.length : visibleLearned(note).reduce((count, group) => count + group.items.length, 0)
 }
@@ -133,7 +133,7 @@ export interface StudyCourse {
   course: string
   /** 최신순 */
   notes: StudyNote[]
-  /** 이 강의의 개념 묶음 이름 — 나온 순서대로, 겹치면 한 번만 */
+  /** 이 강의의 개념 묶음 이름 - 나온 순서대로, 겹치면 한 번만 */
   groups: string[]
 }
 
@@ -163,7 +163,7 @@ export function findCourse(area: string | null, course: string | null) {
   return COURSES.find((item) => item.area === area && item.course === course)
 }
 
-// 대표 강의 수 — 가장 최근 노트 날짜를 포함한 7일(날짜 차이 0~6일, 예: 최신이 11.11 이면 11.05~11.11) 안에
+// 대표 강의 수 - 가장 최근 노트 날짜를 포함한 7일(날짜 차이 0~6일, 예: 최신이 11.11 이면 11.05~11.11) 안에
 // 노트가 올라온 강의 전부, 단 2~4개 (사용자 결정 2026-11-11, F-004 8차)
 const FEATURED_MIN = 2
 const FEATURED_MAX = 4
@@ -181,7 +181,7 @@ const RECENT_COURSES = [...COURSES]
   .filter((course, i, sorted) => sorted.findIndex((other) => other.course === course.course) === i)
 
 /**
- * 대표 강의 고르기 — courses 는 최근 공부한 순(각 강의의 notes[0] 이 최신). 최신 노트 날짜를 포함한 7일 안에
+ * 대표 강의 고르기 - courses 는 최근 공부한 순(각 강의의 notes[0] 이 최신). 최신 노트 날짜를 포함한 7일 안에
  * 업데이트된 강의를 앞에서부터, 최소 2 · 최대 4개. 오늘 날짜가 아니라 노트 날짜끼리 비교해서, 공부를 며칠 쉬어도 비지 않는다.
  * 입력만 바꿔 규칙을 확인할 수 있게 순수 함수로 둔다(checks/run.mjs).
  */
@@ -195,7 +195,7 @@ export function pickFeatured<T extends { notes: { date: string }[] }>(courses: T
 /** Study 홈에서 개념 카드로 크게 보여 줄 대표 강의. 나머지는 '다른 강의' 목록에 한 줄씩 */
 export const FEATURED_COURSES = pickFeatured(RECENT_COURSES)
 
-/** 실제로 있는 사례에 쓴 것만 — 사례가 아직 없으면 '써먹은 곳'에 나오지 않는다 */
+/** 실제로 있는 사례에 쓴 것만 - 사례가 아직 없으면 '써먹은 곳'에 나오지 않는다 */
 export function appliedCases(note: StudyNote): (StudyApplied & { item: PortfolioCase })[] {
   return (note.applied ?? []).flatMap((applied) => {
     const item = CASES.find((c) => c.slug === applied.slug)
@@ -203,7 +203,7 @@ export function appliedCases(note: StudyNote): (StudyApplied & { item: Portfolio
   })
 }
 
-/** 사례 상세의 '이 작업에 쓴 공부' — 그 사례를 applied 로 가리키는 노트 */
+/** 사례 상세의 '이 작업에 쓴 공부' - 그 사례를 applied 로 가리키는 노트 */
 export function notesForCase(slug: string) {
   return NOTES.filter((note) => note.applied?.some((applied) => applied.slug === slug))
 }

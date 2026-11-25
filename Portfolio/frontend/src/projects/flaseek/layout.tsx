@@ -14,7 +14,7 @@ export type ActiveMenu = Category | 'all' | null
 
 const categoryHref = (key: Category | 'all') => flaseekHref('/list', { cat: key === 'all' ? undefined : key })
 
-/** 시안이라는 걸 먼저 알린다 — 실제 쇼핑몰로 오해하지 않게 */
+/** 시안이라는 걸 먼저 알린다 - 실제 쇼핑몰로 오해하지 않게 */
 function NoticeBar() {
   return (
     <div className="bg-main text-white">
@@ -85,7 +85,7 @@ function Header({ active }: { active: ActiveMenu }) {
 
   return (
     <header className="border-b border-regular bg-white">
-      {/* PC — 로고 · 영문+한글 2줄 메뉴 · 검색·마이·장바구니 */}
+      {/* PC - 로고 · 영문+한글 2줄 메뉴 · 검색·마이·장바구니 */}
       <Container className="hidden items-center justify-between py-4 lg:flex">
         <Logo />
         <nav aria-label="카테고리">
@@ -111,7 +111,7 @@ function Header({ active }: { active: ActiveMenu }) {
         </div>
       </Container>
 
-      {/* 모바일 — 메뉴·로고 / 검색·장바구니, 아래에 가로로 넘기는 카테고리 줄 */}
+      {/* 모바일 - 메뉴·로고 / 검색·장바구니, 아래에 가로로 넘기는 카테고리 줄 */}
       <div className="lg:hidden">
         <div className="flex h-14 items-center justify-between px-2">
           <div className="flex items-center">
@@ -179,7 +179,7 @@ function Header({ active }: { active: ActiveMenu }) {
   )
 }
 
-// 사업자 정보는 형식만 실제 몰과 같게 둔 예시 값이다 — 시안 화면을 보고 실제 회사·대표에게 연락하지 않게
+// 사업자 정보는 형식만 실제 몰과 같게 둔 예시 값이다 - 시안 화면을 보고 실제 회사·대표에게 연락하지 않게
 const COMPANY = [
   'Company : Sample Corp. · CEO : Gil-Dong Hong',
   'Address : 3F, 00 Sample-ro, Gangnam-gu, Seoul',
@@ -202,7 +202,7 @@ function CustomerCenter({ className = '' }: { className?: string }) {
     <div className={`flex flex-col gap-1 ${className}`}>
       <p className="text-13 font-medium text-sub">고객센터</p>
       <p className="text-24 font-semibold tracking-normal text-main">0000-0000</p>
-      <p className="text-12 text-sub">평일 10:30 – 18:00 (점심 12:00 – 13:00) · 주말·공휴일 휴무</p>
+      <p className="text-12 text-sub">평일 10:30 - 18:00 (점심 12:00 - 13:00) · 주말·공휴일 휴무</p>
     </div>
   )
 }
@@ -210,7 +210,7 @@ function CustomerCenter({ className = '' }: { className?: string }) {
 function Footer() {
   return (
     <footer className="bg-light">
-      {/* PC — 회사 정보 왼쪽, 고객센터 오른쪽 */}
+      {/* PC - 회사 정보 왼쪽, 고객센터 오른쪽 */}
       <Container className="hidden items-start justify-between pt-12 pb-16 lg:flex">
         <div className="flex flex-col gap-3">
           <p lang="en" className="text-16 font-semibold tracking-normal text-main">
@@ -225,7 +225,7 @@ function Footer() {
         </div>
         <CustomerCenter className="items-end" />
       </Container>
-      {/* 모바일 — 고객센터를 먼저 */}
+      {/* 모바일 - 고객센터를 먼저 */}
       <div className="flex flex-col gap-4 px-5 pt-8 pb-12 lg:hidden">
         <CustomerCenter />
         <FooterLinks />
@@ -243,12 +243,12 @@ function Footer() {
 
 interface ShellProps {
   active: ActiveMenu
-  /** 모바일 하단 고정 구매바가 있는 화면 — 푸터가 가려지지 않게 그만큼 띄운다 */
+  /** 모바일 하단 고정 구매바가 있는 화면 - 푸터가 가려지지 않게 그만큼 띄운다 */
   mobileBottomBar?: boolean
   children: ReactNode
 }
 
-/** 모든 화면의 틀 — 안내 띠 · 헤더 · 본문 · 푸터 · 토스트 */
+/** 모든 화면의 틀 - 안내 띠 · 헤더 · 본문 · 푸터 · 토스트 */
 export default function Shell({ active, mobileBottomBar = false, children }: ShellProps) {
   return (
     <div className={`flex min-h-svh flex-col bg-white text-main ${mobileBottomBar ? 'pb-26 lg:pb-0' : ''}`}>

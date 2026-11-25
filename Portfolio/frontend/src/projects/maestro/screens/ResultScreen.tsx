@@ -13,7 +13,7 @@ const VIEWS = [
   { value: 'table' as const, label: '표로 비교' },
 ]
 
-// RES_01_001~004 — 지도 + 후보 3곳. MO 는 위 지도 + 아래 시트, PC 는 목록 4칸 + 지도 8칸.
+// RES_01_001~004 - 지도 + 후보 3곳. MO 는 위 지도 + 아래 시트, PC 는 목록 4칸 + 지도 8칸.
 // PC 에서 카드를 누르면(placeId) 지도 위 오른쪽 패널로 상세를 연다.
 export default function ResultScreen({ query, placeId }: { query: Query; placeId?: string }) {
   const result = useMaestro((state) => state.result)
@@ -74,7 +74,7 @@ export default function ResultScreen({ query, placeId }: { query: Query; placeId
       </div>
 
       <div className="flex flex-col lg:mx-auto lg:w-full lg:max-w-[1200px] lg:px-6 xl:px-0 lg:flex-row lg:items-start lg:gap-6 lg:pt-8 lg:pb-8">
-        {/* 지도 — MO 는 위 248(표로 비교는 시트를 펼쳐 140), PC 는 오른쪽 8칸 */}
+        {/* 지도 - MO 는 위 248(표로 비교는 시트를 펼쳐 140), PC 는 오른쪽 8칸 */}
         <div
           className={`relative transition-[height] duration-300 ease-out motion-reduce:transition-none lg:sticky lg:top-8 lg:order-2 lg:h-[764px] lg:flex-1 lg:overflow-hidden lg:rounded-card ${
             view === 'table' ? 'h-[140px]' : 'h-[248px]'
@@ -101,7 +101,7 @@ export default function ResultScreen({ query, placeId }: { query: Query; placeId
           )}
         </div>
 
-        {/* 결과 시트 — MO 는 지도에 20 겹친 2단 시트, PC 는 왼쪽 목록 4칸 */}
+        {/* 결과 시트 - MO 는 지도에 20 겹친 2단 시트, PC 는 왼쪽 목록 4칸 */}
         <section
           aria-label="후보"
           className="relative z-10 -mt-5 min-h-[calc(100svh-284px)] rounded-t-mr-sheet bg-white pb-10 shadow-mr-sheet lg:order-1 lg:mt-0 lg:min-h-0 lg:w-96 lg:shrink-0 lg:rounded-none lg:bg-transparent lg:pb-0 lg:shadow-none"
@@ -121,7 +121,7 @@ export default function ResultScreen({ query, placeId }: { query: Query; placeId
   )
 }
 
-/** 'none' 상태의 안내 — 가장 빨리 여는 곳 기준 */
+/** 'none' 상태의 안내 - 가장 빨리 여는 곳 기준 */
 function emptyBody(first: Pick | undefined) {
   if (!first) return '오늘은 더 여는 곳이 없어요'
   const time = first.status.label.replace(' 열어요', '')
@@ -178,7 +178,7 @@ function PickList({ data, query, highlighted }: { data: Picks; query: Query; hig
   )
 }
 
-/** RES_01_002 표로 비교 — 3곳을 같은 줄에서. 열마다 [여기로] */
+/** RES_01_002 표로 비교 - 3곳을 같은 줄에서. 열마다 [여기로] */
 function CompareTable({ data, query }: { data: Picks; query: Query }) {
   const labels = conditionLabels(data.conditions)
   const rows: { label: string; cell: (pick: Pick) => string }[] = [
@@ -239,7 +239,7 @@ function CompareTable({ data, query }: { data: Picks; query: Query }) {
           </tbody>
         </table>
       </div>
-      {/* 함께 고르기(투표)는 구현 2차 — 자리만 보여 준다 */}
+      {/* 함께 고르기(투표)는 구현 2차 - 자리만 보여 준다 */}
       <button type="button" disabled className={`${buttonClass('secondary', 'L')} w-full`}>
         함께 고르기 · 투표 링크 만들기
       </button>

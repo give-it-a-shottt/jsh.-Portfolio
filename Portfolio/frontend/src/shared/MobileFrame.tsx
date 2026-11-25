@@ -27,7 +27,7 @@ export default function MobileFrame({ children, width = 375, height = 812 }: Mob
 
   return (
     <div className="min-h-svh bg-light sm:flex sm:items-center sm:justify-center sm:py-6">
-      {/* 둥근 모서리용 overflow 는 넓은 화면에서만 — 휴대폰에서 걸면 sticky 버튼이 화면 아래에 붙지 않는다 */}
+      {/* 둥근 모서리용 overflow 는 넓은 화면에서만 - 휴대폰에서 걸면 sticky 버튼이 화면 아래에 붙지 않는다 */}
       <div
         ref={setFrame}
         style={size}

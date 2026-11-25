@@ -10,7 +10,7 @@ import math
 from app.yumi.models import LatLng, Place
 
 # 마에스트로가 쓰는 필터. 여기 없는 이름을 쓰면 오타일 수 있어서 바로 알려준다.
-# (실제 유미 API 에는 더 많은 필터가 있다 — GET /api/v1/meta)
+# (실제 유미 API 에는 더 많은 필터가 있다 - GET /api/v1/meta)
 SUPPORTED_FILTERS = {
     "keyword",
     "subtype",
@@ -25,7 +25,7 @@ SUPPORTED_FILTERS = {
 
 
 def distance_m(a: LatLng, b: LatLng) -> float:
-    """두 좌표 사이 거리(m) — 하버사인 공식."""
+    """두 좌표 사이 거리(m) - 하버사인 공식."""
     lat1, lat2 = math.radians(a.lat), math.radians(b.lat)
     d_lat = lat2 - lat1
     d_lng = math.radians(b.lng - a.lng)
@@ -73,6 +73,6 @@ def matches(place: Place, filters: dict[str, str | bool]) -> bool:
             if place.open_now and place.open_now.open is False:
                 return False
         elif value is True and attrs.get(name) is not True:
-            # parking / reservable / private_room — true 를 붙이면 확인된 곳만
+            # parking / reservable / private_room - true 를 붙이면 확인된 곳만
             return False
     return True

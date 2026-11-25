@@ -2,7 +2,7 @@ import type { Condition, PlaceCard, Status } from './types'
 
 const KST_CLOCK = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
 
-/** 지금 한국 시각 'HH:MM' — 서버도 한국 시간으로 영업 여부를 본다 */
+/** 지금 한국 시각 'HH:MM' - 서버도 한국 시간으로 영업 여부를 본다 */
 export const nowClock = (date = new Date()) => KST_CLOCK.format(date)
 
 /** '1240' → '12:40' */
@@ -20,7 +20,7 @@ export function mealOf(clock: string) {
   return '늦은 밤'
 }
 
-/** 축 10:00 ~ 다음 날 02:00 위에서의 위치(%) — 새벽 시각은 전날 밤으로 본다 */
+/** 축 10:00 ~ 다음 날 02:00 위에서의 위치(%) - 새벽 시각은 전날 밤으로 본다 */
 export const AXIS_START = 10 * 60
 export const AXIS_END = 26 * 60
 export function axisPercent(minutes: number) {
@@ -54,7 +54,7 @@ export function wonShort(won: number) {
   return chun ? `${man}만 ${chun}천 원` : `${man}만 원`
 }
 
-/** 상세의 가격대 — '1인 1만 원 안쪽' */
+/** 상세의 가격대 - '1인 1만 원 안쪽' */
 export function priceText(avg: number | null) {
   if (avg === null) return '정보 없음'
   if (avg <= 10_000) return '1인 1만 원 안쪽'
@@ -63,14 +63,14 @@ export function priceText(avg: number | null) {
 
 export const waitingShort = (place: PlaceCard) => (place.waitingExpected ? '있을 수도' : '거의 없음')
 
-/** 상태 배지 색 — 영업 중 초록 · 마감 임박 빨강 · 나중에 엶 / 영업 끝 회색 */
+/** 상태 배지 색 - 영업 중 초록 · 마감 임박 빨강 · 나중에 엶 / 영업 끝 회색 */
 export function badgeTone(status: Status) {
   if (status.kind === 'open') return 'green'
   if (status.kind === 'closing') return 'red'
   return 'black'
 }
 
-/** 카카오맵 길 찾기 — 앱이 있으면 앱으로, 없으면(PC 포함) 웹으로 열린다 */
+/** 카카오맵 길 찾기 - 앱이 있으면 앱으로, 없으면(PC 포함) 웹으로 열린다 */
 export function directionsUrl(place: PlaceCard) {
   return `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${place.location.lat},${place.location.lng}`
 }
@@ -78,7 +78,7 @@ export function directionsUrl(place: PlaceCard) {
 /** 조건 키 → 칩 글자 (서버가 정한 라벨) */
 export const conditionLabels = (conditions: Condition[]) => new Map(conditions.map((c) => [c.key, c.label]))
 
-/** 받침이 있으면 '은', 없으면 '는' — '을지백탄뼈구이는', '을지 칼국수집은'. 한글로 끝나지 않으면 '은(는)' */
+/** 받침이 있으면 '은', 없으면 '는' - '을지백탄뼈구이는', '을지 칼국수집은'. 한글로 끝나지 않으면 '은(는)' */
 export function topic(word: string) {
   const code = word.charCodeAt(word.length - 1) - 0xac00
   if (code < 0 || code > 11171) return '은(는)'

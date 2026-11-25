@@ -20,7 +20,7 @@ def register_error_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(NotAvailable)
     async def not_available(_: Request, exc: NotAvailable) -> JSONResponse:
-        # 파트너가 아닌 매장 — 다시 시도하지 말고 전화로 안내한다
+        # 파트너가 아닌 매장 - 다시 시도하지 말고 전화로 안내한다
         return _error(
             status.HTTP_422_UNPROCESSABLE_CONTENT,
             exc.code,
@@ -29,7 +29,7 @@ def register_error_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(YumiError)
     async def yumi_error(_: Request, exc: YumiError) -> JSONResponse:
-        # 키 문제·한도 초과·유미 서버 오류 — 발표 중이면 YUMI_MODE=mock 으로 바꿔 버틴다
+        # 키 문제·한도 초과·유미 서버 오류 - 발표 중이면 YUMI_MODE=mock 으로 바꿔 버틴다
         if exc.status_code == 429:
             return _error(
                 status.HTTP_429_TOO_MANY_REQUESTS,

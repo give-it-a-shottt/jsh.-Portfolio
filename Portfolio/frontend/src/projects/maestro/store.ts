@@ -15,13 +15,13 @@ type Result =
   | { key: string; status: 'error'; message: string }
 
 interface MaestroState {
-  /** 마지막에 고른 동네 — 다음 방문의 기본값. 이것만 localStorage 에 남긴다 */
+  /** 마지막에 고른 동네 - 다음 방문의 기본값. 이것만 localStorage 에 남긴다 */
   lastDong: DongKey
-  /** 결과 — 조건(key)이 같으면 상세에 갔다 와도 다시 부르지 않는다 */
+  /** 결과 - 조건(key)이 같으면 상세에 갔다 와도 다시 부르지 않는다 */
   result: Result | null
   /** 지도 핀 ↔ 카드 강조 */
   selectedId: string | null
-  /** 결과 시트 — 목록 / 표로 비교 */
+  /** 결과 시트 - 목록 / 표로 비교 */
   view: 'list' | 'table'
   /** 화면 아래 토스트 한 줄 */
   toast: string | null

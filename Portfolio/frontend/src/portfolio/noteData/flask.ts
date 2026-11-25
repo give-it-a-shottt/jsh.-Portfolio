@@ -1,6 +1,6 @@
 import type { StudyNote } from '../notes'
 
-// 백엔드 강의 30개(1~30강, 파이썬 기초 + Flask)를 8개 노트로 합쳤다 — F-012 노트 틀
+// 백엔드 강의 30개(1~30강, 파이썬 기초 + Flask)를 8개 노트로 합쳤다 - F-012 노트 틀
 // 파이썬 코드는 Python 3.13.5 로, Flask 코드는 Flask 3.1.0 의 app.test_client() 로 돌려 확인했다.
 // flask_cors · flask_login · pymysql · pymongo 코드와 bash · 브라우저(Vue) 코드는 설치 · 서버가 없어 문법 검사만 했다.
 // 예전 노트 30개(be-python-start … be-deploy) 주소는 replaces 로 이 노트들에 이어진다.
@@ -13,11 +13,11 @@ export const FLASK_NOTES: StudyNote[] = [
     course: '백엔드',
     lesson: '1 · 2 · 3 · 4강',
     date: '2026.10.04',
-    title: '파이썬 기초 — 자료형 · 제어문 · 함수 · 컬렉션',
+    title: '파이썬 기초 - 자료형 · 제어문 · 함수 · 컬렉션',
     summary:
       '숫자 · 문자열 · 리스트를 다루고, 조건문 · 반복문 · 함수로 흐름을 짜고, 튜플 · 딕셔너리 · 집합을 골라 쓸 수 있다.',
     points: [
-      'input() 은 항상 문자열 — 계산하려면 int() · float() 로 바꾼다',
+      'input() 은 항상 문자열 - 계산하려면 int() · float() 로 바꾼다',
       '인덱스는 0부터, [시작:끝] · range(시작, 끝) 은 끝 바로 앞까지',
       '튜플은 못 고치고, 딕셔너리는 키로 찾고, 집합은 중복이 없다',
     ],
@@ -29,7 +29,7 @@ export const FLASK_NOTES: StudyNote[] = [
         why: "타입이 다르면 같은 + 도 다르게 동작해서, '10' + '20' 은 30 이 아니라 '1020' 이 된다.",
         code: {
           lang: 'python',
-          caption: '10 과 20 을 입력했을 때 — 문자열 더하기와 숫자 더하기',
+          caption: '10 과 20 을 입력했을 때 - 문자열 더하기와 숫자 더하기',
           source: `print(7 / 2, 7 // 2, 7 % 2, 2 ** 10)    # 3.5 3 1 1024
 
 r = 10
@@ -46,7 +46,7 @@ print(type(A), type(r), type(pi), type(r > 5))
         },
       },
       {
-        title: '문자열 — 인덱스 · 슬라이싱 · 포맷',
+        title: '문자열 - 인덱스 · 슬라이싱 · 포맷',
         body: 'len() 으로 길이를 재고, 인덱스는 앞에서 0부터 · 뒤에서 -1부터 센다. 문자열[시작:끝] 은 끝 번호 바로 앞까지 잘라 오고, count · find · replace · strip · split 같은 함수는 변수.함수() 꼴로 부른다. 값을 끼워 출력할 때는 format() · % 를 쓰고, 지금 코드에서는 f-string(3.6+)을 가장 많이 쓴다.',
         why: '문자열은 고칠 수 없는 값이라 replace · strip 은 원본을 바꾸지 않고 새 문자열을 돌려준다.',
         code: {
@@ -94,7 +94,7 @@ print(lang.sort())            # None`,
         why: 'elif 는 앞 조건이 거짓일 때만 검사해서, 큰 기준부터 적으면 age >= 13 and age < 19 처럼 범위를 두 번 적지 않아도 된다.',
         code: {
           lang: 'python',
-          caption: '15살은 청소년 — 1부터 10까지 더하면 55',
+          caption: '15살은 청소년 - 1부터 10까지 더하면 55',
           source: `age = 15
 if age >= 19:
     print('성인')
@@ -159,10 +159,10 @@ print(2 in A, A)                       # True {2, 3, 5, 6, 7}`,
       },
     ],
     pitfalls: [
-      "int('3.5') 처럼 정수 모양이 아닌 문자열은 ValueError 가 난다 — 소수는 float() 로 바꾼다",
-      'sort() 의 반환값은 None 이다 — lang = lang.sort() 라고 쓰면 리스트를 잃는다',
+      "int('3.5') 처럼 정수 모양이 아닌 문자열은 ValueError 가 난다 - 소수는 float() 로 바꾼다",
+      'sort() 의 반환값은 None 이다 - lang = lang.sort() 라고 쓰면 리스트를 잃는다',
       '숫자와 문자열이 섞인 리스트는 담을 수는 있어도 sort() 하면 TypeError 가 난다',
-      '빈 { } 는 집합이 아니라 빈 딕셔너리다 — 빈 집합은 set() 으로 만든다',
+      '빈 { } 는 집합이 아니라 빈 딕셔너리다 - 빈 집합은 set() 으로 만든다',
     ],
     replaces: ['be-python-start', 'be-python-string-list', 'be-python-control', 'be-python-func-collections'],
     tags: ['Python', '기초', '자료구조'],
@@ -201,7 +201,7 @@ print(2 in A, A)                       # True {2, 3, 5, 6, 7}`,
     print(inner_func())
 
 outer_func()        # call outer_func → call inner_func
-inner_func()        # NameError — 밖에서는 이름이 없다`,
+inner_func()        # NameError - 밖에서는 이름이 없다`,
         },
       },
       {
@@ -249,7 +249,7 @@ funcs = [calc_power(n) for n in range(1, 6)]
 print([f(2) for f in funcs])         # [2, 4, 8, 16, 32]
 
 del calc_power
-print(power2(5))                     # 25 — 바깥 함수를 지워도 동작`,
+print(power2(5))                     # 25 - 바깥 함수를 지워도 동작`,
         },
       },
       {
@@ -300,11 +300,11 @@ print(divide(9, 0))     # cannot be divided with zero → None`,
       },
       {
         title: '데코레이터 쌓기와 파라미터 데코레이터',
-        body: "@ 를 여러 줄 쓰면 정의할 때 아래쪽(함수에 가까운 것)부터 감싸고, 호출하면 가장 바깥인 위쪽 데코레이터의 코드부터 실행된다. @mark('b') 처럼 데코레이터에 값을 넘기려면 중첩을 한 단계 더 만든다 — mark('b') 가 먼저 불려 진짜 데코레이터를 돌려주고, 그것이 함수를 감싼다. Flask 의 @app.route('/hello') 가 이런 파라미터 데코레이터다.",
+        body: "@ 를 여러 줄 쓰면 정의할 때 아래쪽(함수에 가까운 것)부터 감싸고, 호출하면 가장 바깥인 위쪽 데코레이터의 코드부터 실행된다. @mark('b') 처럼 데코레이터에 값을 넘기려면 중첩을 한 단계 더 만든다 - mark('b') 가 먼저 불려 진짜 데코레이터를 돌려주고, 그것이 함수를 감싼다. Flask 의 @app.route('/hello') 가 이런 파라미터 데코레이터다.",
         why: '태그 · 경로 같은 설정값만 바꿔 같은 데코레이터를 여러 곳에 재사용할 수 있다.',
         code: {
           lang: 'python',
-          caption: '감싸기는 i → b, 실행은 b → i — 결과는 <b><i>안녕</i></b>',
+          caption: '감싸기는 i → b, 실행은 b → i - 결과는 <b><i>안녕</i></b>',
           source: `def mark(tag):                               # 값을 받는 바깥 단계
     def decorator(func):
         print('감싸기', tag)
@@ -325,10 +325,10 @@ print(greet('안녕'))
       },
     ],
     pitfalls: [
-      '데코레이터의 바깥 코드는 함수를 정의할 때 한 번 실행된다 — 위 예의 감싸기 출력은 greet 을 부르기 전에 찍힌다',
+      '데코레이터의 바깥 코드는 함수를 정의할 때 한 번 실행된다 - 위 예의 감싸기 출력은 greet 을 부르기 전에 찍힌다',
       '안쪽 함수가 원래 함수의 결과를 return 하지 않으면, 꾸민 함수는 늘 None 을 돌려준다',
-      "functools.wraps 없이 감싸면 함수 이름(__name__)이 wrapper 로 바뀐다 — Flask 에서 같은 데코레이터를 두 라우트에 붙이면 endpoint 이름이 겹쳐 AssertionError 가 나니 안쪽 함수에 @wraps(func) 를 붙인다",
-      '반복문 안에서 바로 lambda · def 로 만든 클로저는 n 의 값이 아니라 변수를 기억해, 다 만든 뒤 부르면 모두 마지막 n 을 쓴다 — calc_power(n) 처럼 바깥 함수로 감싸면 호출마다 n 이 따로 생긴다',
+      "functools.wraps 없이 감싸면 함수 이름(__name__)이 wrapper 로 바뀐다 - Flask 에서 같은 데코레이터를 두 라우트에 붙이면 endpoint 이름이 겹쳐 AssertionError 가 나니 안쪽 함수에 @wraps(func) 를 붙인다",
+      '반복문 안에서 바로 lambda · def 로 만든 클로저는 n 의 값이 아니라 변수를 기억해, 다 만든 뒤 부르면 모두 마지막 n 을 쓴다 - calc_power(n) 처럼 바깥 함수로 감싸면 호출마다 n 이 따로 생긴다',
     ],
     replaces: ['be-first-class', 'be-closure', 'be-decorator-3', 'be-decorator-4'],
     tags: ['Python', '함수', '클로저', '데코레이터'],
@@ -343,7 +343,7 @@ print(greet('안녕'))
     course: '백엔드',
     lesson: '26 · 27 · 28강',
     date: '2026.10.04',
-    title: '클래스 — 객체 · 상속 · 클래스 메서드',
+    title: '클래스 - 객체 · 상속 · 클래스 메서드',
     summary:
       '클래스로 속성과 메서드를 묶어 객체를 만들고, 상속 · 재정의로 공통 코드를 나누고, 클래스 변수와 static · class 메서드를 구분해 쓸 수 있다.',
     points: [
@@ -361,7 +361,7 @@ print(greet('안녕'))
           lang: 'python',
           caption: 'square1 을 바꿔도 square2 는 그대로',
           source: `class Quadrangle:
-    def __init__(self, width, height, color):   # 생성자 — 객체를 만들 때 실행
+    def __init__(self, width, height, color):   # 생성자 - 객체를 만들 때 실행
         self.width = width                       # 인스턴스 속성
         self.height = height
         self.color = color
@@ -457,10 +457,10 @@ s.general()                          # study hard`,
           lang: 'python',
           caption: 'f2.count 처럼 객체로 읽어도 클래스 변수 값이 나온다',
           source: `class Figure:
-    count = 0                          # 클래스 변수 — 모든 객체가 공유
+    count = 0                          # 클래스 변수 - 모든 객체가 공유
 
     def __init__(self, width, height):
-        self.width = width             # 인스턴스 변수 — 객체마다 따로
+        self.width = width             # 인스턴스 변수 - 객체마다 따로
         self.height = height
         Figure.count += 1
 
@@ -476,11 +476,11 @@ print(Figure.count)                    # 1`,
       },
       {
         title: 'static method 와 class method',
-        body: '@staticmethod 는 self · cls 를 받지 않는, 논리상 클래스에 넣어 둔 함수라 객체 속성에 접근할 수 없다(클래스 변수는 클래스 이름으로 접근). @classmethod 는 첫 인자 cls 로 호출한 클래스를 받아 cls.클래스변수 를 다룬다. 둘 다 클래스명.메서드() · 객체.메서드() 로 부를 수 있고, 차이는 상속했을 때 드러난다 — 자식에서 부르면 cls 는 자식 클래스라 자식 값만 바뀌지만, static method 안에 Figure.name = name 처럼 클래스 이름을 적으면 자식에서 불러도 부모 값이 바뀐다.',
+        body: '@staticmethod 는 self · cls 를 받지 않는, 논리상 클래스에 넣어 둔 함수라 객체 속성에 접근할 수 없다(클래스 변수는 클래스 이름으로 접근). @classmethod 는 첫 인자 cls 로 호출한 클래스를 받아 cls.클래스변수 를 다룬다. 둘 다 클래스명.메서드() · 객체.메서드() 로 부를 수 있고, 차이는 상속했을 때 드러난다 - 자식에서 부르면 cls 는 자식 클래스라 자식 값만 바뀌지만, static method 안에 Figure.name = name 처럼 클래스 이름을 적으면 자식에서 불러도 부모 값이 바뀐다.',
         why: '자식마다 따로 가져야 하는 값을 다룰 때는 cls 를 받는 classmethod 가 맞다.',
         code: {
           lang: 'python',
-          caption: 'Circle.set_name 은 Circle 에만 name 을 만든다 — figure circle',
+          caption: 'Circle.set_name 은 Circle 에만 name 을 만든다 - figure circle',
           source: `class Figure:
     name = 'figure'
 
@@ -502,9 +502,9 @@ print(Figure.name, Circle.name)        # figure circle`,
     ],
     pitfalls: [
       '메서드에 self 를 빠뜨리면 부를 때 TypeError(takes 0 positional arguments but 1 was given)가 난다',
-      '자식에서 __init__ 을 다시 정의하면 부모 __init__ 은 자동으로 불리지 않는다 — super().__init__(...) 를 직접 불러야 부모가 만드는 속성이 생긴다',
-      'self.count += 1 은 클래스 변수를 바꾸지 않고 그 객체에 같은 이름의 인스턴스 변수를 새로 만든다 — 클래스 변수는 클래스명.count 로 바꾼다',
-      'del 은 이름 하나를 지울 뿐이라, 다른 변수가 같은 객체를 가리키고 있으면 __del__ 이 바로 불리지 않는다 — __del__ 이 불리는 시점에 기대는 코드는 피한다',
+      '자식에서 __init__ 을 다시 정의하면 부모 __init__ 은 자동으로 불리지 않는다 - super().__init__(...) 를 직접 불러야 부모가 만드는 속성이 생긴다',
+      'self.count += 1 은 클래스 변수를 바꾸지 않고 그 객체에 같은 이름의 인스턴스 변수를 새로 만든다 - 클래스 변수는 클래스명.count 로 바꾼다',
+      'del 은 이름 하나를 지울 뿐이라, 다른 변수가 같은 객체를 가리키고 있으면 __del__ 이 바로 불리지 않는다 - __del__ 이 불리는 시점에 기대는 코드는 피한다',
     ],
     replaces: ['be-class-basics', 'be-inheritance', 'be-class-method'],
     tags: ['Python', '클래스', 'OOP'],
@@ -540,7 +540,7 @@ print(Figure.name, Circle.name)        # figure circle`,
         why: "파이썬은 C · Java 의 main 같은 시작점 없이 위에서부터 실행해서, if __name__ == '__main__': 으로 직접 실행할 때만 돌 코드를 가른다.",
         code: {
           lang: 'python',
-          caption: 'python start.py 로 실행 — import 된 mymodule 은 자기 파일 이름을 받는다',
+          caption: 'python start.py 로 실행 - import 된 mymodule 은 자기 파일 이름을 받는다',
           source: `# mymodule.py
 print('mymodule.py 의 __name__:', __name__)
 
@@ -577,7 +577,7 @@ if __name__ == '__main__':
         why: 'Flask 개발 서버는 편의용이라 운영 서버만큼의 안정성 · 보안 · 성능을 보장하지 않는다(flask run --help 에도 적혀 있다).',
       },
       {
-        title: 'URL 의 구성 — URL 과 URI',
+        title: 'URL 의 구성 - URL 과 URI',
         body: 'URI 는 자원을 식별하는 문자열을 모두 가리키는 넓은 말이고, URL 은 그중 자원의 위치(어디서 어떻게 가져올지)로 식별하는 것이다. 쿼리스트링(?id=dave)이 붙어도 여전히 URL 이고, 쿼리는 경로(path)와 별개 구성요소다. 웹은 HTML · URL · HTTP 세 가지로 이뤄진다.',
         why: 'Flask 라우팅은 path 만 보고 함수를 고르고, 쿼리는 request.args 로 따로 읽는다.',
         code: {
@@ -595,7 +595,7 @@ print(u.fragment)          # top`,
         },
       },
       {
-        title: '주소의 일부를 변수로 — 동적 라우팅',
+        title: '주소의 일부를 변수로 - 동적 라우팅',
         body: '<변수명> 으로 경로의 일부를 받아 함수 인자로 쓴다. 타입을 적지 않으면 문자열(슬래시는 못 받음)이고, <int:변수> · <float:변수> 로 타입을 정하면 Flask 가 바꿔서 넘긴다. 타입이 맞지 않는 주소는 함수까지 오지 않고 404 가 된다.',
         why: '/profile/dave 처럼 주소 자체가 입력이 되어, 사용자 · 글마다 라우트를 따로 만들지 않아도 된다.',
         code: {
@@ -619,10 +619,10 @@ def add_five(num):
       },
     ],
     pitfalls: [
-      'debug=True(--debug)는 개발할 때만 켠다 — 디버거가 브라우저에서 파이썬 코드를 실행할 수 있게 해 주므로, 외부에 열린 서버에서 켜면 안 된다',
-      '<int:...> 는 음수를 받지 않는다 — /message/-1 도 404 다',
-      'int 값을 문자열과 + 로 이으면 TypeError — %d · str() · f-string 으로 붙인다',
-      '주피터에서 app.run() 을 실행하면 서버가 도는 동안 셀이 끝나지 않는다 — 시험이 끝나면 셀을 멈춘다',
+      'debug=True(--debug)는 개발할 때만 켠다 - 디버거가 브라우저에서 파이썬 코드를 실행할 수 있게 해 주므로, 외부에 열린 서버에서 켜면 안 된다',
+      '<int:...> 는 음수를 받지 않는다 - /message/-1 도 404 다',
+      'int 값을 문자열과 + 로 이으면 TypeError - %d · str() · f-string 으로 붙인다',
+      '주피터에서 app.run() 을 실행하면 서버가 도는 동안 셀이 끝나지 않는다 - 시험이 끝나면 셀을 멈춘다',
     ],
     replaces: ['be-fullstack-intro', 'be-flask-start', 'be-flask-run', 'be-flask-routing'],
     tags: ['Flask', '라우팅', '웹 구조'],
@@ -637,7 +637,7 @@ def add_five(num):
     course: '백엔드',
     lesson: '13 · 14 · 15강',
     date: '2026.10.04',
-    title: 'HTTP와 REST API — jsonify · 요청 파라미터',
+    title: 'HTTP와 REST API - jsonify · 요청 파라미터',
     summary:
       'HTTP 요청 · 응답 구조와 REST 설계 방식을 이해하고, Flask 에서 JSON 을 돌려주고 쿼리스트링 · 폼 입력을 받아 처리할 수 있다.',
     points: [
@@ -648,7 +648,7 @@ def add_five(num):
     learned: [],
     sections: [
       {
-        title: 'HTTP — 요청과 응답',
+        title: 'HTTP - 요청과 응답',
         body: 'HTTP 는 클라이언트가 요청(Request)을 보내고 서버가 응답(Response)을 돌려주는 통신 규칙(프로토콜)이다. 요청에는 메서드 · URL · 헤더 · 본문이, 응답에는 상태 코드 · 헤더 · 본문이 담긴다. httpie 로 터미널에서 요청을 보내 보면 이 구조를 그대로 볼 수 있다(강의에서는 윈도우에서 PowerShell 을 권했다).',
         why: '브라우저 화면 없이 API 만 따로 시험할 수 있어서, 화면을 만들기 전에 서버부터 확인한다.',
         code: {
@@ -662,12 +662,12 @@ http "http://localhost:8080/login?user_name=dave"  # 쿼리스트링은 따옴�
         },
       },
       {
-        title: 'REST — 자원은 URI, 행위는 메서드',
-        body: 'REST 는 무상태 · 캐시 가능 · 균일 인터페이스 같은 제약을 정한 아키텍처 스타일이고, 실무에서는 URI 로 자원을 가리키고 HTTP 메서드로 그 자원에 할 일을 나타내는 규칙으로 적용한다 — 생성 POST · 조회 GET · 수정 PUT · 삭제 DELETE. 응답 형식이 아니라 설계 규칙이라 JSON 을 돌려준다고 REST 가 되는 것은 아니고, /posts/3 하나에 메서드만 바꿔 조회 · 수정 · 삭제를 나누는 식으로 짠다. 이렇게 만든 API 가 REST API 이고, 마이크로서비스와 누구나 쓰게 공개한 API 에서 많이 쓴다.',
+        title: 'REST - 자원은 URI, 행위는 메서드',
+        body: 'REST 는 무상태 · 캐시 가능 · 균일 인터페이스 같은 제약을 정한 아키텍처 스타일이고, 실무에서는 URI 로 자원을 가리키고 HTTP 메서드로 그 자원에 할 일을 나타내는 규칙으로 적용한다 - 생성 POST · 조회 GET · 수정 PUT · 삭제 DELETE. 응답 형식이 아니라 설계 규칙이라 JSON 을 돌려준다고 REST 가 되는 것은 아니고, /posts/3 하나에 메서드만 바꿔 조회 · 수정 · 삭제를 나누는 식으로 짠다. 이렇게 만든 API 가 REST API 이고, 마이크로서비스와 누구나 쓰게 공개한 API 에서 많이 쓴다.',
         why: 'URI 에 /deletePost 같은 동사를 넣지 않아도, 메서드만 보고 무엇을 하는 요청인지 안다.',
         code: {
           lang: 'python',
-          caption: '/posts/1 하나에 GET · PUT · DELETE — 없는 글은 404, 지우면 204',
+          caption: '/posts/1 하나에 GET · PUT · DELETE - 없는 글은 404, 지우면 204',
           source: `from flask import Flask, request
 
 app = Flask(__name__)
@@ -686,7 +686,7 @@ def post_detail(post_id):                      # 자원: 1번 글 → /posts/1
         },
       },
       {
-        title: 'JSON 응답 — jsonify 와 dict 반환',
+        title: 'JSON 응답 - jsonify 와 dict 반환',
         body: 'jsonify() 는 딕셔너리를 JSON 문자열로 바꾸고 Content-Type: application/json 헤더를 붙인 Response 객체를 만든다. Flask 1.1 부터는 dict 를, 2.2 부터는 list 를 그냥 return 해도 같은 JSON 응답이 된다. (본문, 상태 코드) 튜플로 돌려주면 상태 코드도 함께 정한다.',
         why: 'dict · list 를 돌려주면 Flask 가 jsonify 와 같은 처리를 대신 해 주므로, 둘은 같은 응답이고 jsonify 는 그 일을 코드에 드러내 적는 방법이다.',
         code: {
@@ -711,7 +711,7 @@ def langs():
         },
       },
       {
-        title: '쿼리스트링 — request.args',
+        title: '쿼리스트링 - request.args',
         body: "URL 뒤 ?키=값&키=값 부분이 쿼리스트링이고(첫 파라미터 앞은 ?, 다음부터는 &), Flask 에서는 request.args.get('키') 로 꺼낸다. 없는 키는 None 이 나오고, get('page', 1, type=int) 처럼 기본값과 형 변환을 함께 줄 수 있다. request.args 는 메서드와 상관없이 URL 의 쿼리스트링만 읽고, POST · PUT 본문은 request.get_json()(JSON)이나 request.form(HTML 폼)으로 읽는다.",
         why: '쿼리스트링은 URL 에 그대로 남으므로 검색어 · 페이지 번호처럼 드러나도 되는 값에 쓴다.',
         code: {
@@ -749,10 +749,10 @@ def login():
       },
     ],
     pitfalls: [
-      "request.args.get(..., type=int) 는 변환에 실패하면 에러 대신 기본값을 준다 — page=abc 도 1 이 된다",
+      "request.args.get(..., type=int) 는 변환에 실패하면 에러 대신 기본값을 준다 - page=abc 도 1 이 된다",
       'methods 를 적지 않은 라우트는 GET(과 자동으로 붙는 HEAD · OPTIONS)만 받아서, POST 로 보내면 405 Method Not Allowed 가 난다',
-      'jsonify 는 기본 설정에서 한글을 유니코드 이스케이프로 바꿔 보낸다 — 클라이언트가 읽으면 같은 글자지만, 응답을 눈으로 볼 때 한글이 보이게 하려면 app.json.ensure_ascii = False',
-      'GET 쿼리스트링은 주소창 · 서버 로그 · 브라우저 기록에 그대로 남는다 — 비밀번호 같은 값은 POST 본문으로, HTTPS 위에서 보낸다',
+      'jsonify 는 기본 설정에서 한글을 유니코드 이스케이프로 바꿔 보낸다 - 클라이언트가 읽으면 같은 글자지만, 응답을 눈으로 볼 때 한글이 보이게 하려면 app.json.ensure_ascii = False',
+      'GET 쿼리스트링은 주소창 · 서버 로그 · 브라우저 기록에 그대로 남는다 - 비밀번호 같은 값은 POST 본문으로, HTTPS 위에서 보낸다',
     ],
     replaces: ['be-http-rest', 'be-jsonify', 'be-get-params'],
     tags: ['Flask', 'HTTP', 'REST API', 'JSON'],
@@ -767,18 +767,18 @@ def login():
     course: '백엔드',
     lesson: '16 · 17 · 18 · 19강',
     date: '2026.10.04',
-    title: '템플릿과 프론트 연결 — Jinja · Vue · axios · CORS',
+    title: '템플릿과 프론트 연결 - Jinja · Vue · axios · CORS',
     summary:
       'Jinja2 템플릿으로 서버에서 HTML 을 만들고, CDN 으로 불러온 Vue · axios 에서 Flask API 를 부르며, 다른 출처 요청에 필요한 CORS 설정을 할 수 있다.',
     points: [
-      '{{ 값 }} 은 출력, {% 코드 %} 는 반복 · 조건 — endfor · endif 로 닫는다',
+      '{{ 값 }} 은 출력, {% 코드 %} 는 반복 · 조건 - endfor · endif 로 닫는다',
       '다른 출처 응답을 막는 건 브라우저의 같은 출처 정책, CORS 는 서버가 응답 헤더로 그 제한을 풀어 주는 규칙',
-      'axios 의 params 는 쿼리스트링, data 는 본문 — Flask 에서는 request.args 와 get_json()',
+      'axios 의 params 는 쿼리스트링, data 는 본문 - Flask 에서는 request.args 와 get_json()',
     ],
     learned: [],
     sections: [
       {
-        title: 'Jinja2 — 변수 출력',
+        title: 'Jinja2 - 변수 출력',
         body: "Jinja2 는 HTML 안에 파이썬 비슷한 코드를 넣어, 필요한 부분만 바꾼 최종 HTML 을 만드는 템플릿 엔진이다. {{ 변수 }} 는 값을 출력하고 {% … %} 안에는 반복문 · 조건문을 쓴다. 템플릿에서 쓸 값은 render_template('파일', 이름=값) 으로 함께 넘긴다.",
         why: 'HTML 뼈대는 그대로 두고 사용자 이름 · 목록처럼 바뀌는 부분만 서버에서 채운다.',
         code: {
@@ -798,12 +798,12 @@ def hello_name(user):
         },
       },
       {
-        title: 'Jinja2 — 반복문',
+        title: 'Jinja2 - 반복문',
         body: '{% for 값 in 목록 %} 으로 시작해 {% endfor %} 로 닫고, 들여쓰기는 상관없다. 템플릿에서는 len(values) 대신 필터 문법 values | length 를 쓰고, loop.index 는 1부터, loop.index0 은 0부터 센 반복 번호다. range() 는 파이썬과 같다.',
         why: '목록 길이만큼 <li> 를 서버에서 찍어 내므로 HTML 에 항목을 하나하나 적지 않는다.',
         code: {
           lang: 'markup',
-          caption: "values=['list1', 'list2', 'list3'] 을 넘겼을 때 — 1. list1 … 모두 3개",
+          caption: "values=['list1', 'list2', 'list3'] 을 넘겼을 때 - 1. list1 … 모두 3개",
           source: `<ul>
   {% for value in values %}
   <li>{{ loop.index }}. {{ value }}</li>
@@ -817,7 +817,7 @@ def hello_name(user):
         },
       },
       {
-        title: 'Jinja2 — 조건문과 주석',
+        title: 'Jinja2 - 조건문과 주석',
         body: '{% if %} · {% elif %} · {% else %} 를 쓰고, elif · else 는 필요할 때만 넣지만 {% endif %} 는 꼭 닫는다. {# … #} 로 감싼 부분은 실행도 출력도 되지 않고 여러 줄도 한 번에 감쌀 수 있다. HTML 주석(<!-- -->)은 결과 HTML 에 그대로 남아 브라우저의 소스 보기에 보인다는 점이 다르다.',
         why: '사용자에게 보이면 안 되는 메모는 {# #} 로 남겨야 응답에 실리지 않는다.',
         code: {
@@ -842,7 +842,7 @@ def hello_name(user):
         why: '빌드 도구 없이 HTML 파일 하나로 화면과 API 호출을 시험해 볼 수 있다.',
         code: {
           lang: 'markup',
-          caption: '버튼을 누르면 GET /test?email=… — Flask 가 다른 포트면 CORS 설정 전에는 응답을 읽지 못한다',
+          caption: '버튼을 누르면 GET /test?email=… - Flask 가 다른 포트면 CORS 설정 전에는 응답을 읽지 못한다',
           source: `<div id="app">
   <button class="btn btn-secondary" v-on:click="axiosTest">GET TEST</button>
 </div>
@@ -863,7 +863,7 @@ def hello_name(user):
       },
       {
         title: '같은 출처 정책과 CORS',
-        body: '브라우저는 <img> · <link> 로는 다른 출처 파일도 불러오지만, 스크립트(axios · fetch)로 보낸 요청의 응답은 같은 출처일 때만 읽게 한다 — 출처는 프로토콜 · 호스트 · 포트가 모두 같아야 같다. CORS 는 서버가 응답 헤더 Access-Control-Allow-Origin 으로 "이 출처는 읽어도 된다"고 알려 이 제한을 푸는 규칙이고, flask_cors 의 CORS(app) 가 이 헤더를 붙여 준다. 단순한 GET 요청은 서버까지 가서 처리된 뒤 브라우저가 응답 읽기만 막고, JSON 본문 · Authorization 헤더 · PUT/DELETE 처럼 preflight 가 필요한 요청은 먼저 OPTIONS 로 허락을 묻고 허락을 못 받으면 본 요청을 보내지 않는다.',
+        body: '브라우저는 <img> · <link> 로는 다른 출처 파일도 불러오지만, 스크립트(axios · fetch)로 보낸 요청의 응답은 같은 출처일 때만 읽게 한다 - 출처는 프로토콜 · 호스트 · 포트가 모두 같아야 같다. CORS 는 서버가 응답 헤더 Access-Control-Allow-Origin 으로 "이 출처는 읽어도 된다"고 알려 이 제한을 푸는 규칙이고, flask_cors 의 CORS(app) 가 이 헤더를 붙여 준다. 단순한 GET 요청은 서버까지 가서 처리된 뒤 브라우저가 응답 읽기만 막고, JSON 본문 · Authorization 헤더 · PUT/DELETE 처럼 preflight 가 필요한 요청은 먼저 OPTIONS 로 허락을 묻고 허락을 못 받으면 본 요청을 보내지 않는다.',
         why: 'CORS 에러는 서버 코드가 아니라 응답 헤더 문제라, 서버 로그에는 요청이 200 으로 찍혀 있을 수도 있다.',
         code: {
           lang: 'python',
@@ -873,7 +873,7 @@ from flask import Flask
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)                                         # 모든 출처 허용 — 개발용
+CORS(app)                                         # 모든 출처 허용 - 개발용
 # CORS(app, origins=['http://localhost:5173'])    # 운영은 허용할 출처만`,
         },
       },
@@ -890,8 +890,8 @@ app = Flask(__name__)
 
 @app.route('/test', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def test():
-    query = request.args.get('email')             # URL ?email=… — 어떤 메서드든
-    body = request.get_json(silent=True) or {}    # 본문 JSON — 보통 POST · PUT
+    query = request.args.get('email')             # URL ?email=… - 어떤 메서드든
+    body = request.get_json(silent=True) or {}    # 본문 JSON - 보통 POST · PUT
     return {'method': request.method, 'query': query, 'body': body.get('email')}
 
 # axios.get(url, { params: { email } })  → query 로
@@ -900,10 +900,10 @@ def test():
       },
     ],
     pitfalls: [
-      'CORS(app) 는 모든 출처를 허용한다 — 운영에서는 origins 에 허용할 프론트 주소만 적는다',
-      '{{ }} 출력에 |safe 를 붙이면 이스케이프 없이 그대로 나간다 — 사용자 입력에는 쓰지 않는다',
-      'POST 본문은 주소창에 안 보일 뿐 개발자 도구 · 네트워크 탭에서는 그대로 보인다 — 전송 중에 엿보는 것을 막는 건 HTTPS 다',
-      '다른 사이트 HTML 을 requests 로 받아 그대로 돌려주면 상대 경로로 적힌 이미지 · JS 는 404 다 — 브라우저가 그 파일을 내 서버에서 찾기 때문이다',
+      'CORS(app) 는 모든 출처를 허용한다 - 운영에서는 origins 에 허용할 프론트 주소만 적는다',
+      '{{ }} 출력에 |safe 를 붙이면 이스케이프 없이 그대로 나간다 - 사용자 입력에는 쓰지 않는다',
+      'POST 본문은 주소창에 안 보일 뿐 개발자 도구 · 네트워크 탭에서는 그대로 보인다 - 전송 중에 엿보는 것을 막는 건 HTTPS 다',
+      '다른 사이트 HTML 을 requests 로 받아 그대로 돌려주면 상대 경로로 적힌 이미지 · JS 는 404 다 - 브라우저가 그 파일을 내 서버에서 찾기 때문이다',
     ],
     replaces: ['be-jinja-loop', 'be-jinja-if', 'be-cdn-vue-axios', 'be-cors'],
     tags: ['Flask', 'Jinja2', 'Vue', 'CORS'],
@@ -918,7 +918,7 @@ def test():
     course: '백엔드',
     lesson: '20 · 21 · 22 · 23강',
     date: '2026.10.04',
-    title: 'Flask 구조 — 에러 · 로깅 · 요청 훅 · MVC · 블루프린트',
+    title: 'Flask 구조 - 에러 · 로깅 · 요청 훅 · MVC · 블루프린트',
     summary:
       '상태 코드별 에러 응답과 파일 로그를 남기고, 모든 요청 앞뒤에 공통 코드를 끼우고, 기획한 서비스를 MVC 폴더와 Blueprint 로 나눠 짤 수 있다.',
     points: [
@@ -947,7 +947,7 @@ def page_not_found(error):
         },
       },
       {
-        title: 'logging — 로그 레벨',
+        title: 'logging - 로그 레벨',
         body: '서버는 계속 돌아가므로 문제가 생기면 기록(로그)을 보고 원인을 찾고, 사용자 접속 · 해킹 시도를 확인할 때도 쓴다. 레벨은 DEBUG < INFO < WARNING < ERROR < CRITICAL 순으로 심각하고, 설정한 레벨 이상만 기록된다. 개발 단계보다 서비스를 운영할 때 제대로 갖춘다.',
         why: '레벨을 나눠 두면 코드는 그대로 두고 설정만 바꿔 기록할 양을 조절할 수 있다.',
         code: {
@@ -965,7 +965,7 @@ logging.critical('critical')    # 기록됨`,
       },
       {
         title: 'RotatingFileHandler 로 Flask 로그 남기기',
-        body: '핸들러는 로그를 어디로 보낼지 정한다 — FileHandler 는 파일, SysLogHandler 는 유닉스 syslog, NTEventLogHandler 는 윈도우 이벤트 로그로 보낸다. RotatingFileHandler 는 파일이 maxBytes 에 닿으면 지금 파일을 .1 로, 있던 .1 을 .2 로 밀어내고 새 파일에 이어 쓰며, backupCount 를 넘는 가장 오래된 파일은 지운다. app.logger.addHandler() 로 등록해야 app.logger 기록이 그 파일로 간다.',
+        body: '핸들러는 로그를 어디로 보낼지 정한다 - FileHandler 는 파일, SysLogHandler 는 유닉스 syslog, NTEventLogHandler 는 윈도우 이벤트 로그로 보낸다. RotatingFileHandler 는 파일이 maxBytes 에 닿으면 지금 파일을 .1 로, 있던 .1 을 .2 로 밀어내고 새 파일에 이어 쓰며, backupCount 를 넘는 가장 오래된 파일은 지운다. app.logger.addHandler() 로 등록해야 app.logger 기록이 그 파일로 간다.',
         why: '로그가 디스크를 가득 채우면 서버 전체가 이상해질 수 있어서, 용량 상한이 있는 회전 방식을 쓴다.',
         code: {
           lang: 'python',
@@ -1013,7 +1013,7 @@ def after_request(response):
       },
       {
         title: 'MVP 기획과 MVC 패턴',
-        body: 'MVP(Minimum Viable Product)는 최소 기능만 만들어 내놓고 고객 반응을 보며 고쳐 가는 방식으로, 강의는 블로그를 A/B 테스트로 열었다 — 같은 주소로 들어와도 제목만 다른 A · B 페이지를 반반 보여 주고, 이메일 구독을 받아 구독자에게는 같은 페이지를 고정하고, 접속 IP · 시간을 로그로 남겨 어느 제목이 구독을 더 모으는지 본다. MVC 는 코드를 Model(데이터 · DB) · View(화면) · Controller(둘을 잇는 제어 코드)로 나누는 구조다. 다만 기능 하나가 여러 파일로 쪼개져 오히려 읽고 고치기 어려울 때도 있어서, 강의는 기존 코드가 MVC 면 따르고 아니면 참고만 하라고 했다(Simple is Best).',
+        body: 'MVP(Minimum Viable Product)는 최소 기능만 만들어 내놓고 고객 반응을 보며 고쳐 가는 방식으로, 강의는 블로그를 A/B 테스트로 열었다 - 같은 주소로 들어와도 제목만 다른 A · B 페이지를 반반 보여 주고, 이메일 구독을 받아 구독자에게는 같은 페이지를 고정하고, 접속 IP · 시간을 로그로 남겨 어느 제목이 구독을 더 모으는지 본다. MVC 는 코드를 Model(데이터 · DB) · View(화면) · Controller(둘을 잇는 제어 코드)로 나누는 구조다. 다만 기능 하나가 여러 파일로 쪼개져 오히려 읽고 고치기 어려울 때도 있어서, 강의는 기존 코드가 MVC 면 따르고 아니면 참고만 하라고 했다(Simple is Best).',
         why: '처음부터 다 만들기보다 가장 작은 기능으로 고객 반응을 먼저 확인하는 것이 적은 인력 · 짧은 기간에 맞다.',
       },
       {
@@ -1043,7 +1043,7 @@ app.register_blueprint(blog.blog_ab, url_prefix='/blog')`,
     ],
     pitfalls: [
       "after_request 에서 response 를 return 하지 않으면 응답 자리에 None 이 들어가 요청이 에러(TypeError)로 끝난다",
-      'logging.basicConfig 는 루트 로거에 핸들러가 이미 있으면 아무 일도 하지 않는다 — 주피터에서 설정을 바꿔 다시 실행할 때는 force=True(3.8+)',
+      'logging.basicConfig 는 루트 로거에 핸들러가 이미 있으면 아무 일도 하지 않는다 - 주피터에서 설정을 바꿔 다시 실행할 때는 force=True(3.8+)',
       'RotatingFileHandler 의 maxBytes 나 backupCount 가 0 이면 회전하지 않고 한 파일에 계속 쓴다',
       "Blueprint 안의 라우트를 url_for 로 만들 때는 '블루프린트이름.함수이름'(blog.blog)을 쓴다",
     ],
@@ -1071,12 +1071,12 @@ app.register_blueprint(blog.blog_ab, url_prefix='/blog')`,
     learned: [],
     sections: [
       {
-        title: 'MySQL 연결 — pymysql',
+        title: 'MySQL 연결 - pymysql',
         body: '구독 이메일처럼 규격이 정해지고 안정성이 중요한 데이터는 MySQL, 형식이 자주 바뀌고 양이 많으며 일부 유실돼도 큰 문제 없는 로그 · 크롤링 데이터는 MongoDB, 성능을 위한 메모리 DB 로는 Redis 를 쓴다. 강의는 ORM(SQLAlchemy) 대신 SQL 에 먼저 익숙해지려고 pymysql 을 썼고, 순서는 connect → cursor → execute → (조회면 fetch, 변경이면 commit) → close 다. Flask 코드에서 바로 시험하면 오래 걸리니, 주피터에서 충분히 시험한 뒤 최종 코드만 옮긴다.',
         why: '%s 자리표시에 값을 튜플로 넘기면 pymysql 이 값을 이스케이프해 SQL 인젝션을 막는다.',
         code: {
           lang: 'python',
-          caption: "접속 정보는 환경변수에서 — 강의의 passwd · db · 'utf8' 은 password · database · 'utf8mb4' 로",
+          caption: "접속 정보는 환경변수에서 - 강의의 passwd · db · 'utf8' 은 password · database · 'utf8mb4' 로",
           source: `import os
 import pymysql
 
@@ -1096,7 +1096,7 @@ db_conn.close()`,
         },
       },
       {
-        title: 'MongoDB 연결 — pymongo',
+        title: 'MongoDB 연결 - pymongo',
         body: '스키마(테이블 구조)를 미리 정하지 않아도 되는 MongoDB 는 형식이 수시로 바뀌는 접속 로그를 담기 좋다. MongoClient 로 연결한 뒤 client.DB이름.콜렉션이름 으로 콜렉션(테이블 같은 것)을 꺼내고, insert_one · find_one · find · delete_one 으로 다루며, 문서마다 _id(ObjectId)가 자동으로 붙는다. 연결은 여러 이유로 끊길 수 있어서 가벼운 명령으로 살아 있는지 확인하는데, 강의의 ismaster 대신 지금은 ping 을 쓴다.',
         why: '끊긴 연결로 작업하다 에러가 나기 전에, 짧은 명령으로 먼저 확인하면 원인을 바로 안다.',
         code: {
@@ -1116,7 +1116,7 @@ blog_ab.delete_one({'emailid': 'test@gmail.com'})`,
         },
       },
       {
-        title: 'flask_login — 로그인 세션 흐름',
+        title: 'flask_login - 로그인 세션 흐름',
         body: 'flask_login 은 로그인한 사용자를 요청마다 구분해 주는 라이브러리다. login_user(user) 가 사용자 id 를 Flask 세션에 넣으면 서버는 응답의 Set-Cookie 로 서명된 세션 쿠키를 보내고, 브라우저는 이후 같은 서버에 요청할 때마다 그 쿠키를 자동으로 보낸다. 다음 요청에서 user_loader 가 쿠키 속 id 로 User 를 다시 불러 current_user 에 넣고, @login_required 가 붙은 라우트는 로그인한 사용자만 통과시키며, logout_user() 는 세션에서 id 를 지운다.',
         why: 'HTTP 는 요청끼리 서로를 기억하지 않아서, 쿠키로 누가 보낸 요청인지를 매번 실어 보낸다.',
         code: {
@@ -1142,7 +1142,7 @@ def unauthorized():                            # 로그인 없이 @login_require
       },
       {
         title: 'User 클래스와 로그인 라우트',
-        body: 'User 클래스는 UserMixin 을 상속해 is_authenticated · is_active · is_anonymous · get_id() 를 기본으로 받고, 필요할 때만 재정의한다. 사용자를 구분하는 id 속성이 꼭 있어야 하고, DB 조회 · 생성은 객체 없이 부르도록 @staticmethod 로 만든다 — get(user_id) · find(user_email) · create(user_email, blog_id). 로그인 라우트는 create 로 사용자를 얻어 login_user 에 넘기고, 이후 current_user.id · current_user.is_authenticated 로 사용자를 확인한다.',
+        body: 'User 클래스는 UserMixin 을 상속해 is_authenticated · is_active · is_anonymous · get_id() 를 기본으로 받고, 필요할 때만 재정의한다. 사용자를 구분하는 id 속성이 꼭 있어야 하고, DB 조회 · 생성은 객체 없이 부르도록 @staticmethod 로 만든다 - get(user_id) · find(user_email) · create(user_email, blog_id). 로그인 라우트는 create 로 사용자를 얻어 login_user 에 넘기고, 이후 current_user.id · current_user.is_authenticated 로 사용자를 확인한다.',
         why: 'User.get() · User.create() 처럼 클래스명.함수 꼴이면 코드만 봐도 어느 기능인지 보인다.',
         code: {
           lang: 'python',
@@ -1151,7 +1151,7 @@ def unauthorized():                            # 로그인 없이 @login_require
 
 class User(UserMixin):                       # is_authenticated · get_id() 등을 물려받는다
     def __init__(self, user_id, user_email, blog_id):
-        self.id = user_id                    # flask_login 이 쓰는 id — 꼭 있어야 한다
+        self.id = user_id                    # flask_login 이 쓰는 id - 꼭 있어야 한다
         self.user_email = user_email
         self.blog_id = blog_id
     @staticmethod
@@ -1166,7 +1166,7 @@ def login():
         },
       },
       {
-        title: 'Control 클래스 — A/B 페이지 고르기',
+        title: 'Control 클래스 - A/B 페이지 고르기',
         body: 'BlogSession 은 MVC 의 Control 로, 클래스 변수 blog_page(A · B 페이지 이름)와 session_count 를 두고 staticmethod 로 기능을 묶었다. get_blog_page() 는 session_count 를 0 · 1 로 번갈아 바꿔 A 와 B 페이지를 번갈아 돌려주고, 구독자처럼 보던 페이지가 정해져 있으면 그 페이지로 고정한다. save_session_info() 는 접속 IP · 이메일 · 페이지 · 시간을 MongoDB 에 문서 하나로 저장한다.',
         why: '비슷한 기능을 클래스 하나에 모으면 BlogSession.get_blog_page() 처럼 이름만 보고 역할을 알고, 고칠 곳도 한 곳이다.',
         code: {
@@ -1174,7 +1174,7 @@ def login():
           caption: '값 없이 네 번 부르면 A · B · A · B, 구독자(B)는 B 고정',
           source: `class BlogSession:
     blog_page = {'A': 'blog_A.html', 'B': 'blog_B.html'}
-    session_count = 0                        # 클래스 변수 — 한 프로세스 안의 요청이 함께 쓴다(워커가 여럿이면 따로)
+    session_count = 0                        # 클래스 변수 - 한 프로세스 안의 요청이 함께 쓴다(워커가 여럿이면 따로)
 
     @staticmethod
     def get_blog_page(blog_id=None):
@@ -1191,7 +1191,7 @@ print(BlogSession.get_blog_page('B'))                    # blog_B.html`,
         },
       },
       {
-        title: '배포 — ngrok 과 AWS',
+        title: '배포 - ngrok 과 AWS',
         body: '배포는 내 서비스를 다른 사람도 접속할 수 있게 서버에 올리는 것이고, 가장 흔한 형태는 클라우드(AWS) + 리눅스 서버 + Docker 다. 개발 중에는 ngrok 이 내 PC 의 포트를 외부 주소로 열어 주고(가입 후 authtoken 등록), 강의의 AWS 배포는 EC2(Ubuntu)를 만들어 pem 키로 ssh 접속하고 Elastic IP 로 고정 주소를 붙인 뒤 FileZilla 로 파일을 올렸다. Flask 는 Apache 에 mod_wsgi 를 붙여 연결하는데, runserver.wsgi 에서 앱을 application 이라는 이름으로 불러오고, 포트는 Apache 설정(ports.conf)과 AWS 보안 그룹 양쪽에서 열어야 한다.',
         why: 'Flask 개발 서버는 운영용이 아니라서, 외부 요청을 받는 일은 Apache 같은 웹 서버와 WSGI 연결에 맡긴다.',
         code: {
@@ -1200,7 +1200,7 @@ print(BlogSession.get_blog_page('B'))                    # blog_B.html`,
           source: `# 개발 중 잠깐 외부 공개 (ngrok 가입 후 authtoken 등록)
 ngrok http 8080
 
-# EC2(Ubuntu) 접속 — 키 파일은 나만 읽게
+# EC2(Ubuntu) 접속 - 키 파일은 나만 읽게
 chmod 400 my-key.pem
 ssh -i my-key.pem ubuntu@$EC2_IP        # EC2_IP = Elastic IP
 
@@ -1214,10 +1214,10 @@ sudo systemctl restart apache2`,
       },
     ],
     pitfalls: [
-      'app.secret_key = os.urandom(24) 처럼 실행할 때마다 새로 만들면 서버를 다시 켤 때마다 모든 로그인이 풀리고, 프로세스가 여럿이면 서로의 쿠키를 읽지 못한다 — 고정된 값을 환경변수로 넣는다',
-      'Flask 세션 쿠키는 서명만 되고 암호화는 안 된다 — base64 를 풀면 내용이 보이니 비밀값을 넣지 않는다',
-      "MySQL 의 utf8 은 3바이트(utf8mb3)라 이모지를 담지 못한다 — charset='utf8mb4' 를 쓴다",
-      'MongoClient 를 만드는 것만으로는 서버 연결을 확인하지 않는다 — 첫 명령에서야 연결 에러가 나니 ping 으로 먼저 확인한다',
+      'app.secret_key = os.urandom(24) 처럼 실행할 때마다 새로 만들면 서버를 다시 켤 때마다 모든 로그인이 풀리고, 프로세스가 여럿이면 서로의 쿠키를 읽지 못한다 - 고정된 값을 환경변수로 넣는다',
+      'Flask 세션 쿠키는 서명만 되고 암호화는 안 된다 - base64 를 풀면 내용이 보이니 비밀값을 넣지 않는다',
+      "MySQL 의 utf8 은 3바이트(utf8mb3)라 이모지를 담지 못한다 - charset='utf8mb4' 를 쓴다",
+      'MongoClient 를 만드는 것만으로는 서버 연결을 확인하지 않는다 - 첫 명령에서야 연결 에러가 나니 ping 으로 먼저 확인한다',
     ],
     replaces: ['be-flask-mysql', 'be-flask-mongodb', 'be-flask-login', 'be-deploy'],
     tags: ['Flask', 'MySQL', 'MongoDB', '로그인', '배포'],

@@ -45,7 +45,7 @@ import {
 } from '../data'
 import { nightlyHref } from '../routes'
 
-// 04 수면 대시보드 — 머리말 → 점수 · 단계 카드 · 단계 그래프 → 7일 점수 · 기기 · 동기화 기록 → AI 코치로 이어 묻기
+// 04 수면 대시보드 - 머리말 → 점수 · 단계 카드 · 단계 그래프 → 7일 점수 · 기기 · 동기화 기록 → AI 코치로 이어 묻기
 
 const SUMMARY = [
   { label: '총 수면', icon: moon12Icon, value: duration(SLEEP_TOTAL_MINUTES) },
@@ -96,7 +96,7 @@ function PageHead() {
   )
 }
 
-/** 날짜 이동 — 가짜 데이터가 하루치라 앞뒤 버튼은 눌리지 않게 둔다 */
+/** 날짜 이동 - 가짜 데이터가 하루치라 앞뒤 버튼은 눌리지 않게 둔다 */
 function DateNav({ className }: { className: string }) {
   return (
     <div className={`flex items-center gap-1 ${className}`}>
@@ -182,7 +182,7 @@ function Legend({ className }: { className: string }) {
   )
 }
 
-/** 수면 단계 그래프 — 막대 위치는 잠든 뒤 지난 분을 밤 전체(432분)에 대한 비율로 놓아 화면 폭에 맞춰 늘어난다 */
+/** 수면 단계 그래프 - 막대 위치는 잠든 뒤 지난 분을 밤 전체(432분)에 대한 비율로 놓아 화면 폭에 맞춰 늘어난다 */
 function Hypnogram() {
   const summary = LAST_NIGHT.map(({ stage, minutes }) => `${STAGES[stage].label} ${duration(minutes)}`).join(', ')
   return (
@@ -252,7 +252,7 @@ function WeeklyTrend() {
               <span className={`hidden text-11 font-medium tracking-normal lg:block ${today ? 'text-nt-main' : 'text-nt-weak'}`}>
                 {score}
               </span>
-              {/* 50점을 바닥으로 두고 1점에 3px — 시안 막대 높이 그대로 */}
+              {/* 50점을 바닥으로 두고 1점에 3px - 시안 막대 높이 그대로 */}
               <span
                 className={`w-full rounded-t-[6px] rounded-b-[2px] ${
                   today ? 'bg-linear-to-b from-nt-mist to-nt-cta' : 'bg-nt-primary-soft'

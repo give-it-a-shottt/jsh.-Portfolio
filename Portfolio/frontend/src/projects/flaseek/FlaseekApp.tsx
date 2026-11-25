@@ -11,7 +11,7 @@ interface FlaseekAppProps {
   params: URLSearchParams
 }
 
-// FLASEEK 자사몰 리뉴얼 시안 — 메인 → 상품 리스트 → 상품 상세, 로그인. 피그마 PC 1440 · MO 390 시안을 반응형 한 벌로.
+// FLASEEK 자사몰 리뉴얼 시안 - 메인 → 상품 리스트 → 상품 상세, 로그인. 피그마 PC 1440 · MO 390 시안을 반응형 한 벌로.
 export default function FlaseekApp({ path, params }: FlaseekAppProps) {
   // 주소의 조건이 바뀌면 화면 상태(필터·선택)를 새로 시작한다
   const key = params.toString()

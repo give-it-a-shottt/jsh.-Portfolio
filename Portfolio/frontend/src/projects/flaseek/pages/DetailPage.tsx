@@ -16,7 +16,7 @@ import {
 import { addToCart, showDemoNotice, showToast } from '../store'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, Container, SpriteImage, Tag, WishButton } from '../ui'
 
-/** 앵커 탭 — 원하는 곳으로 바로 간다 */
+/** 앵커 탭 - 원하는 곳으로 바로 간다 */
 const SECTIONS = [
   { id: 'detail-info', label: '상세정보' },
   { id: 'detail-reviews', label: '리뷰 862' },
@@ -34,7 +34,7 @@ function Gallery({ crop, name }: { crop: Crop; name: string }) {
 
   return (
     <div className="flex flex-col gap-4 lg:w-[calc(50%-12px)] lg:shrink-0">
-      {/* 모바일 — 화면 폭 정사각형을 옆으로 넘긴다 */}
+      {/* 모바일 - 화면 폭 정사각형을 옆으로 넘긴다 */}
       <div className="relative -mx-5 lg:hidden">
         <ul
           onScroll={(event) => setCurrent(Math.round(event.currentTarget.scrollLeft / event.currentTarget.clientWidth))}
@@ -78,7 +78,7 @@ interface TypeSelectsProps {
   onChange: (types: string[]) => void
 }
 
-/** 세트에 담을 타입 — 고른 칸 다음에 빈 칸 하나를 더 보여준다 */
+/** 세트에 담을 타입 - 고른 칸 다음에 빈 칸 하나를 더 보여준다 */
 function TypeSelects({ count, types, onChange }: TypeSelectsProps) {
   const shown = Math.min(count, types.length + 1)
   return (
@@ -150,7 +150,7 @@ interface DetailPageProps {
   params: URLSearchParams
 }
 
-// 상품 상세 — 구매 영역은 스크롤해도 따라온다(PC 상단·모바일 하단 고정). 상세는 접고, 리뷰는 요약을 먼저.
+// 상품 상세 - 구매 영역은 스크롤해도 따라온다(PC 상단·모바일 하단 고정). 상세는 접고, 리뷰는 요약을 먼저.
 export default function DetailPage({ params }: DetailPageProps) {
   const base = findProduct(Number(params.get('id'))) ?? findProduct(2)!
   const isSet = base.setCount !== undefined
@@ -161,7 +161,7 @@ export default function DetailPage({ params }: DetailPageProps) {
   const [activeSection, setActiveSection] = useState<SectionId>('detail-info')
   const [barVisible, setBarVisible] = useState(false)
   const actionsRef = useRef<HTMLDivElement>(null)
-  // 탭으로 이동 중이면 스크롤 위치로 탭을 바꾸지 않는다 — Q&A·배송은 페이지 끝이라 위까지 못 올라온다
+  // 탭으로 이동 중이면 스크롤 위치로 탭을 바꾸지 않는다 - Q&A·배송은 페이지 끝이라 위까지 못 올라온다
   const pickedSection = useRef<SectionId | null>(null)
 
   // 세트 칩을 바꾸면 그 매수의 상품(이름·가격·사진)으로 바꿔 보여준다
@@ -169,7 +169,7 @@ export default function DetailPage({ params }: DetailPageProps) {
   const needTypes = isSet && setCount > 1
   const optionSummary = types.length > 0 ? `${setCount}매 · ${types[0]}${types.length > 1 ? ` 외 ${types.length - 1}개` : ''}` : `${setCount}매 · 타입 선택 전`
 
-  // PC — 구매 버튼이 화면 위로 사라지면 상단 구매바를 띄운다
+  // PC - 구매 버튼이 화면 위로 사라지면 상단 구매바를 띄운다
   useEffect(() => {
     const actions = actionsRef.current
     if (!actions) return
@@ -356,7 +356,7 @@ export default function DetailPage({ params }: DetailPageProps) {
         </div>
       </Container>
 
-      {/* 앵커 탭 — 모바일은 위에, PC 는 구매바가 뜨면 그 아래에 붙는다 */}
+      {/* 앵커 탭 - 모바일은 위에, PC 는 구매바가 뜨면 그 아래에 붙는다 */}
       <div className="h-8 lg:h-20" />
       <nav aria-label="상품 정보 바로가기" className={`sticky top-0 z-30 bg-white ${barVisible ? 'lg:top-18' : ''}`}>
         <div className="mx-auto w-full max-w-[1280px] lg:px-10">
@@ -382,7 +382,7 @@ export default function DetailPage({ params }: DetailPageProps) {
         </div>
       </nav>
 
-      {/* 상세 — 처음엔 900px(모바일 480)만 보여주고 더보기로 펼친다 */}
+      {/* 상세 - 처음엔 900px(모바일 480)만 보여주고 더보기로 펼친다 */}
       <section id="detail-info" aria-label="상세정보" className="mx-auto flex max-w-198 scroll-mt-14 flex-col items-center gap-4 lg:scroll-mt-36 lg:gap-0 lg:pt-12">
         <div className={`relative w-full overflow-hidden ${detailOpen ? '' : 'h-120 lg:h-225'}`}>
           <img src={detailPreview} alt="압박스타킹을 신은 다리 연출 컷" width={928} height={1152} className="h-auto w-full" />
@@ -401,7 +401,7 @@ export default function DetailPage({ params }: DetailPageProps) {
         </div>
       </section>
 
-      {/* 리뷰 — 평균·사이즈감·압박감 요약을 먼저 */}
+      {/* 리뷰 - 평균·사이즈감·압박감 요약을 먼저 */}
       <section id="detail-reviews" aria-labelledby="reviews-title" className="mx-auto flex max-w-198 scroll-mt-14 flex-col gap-4 px-5 pt-12 lg:scroll-mt-36 lg:gap-6 lg:px-0 lg:pt-20">
         <h2 id="reviews-title" className="flex gap-2 text-20 font-semibold lg:text-28">
           리뷰 <span className="text-flaseek-text">862</span>
@@ -501,7 +501,7 @@ export default function DetailPage({ params }: DetailPageProps) {
         </p>
       </div>
 
-      {/* 모바일 하단 고정 구매바 — 주요 CTA 56 */}
+      {/* 모바일 하단 고정 구매바 - 주요 CTA 56 */}
       <div className="fixed inset-x-0 bottom-0 z-40 flex gap-2 bg-white px-5 pt-3 pb-8 shadow-flaseek-3 lg:hidden">
         <WishButton id={product.id} iconSize={24} className="size-14 shrink-0 rounded-sm border" />
         <button type="button" onClick={onCart} className={`${BUTTON_SECONDARY} h-14 flex-1`}>

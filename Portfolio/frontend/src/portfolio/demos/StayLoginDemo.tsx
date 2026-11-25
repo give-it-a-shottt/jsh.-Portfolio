@@ -8,7 +8,7 @@ import visibilityOff from '../assets/design/stay-login/visibility-off.svg'
 import visibilityOn from '../assets/design/stay-login/visibility-on.svg'
 import { CheckIcon } from '../../shared/icons'
 
-// 숙박 예약 앱 Accio 로그인 — 피그마 「로그인(수정)」 3안(336:741), 400×860 다크 화면.
+// 숙박 예약 앱 Accio 로그인 - 피그마 「로그인(수정)」 3안(336:741), 400×860 다크 화면.
 // 이 앱만의 색이라 포트폴리오 토큰 대신 시안 값을 그대로 쓴다.
 const FIELD_CLASS =
   'flex h-[51px] items-center rounded-[8px] border border-[rgba(229,229,236,0.7)] bg-[rgba(17,17,17,0.08)] shadow-[inset_0px_60px_0px_4px_rgba(255,255,255,0.03)]'
@@ -30,7 +30,7 @@ export default function StayLoginDemo() {
 
   useEffect(() => () => window.clearTimeout(timer.current), [])
 
-  // 화면 아래에 잠깐 띄우는 안내 — 실제 인증·이동은 없는 데모다
+  // 화면 아래에 잠깐 띄우는 안내 - 실제 인증·이동은 없는 데모다
   const notify = (message: string) => {
     window.clearTimeout(timer.current)
     setNotice(message)
@@ -49,7 +49,7 @@ export default function StayLoginDemo() {
 
   return (
     <div className="relative flex min-h-[860px] flex-col bg-[#1c1c1c]">
-      {/* 상태 표시줄 — 휴대폰 틀의 장식 */}
+      {/* 상태 표시줄 - 휴대폰 틀의 장식 */}
       <div aria-hidden="true" className="flex h-[50px] shrink-0 items-center justify-between px-6 py-[14px]">
         <span className="text-13 font-semibold tracking-normal text-[#e7e7e5]">9:41</span>
         <span className="flex items-center gap-1.5">
@@ -171,7 +171,7 @@ export default function StayLoginDemo() {
 
         <div className="flex flex-col gap-4">
           <button type="button" onClick={() => notifyNotLinked('Google 로그인')} className={SOCIAL_BUTTON_CLASS}>
-            {/* 피그마 Symbol.svg — 마스크 그룹 구조를 그대로 옮긴다 */}
+            {/* 피그마 Symbol.svg - 마스크 그룹 구조를 그대로 옮긴다 */}
             <span aria-hidden="true" className="relative size-[15px] shrink-0 overflow-clip">
               <span
                 className="absolute inset-[-0.43%_-0.75%_-0.73%_-0.75%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[0.112px_0.064px] mask-size-[15px_15px]"
@@ -192,7 +192,7 @@ export default function StayLoginDemo() {
 
         <div className="flex-1" />
 
-        {/* 홈 인디케이터 — 휴대폰 틀의 장식 */}
+        {/* 홈 인디케이터 - 휴대폰 틀의 장식 */}
         <div aria-hidden="true" className="flex h-[34px] items-center justify-center py-2">
           <span className="h-[5px] w-[134px] rounded-[3px] bg-[#e7e7e5] opacity-30" />
         </div>

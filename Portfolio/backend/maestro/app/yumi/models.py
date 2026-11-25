@@ -11,7 +11,7 @@ from app.core.schemas import CamelModel
 
 
 class YumiModel(CamelModel):
-    """유미 응답 모델의 기반 — camelCase ↔ snake_case."""
+    """유미 응답 모델의 기반 - camelCase ↔ snake_case."""
 
 
 def _none_to(empty: type[list] | type[dict]) -> BeforeValidator:
@@ -86,7 +86,7 @@ class BusinessHours(YumiModel):
 
 
 class Reputation(YumiModel):
-    """교차검증·최근 활동 근거 — 화면의 검증 배지로 쓴다."""
+    """교차검증·최근 활동 근거 - 화면의 검증 배지로 쓴다."""
 
     cross_source_confirmed: bool = False  # 여러 지도 소스에서 같은 곳으로 확인됨
     recently_active: bool = False  # 최근까지 리뷰 활동
@@ -104,12 +104,12 @@ class Place(YumiModel):
     address: Address | None = None
     confidence: float = 0
     possibly_closed: bool = False
-    source_count: int = 0  # 같은 곳으로 확인된 지도 소스 수 — "지도 앱 3곳에 다 나와요"
-    last_seen_at: datetime | None = None  # 유미가 마지막으로 확인한 때 — 근거의 날짜
+    source_count: int = 0  # 같은 곳으로 확인된 지도 소스 수 - "지도 앱 3곳에 다 나와요"
+    last_seen_at: datetime | None = None  # 유미가 마지막으로 확인한 때 - 근거의 날짜
     distance_m: int | None = None  # nearby 검색에서만 온다
     # contact_hours 등급
     phone: str | None = None
-    yumi_reservable: bool = False  # 유미 파트너 — 앱으로 실시간 문의·예약이 된다
+    yumi_reservable: bool = False  # 유미 파트너 - 앱으로 실시간 문의·예약이 된다
     reservation_channels: Strings
     business_hours: Annotated[
         list[BusinessHours], _none_to(list), Field(default_factory=list)
@@ -122,7 +122,7 @@ class Place(YumiModel):
     price: Price | None = None
     menu_summary: MenuSummary | None = None
     nearest_station: NearestStation | None = None
-    # edge 등급 — serviceAttributes 안쪽 키는 snake_case(venue_subtype …) 그대로 온다
+    # edge 등급 - serviceAttributes 안쪽 키는 snake_case(venue_subtype …) 그대로 온다
     recommended_for: Strings  # solo_dining, date, group_dining …
     service_attributes: Attributes
     atmosphere: Strings
@@ -139,7 +139,7 @@ LiveStatusKind = Literal["item", "wait", "seats"]
 
 
 class LiveStatus(YumiModel):
-    """실시간 문의 — 사장님이 앱에서 한 번 눌러 답한다 (5분 안)."""
+    """실시간 문의 - 사장님이 앱에서 한 번 눌러 답한다 (5분 안)."""
 
     query_id: str
     place_id: str
@@ -150,8 +150,8 @@ class LiveStatus(YumiModel):
     note: str | None = None  # 사장님 메모 (예: '20분')
     verified_at: datetime | None = None
     reused: bool = False  # 같은 질문의 최근 답을 다시 쓴 경우
-    blocked: str | None = None  # 'closed_now' — 영업시간 밖이라 묻지 않음
-    simulated: bool = False  # 마에스트로가 흉내 낸 답 — 실제 사장님께 보내지 않았다
+    blocked: str | None = None  # 'closed_now' - 영업시간 밖이라 묻지 않음
+    simulated: bool = False  # 마에스트로가 흉내 낸 답 - 실제 사장님께 보내지 않았다
 
 
 class ReservationRequest(YumiModel):
@@ -167,11 +167,11 @@ class ReservationRequest(YumiModel):
 
 
 class Reservation(YumiModel):
-    """예약 요청 — pending → confirmed / cancelled / expired."""
+    """예약 요청 - pending → confirmed / cancelled / expired."""
 
     reservation_id: str
     place_id: str
     reservation_time: datetime
     guest_count: int
     status: str
-    simulated: bool = False  # 마에스트로가 흉내 낸 예약 — 실제 매장에 보내지 않았다
+    simulated: bool = False  # 마에스트로가 흉내 낸 예약 - 실제 매장에 보내지 않았다

@@ -14,7 +14,7 @@ export interface LightboxItem {
 }
 
 interface LightboxProps {
-  /** 어느 목록인지 — 화면 읽기 프로그램에 함께 읽어 준다 */
+  /** 어느 목록인지 - 화면 읽기 프로그램에 함께 읽어 준다 */
   title: string
   items: LightboxItem[]
   index: number
@@ -22,8 +22,8 @@ interface LightboxProps {
   onClose: () => void
   /**
    * 보는 방식. 없으면 scroll.
-   *   scroll  폭에 맞춰 크게, 세로로 긴 건 스크롤 — 웹페이지 캡처 · 디자인 시스템 문서(Design 사례)
-   *   fit     화면 안에 통째로 보여 주고, 누르면 원본 크기로 확대 — 구도가 중요한 포토샵 작업물(Study 노트)
+   *   scroll  폭에 맞춰 크게, 세로로 긴 건 스크롤 - 웹페이지 캡처 · 디자인 시스템 문서(Design 사례)
+   *   fit     화면 안에 통째로 보여 주고, 누르면 원본 크기로 확대 - 구도가 중요한 포토샵 작업물(Study 노트)
    */
   mode?: 'scroll' | 'fit'
 }
@@ -35,7 +35,7 @@ interface LightboxProps {
 export default function Lightbox({ title, items, index, onIndex, onClose, mode = 'scroll' }: LightboxProps) {
   const closeRef = useRef<HTMLButtonElement>(null)
   const touchStartX = useRef<number | null>(null)
-  // fit 방식의 확대 상태 — 몇 번째 이미지를 확대했는지로 둬서, 다른 장으로 넘기면 저절로 맞춤으로 돌아간다
+  // fit 방식의 확대 상태 - 몇 번째 이미지를 확대했는지로 둬서, 다른 장으로 넘기면 저절로 맞춤으로 돌아간다
   const [zoomedIndex, setZoomedIndex] = useState<number | null>(null)
   // 화면보다 커서 확대할 거리가 있는 이미지만 확대를 켠다(작은 이미지는 맞춤 = 원본)
   const [zoomable, setZoomable] = useState<Record<number, boolean>>({})
@@ -93,7 +93,7 @@ export default function Lightbox({ title, items, index, onIndex, onClose, mode =
     </button>
   )
 
-  // 화면 전체를 덮어야 해서 body 에 바로 그린다 — 위쪽 요소에 transform 이 있어도 fixed 가 어긋나지 않게
+  // 화면 전체를 덮어야 해서 body 에 바로 그린다 - 위쪽 요소에 transform 이 있어도 fixed 가 어긋나지 않게
   return createPortal(
     <div
       role="dialog"
@@ -137,7 +137,7 @@ export default function Lightbox({ title, items, index, onIndex, onClose, mode =
 
       <div className="relative min-h-0 flex-1">
         {/* 바깥(어두운 곳)을 누르면 닫는다. 화면을 바꾸면 맨 위부터 보이게 key 로 새로 그린다.
-            스크롤바는 어두운 배경에 묻히게 얇고 옅게(scrollbar-dark) — 긴 이미지가 더 있다는 표시는 남긴다 */}
+            스크롤바는 어두운 배경에 묻히게 얇고 옅게(scrollbar-dark) - 긴 이미지가 더 있다는 표시는 남긴다 */}
         {isFit ? (
           <div
             key={index}

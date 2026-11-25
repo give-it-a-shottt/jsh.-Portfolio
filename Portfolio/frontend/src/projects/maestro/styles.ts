@@ -1,4 +1,4 @@
-// 버튼 모양 — 피그마 M-2 Button (Primary / Secondary × XL 56 · L 48 · S 32). <a> 와 <button> 이 같이 쓴다
+// 버튼 모양 - 피그마 M-2 Button (Primary / Secondary × XL 56 · L 48 · S 32). <a> 와 <button> 이 같이 쓴다
 
 const BUTTON_SIZE = { XL: 'h-14 px-6', L: 'h-12 px-5', S: 'h-8 px-3 text-14' }
 const BUTTON_STYLE = {

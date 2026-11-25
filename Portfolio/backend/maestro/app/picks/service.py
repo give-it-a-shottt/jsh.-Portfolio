@@ -1,4 +1,4 @@
-"""후보 3곳 고르기 — 홈의 [3곳 찾기] 한 번에 결과 화면 전체를 만든다.
+"""후보 3곳 고르기 - 홈의 [3곳 찾기] 한 번에 결과 화면 전체를 만든다.
 
 유미 요청은 동네마다 검색 1번(추천순 100곳, edge 등급)이고 6시간 동안 다시 쓴다.
 영업 여부 · 상황 조건 · 순위는 모두 받은 데이터 안에서 계산해서, 시각이나 조건을 바꿔도 요청이 늘지 않는다.
@@ -38,8 +38,8 @@ from app.yumi.models import LatLng, Place
 
 KST = timezone(timedelta(hours=9))
 PICKS = 3
-BAR_END = 26 * 60  # 영업시간 막대 축의 끝 — 다음 날 02:00
-# 동네 4곳 — 유미 상권 중심 좌표 (2026-11-01 /api/v1/regions)
+BAR_END = 26 * 60  # 영업시간 막대 축의 끝 - 다음 날 02:00
+# 동네 4곳 - 유미 상권 중심 좌표 (2026-11-01 /api/v1/regions)
 DONGS: dict[DongKey, DongOut] = {
     "euljiro": DongOut(
         key="euljiro", label="을지로", center=LatLng(lat=37.5662, lng=126.991)
@@ -58,7 +58,7 @@ DONGS: dict[DongKey, DongOut] = {
 DEMO_TIMES = ["12:40", "19:30", "22:00"]
 
 SEARCH_RADIUS = 600  # m
-SEARCH_FIELDS = "core,contact_hours,quality,edge"  # 상세까지 한 번에 — 상세 화면에서 다시 부르지 않는다
+SEARCH_FIELDS = "core,contact_hours,quality,edge"  # 상세까지 한 번에 - 상세 화면에서 다시 부르지 않는다
 SEARCH_PAGE_SIZE = 100
 CACHE_SECONDS = 6 * 60 * 60  # 영업시간 · 근거는 하루 안에 거의 바뀌지 않는다
 
@@ -78,7 +78,7 @@ ATMOSPHERE = {
 
 # 저장본이 있으니 유미를 오래 기다리지 않는다. 추천순 검색은 10초를 넘기기도 해서 15초까지만
 LIVE_TIMEOUT_SECONDS = 15
-# 유미가 실패한 동네는 이만큼 다시 부르지 않고 저장본으로 — 장애 · 한도 중에 요청마다 기다리지 않게
+# 유미가 실패한 동네는 이만큼 다시 부르지 않고 저장본으로 - 장애 · 한도 중에 요청마다 기다리지 않게
 FAIL_SECONDS = 10 * 60
 
 SNAPSHOT = Path(__file__).parent.parent / "yumi" / "fixtures" / "snapshot.json"
@@ -103,7 +103,7 @@ def clear_cache() -> None:
 
 
 def nearby_query(dong: DongKey) -> NearbyQuery:
-    """동네 검색 조건 — 결과 화면과 저장본(scripts/snapshot.py)이 같은 조건으로 받는다."""
+    """동네 검색 조건 - 결과 화면과 저장본(scripts/snapshot.py)이 같은 조건으로 받는다."""
     center = DONGS[dong].center
     return NearbyQuery(
         lat=center.lat,
@@ -158,7 +158,7 @@ def resolve_time(at: str, day: str | None) -> tuple[str, int]:
 
 
 def _candidate(place: Place) -> bool:
-    """폐업 신호가 있거나 식당이 아닌 곳(카페 · 바)은 뺀다 — 갔는데 문 닫았으면 안 되니까."""
+    """폐업 신호가 있거나 식당이 아닌 곳(카페 · 바)은 뺀다 - 갔는데 문 닫았으면 안 되니까."""
     closed = place.possibly_closed or place.closure_signal is not None
     return not closed and place.category in (None, "restaurant")
 
@@ -325,15 +325,15 @@ def build_picks(
 
 
 def _day_text(place: Place, day: str) -> str:
-    """'11:00 – 21:00 · 쉬는 시간 없음' / '11:00 – 21:00 · 브레이크 15:00 – 17:00' / '휴무'."""
+    """'11:00 - 21:00 · 쉬는 시간 없음' / '11:00 - 21:00 · 브레이크 15:00 - 17:00' / '휴무'."""
     segs = hours.segments(place, day)
     if not segs:
         return "휴무"
-    span = f"{hours.clock(segs[0].start)} – {hours.clock(segs[-1].end)}"
+    span = f"{hours.clock(segs[0].start)} - {hours.clock(segs[-1].end)}"
     if len(segs) == 1:
         return f"{span} · 쉬는 시간 없음"
     breaks = ", ".join(
-        f"{hours.clock(a.end)} – {hours.clock(b.start)}" for a, b in pairwise(segs)
+        f"{hours.clock(a.end)} - {hours.clock(b.start)}" for a, b in pairwise(segs)
     )
     return f"{span} · 브레이크 {breaks}"
 

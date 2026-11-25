@@ -1,4 +1,4 @@
-"""3단계 채점표 — app/situations.py 를 채우면 통과한다.
+"""3단계 채점표 - app/situations.py 를 채우면 통과한다.
 
 기준이 기획과 다르면 테스트를 고쳐도 된다. 테스트도 기획의 일부다.
 실행: uv run pytest tests/test_situations.py -v

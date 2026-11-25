@@ -14,7 +14,7 @@ interface MaestroAppProps {
   params: URLSearchParams
 }
 
-// 마에스트로 리뉴얼 — 홈(동네 · 상황) → 결과(지도 + 후보 3곳) → 식당 상세 → 자리 물어보기.
+// 마에스트로 리뉴얼 - 홈(동네 · 상황) → 결과(지도 + 후보 3곳) → 식당 상세 → 자리 물어보기.
 // 조건은 주소(?t=&dong=&s=)에, 결과 · 선택 같은 화면 사이 상태는 Zustand(store.ts)에 둔다.
 export default function MaestroApp({ path, params }: MaestroAppProps) {
   const lastDong = useMaestro((state) => state.lastDong)

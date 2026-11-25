@@ -9,7 +9,7 @@ from app.yumi.models import Place, Region
 
 
 class MealIn(CamelModel):
-    """일정 입력의 끼니 한 줄 — '토 12:00 을지로 2명'."""
+    """일정 입력의 끼니 한 줄 - '토 12:00 을지로 2명'."""
 
     at: datetime  # 끼니 시각, 한국 시간 (예: 2026-10-17T12:00)
     dong: str = Field(min_length=1)
@@ -22,7 +22,7 @@ class ScoreRequest(CamelModel):
     meals: list[MealIn] = Field(min_length=1, max_length=5)
 
 
-# 끼니 시각으로 정한다 — 악보 타임라인의 LUNCH / CAFE / DINNER
+# 끼니 시각으로 정한다 - 악보 타임라인의 LUNCH / CAFE / DINNER
 MealKind = Literal["breakfast", "lunch", "cafe", "dinner", "late_night"]
 
 
@@ -45,7 +45,7 @@ class MealScore(CamelModel):
 
 
 class Score(CamelModel):
-    """악보 — 끼니별 메인 식당 + 상황별 변주."""
+    """악보 - 끼니별 메인 식당 + 상황별 변주."""
 
     situations: list[SituationOut]
     meals: list[MealScore]

@@ -28,7 +28,7 @@ interface Filters {
 
 const NO_FILTERS: Filters = { thickness: null, skin: null, pressure: null, season: null }
 
-/** 고른 값이 있으면 그 값을 가진 상품만 — 레그웨어 전용 값이라 쉐이프웨어는 함께 빠진다 */
+/** 고른 값이 있으면 그 값을 가진 상품만 - 레그웨어 전용 값이라 쉐이프웨어는 함께 빠진다 */
 function matches(product: Product, filters: Filters) {
   return (
     (!filters.thickness || !!product.thickness?.includes(filters.thickness)) &&
@@ -59,7 +59,7 @@ const CATEGORY_TABS: { key: Category | 'all'; label: string }[] = [
   ...(Object.keys(CATEGORY_TAB) as Category[]).map((key) => ({ key, label: CATEGORY_TAB[key] })),
 ]
 
-/** 필터 그룹 하나 — 다시 누르면 선택이 풀린다 */
+/** 필터 그룹 하나 - 다시 누르면 선택이 풀린다 */
 interface GroupProps<T extends string> {
   label: string
   options: readonly T[]
@@ -99,7 +99,7 @@ interface FilterFieldsProps {
   onChange: (next: Filters) => void
 }
 
-/** PC — 연한 상자 안에 두께 한 줄, 피부톤·압박·계절 한 줄 */
+/** PC - 연한 상자 안에 두께 한 줄, 피부톤·압박·계절 한 줄 */
 function FilterBox({ filters, onChange }: FilterFieldsProps) {
   const group = <T extends string>({ label, ...props }: GroupProps<T>) => (
     <div role="group" aria-label={label} className="flex items-center gap-2">
@@ -127,7 +127,7 @@ interface FilterSheetProps {
   onClose: () => void
 }
 
-/** 모바일 — 필터 바텀시트. 고르는 동안 결과 수를 버튼에 바로 보여준다 */
+/** 모바일 - 필터 바텀시트. 고르는 동안 결과 수를 버튼에 바로 보여준다 */
 function FilterSheet({ initial, countFor, onApply, onClose }: FilterSheetProps) {
   const [draft, setDraft] = useState(initial)
 
@@ -213,7 +213,7 @@ interface ListPageProps {
   params: URLSearchParams
 }
 
-// 상품 리스트 — 위에 카테고리 탭과 두께 칩, 아래 카드. 모바일 필터는 바텀시트로.
+// 상품 리스트 - 위에 카테고리 탭과 두께 칩, 아래 카드. 모바일 필터는 바텀시트로.
 export default function ListPage({ params }: ListPageProps) {
   const category = (params.get('cat') as Category | null) ?? 'all'
   const query = params.get('q')?.trim() ?? ''
@@ -278,7 +278,7 @@ export default function ListPage({ params }: ListPageProps) {
         <FilterBox filters={filters} onChange={changeFilters} />
       </Container>
 
-      {/* 모바일 — 필터 버튼 + 두께 칩 가로 스크롤 */}
+      {/* 모바일 - 필터 버튼 + 두께 칩 가로 스크롤 */}
       <Container className="flex flex-col gap-3 pt-4 lg:hidden">
         <div className="scrollbar-none -mr-5 flex gap-2 overflow-x-auto pr-5">
           <button

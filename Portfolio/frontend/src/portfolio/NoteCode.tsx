@@ -2,7 +2,7 @@ import { Highlight, themes } from 'prism-react-renderer'
 import type { NoteCode as NoteCodeData } from './notes'
 
 /**
- * 공부 노트 안의 코드 블록 — 사례 상세(EngineeringCaseDetail)와 같은 하이라이터 · 테마.
+ * 공부 노트 안의 코드 블록 - 사례 상세(EngineeringCaseDetail)와 같은 하이라이터 · 테마.
  * 하이라이터가 무거워서 StudyDetail 이 lazy 로 받는다(코드가 있는 노트를 열 때만).
  */
 export default function NoteCode({ code }: { code: NoteCodeData }) {

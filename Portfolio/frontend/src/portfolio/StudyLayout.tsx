@@ -4,7 +4,7 @@ import type { CaseType } from './data'
 import { NOTES, STUDY_TREE, studyHref } from './notes'
 
 interface StudyNavProps {
-  /** 지금 보고 있는 강의 — 강의 화면·노트 상세에서 그 강의 줄을 표시한다. 없으면 '공부 노트 홈'을 표시한다 */
+  /** 지금 보고 있는 강의 - 강의 화면·노트 상세에서 그 강의 줄을 표시한다. 없으면 '공부 노트 홈'을 표시한다 */
   current?: { area: CaseType; course: string }
 }
 
@@ -92,7 +92,7 @@ function StudyNav({ current }: StudyNavProps) {
 }
 
 /**
- * Study 화면 틀 — 데스크톱은 왼쪽에 노션 같은 사이드바(피그마 05·06), lg 미만은 본문 위 접히는 목차.
+ * Study 화면 틀 - 데스크톱은 왼쪽에 노션 같은 사이드바(피그마 05·06), lg 미만은 본문 위 접히는 목차.
  * 사이드바 배경은 화면 끝까지, 목차는 스크롤을 따라 내려온다.
  */
 export default function StudyLayout({ current, children }: StudyNavProps & { children: ReactNode }) {

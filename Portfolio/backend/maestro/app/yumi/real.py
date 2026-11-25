@@ -3,7 +3,7 @@
 2026-10-07 실제 응답을 보고 맞춘 것
   - 응답은 {"success", "data", "meta"} 봉투에 담겨 온다 → data 만 꺼낸다
   - 요청 1번마다 X-Ratelimit-Remaining 이 1씩 준다 (기본 무료 한도는 하루 70토큰) → 같은 검색은 잠깐 캐시한다
-  - '을지로'·'성수'는 동이 아니라 상권(kind=district)으로 풀린다 — Region 모델이 빈 코드를 받는다
+  - '을지로'·'성수'는 동이 아니라 상권(kind=district)으로 풀린다 - Region 모델이 빈 코드를 받는다
 
 ★ 실시간 문의·예약은 실제 사장님 앱으로 푸시가 간다. 개발·발표 중에 진짜 사장님을 귀찮게 하지 않도록
   real 모드에서도 HTTP 를 보내지 않고 OwnerSimulator(mock)로 흉내 낸다 (응답의 simulated=True).
@@ -27,7 +27,7 @@ from app.yumi.models import (
     ReservationRequest,
 )
 
-# 식당 상세에 쓰는 등급 — 사진(media)은 8토큰이라 받지 않는다
+# 식당 상세에 쓰는 등급 - 사진(media)은 8토큰이라 받지 않는다
 DETAIL_FIELDS = "core,contact_hours,quality,edge"
 MAX_RETRY_AFTER = 5.0  # 초. 429 를 받으면 이만큼까지만 기다렸다가 한 번 더 시도한다
 # 실제로 재 보니 추천순(discovery) 검색은 10초를 넘기기도 한다
@@ -62,7 +62,7 @@ class RealYumiClient:
     ) -> None:
         if not api_key:
             raise YumiError(401, "YUMI_API_KEY 가 비어 있어요 (.env 확인)")
-        # 키는 매 요청 헤더에 붙는다 — 주소(?api_key=)에 넣으면 로그에 남아 새기 쉽다
+        # 키는 매 요청 헤더에 붙는다 - 주소(?api_key=)에 넣으면 로그에 남아 새기 쉽다
         self._http = httpx.AsyncClient(
             base_url=base_url,
             headers={"Authorization": f"Bearer {api_key}"},
@@ -73,7 +73,7 @@ class RealYumiClient:
         self._cache: dict[
             tuple[str, tuple[tuple[str, Any], ...]], tuple[float, Any]
         ] = {}
-        # 악보 1번에 검색이 십여 개 동시에 나간다 — 한꺼번에 몰리지 않게 동시 개수를 묶는다
+        # 악보 1번에 검색이 십여 개 동시에 나간다 - 한꺼번에 몰리지 않게 동시 개수를 묶는다
         self._limit = asyncio.Semaphore(max_concurrency)
         # 사장님께 가는 기능은 흉내만 낸다
         self._owner = MockYumiClient(accept_any_place=True)
@@ -100,7 +100,7 @@ class RealYumiClient:
             response = await self._send(path, params)
             if response.status_code == 429:
                 wait = float(response.headers.get("Retry-After", "1"))
-                # 하루 한도를 다 쓰면 Retry-After 가 몇 시간이다 — 기다리지 않고 바로 알린다
+                # 하루 한도를 다 쓰면 Retry-After 가 몇 시간이다 - 기다리지 않고 바로 알린다
                 if wait > MAX_RETRY_AFTER:
                     raise YumiError(429, "하루 한도를 다 썼어요")
                 await asyncio.sleep(wait)
@@ -113,7 +113,7 @@ class RealYumiClient:
         try:
             data = response.json()["data"]
         except (ValueError, KeyError, TypeError) as error:
-            # 봉투 모양이 달라도 500 이 아니라 유미 오류로 — 결과 화면은 저장본으로 대신한다
+            # 봉투 모양이 달라도 500 이 아니라 유미 오류로 - 결과 화면은 저장본으로 대신한다
             raise YumiError(502, "유미 응답 모양이 예상과 달라요") from error
         self._cache[key] = (time.monotonic(), data)
         return data
@@ -146,7 +146,7 @@ class RealYumiClient:
             raise PlaceNotFound(place_id) from exc
         return Place.model_validate(data)
 
-    # ── 사장님께 가는 기능 — 실제로 보내지 않는다 ─────────────────────────────
+    # ── 사장님께 가는 기능 - 실제로 보내지 않는다 ─────────────────────────────
 
     async def ask_live_status(
         self,

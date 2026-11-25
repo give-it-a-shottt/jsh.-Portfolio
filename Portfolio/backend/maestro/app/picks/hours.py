@@ -1,4 +1,4 @@
-"""영업시간 계산 — 결과 카드의 상태 배지 · "다음 변화 시점" 한 줄 · 영업시간 막대.
+"""영업시간 계산 - 결과 카드의 상태 배지 · "다음 변화 시점" 한 줄 · 영업시간 막대.
 
 시각은 모두 '그날 0시부터 몇 분'으로 다룬다. 새벽까지 여는 곳은 닫는 시각에 1440 을 더한다
 (18:00~02:00 → 1080~1560). 그래서 새벽 1시에는 전날 영업 구간도 함께 본다.
@@ -101,7 +101,7 @@ def next_opening(place: Place, day: str, at: int) -> int | None:
 
 
 def hour(minutes: int) -> str:
-    """표에 쓰는 짧은 시각 — 정각이면 '21시', 아니면 '21:30'."""
+    """표에 쓰는 짧은 시각 - 정각이면 '21시', 아니면 '21:30'."""
     if minutes % 60:
         return clock(minutes)
     return "24시" if minutes == DAY else f"{minutes // 60 % 24}시"
@@ -110,9 +110,9 @@ def hour(minutes: int) -> str:
 @dataclass(frozen=True)
 class Status:
     kind: StatusKind
-    label: str  # 상태 배지 — '영업 중', '40분 남음', '17:00 열어요'
+    label: str  # 상태 배지 - '영업 중', '40분 남음', '17:00 열어요'
     next_change: str  # 카드의 '다음 변화 시점' 한 줄
-    short: str  # 표로 비교의 '지금' 칸 — '21시까지', '15시 쉼'
+    short: str  # 표로 비교의 '지금' 칸 - '21시까지', '15시 쉼'
 
 
 def status_at(place: Place, day: str, at: int) -> Status:
@@ -121,7 +121,7 @@ def status_at(place: Place, day: str, at: int) -> Status:
         left = seg.end - at
         later = [s for s in segments(place, day) if s.start >= seg.end]
         if seg.last_order is not None and at >= seg.last_order:
-            # 문은 열려 있어도 주문을 받지 않는다 — 가 봐야 실패하니 마감 임박과 같게 알린다
+            # 문은 열려 있어도 주문을 받지 않는다 - 가 봐야 실패하니 마감 임박과 같게 알린다
             return Status(
                 "closing",
                 "주문 마감",

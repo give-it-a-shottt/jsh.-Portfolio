@@ -6,26 +6,26 @@ import { editDistance, hangulToKeys, keysToHangul, toJamo } from './hangul'
 import { isShortLatin, latinWords, normalize, plainWords, queryWords, stripJosa, type QueryWord } from './searchText'
 import { isSynonymTerm, synonymsOf } from './synonyms'
 
-// 사이트 검색(F-007) — 사례·노트를 '문서'로 보고 점수를 매겨 순서를 정한다.
+// 사이트 검색(F-007) - 사례·노트를 '문서'로 보고 점수를 매겨 순서를 정한다.
 //   S2  두 글자 조각(bigram) 목차로 후보를 좁힌 뒤 글을 확인한다. 본문까지 찾는다.
-//   S3  BM25 점수 — 낱말이 많이 나올수록, 드문 낱말일수록, 제목에 있을수록 위로. 레벨은 살짝 얹는다.
+//   S3  BM25 점수 - 낱말이 많이 나올수록, 드문 낱말일수록, 제목에 있을수록 위로. 레벨은 살짝 얹는다.
 //   S4  같은 뜻의 말(동의어)로도 찾고, 아무것도 안 나오는 낱말은 한영 자판 오타 → 자모 편집거리 순으로 고쳐 본다.
 
 /** 문서를 나눈 칸. 같은 낱말이라도 어느 칸에 있느냐로 무게가 다르다 */
 type Field = 'title' | 'meta' | 'summary' | 'body'
 
-/** 칸별 무게 — 제목에 있으면 본문의 3배로 친다. 태그·keywords 는 작성자가 고른 말이라 요약보다 무겁다 */
+/** 칸별 무게 - 제목에 있으면 본문의 3배로 친다. 태그·keywords 는 작성자가 고른 말이라 요약보다 무겁다 */
 const FIELD_WEIGHT: Record<Field, number> = { title: 3, meta: 2, summary: 1.5, body: 1 }
 const FIELDS = Object.keys(FIELD_WEIGHT) as Field[]
 
-/** BM25 상수 — 널리 쓰는 기본값. K1 은 같은 낱말이 여러 번 나올 때 점수가 얼마나 더 오를지, B 는 긴 글을 얼마나 깎을지 */
+/** BM25 상수 - 널리 쓰는 기본값. K1 은 같은 낱말이 여러 번 나올 때 점수가 얼마나 더 오를지, B 는 긴 글을 얼마나 깎을지 */
 const K1 = 1.2
 const B = 0.75
 
-/** 레벨 한 단계마다 점수에 곱하는 덤 — 레벨 4 는 ×1.3. 관련도가 비슷할 때만 순서를 바꿀 만큼 작게 둔다 */
+/** 레벨 한 단계마다 점수에 곱하는 덤 - 레벨 4 는 ×1.3. 관련도가 비슷할 때만 순서를 바꿀 만큼 작게 둔다 */
 const LEVEL_BOOST = 0.1
 
-/** '전체' 탭 배치 — 사례 몇 개 뒤에 노트 묶음을 끼울지. SearchResults 와 채점기(search-eval)가 같이 쓴다 */
+/** '전체' 탭 배치 - 사례 몇 개 뒤에 노트 묶음을 끼울지. SearchResults 와 채점기(search-eval)가 같이 쓴다 */
 export const NOTES_AFTER = 3
 export const NOTES_IN_MODULE = 3
 
@@ -34,9 +34,9 @@ interface SearchDoc {
   id: string
   /** 칸마다 정규화한 글(공백·문장부호 없음) */
   fields: Record<Field, string>
-  /** 칸마다 영어·숫자 낱말 — 짧은 영어 검색어('ai')를 통째로 맞춰 볼 때 쓴다 */
+  /** 칸마다 영어·숫자 낱말 - 짧은 영어 검색어('ai')를 통째로 맞춰 볼 때 쓴다 */
   words: Record<Field, string[]>
-  /** 이 문서에 나오는 낱말(조사 뗀 모양) — 오타를 고칠 때 비교할 말 목록의 재료 */
+  /** 이 문서에 나오는 낱말(조사 뗀 모양) - 오타를 고칠 때 비교할 말 목록의 재료 */
   terms: Set<string>
   /** 노트는 레벨이 없어 1로 둔다 */
   level: number
@@ -55,7 +55,7 @@ function designText(item: PortfolioCase) {
   ]
 }
 
-/** 칸별 원문으로 문서 만들기 — 정규화한 글과 영어 낱말 목록을 함께 만들어 둔다 */
+/** 칸별 원문으로 문서 만들기 - 정규화한 글과 영어 낱말 목록을 함께 만들어 둔다 */
 function makeDoc(id: string, level: number, raw: Record<Field, string>): SearchDoc {
   const fields = {} as Record<Field, string>
   const words = {} as Record<Field, string[]>
@@ -73,7 +73,7 @@ function caseDoc(item: PortfolioCase): SearchDoc {
   const body = story ? [story.problem, story.result ?? '', ...story.points.flatMap((point) => [point.title, point.body])] : []
   return makeDoc(`case:${item.slug}`, item.level, {
     title: item.title,
-    // 분야(Front · Back · Design)도 메타에 둔다 — '프론트'가 동의어 'front' 로 Front 사례에 걸리게(S4)
+    // 분야(Front · Back · Design)도 메타에 둔다 - '프론트'가 동의어 'front' 로 Front 사례에 걸리게(S4)
     meta: [item.type, item.tags.join(' '), item.keywords].join(' '),
     summary: item.description,
     body: [...body, ...designText(item)].join(' '),
@@ -82,7 +82,7 @@ function caseDoc(item: PortfolioCase): SearchDoc {
 
 function noteDoc(note: StudyNote): SearchDoc {
   const body = [
-    // 화면에 숨긴 '막힌 것' 묶음으로는 찾지 않는다 — 결과를 열었는데 검색어가 안 보이면 안 되니까
+    // 화면에 숨긴 '막힌 것' 묶음으로는 찾지 않는다 - 결과를 열었는데 검색어가 안 보이면 안 되니까
     ...conceptGroups(note).flatMap((group) => [group.title, ...group.items]),
     ...(note.pitfalls ?? []),
     ...(note.practice ?? []).flatMap((practice) => [practice.caption, practice.how]),
@@ -95,7 +95,7 @@ function noteDoc(note: StudyNote): SearchDoc {
   })
 }
 
-/** 두 글자씩 겹쳐 자른 조각 — '디자인' → 디자 · 자인. 한 글자면 조각이 없다 */
+/** 두 글자씩 겹쳐 자른 조각 - '디자인' → 디자 · 자인. 한 글자면 조각이 없다 */
 function bigrams(text: string) {
   const grams = new Set<string>()
   for (let i = 0; i < text.length - 1; i++) grams.add(text.slice(i, i + 2))
@@ -104,12 +104,12 @@ function bigrams(text: string) {
 
 const DOCS: SearchDoc[] = [...CASES.map(caseDoc), ...NOTES.map(noteDoc)]
 
-/** 칸별 평균 길이 — BM25 가 '이 글이 평균보다 긴가'를 볼 때 쓴다 */
+/** 칸별 평균 길이 - BM25 가 '이 글이 평균보다 긴가'를 볼 때 쓴다 */
 const AVG_LENGTH = Object.fromEntries(
   FIELDS.map((field) => [field, DOCS.reduce((sum, doc) => sum + doc.fields[field].length, 0) / DOCS.length]),
 ) as Record<Field, number>
 
-/** 역색인 — 조각마다 그 조각이 들어 있는 문서 번호. 책 뒤의 '찾아보기'와 같다 */
+/** 역색인 - 조각마다 그 조각이 들어 있는 문서 번호. 책 뒤의 '찾아보기'와 같다 */
 const INDEX = new Map<string, number[]>()
 DOCS.forEach((doc, docIndex) => {
   for (const gram of bigrams(FIELDS.map((field) => doc.fields[field]).join(' '))) {
@@ -122,7 +122,7 @@ DOCS.forEach((doc, docIndex) => {
 const ALL_DOCS = DOCS.map((_, docIndex) => docIndex)
 
 /**
- * 낱말 하나가 들어 있을 수 있는 문서 — 낱말의 조각이 모두 들어 있는 문서만 남긴다(목록 교집합).
+ * 낱말 하나가 들어 있을 수 있는 문서 - 낱말의 조각이 모두 들어 있는 문서만 남긴다(목록 교집합).
  * 조각이 다 있어도 순서가 다를 수 있어서(디자·자인 ↔ 자인디자) 칸마다 한 번 더 확인한다.
  */
 function candidates(term: string) {
@@ -161,7 +161,7 @@ function idf(docCount: number) {
   return Math.log(1 + (DOCS.length - docCount + 0.5) / (docCount + 0.5))
 }
 
-/** 낱말 하나가 문서 하나에 주는 점수(BM25F) — 칸마다 무게를 곱하고 긴 칸은 깎아 합친 뒤, 많이 나와도 점수가 끝없이 오르지 않게 누른다 */
+/** 낱말 하나가 문서 하나에 주는 점수(BM25F) - 칸마다 무게를 곱하고 긴 칸은 깎아 합친 뒤, 많이 나와도 점수가 끝없이 오르지 않게 누른다 */
 function wordScore(doc: SearchDoc, form: string, wordIdf: number) {
   const weighted = FIELDS.reduce((sum, field) => {
     const lengthRatio = AVG_LENGTH[field] ? doc.fields[field].length / AVG_LENGTH[field] : 0
@@ -172,7 +172,7 @@ function wordScore(doc: SearchDoc, form: string, wordIdf: number) {
 
 /**
  * 결과에 넣으려면 맞아야 하는 낱말 수. 두 개까지는 전부, 세 개부터는 75%(내림).
- * Elasticsearch 의 minimum_should_match 와 같은 생각이다 — 긴 문장형 검색어는 한두 낱말이 데이터에 없어도 찾게.
+ * Elasticsearch 의 minimum_should_match 와 같은 생각이다 - 긴 문장형 검색어는 한두 낱말이 데이터에 없어도 찾게.
  * 두 낱말을 전부 요구하는 건 '안드로이드 앱'이 '앱' 하나로 아무 앱이나 걸리지 않게 하려고다.
  */
 function requiredMatches(wordCount: number) {
@@ -183,11 +183,11 @@ function requiredMatches(wordCount: number) {
 const VOCAB = new Map<string, number>()
 for (const doc of DOCS) for (const term of doc.terms) if ([...term].length >= 2) VOCAB.set(term, (VOCAB.get(term) ?? 0) + 1)
 
-/** 자모로 푼 낱말 목록 — 처음 오타를 고칠 때 한 번만 만든다(대부분의 검색은 오타가 없다) */
+/** 자모로 푼 낱말 목록 - 처음 오타를 고칠 때 한 번만 만든다(대부분의 검색은 오타가 없다) */
 let vocabJamo: { term: string; jamo: string[]; docCount: number }[] | null = null
 
 /**
- * 고쳐도 되는 거리 — 자모(영문은 글자) 수가 적으면 한 글자만 바꿔도 다른 말이 돼서 고치지 않는다.
+ * 고쳐도 되는 거리 - 자모(영문은 글자) 수가 적으면 한 글자만 바꿔도 다른 말이 돼서 고치지 않는다.
  * 4~9개는 1, 10개부터는 2. 영문은 5글자부터 고친다('ai' → 'ui' 같은 일을 막으려고).
  */
 function allowedDistance(jamo: string[], latin: boolean) {
@@ -216,12 +216,12 @@ function closestTerm(word: string) {
   return best?.term ?? null
 }
 
-/** 모양들에 동의어를 더한다 — [그대로, 조사 뗀 모양, 같은 뜻의 말…] 순서. 앞의 모양이 먼저 맞춰진다 */
+/** 모양들에 동의어를 더한다 - [그대로, 조사 뗀 모양, 같은 뜻의 말…] 순서. 앞의 모양이 먼저 맞춰진다 */
 function withSynonyms(forms: string[]) {
   return [...new Set([...forms, ...forms.flatMap(synonymsOf)])]
 }
 
-/** 띄어 쓴 두 낱말이 붙이면 사전의 말이면 하나로 합친다 — '레이트 리밋' → '레이트리밋' */
+/** 띄어 쓴 두 낱말이 붙이면 사전의 말이면 하나로 합친다 - '레이트 리밋' → '레이트리밋' */
 function joinSynonymPairs(words: QueryWord[]) {
   const joined: QueryWord[] = []
   for (let i = 0; i < words.length; i++) {
@@ -237,7 +237,7 @@ function joinSynonymPairs(words: QueryWord[]) {
   return joined
 }
 
-/** 고쳐서 찾은 낱말 — 결과 화면에 "'플랜포미'(으)로 찾은 결과"로 알린다 */
+/** 고쳐서 찾은 낱말 - 결과 화면에 "'플랜포미'(으)로 찾은 결과"로 알린다 */
 export interface Correction {
   from: string
   to: string
@@ -250,12 +250,12 @@ const MORE_COMMON = 3
 
 /**
  * 낱말 하나를 찾는다. 0건이거나 드문 말(1~2개 문서)이면 차례로 고쳐 본다.
- *   1) 한영 자판 오타 — 'vmffosvhal' → '플랜포미', 'ㅁㅊㅊㅑㅐ' → 'accio'
- *   2) 자모 편집거리 — '마에스트르' → '마에스트로'
+ *   1) 한영 자판 오타 - 'vmffosvhal' → '플랜포미', 'ㅁㅊㅊㅑㅐ' → 'accio'
+ *   2) 자모 편집거리 - '마에스트르' → '마에스트로'
  * 0건이면 고친 말이 1개 문서에만 있어도 바꾼다. 드문 말은 두 조건을 다 채울 때만 바꾼다(T-008).
- *   - 검색어가 친 그대로 그 글들에 적혀 있다 — 오타를 예시로 적어 둔 글('vmffosvhal → 플랜포미')일 가능성이 크다.
+ *   - 검색어가 친 그대로 그 글들에 적혀 있다 - 오타를 예시로 적어 둔 글('vmffosvhal → 플랜포미')일 가능성이 크다.
  *     조사·어미를 뗀 모양으로만 걸렸다면('밀리는' → '밀리면' 속 '밀리') 활용된 진짜 말이라 고치지 않는다.
- *   - 고친 말이 훨씬 흔하다(3배 이상) — 맞춤법 교정기가 '더 흔한 쪽'을 고르는 것과 같은 생각
+ *   - 고친 말이 훨씬 흔하다(3배 이상) - 맞춤법 교정기가 '더 흔한 쪽'을 고르는 것과 같은 생각
  */
 function findWord(word: QueryWord) {
   const found = docsWithWord(withSynonyms(word.forms))
@@ -305,7 +305,7 @@ function scoreDocs(query: string) {
 }
 
 /**
- * 검색 결과 — 점수 높은 순. 점수가 같으면 사례는 레벨 → 날짜(rank.ts), 노트는 최신순. 빈 검색어면 전부 기본 순서.
+ * 검색 결과 - 점수 높은 순. 점수가 같으면 사례는 레벨 → 날짜(rank.ts), 노트는 최신순. 빈 검색어면 전부 기본 순서.
  * corrections 는 오타를 고쳐서 찾은 낱말들이다(결과 화면 안내용).
  */
 export function search(query: string): { cases: PortfolioCase[]; notes: StudyNote[]; corrections: Correction[] } {
@@ -315,12 +315,12 @@ export function search(query: string): { cases: PortfolioCase[]; notes: StudyNot
   const byScore = <T>(items: T[], id: (item: T) => string) =>
     items.filter((item) => scores.has(id(item))).sort((a, b) => scoreOf(id(b)) - scoreOf(id(a)))
   return {
-    // rankCases 로 먼저 줄 세운 뒤 점수로 다시 정렬한다 — sort 는 안정 정렬이라 같은 점수면 레벨·날짜 순이 남는다
+    // rankCases 로 먼저 줄 세운 뒤 점수로 다시 정렬한다 - sort 는 안정 정렬이라 같은 점수면 레벨·날짜 순이 남는다
     cases: byScore(rankCases(CASES), (item) => `case:${item.slug}`),
     notes: byScore(NOTES, (note) => `note:${note.slug}`),
     corrections,
   }
 }
 
-/** 색인 크기 — 채점기(search-eval)가 기록에 남긴다 */
+/** 색인 크기 - 채점기(search-eval)가 기록에 남긴다 */
 export const INDEX_STATS = { docs: DOCS.length, grams: INDEX.size }

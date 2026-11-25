@@ -14,7 +14,7 @@ const BENEFITS = [
 const INPUT =
   'h-12 w-full rounded-sm border border-regular bg-white px-4 text-15 text-main outline-none placeholder:text-disabled focus:border-black'
 
-// 로그인 — 폼 1단 384(가운데 4칸). 간편 로그인은 아이디 로그인 아래에 폼 너비 그대로 크게.
+// 로그인 - 폼 1단 384(가운데 4칸). 간편 로그인은 아이디 로그인 아래에 폼 너비 그대로 크게.
 export default function LoginPage() {
   const [id, setId] = useState('')
   const [password, setPassword] = useState('')
@@ -78,7 +78,7 @@ export default function LoginPage() {
         </div>
 
         <div className="flex flex-col gap-2">
-          {/* 카카오·네이버 색은 각 사 브랜드 가이드 규정색 — 대비 기준 예외 */}
+          {/* 카카오·네이버 색은 각 사 브랜드 가이드 규정색 - 대비 기준 예외 */}
           <button
             type="button"
             onClick={() => showDemoNotice('간편 로그인은')}

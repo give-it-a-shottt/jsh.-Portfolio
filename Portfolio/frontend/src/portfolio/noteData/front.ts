@@ -1,19 +1,19 @@
 import type { StudyNote } from '../notes'
 
-// Front 공부 노트 — 노션 학습노트 > 학습 폴더 > 프론트엔드, AI와 학습(화면 쪽)
+// Front 공부 노트 - 노션 학습노트 > 학습 폴더 > 프론트엔드, AI와 학습(화면 쪽)
 export const FRONT_NOTES: StudyNote[] = [
-  // ── 타입스크립트 (책 · 최신 편부터) — F-012 노트 틀 ──
+  // ── 타입스크립트 (책 · 최신 편부터) - F-012 노트 틀 ──
   {
     slug: 'fe-ts-type-handling',
     area: 'Front',
     course: '타입스크립트',
     lesson: '2편',
     date: '2026.11.11',
-    title: '타입 다루기 — any · unknown · 집합으로 보는 대입 · 제네릭 · 조건부 타입',
+    title: '타입 다루기 - any · unknown · 집합으로 보는 대입 · 제네릭 · 조건부 타입',
     summary:
       '타입을 값의 집합으로 보고 어떤 값이 어떤 자리에 들어가는지 판단하고, 밖에서 들어온 데이터는 unknown 으로 받아 경계에서 한 번 검증해 안쪽 코드가 확실한 타입만 다루게 할 수 있다.',
     points: [
-      'TS 검사는 코드를 짤 때만 일어난다 — as 는 검사 없이 믿는 것이고, 실행 중 확인은 typeof · instanceof · Zod',
+      'TS 검사는 코드를 짤 때만 일어난다 - as 는 검사 없이 믿는 것이고, 실행 중 확인은 typeof · instanceof · Zod',
       '좁은 타입은 넓은 자리에 들어가고 반대는 안 된다. 객체는 속성이 많을수록 좁다',
       '제네릭은 타입을 받는 빈칸이고 extends 로 범위를 제한한다. 조건부 타입은 유니온을 하나씩 나눠 검사한다',
     ],
@@ -25,42 +25,42 @@ export const FRONT_NOTES: StudyNote[] = [
         why: '확인을 빼먹으면 실행 중이 아니라 코드를 짤 때 빨간 줄로 보여서, 불확실한 값은 any 대신 unknown 으로 받는다.',
         code: {
           lang: 'typescript',
-          caption: 'any 는 통과, unknown 은 좁힌 뒤에만 — tsc --strict 로 타입 검사 통과',
+          caption: 'any 는 통과, unknown 은 좁힌 뒤에만 - tsc --strict 로 타입 검사 통과',
           source: `const a: any = 123;
-a.toUpperCase();                            // 통과 — 실행하면 터진다
+a.toUpperCase();                            // 통과 - 실행하면 터진다
 
 const u: unknown = 123;
-// @ts-expect-error — 확인 전엔 못 쓴다
+// @ts-expect-error - 확인 전엔 못 쓴다
 u.toUpperCase();
 if (typeof u === 'string') u.toUpperCase(); // 좁힌 뒤에는 OK
 
-const parsed = JSON.parse('{"n":1}');       // any — n 도 any 로 번진다
+const parsed = JSON.parse('{"n":1}');       // any - n 도 any 로 번진다
 const n = parsed.n;`,
         },
       },
       {
-        title: '컴파일 타임과 런타임 — as 는 검사가 아니다',
+        title: '컴파일 타임과 런타임 - as 는 검사가 아니다',
         body: 'TS 의 검사는 코드를 짤 때만 일어나고, 실행할 때는 타입이 다 지워진 자바스크립트로 돈다. 그래서 as 단언과 ! 는 "이 타입이라고 믿어" 일 뿐 아무것도 확인하지 않고, 컴파일 뒤에 사라진다. 실행 중에 진짜 확인하는 건 typeof · instanceof 처럼 자바스크립트 코드로 남는 것이다.',
         why: '서버 응답처럼 밖에서 들어오는 값은 TS 가 볼 수 없어서, 타입만 적어 두면 다른 모양이 와도 그대로 통과한다.',
         code: {
           lang: 'typescript',
-          caption: 'strict 모드에서 catch 의 error 는 unknown — instanceof 로 확인하고 쓴다',
+          caption: 'strict 모드에서 catch 의 error 는 unknown - instanceof 로 확인하고 쓴다',
           source: `try {
   throw new Error('x');
 } catch (e) {
-  // @ts-expect-error — 확인 전엔 message 를 못 꺼낸다
+  // @ts-expect-error - 확인 전엔 message 를 못 꺼낸다
   e.message;
   if (e instanceof Error) console.log(e.message); // 실제로 검사하고 쓰기
 }`,
         },
       },
       {
-        title: '타입은 값의 집합 — 좁은 것은 넓은 자리에',
+        title: '타입은 값의 집합 - 좁은 것은 넓은 자리에',
         body: '타입을 값의 집합으로 보면 대입 규칙이 한 번에 정리된다. 좁은 타입(리터럴)은 넓은 타입(string) 자리에 들어가고 반대는 안 된다. unknown 은 전체집합이라 뭐든 받고, never 는 공집합이라 어디든 들어간다. 객체는 조건(속성)이 많을수록 만족하는 값이 적어서 좁은 타입이다.',
         why: '"이 값이 이 자리에 들어가나?" 를 외우지 않고 "더 좁은가?" 하나로 판단할 수 있다.',
         code: {
           lang: 'typescript',
-          caption: '속성이 많은 B 가 더 좁다 — B → A 는 OK, A → B 는 에러',
+          caption: '속성이 많은 B 가 더 좁다 - B → A 는 OK, A → B 는 에러',
           source: `type A = { name: string };
 type B = { name: string; age: number };
 
@@ -68,7 +68,7 @@ const b: B = { name: 'b', age: 2 };
 const toA: A = b;              // 좁은(B) → 넓은(A) OK
 
 const a: A = { name: 'a' };
-// @ts-expect-error — age 가 없을 수 있다
+// @ts-expect-error - age 가 없을 수 있다
 const toB: B = a;`,
         },
       },
@@ -78,10 +78,10 @@ const toB: B = a;`,
         why: '리터럴에 남는 속성은 오타일 가능성이 높고, 변수는 다른 데서도 쓰는 큰 객체일 수 있어서 기준이 다르다.',
         code: {
           lang: 'typescript',
-          caption: '리터럴은 깐깐하게, 변수는 모양만 — 브랜딩으로 같은 number 도 구분',
+          caption: '리터럴은 깐깐하게, 변수는 모양만 - 브랜딩으로 같은 number 도 구분',
           source: `interface Person { name: string; age: number }
 
-// @ts-expect-error — 리터럴을 바로 넣으면 hobby 를 잡는다
+// @ts-expect-error - 리터럴을 바로 넣으면 hobby 를 잡는다
 const p1: Person = { name: 'a', age: 1, hobby: '축구' };
 const obj = { name: 'a', age: 1, hobby: '축구' };
 const p2: Person = obj;        // 변수로 넣으면 통과
@@ -89,7 +89,7 @@ const p2: Person = obj;        // 변수로 넣으면 통과
 type Money = number & { __brand: 'money' };
 type Liter = number & { __brand: 'liter' };
 const money = 100 as Money;
-// @ts-expect-error — 모양이 달라 서로 대입 불가
+// @ts-expect-error - 모양이 달라 서로 대입 불가
 const liter: Liter = money;`,
         },
       },
@@ -99,12 +99,12 @@ const liter: Liter = money;`,
         why: '기능이 많이 겹쳐서 "객체는 interface, 나머지는 type" 처럼 팀에서 하나로 정해 일관되게 쓰는 게 핵심이다.',
       },
       {
-        title: '타입에서 타입 꺼내기 — keyof · 인덱스 접근 · 매핑',
+        title: '타입에서 타입 꺼내기 - keyof · 인덱스 접근 · 매핑',
         body: 'keyof Person 은 키 이름들(\'name\' | \'age\'), Person[\'name\'] 은 그 속성의 값 타입을 꺼낸다. 매핑된 객체 타입 { [K in keyof T]: ... } 는 키를 하나씩 돌며 새 객체 타입을 만든다. Partial · Readonly · Pick · Record 같은 내장 유틸리티 타입이 이 문법으로 만들어져 있다.',
         why: '원래 타입에서 가져다 쓰니 Person 이 바뀌면 따라 바뀌고, AI 가 짠 코드의 유틸리티 타입 정의를 직접 읽을 수 있다.',
         code: {
           lang: 'typescript',
-          caption: 'Partial 을 직접 만들어 보기 — 수정 API 처럼 일부 필드만 보낼 때',
+          caption: 'Partial 을 직접 만들어 보기 - 수정 API 처럼 일부 필드만 보낼 때',
           source: `interface User { id: number; name: string; email: string }
 
 type Keys = keyof User;                 // 'id' | 'name' | 'email'
@@ -127,7 +127,7 @@ const same: Partial<User> = patch;                  // 내장 Partial 과 같은
 }
 len('abc');   // 3
 len([1, 2]);  // 2
-// @ts-expect-error — number 에는 length 가 없다
+// @ts-expect-error - number 에는 length 가 없다
 len(123);`,
         },
       },
@@ -139,13 +139,13 @@ len(123);`,
           lang: 'typescript',
           caption: '같은 유니온, 쪼개느냐 덩어리로 보느냐',
           source: `type IsString<T> = T extends string ? 'yes' : 'no';
-type R1 = IsString<string | number>;   // 'yes' | 'no' — 하나씩 검사
+type R1 = IsString<string | number>;   // 'yes' | 'no' - 하나씩 검사
 
 type NoDist<T> = [T] extends [string] ? 'yes' : 'no';
-type R2 = NoDist<string | number>;     // 'no' — 한 덩어리로 검사
+type R2 = NoDist<string | number>;     // 'no' - 한 덩어리로 검사
 
 const r1: R1 = 'yes';
-// @ts-expect-error — R2 는 'no' 하나뿐
+// @ts-expect-error - R2 는 'no' 하나뿐
 const r2: R2 = 'yes';`,
         },
       },
@@ -155,7 +155,7 @@ const r2: R2 = 'yes';`,
         why: 'any 를 여기저기 흘려보내지 않고 입구에서 한 번에 끊으면, 안쪽 코드는 타입 걱정 없이 쓸 수 있다.',
         code: {
           lang: 'typescript',
-          caption: '스키마에서 타입을 뽑고, 모양이 다르면 parse 에서 에러 — zod 3 으로 타입 검사 통과',
+          caption: '스키마에서 타입을 뽑고, 모양이 다르면 parse 에서 에러 - zod 3 으로 타입 검사 통과',
           source: `import { z } from 'zod';
 
 const UserSchema = z.object({ id: z.number(), name: z.string() });
@@ -170,12 +170,12 @@ async function getUser(id: number): Promise<User> {
       },
     ],
     pitfalls: [
-      'as 와 ! 는 검사가 아니다 — 컴파일 뒤에 사라져서 실행 중에는 아무것도 막지 않는다',
-      'instanceof 는 클래스로 만든 값(Error · Date)에만 쓴다 — 서버에서 온 평범한 객체는 typeof · in · Zod 로 확인한다',
-      '함수 선언문은 항상 throw 해도 반환 타입이 void 로 추론된다 — never 가 필요하면 직접 적는다(표현식 · 화살표 함수는 never)',
-      'type 의 & 는 속성이 충돌해도 에러 없이 그 속성이 never 가 된다 — interface 의 extends 는 바로 에러를 낸다',
-      '잉여 속성 검사는 리터럴을 바로 넣을 때만 한다 — 변수로 넣으면 남는 속성이 있어도 통과한다',
-      'TS 의 private 은 컴파일 때만 막는다 — 실행 중에도 숨기려면 자바스크립트의 #name 을 쓴다',
+      'as 와 ! 는 검사가 아니다 - 컴파일 뒤에 사라져서 실행 중에는 아무것도 막지 않는다',
+      'instanceof 는 클래스로 만든 값(Error · Date)에만 쓴다 - 서버에서 온 평범한 객체는 typeof · in · Zod 로 확인한다',
+      '함수 선언문은 항상 throw 해도 반환 타입이 void 로 추론된다 - never 가 필요하면 직접 적는다(표현식 · 화살표 함수는 never)',
+      'type 의 & 는 속성이 충돌해도 에러 없이 그 속성이 never 가 된다 - interface 의 extends 는 바로 에러를 낸다',
+      '잉여 속성 검사는 리터럴을 바로 넣을 때만 한다 - 변수로 넣으면 남는 속성이 있어도 통과한다',
+      'TS 의 private 은 컴파일 때만 막는다 - 실행 중에도 숨기려면 자바스크립트의 #name 을 쓴다',
     ],
     tags: ['프론트엔드', 'TypeScript', '제네릭', 'unknown'],
     keywords:
@@ -187,7 +187,7 @@ async function getUser(id: number): Promise<User> {
     course: '타입스크립트',
     lesson: '1편',
     date: '2026.11.10',
-    title: '타입 붙이기 — 추론 · 리터럴 타입 · 튜플 · 유니온과 좁히기',
+    title: '타입 붙이기 - 추론 · 리터럴 타입 · 튜플 · 유니온과 좁히기',
     summary:
       '타입은 매개변수처럼 추론이 안 되는 자리에만 적고, 리터럴 · 튜플 · 유니온으로 들어올 값을 좁혀 오타와 순서 실수를 코드 짤 때 잡을 수 있다.',
     points: [
@@ -198,9 +198,9 @@ async function getUser(id: number): Promise<User> {
     learned: [],
     sections: [
       {
-        title: '타입은 어디에 붙이나 — 나머지는 추론',
+        title: '타입은 어디에 붙이나 - 나머지는 추론',
         body: '타입은 변수 · 함수 매개변수 · 반환값 세 자리에 붙인다. 매개변수는 부르는 쪽이 무엇을 넣을지 TS 가 알 수 없어서 거의 항상 적고, 변수와 반환값은 오른쪽 값이나 return 에서 추론되므로 대부분 생략한다. 빈 배열처럼 추론이 애매한 곳에만 직접 적는다.',
-        why: '추론되는 곳까지 전부 적으면 코드만 길어진다 — 추론이 안 되거나 틀린 곳에만 쓴다.',
+        why: '추론되는 곳까지 전부 적으면 코드만 길어진다 - 추론이 안 되거나 틀린 곳에만 쓴다.',
         code: {
           lang: 'typescript',
           caption: '매개변수만 적고 나머지는 추론',
@@ -214,18 +214,18 @@ const ids: number[] = [];                // 빈 배열은 적어 준다`,
       {
         title: '리터럴 타입과 리터럴 유니온',
         body: '\'hello\' · 123 · false 처럼 값 하나만 허용하는 타입이 리터럴 타입이다. const 는 다시 못 바꾸니 값 그대로 추론되고, let 은 나중에 다른 값이 들어올 수 있어 string 으로 넓혀 추론된다. 리터럴을 유니온으로 묶은 \'todo\' | \'done\' 은 정해진 값 말고는 못 넣는 드롭다운 같은 타입이다.',
-        why: '상태값 · 버튼 종류처럼 값이 정해진 곳에 쓰면 오타를 코드 짤 때 바로 잡는다 — enum 대신 많이 쓰는 실무 패턴이다.',
+        why: '상태값 · 버튼 종류처럼 값이 정해진 곳에 쓰면 오타를 코드 짤 때 바로 잡는다 - enum 대신 많이 쓰는 실무 패턴이다.',
         code: {
           lang: 'typescript',
           caption: 'const 와 let 의 추론 차이, 리터럴 유니온',
           source: `const c = 'hello';          // 'hello'
 let l = 'hello';            // string
-// @ts-expect-error — let 은 string 으로 넓어져 'hello' 자리에 못 들어감
+// @ts-expect-error - let 은 string 으로 넓어져 'hello' 자리에 못 들어감
 const ll: 'hello' = l;
 
 type Status = 'todo' | 'doing' | 'done';
 let status: Status = 'todo';
-// @ts-expect-error — 정해진 값이 아니다
+// @ts-expect-error - 정해진 값이 아니다
 status = 'finished';`,
         },
       },
@@ -237,11 +237,11 @@ status = 'finished';`,
           lang: 'typescript',
           caption: '{} 는 숫자도 받는다 / String 객체는 string 자리에 못 들어간다',
           source: `let anyButNull: {} = 123;    // 통과
-// @ts-expect-error — null 만 거부
+// @ts-expect-error - null 만 거부
 anyButNull = null;
 
 const wrapper: String = new String('x');
-// @ts-expect-error — 래퍼 객체는 string 자리에 못 들어감
+// @ts-expect-error - 래퍼 객체는 string 자리에 못 들어감
 const bad: string = wrapper;`,
         },
       },
@@ -255,7 +255,7 @@ const bad: string = wrapper;`,
           source: `const t: [number, string] = [1, 'a'];
 t.push(3 as any);                         // 일반 튜플은 통과
 const rt: readonly [number, string] = [1, 'a'];
-// @ts-expect-error — readonly 튜플엔 push 가 없다
+// @ts-expect-error - readonly 튜플엔 push 가 없다
 rt.push(3);
 
 const r: [string, ...number[]] = ['합계', 1, 2, 3];
@@ -287,18 +287,18 @@ config.mode = 'light';`,
           lang: 'typescript',
           caption: '변수는 typeof 를 붙여야 타입이 된다',
           source: `const value = 1;
-// @ts-expect-error — 'value' refers to a value, but is being used as a type
+// @ts-expect-error - 'value' refers to a value, but is being used as a type
 const x: value = 1;
-const y: typeof value = 1;   // OK — 타입은 1`,
+const y: typeof value = 1;   // OK - 타입은 1`,
         },
       },
     ],
     pitfalls: [
-      '{} 와 Object 는 빈 객체 타입이 아니다 — 숫자 · 문자열까지 통과하니 객체는 모양을 적는다',
-      'String · Number 같은 대문자 타입은 래퍼 객체 타입이다 — 소문자 string · number 를 쓴다',
-      'readonly 없는 튜플은 push 가 에러 없이 통과한다 — 길이를 지키려면 readonly 를 붙인다',
-      '유니온을 선언하는 것 자체가 타입 좁히기는 아니다 — typeof 등으로 하나로 줄여 가는 과정이 좁히기다',
-      'typeof null 은 \'object\' 다 — 객체로 좁힐 때 null 을 따로 걸러야 한다',
+      '{} 와 Object 는 빈 객체 타입이 아니다 - 숫자 · 문자열까지 통과하니 객체는 모양을 적는다',
+      'String · Number 같은 대문자 타입은 래퍼 객체 타입이다 - 소문자 string · number 를 쓴다',
+      'readonly 없는 튜플은 push 가 에러 없이 통과한다 - 길이를 지키려면 readonly 를 붙인다',
+      '유니온을 선언하는 것 자체가 타입 좁히기는 아니다 - typeof 등으로 하나로 줄여 가는 과정이 좁히기다',
+      'typeof null 은 \'object\' 다 - 객체로 좁힐 때 null 을 따로 걸러야 한다',
     ],
     tags: ['프론트엔드', 'TypeScript', '타입 추론', '유니온'],
     keywords:
@@ -312,13 +312,13 @@ const y: typeof value = 1;   // OK — 타입은 1`,
     course: 'React',
     lesson: '6편',
     date: '2026.11.10',
-    title: 'Zustand · TanStack Query — 상태 위치 정하기 · 캐시 · 무효화 · 낙관적 업데이트',
+    title: 'Zustand · TanStack Query - 상태 위치 정하기 · 캐시 · 무효화 · 낙관적 업데이트',
     summary:
       '상태를 원본이 어디 있느냐로 나눠 서버 데이터는 TanStack Query, 멀리 공유하는 화면 값은 Zustand, 한 곳 값은 useState, 공유 · 새로고침에 남길 값은 쿼리 파라미터에 둘 수 있다.',
     points: [
-      '서버 데이터를 Zustand 에 복사하면 원본이 두 군데가 되어 어긋난다 — 바뀐 뒤엔 해당 queryKey 를 무효화해 다시 받는다',
+      '서버 데이터를 Zustand 에 복사하면 원본이 두 군데가 되어 어긋난다 - 바뀐 뒤엔 해당 queryKey 를 무효화해 다시 받는다',
       'queryKey 에는 queryFn 이 쓰는 값을 전부 넣는다. staleTime 은 "다시 받을까", gcTime 은 "지워도 될까"',
-      'Zustand 는 셀렉터로 고른 값이 바뀔 때만 다시 그린다 — 구조 분해로 꺼내면 스토어 전체 구독',
+      'Zustand 는 셀렉터로 고른 값이 바뀔 때만 다시 그린다 - 구조 분해로 꺼내면 스토어 전체 구독',
     ],
     learned: [],
     sections: [
@@ -328,12 +328,12 @@ const y: typeof value = 1;   // OK — 타입은 1`,
         why: '서버 상태는 다른 사람이 바꿀 수 있어 "언제 낡았나 · 언제 다시 받나" 를 따로 관리해야 해서 전용 도구가 있다.',
       },
       {
-        title: 'Zustand 셀렉터 — 고른 값만 구독',
+        title: 'Zustand 셀렉터 - 고른 값만 구독',
         body: '셀렉터 (s) => s.theme 으로 필요한 값만 꺼내면, 상태가 바뀔 때 Zustand 가 셀렉터 결과를 이전 값과 비교(Object.is)해 달라진 컴포넌트만 다시 그린다. 셀렉터 없이 useAppStore() 를 부르면 스토어 전체를 구독해서 다른 값이 바뀌어도 다시 그려진다.',
         why: '프롭 드릴링 없이 바로 꺼내 쓰면서도, 상관없는 변경으로 화면이 다시 그려지는 걸 막는다.',
         code: {
           lang: 'typescript',
-          caption: 'theme 만 구독하는 헤더 — zustand 5 로 타입 검사 통과(브라우저 실행은 못 함)',
+          caption: 'theme 만 구독하는 헤더 - zustand 5 로 타입 검사 통과(브라우저 실행은 못 함)',
           source: `import { create } from 'zustand';
 
 type AppState = {
@@ -361,7 +361,7 @@ export function Header() {
         why: '[\'products\', sort] 처럼 정렬마다 사물함이 따로 생겨, 이미 본 정렬은 요청 없이 바로 보여 준다.',
         code: {
           lang: 'typescript',
-          caption: '정렬값을 키에 넣고 5분 동안은 다시 요청하지 않는다 — @tanstack/react-query 5 로 타입 검사 통과',
+          caption: '정렬값을 키에 넣고 5분 동안은 다시 요청하지 않는다 - @tanstack/react-query 5 로 타입 검사 통과',
           source: `import { useQuery } from '@tanstack/react-query';
 
 type Product = { id: number; name: string; price: number };
@@ -385,8 +385,8 @@ export function ProductList({ sort }: { sort: string }) {
         },
       },
       {
-        title: 'staleTime · gcTime · enabled — 언제 요청하나',
-        body: 'staleTime 은 받은 데이터를 몇 동안 신선하다고 볼지(기본 0 — 화면에 다시 들어올 때마다 재요청), gcTime 은 쓰는 컴포넌트가 다 사라진 캐시를 언제 버릴지(기본 5분)다. 낡았다고 바로 지우지 않고 일단 보여 준 뒤 뒤에서 새로 받는다. enabled 는 지금 요청을 시작해도 되는지 정하는 스위치로, ID 가 늦게 들어올 때 enabled: !!id 로 기다리게 한다.',
+        title: 'staleTime · gcTime · enabled - 언제 요청하나',
+        body: 'staleTime 은 받은 데이터를 몇 동안 신선하다고 볼지(기본 0 - 화면에 다시 들어올 때마다 재요청), gcTime 은 쓰는 컴포넌트가 다 사라진 캐시를 언제 버릴지(기본 5분)다. 낡았다고 바로 지우지 않고 일단 보여 준 뒤 뒤에서 새로 받는다. enabled 는 지금 요청을 시작해도 되는지 정하는 스위치로, ID 가 늦게 들어올 때 enabled: !!id 로 기다리게 한다.',
         why: '훅은 조건문 안에서 부를 수 없어서, 조건은 if 로 감싸지 않고 enabled 옵션으로 건다.',
         code: {
           lang: 'typescript',
@@ -404,7 +404,7 @@ export function ProductDetail({ id }: { id?: string }) {
         },
       },
       {
-        title: '무효화 — 바뀐 뒤엔 다시 받는다',
+        title: '무효화 - 바뀐 뒤엔 다시 받는다',
         body: 'useMutation 으로 서버 데이터를 바꾼 뒤 queryClient.invalidateQueries 로 그 키를 낡음으로 표시하면, 지금 화면에 있는 쿼리는 바로 다시 불러오고 화면에 없는 쿼리는 다음에 열릴 때 다시 불러온다. 키는 앞부분이 같으면 한꺼번에 무효화되어 [\'products\'] 하나로 [\'products\', \'price\'] 까지 낡음 처리된다.',
         why: '새 상태 계산은 서버가 하고 프론트는 다시 받아 오기만 해서, 원본이 한 곳에만 있게 된다.',
         code: {
@@ -430,7 +430,7 @@ export function DeleteButton({ id }: { id: string }) {
         },
       },
       {
-        title: '낙관적 업데이트 — 화면부터 바꾸고 실패하면 되돌리기',
+        title: '낙관적 업데이트 - 화면부터 바꾸고 실패하면 되돌리기',
         body: 'onMutate 에서 진행 중인 불러오기를 멈추고 이전 값을 보관한 뒤 캐시를 먼저 바꾼다. 실패하면 onError 에서 보관한 값으로 되돌리고, 성공이든 실패든 onSettled 에서 무효화해 서버 값과 맞춘다. 좋아요 · 찜처럼 되돌려도 괜찮은 동작에 쓰고, 결제 · 송금처럼 실패하면 안 되는 동작은 응답을 기다리고 버튼을 비활성화한다.',
         why: '무효화 후 다시 받는 동안 예전 숫자가 보여 버튼이 굼뜨게 느껴지는 걸 없앤다.',
         code: {
@@ -465,12 +465,12 @@ export function LikeButton({ id }: { id: string }) {
       },
     ],
     pitfalls: [
-      '서버 데이터를 Zustand 에 복사해 직접 +1 하면 원본이 두 군데로 나뉘어 어긋난다 — 서버 상태는 TanStack Query 에만 둔다',
-      'const { theme } = useAppStore() 는 theme 만 쓰는 것 같아도 스토어 전체 구독이다 — 셀렉터로 고른다',
-      '셀렉터에서 객체를 새로 만들어 꺼내면 매번 바뀐 것으로 보여 v5 에서 무한 렌더링이 날 수 있다 — useShallow 로 감싼다',
+      '서버 데이터를 Zustand 에 복사해 직접 +1 하면 원본이 두 군데로 나뉘어 어긋난다 - 서버 상태는 TanStack Query 에만 둔다',
+      'const { theme } = useAppStore() 는 theme 만 쓰는 것 같아도 스토어 전체 구독이다 - 셀렉터로 고른다',
+      '셀렉터에서 객체를 새로 만들어 꺼내면 매번 바뀐 것으로 보여 v5 에서 무한 렌더링이 날 수 있다 - useShallow 로 감싼다',
       'queryKey 에 정렬 · ID 를 빠뜨리면 정렬을 바꿔도 예전 목록이 보인다',
-      '폴링(몇 초마다 재요청)은 낭비가 크고 반영도 늦다 — 내가 바꾼 데이터는 무효화로 갱신한다',
-      '삭제 후 이동은 router.push 보다 replace — 뒤로 가기로 삭제된 글에 돌아가지 않는다',
+      '폴링(몇 초마다 재요청)은 낭비가 크고 반영도 늦다 - 내가 바꾼 데이터는 무효화로 갱신한다',
+      '삭제 후 이동은 router.push 보다 replace - 뒤로 가기로 삭제된 글에 돌아가지 않는다',
     ],
     tags: ['프론트엔드', 'React', 'Zustand', 'TanStack Query'],
     keywords:
@@ -485,15 +485,15 @@ export function LikeButton({ id }: { id: string }) {
     title: 'React Router · 레이지 로딩 · CORS 와 프록시 · Redux',
     summary: 'React Router 는 URL 과 화면을 맞추고, 중첩 라우트는 부모 안의 <Outlet /> 자리에 자식 화면을 끼운다. CORS 는 브라우저가 거는 제한이라 프록시로 피해 가고, Redux 는 지금 Redux Toolkit 으로 쓴다.',
     points: [
-      'React Router v8 에서 react-router-dom 패키지가 없어졌다 — npm i react-router',
-      '오리진은 같은 컴퓨터가 아니라 프로토콜 + 도메인 + 포트 — 5173 과 8000 은 다른 오리진',
-      'CORS 에러가 나도 요청은 서버에 도착했고 응답도 나갔다 — 막은 건 브라우저',
+      'React Router v8 에서 react-router-dom 패키지가 없어졌다 - npm i react-router',
+      '오리진은 같은 컴퓨터가 아니라 프로토콜 + 도메인 + 포트 - 5173 과 8000 은 다른 오리진',
+      'CORS 에러가 나도 요청은 서버에 도착했고 응답도 나갔다 - 막은 건 브라우저',
     ],
     learned: [
       {
         title: '라우터',
         items: [
-          'index 라우트는 부모 경로까지만 맞았을 때 <Outlet /> 에 넣을 기본 자식 — 없으면 그 자리가 빈다',
+          'index 라우트는 부모 경로까지만 맞았을 때 <Outlet /> 에 넣을 기본 자식 - 없으면 그 자리가 빈다',
           '"어떤 대상인가"(강의 7번)는 경로 파라미터(useParams), "어떻게 보여 줄까"(정렬 · 필터)는 검색 파라미터(useSearchParams)',
           '레이지 로딩은 빌드를 덜 하는 게 아니라 페이지별 파일로 쪼개 두고, 들어가는 순간 그 파일만 내려받는 것',
         ],
@@ -501,17 +501,17 @@ export function LikeButton({ id }: { id: string }) {
       {
         title: 'HTTP · CORS',
         items: [
-          '프록시는 브라우저가 같은 오리진(5173)에만 요청하고, 개발 서버가 8000 에 대신 전달 — 서버끼리는 CORS 가 없다',
-          'Vite server.proxy 는 개발 서버 전용 — 배포에서는 백엔드 CORS 허용이나 리버스 프록시가 따로 필요',
-          'fetch 는 404 · 500 을 에러로 보지 않는다 — res.ok 를 직접 확인해야 하고, axios 는 바로 에러를 던진다',
+          '프록시는 브라우저가 같은 오리진(5173)에만 요청하고, 개발 서버가 8000 에 대신 전달 - 서버끼리는 CORS 가 없다',
+          'Vite server.proxy 는 개발 서버 전용 - 배포에서는 백엔드 CORS 허용이나 리버스 프록시가 따로 필요',
+          'fetch 는 404 · 500 을 에러로 보지 않는다 - res.ok 를 직접 확인해야 하고, axios 는 바로 에러를 던진다',
         ],
       },
       {
         title: 'Redux',
         items: [
-          '리듀서를 순수 함수로 뺀 이유 — 화면 없이 테스트하고, 액션을 다시 넣어 과거 시점을 재현(시간 여행)할 수 있어서',
+          '리듀서를 순수 함수로 뺀 이유 - 화면 없이 테스트하고, 액션을 다시 넣어 과거 시점을 재현(시간 여행)할 수 있어서',
           'Redux Toolkit 의 createSlice 가 액션 · 리듀서를 한 번에 만들고, 안의 immer 덕분에 고치듯 써도 불변 업데이트가 된다',
-          'counter 액션만 보냈을 때 todos 는 이전과 같은 객체로 남았다 — 바뀐 영역만 새 객체',
+          'counter 액션만 보냈을 때 todos 는 이전과 같은 객체로 남았다 - 바뀐 영역만 새 객체',
         ],
       },
       {
@@ -520,7 +520,7 @@ export function LikeButton({ id }: { id: string }) {
           '"같은 컴퓨터면 같은 오리진 아닌가?" → 포트가 다르면 다른 오리진이다. 프록시로 온 요청은 서버 로그에 Origin 이 비어 있었다',
           'useLocation 으로 이동하려 했다 → 읽기 전용이고, 이동은 useNavigate 나 <Link> 로 한다',
           '해시 라우터면 404 가 안 난다 → 맞지만 URL · 검색 노출에서 손해라, 보통은 호스팅에 index.html 폴백을 설정한다',
-          '책처럼 createStore 와 switch 리듀서를 손으로 짜는 방식은 Redux 팀이 더 이상 권하지 않는다 — thunk 도 따로 설치하지 않는다',
+          '책처럼 createStore 와 switch 리듀서를 손으로 짜는 방식은 Redux 팀이 더 이상 권하지 않는다 - thunk 도 따로 설치하지 않는다',
         ],
       },
     ],
@@ -537,8 +537,8 @@ export function LikeButton({ id }: { id: string }) {
     summary: '화면은 시안 → 상태와 액션 → 컴포넌트 분할 순서로 설계한다. Context 는 멀리 있는 자식에게 값을 바로 주는 통로일 뿐, 상태 관리 라이브러리는 아니다.',
     points: [
       '마운트 순서는 렌더링 → DOM 반영 → useLayoutEffect → 화면 그리기 → useEffect',
-      '레이지 초기화는 비동기가 아니다 — 마운트 때 한 번만 부르는 것 (일반 초기화 4번, 레이지 1번 실행)',
-      'state 는 다시 렌더링돼도 유지된다 — 초기화되는 건 일반 변수, ref 는 기억하지만 바꿔도 다시 그리지 않는다',
+      '레이지 초기화는 비동기가 아니다 - 마운트 때 한 번만 부르는 것 (일반 초기화 4번, 레이지 1번 실행)',
+      'state 는 다시 렌더링돼도 유지된다 - 초기화되는 건 일반 변수, ref 는 기억하지만 바꿔도 다시 그리지 않는다',
     ],
     learned: [
       {
@@ -546,22 +546,22 @@ export function LikeButton({ id }: { id: string }) {
         items: [
           'IA 의 화면 정보는 상태 후보, 유저플로우의 행동은 액션, 시안에서 반복되는 덩어리는 컴포넌트 후보가 된다',
           '따로 바뀌는 상태는 나누고, 항상 같이 바뀌는 상태(x, y)는 하나로 묶는다',
-          'useReducer 의 Action 타입이 곧 유저플로우의 행동 목록 — 바꾸는 로직은 컴포넌트 밖 순수 함수에 모인다',
+          'useReducer 의 Action 타입이 곧 유저플로우의 행동 목록 - 바꾸는 로직은 컴포넌트 밖 순수 함수에 모인다',
         ],
       },
       {
         title: '훅',
         items: [
-          'useEffect 하나가 마운트 · 업데이트 · 언마운트를 맡는다 — 클린업은 언마운트 때와 다시 실행되기 직전에 돈다',
+          'useEffect 하나가 마운트 · 업데이트 · 언마운트를 맡는다 - 클린업은 언마운트 때와 다시 실행되기 직전에 돈다',
           '클린업을 빼면 컴포넌트가 사라져도 타이머가 계속 돌았다(메모리 누수)',
-          'useMemo 는 결과값, useCallback 은 함수 자체를 캐싱 — 커스텀 훅은 로직을 나누는 것이지 상태를 나누는 게 아니다',
+          'useMemo 는 결과값, useCallback 은 함수 자체를 캐싱 - 커스텀 훅은 로직을 나누는 것이지 상태를 나누는 게 아니다',
         ],
       },
       {
         title: 'Context',
         items: [
           'Provider 가 감싼 범위에만 값을 방송하고, 필요한 컴포넌트만 받아 쓴다',
-          '값이 바뀌면 그 Context 를 쓰는 컴포넌트는 전부 다시 렌더링 — 테마 · 로그인 사용자처럼 가끔 바뀌는 값에 맞다',
+          '값이 바뀌면 그 Context 를 쓰는 컴포넌트는 전부 다시 렌더링 - 테마 · 로그인 사용자처럼 가끔 바뀌는 값에 맞다',
           '자주 바뀌고 여러 곳에서 쓰는 값(장바구니)은 골라 구독할 수 있는 Zustand · Redux 쪽이 낫다',
         ],
       },
@@ -571,7 +571,7 @@ export function LikeButton({ id }: { id: string }) {
           '"다시 렌더링되면 state 가 리셋된다"고 알았다 → 리셋되는 건 일반 변수였다. ref 2번 누른 뒤 state 를 누르니 ref=2, plain=0',
           '책의 마운트 순서는 useLayoutEffect 가 DOM 반영보다 앞이었다 → 실제로는 DOM 반영이 먼저라 useLayoutEffect 안에서 글자를 읽을 수 있었다',
           '"공통 로직은 커스텀 훅이면 되지 HOC 가 왜 필요하지?" → 훅은 컴포넌트 안에서 돌아서 렌더링 자체를 건너뛸 수는 없다. 그게 memo(HOC)의 몫',
-          '클래스 컴포넌트를 고르는 기준은 익숙함이 아니다 — 지금은 레거시이고, 남은 쓰임은 에러 바운더리 정도',
+          '클래스 컴포넌트를 고르는 기준은 익숙함이 아니다 - 지금은 레거시이고, 남은 쓰임은 에러 바운더리 정도',
         ],
       },
     ],
@@ -588,24 +588,24 @@ export function LikeButton({ id }: { id: string }) {
     summary: '상태는 그걸 쓰는 컴포넌트들의 가장 가까운 공통 부모에 두고, 직접 고치지 않는다. 바뀐 값까지 가는 길에 있는 객체만 새로 만들어야 React 가 주소 비교 한 번으로 변화를 알아차린다.',
     points: [
       'push 후 같은 배열로 setState 하면 화면이 안 바뀌다가, 다른 버튼을 누르자 숨어 있던 값이 한꺼번에 나왔다 (A → A,X,X,O)',
-      'React 19 에서 함수 컴포넌트의 PropTypes 검사가 없어졌다 — props 타입은 TypeScript, 외부 데이터는 zod',
+      'React 19 에서 함수 컴포넌트의 PropTypes 검사가 없어졌다 - props 타입은 TypeScript, 외부 데이터는 zod',
       '제어 · 비제어는 "입력 도중에 그 값이 필요한가"로 고른다',
     ],
     learned: [
       {
         title: '상태와 불변성',
         items: [
-          '다른 값으로 계산할 수 있는 값은 state 로 두지 않는다 — 따로 두면 둘이 어긋난다',
+          '다른 값으로 계산할 수 있는 값은 state 로 두지 않는다 - 따로 두면 둘이 어긋난다',
           'React 는 안을 다 열어 보는 깊은 비교 대신 주소만 보는 얕은 비교를 한다',
-          '경로 복사: 바뀐 값을 감싼 객체들만 새로 만들고 나머지는 공유 — 깊은 복사는 안 바뀐 곳까지 주소가 바뀌어 memo 가 무의미해진다',
+          '경로 복사: 바뀐 값을 감싼 객체들만 새로 만들고 나머지는 공유 - 깊은 복사는 안 바뀐 곳까지 주소가 바뀌어 memo 가 무의미해진다',
         ],
       },
       {
         title: '스타일링 · 이벤트',
         items: [
-          'CSS 모듈은 클래스 이름에 고유값을 붙여 충돌을 막는다(.title → _title_nc2zs_2) — Tailwind 와는 다른 방식',
-          'onClick={handle()} 은 그리는 순간 실행된다 — 함수를 넘기거나 () => handle(id) 로 감싼다',
-          '<MyButton onClick> 은 이벤트가 아니라 이름이 onClick 인 prop — 안쪽 <button> 에 넘겨야 동작했다',
+          'CSS 모듈은 클래스 이름에 고유값을 붙여 충돌을 막는다(.title → _title_nc2zs_2) - Tailwind 와는 다른 방식',
+          'onClick={handle()} 은 그리는 순간 실행된다 - 함수를 넘기거나 () => handle(id) 로 감싼다',
+          '<MyButton onClick> 은 이벤트가 아니라 이름이 onClick 인 prop - 안쪽 <button> 에 넘겨야 동작했다',
         ],
       },
       {
@@ -613,8 +613,8 @@ export function LikeButton({ id }: { id: string }) {
         items: [
           '"경로를 루트로 거슬러 올라가며 새로 만든다"가 헷갈렸다 → 새로 만들어지는 객체를 설명한 말이고, 코드는 위에서 아래로 쓴다',
           '"이벤트 아규먼트"를 useState 의 첫 인자로 알았다 → 이벤트 핸들러가 받는 첫 인자 e 다',
-          '컨테이너 / 표현 컴포넌트는 소개한 사람도 2019년에 더 이상 권하지 않는다 — 로직은 커스텀 훅으로 뺀다',
-          '책은 "비제어는 꼭 필요할 때만"이라 했지만, 비제어는 글자마다 다시 그리지 않아 오히려 빠르다 — React 19 form action 이 FormData 를 바로 넘겨준다',
+          '컨테이너 / 표현 컴포넌트는 소개한 사람도 2019년에 더 이상 권하지 않는다 - 로직은 커스텀 훅으로 뺀다',
+          '책은 "비제어는 꼭 필요할 때만"이라 했지만, 비제어는 글자마다 다시 그리지 않아 오히려 빠르다 - React 19 form action 이 FormData 를 바로 넘겨준다',
         ],
       },
     ],
@@ -630,24 +630,24 @@ export function LikeButton({ id }: { id: string }) {
     title: 'ES6+ · TypeScript 기초와 JSX · props · 리스트 렌더링',
     summary: 'React 코드는 ES6+ 문법과 TypeScript 타입 위에서 쓴다. JSX 의 {} 에는 표현식만 들어가고 문자열은 자동으로 이스케이프된다. 목록은 항목 컴포넌트로 쪼개고 바뀌지 않는 key 를 준다.',
     points: [
-      'async/await 는 Promise 를 대체한 게 아니라 Promise 위에 올린 문법 — 동시에 기다리려면 Promise.all',
-      'enum 대신 리터럴 유니언 — Vite 8 react-ts 템플릿은 enum 을 막는다',
-      '쪼개기만 해서는 렌더링이 줄지 않는다 — memo 없이 9번, memo 를 붙이니 3번',
+      'async/await 는 Promise 를 대체한 게 아니라 Promise 위에 올린 문법 - 동시에 기다리려면 Promise.all',
+      'enum 대신 리터럴 유니언 - Vite 8 react-ts 템플릿은 enum 을 막는다',
+      '쪼개기만 해서는 렌더링이 줄지 않는다 - memo 없이 9번, memo 를 붙이니 3번',
     ],
     learned: [
       {
         title: 'ES6+ · TypeScript',
         items: [
-          '화살표 함수는 자기 this 가 없다 — JS 클래스 메서드를 떼어 부르면 this 가 사라지는 게 파이썬 self 와 다른 점',
-          'type 은 유니언 · 별칭, interface 는 선언 병합 · extends — 프로젝트 안에서 한 규칙으로 통일하는 게 먼저',
-          '절대 경로 @/ 는 tsconfig paths 와 vite.config 두 곳 다 설정해야 한다 — 하나만 하면 에디터나 실행 중 한쪽이 깨진다',
+          '화살표 함수는 자기 this 가 없다 - JS 클래스 메서드를 떼어 부르면 this 가 사라지는 게 파이썬 self 와 다른 점',
+          'type 은 유니언 · 별칭, interface 는 선언 병합 · extends - 프로젝트 안에서 한 규칙으로 통일하는 게 먼저',
+          '절대 경로 @/ 는 tsconfig paths 와 vite.config 두 곳 다 설정해야 한다 - 하나만 하면 에디터나 실행 중 한쪽이 깨진다',
         ],
       },
       {
         title: 'JSX · 렌더링',
         items: [
-          '{} 안의 문자열은 이스케이프돼서 <img onerror> 같은 코드가 글자로 찍힌다 — dangerouslySetInnerHTML 만 예외',
-          'key 는 형제 사이에서 고유하고 바뀌지 않는 값 — 순서가 바뀌는 목록에 index 를 쓰면 입력값이 엉뚱한 줄에 남는다',
+          '{} 안의 문자열은 이스케이프돼서 <img onerror> 같은 코드가 글자로 찍힌다 - dangerouslySetInnerHTML 만 예외',
+          'key 는 형제 사이에서 고유하고 바뀌지 않는 값 - 순서가 바뀌는 목록에 index 를 쓰면 입력값이 엉뚱한 줄에 남는다',
           '렌더링은 컴포넌트 함수를 불러 화면 모양을 계산하는 것, 실제 DOM 을 바꾸는 건 그다음 커밋',
         ],
       },
@@ -656,7 +656,7 @@ export function LikeButton({ id }: { id: string }) {
         items: [
           '"요즘은 Promise 안 쓰고 async/await 만 쓴다"고 알았다 → async 함수는 항상 Promise 를 돌려준다',
           '인터섹션 & 를 합집합처럼 느꼈다 → 속성은 합쳐지지만 값의 범위로는 교집합이라 이름이 그렇다',
-          '책의 "세분화하면 렌더링 최적화"는 저절로 되지 않는다 — 부모가 다시 그려지면 자식은 props 가 같아도 다시 그려진다',
+          '책의 "세분화하면 렌더링 최적화"는 저절로 되지 않는다 - 부모가 다시 그려지면 자식은 props 가 같아도 다시 그려진다',
           '{count && ...} 는 count 가 0 이면 화면에 0 이 찍힌다 → count > 0 && 로 쓴다',
         ],
       },
@@ -670,27 +670,27 @@ export function LikeButton({ id }: { id: string }) {
     course: 'React',
     lesson: '1편',
     date: '2026.10.30',
-    title: 'React 시작하기 — 단방향 흐름 · 모듈 · 번들링 · 호이스팅',
+    title: 'React 시작하기 - 단방향 흐름 · 모듈 · 번들링 · 호이스팅',
     summary: 'React 는 상태가 바뀌면 화면을 다시 그리고, 데이터는 부모 → 자식 한 방향으로만 흐른다. 컴포넌트가 늘면 파일(모듈)로 쪼개고, 번들러가 import 관계를 따라가 몇 개 파일로 묶는다.',
     points: [
-      '가상 DOM 이라서 무조건 빠른 건 아니다 — 비교하는 것도 비용이고, 장점은 선언형으로 써도 충분히 빠르다는 것',
+      '가상 DOM 이라서 무조건 빠른 건 아니다 - 비교하는 것도 비용이고, 장점은 선언형으로 써도 충분히 빠르다는 것',
       'Vite · Next.js 는 번들러가 아니라 번들러를 품은 도구 (Vite 8 은 Rolldown, Next.js 16 은 Turbopack)',
-      '호이스팅은 코드를 옮기는 게 아니라 실행 전에 선언을 먼저 등록하는 것 — let · const 도 등록되지만 TDZ 에 걸린다',
+      '호이스팅은 코드를 옮기는 게 아니라 실행 전에 선언을 먼저 등록하는 것 - let · const 도 등록되지만 TDZ 에 걸린다',
     ],
     learned: [
       {
         title: '모듈 · 번들링',
         items: [
-          '번들러가 하는 일 — 합치기 · 안 쓰는 export 빼기(트리 셰이킹) · JSX/TS 변환 · 압축과 파일명 해시',
+          '번들러가 하는 일 - 합치기 · 안 쓰는 export 빼기(트리 셰이킹) · JSX/TS 변환 · 압축과 파일명 해시',
           '파일 3개를 묶었더니 1개가 되고, 아무도 안 쓰는 unused 함수는 빠졌다',
-          'import 는 파일 어디에 써도 먼저 처리된다 — 그래서 모듈 맨 위에 부작용 코드를 두지 않는다',
+          'import 는 파일 어디에 써도 먼저 처리된다 - 그래서 모듈 맨 위에 부작용 코드를 두지 않는다',
         ],
       },
       {
         title: 'npm · 도구',
         items: [
           '--save 는 npm 5 부터 기본값, 개발 도구는 -D, 전역 -g 대신 npx',
-          'create-react-app 은 2025년 2월 지원이 끝났다 — npm create vite@latest 나 create-next-app',
+          'create-react-app 은 2025년 2월 지원이 끝났다 - npm create vite@latest 나 create-next-app',
           'lazy(() => import()) 한 줄로 About 이 별도 파일로 나뉘었다(코드 스플리팅)',
         ],
       },
@@ -698,7 +698,7 @@ export function LikeButton({ id }: { id: string }) {
         title: '막힌 것 · 바로잡은 것',
         items: [
           '"번들링이 뭘 묶는다는 거지?" → 내가 쪼갠 JS · CSS 파일과 node_modules 의 라이브러리를 의존성 순서대로 묶는다',
-          '"호이스팅 = 선언을 맨 위로 옮기는 것"은 비유일 뿐 — 엔진은 코드를 옮기지 않고, 공식 단계 이름도 아니다',
+          '"호이스팅 = 선언을 맨 위로 옮기는 것"은 비유일 뿐 - 엔진은 코드를 옮기지 않고, 공식 단계 이름도 아니다',
           'var 는 중복 선언이 되고 let 은 안 된다 → let 중복은 파싱 단계 SyntaxError 라 첫 줄조차 실행되지 않았다',
           '책의 "단방향 데이터 바인딩"은 공식 문서에서 "단방향 데이터 흐름"이라고 부른다',
         ],
@@ -714,27 +714,27 @@ export function LikeButton({ id }: { id: string }) {
     course: '포트폴리오 검색',
     lesson: 'S0~S6',
     date: '2026.10.26',
-    title: '검색 알고리즘 — 정규화 · 역색인 · BM25 · 오타 고치기',
+    title: '검색 알고리즘 - 정규화 · 역색인 · BM25 · 오타 고치기',
     summary: '글자가 똑같아야만 찾던 사이트 검색을, 재는 도구부터 만든 뒤 정규화 → 역색인 → BM25 랭킹 → 오타·동의어 → 자동완성 → 추천 검색어 순서로 고쳤다. 숫자는 시험지와 처음 보는 검색어로 따로 쟀다.',
     points: [
-      '고치기 전에 시험지(검색어 + 정답)와 채점기부터 — 상위 3 적중률 · MRR · 0건 비율로 단계마다 비교',
+      '고치기 전에 시험지(검색어 + 정답)와 채점기부터 - 상위 3 적중률 · MRR · 0건 비율로 단계마다 비교',
       '찾는 범위를 넓히면(본문 · 조사) 순서가 무너진다 → BM25 로 많이 · 드물게 · 제목에 나온 말을 위로',
-      '시험지 95% vs 처음 보는 검색어 50% — 시험지를 보고 만든 규칙은 점수가 부풀려진다',
+      '시험지 95% vs 처음 보는 검색어 50% - 시험지를 보고 만든 규칙은 점수가 부풀려진다',
     ],
     learned: [
       {
         title: '측정',
         items: [
-          '검색어를 유형별로 나눠 잰다 — 같은 0건이라도 띄어쓰기 · 조사 · 본문 · 문장 · 오타로 원인이 달랐다',
+          '검색어를 유형별로 나눠 잰다 - 같은 0건이라도 띄어쓰기 · 조사 · 본문 · 문장 · 오타로 원인이 달랐다',
           '"결과가 없어야 하는 검색어"를 같이 둬야, 규칙을 느슨하게 할 때 엉뚱한 결과가 느는 걸 잡는다',
-          '규칙을 다 만든 뒤에 정한 검색어로 한 번만 잰다(검증 세트) — 그 결과를 보고 고치면 다시 오염된다',
+          '규칙을 다 만든 뒤에 정한 검색어로 한 번만 잰다(검증 세트) - 그 결과를 보고 고치면 다시 오염된다',
         ],
       },
       {
         title: '정규화 · 역색인',
         items: [
-          'NFC 로 합치고 전각 · 대소문자 · 공백 · 문장부호를 지워 검색어와 데이터를 같은 모양으로 — NFKC 는 ㄱ 같은 낱자까지 바꿔서 쓰지 않았다',
-          '역색인은 책 뒤의 찾아보기 — 두 글자 조각마다 문서 목록을 두고, 교집합으로 후보를 고른 뒤 글에서 한 번 더 확인',
+          'NFC 로 합치고 전각 · 대소문자 · 공백 · 문장부호를 지워 검색어와 데이터를 같은 모양으로 - NFKC 는 ㄱ 같은 낱자까지 바꿔서 쓰지 않았다',
+          '역색인은 책 뒤의 찾아보기 - 두 글자 조각마다 문서 목록을 두고, 교집합으로 후보를 고른 뒤 글에서 한 번 더 확인',
           '조사는 짧은 목록으로 떼되, 원래 모양과 뗀 모양 중 하나만 맞아도 찾은 것으로 본다',
         ],
       },
@@ -742,15 +742,15 @@ export function LikeButton({ id }: { id: string }) {
         title: '랭킹 (BM25)',
         items: [
           '많이 나올수록(하지만 끝없이 오르지 않게), 드문 낱말일수록, 짧은 글일수록 점수가 높다',
-          '같은 낱말도 칸마다 무게가 다르다 — 제목 3 · 태그 2 · 요약 1.5 · 본문 1',
-          '군더더기 말("어떻게", "했나")은 빼고, 낱말 3개부터는 75% 만 맞아도 결과에 — 2개는 전부(안드로이드 앱 ≠ 아무 앱)',
+          '같은 낱말도 칸마다 무게가 다르다 - 제목 3 · 태그 2 · 요약 1.5 · 본문 1',
+          '군더더기 말("어떻게", "했나")은 빼고, 낱말 3개부터는 75% 만 맞아도 결과에 - 2개는 전부(안드로이드 앱 ≠ 아무 앱)',
         ],
       },
       {
         title: '오타 · 자동완성',
         items: [
-          '편집거리는 자모로 센다 — 시스탬 → 시스템은 ㅐ → ㅔ 하나라 1',
-          '고치기는 결과가 0건일 때만 — 한영 자판(vmffosvhal → 플랜포미) → 편집거리 순서',
+          '편집거리는 자모로 센다 - 시스탬 → 시스템은 ㅐ → ㅔ 하나라 1',
+          '고치기는 결과가 0건일 때만 - 한영 자판(vmffosvhal → 플랜포미) → 편집거리 순서',
           '치는 도중의 "디장"은 자모 앞부분으로, "ㄷㅈㅇ"은 낱말 첫 글자의 초성으로 비교',
         ],
       },
@@ -759,7 +759,7 @@ export function LikeButton({ id }: { id: string }) {
         items: [
           '공백을 지우고 비교했더니 "AI" 가 "detail" 속에도 걸렸다(20건) → 3글자 이하 영어는 단어째로 비교(4건)',
           '초성 "ㄷㅈㅇ" 이 "모든 작업" 의 낱말 중간(든 작업)에 걸렸다 → 낱말 첫 글자에서만 맞추게',
-          '시험지에 "레이아웃"의 초성을 ㄹㅇㅇㅅ 으로 적었는데, "웃"의 첫소리는 ㅇ 이고 ㅅ 은 받침이었다 — 시험지 정답도 틀릴 수 있어서, 코드보다 정답부터 확인했다',
+          '시험지에 "레이아웃"의 초성을 ㄹㅇㅇㅅ 으로 적었는데, "웃"의 첫소리는 ㅇ 이고 ㅅ 은 받침이었다 - 시험지 정답도 틀릴 수 있어서, 코드보다 정답부터 확인했다',
         ],
       },
     ],
@@ -781,12 +781,12 @@ export function LikeButton({ id }: { id: string }) {
     course: '미니 인프런',
     lesson: '14회차',
     date: '2026.11.06',
-    title: '목록 페이지 상태 코드 확인 — res.ok · 구간별 상태 코드',
+    title: '목록 페이지 상태 코드 확인 - res.ok · 구간별 상태 코드',
     summary:
       'fetch 응답을 믿기 전에 res.ok 로 먼저 확인하고, 실패를 정직한 500 으로 내보내며, 에러 메시지와 Network 탭의 숫자가 왜 다른지 설명할 수 있다.',
     points: [
-      'fetch 는 404 · 500 에서 실패하지 않는다 — 확인은 res.ok 로 직접',
-      '확인은 res.json() 보다 먼저 — HTML 본문이면 SyntaxError 가 먼저 터진다',
+      'fetch 는 404 · 500 에서 실패하지 않는다 - 확인은 res.ok 로 직접',
+      '확인은 res.json() 보다 먼저 - HTML 본문이면 SyntaxError 가 먼저 터진다',
       'FastAPI 의 404 를 throw 하면 메시지엔 404, 브라우저엔 500',
     ],
     learned: [],
@@ -794,15 +794,15 @@ export function LikeButton({ id }: { id: string }) {
       {
         title: 'fetch 와 HTTP 에러',
         body: 'fetch 가 에러를 던지는 건 서버에 아예 닿지 못했을 때(FastAPI 가 꺼져 TypeError: fetch failed, 원인은 ECONNREFUSED)뿐이다. 404 · 500 은 서버가 대답은 한 것이라 정상 완료로 치고, res.ok 만 false 가 된다. res.ok 는 상태 코드가 200~299 일 때만 true 다.',
-        why: '확인하지 않으면 에러 응답을 정상 데이터인 줄 알고 다음 줄로 넘어간다 — 400 · 500 번대에서 에러를 던지는 axios 와 다른 점이다.',
+        why: '확인하지 않으면 에러 응답을 정상 데이터인 줄 알고 다음 줄로 넘어간다 - 400 · 500 번대에서 에러를 던지는 axios 와 다른 점이다.',
       },
       {
         title: 'res.json() 은 본문을 그대로 읽는다',
         body: 'res.json() 은 본문 글자를 JSON 규칙대로 JS 값으로 바꿀 뿐, 내용을 고치거나 비우지 않는다. 본문이 {"detail": ...} 객체면 courses 에 객체가 들어가 courses.map is not a function 이 나고, HTML 이나 일반 글자면 읽지 못해 SyntaxError 를 던진다.',
-        why: '잘못된 본문을 조용히 {} 나 null 로 바꿔 주지 않는다 — 그래서 원인이 가려지기 전에 상태 코드부터 본다.',
+        why: '잘못된 본문을 조용히 {} 나 null 로 바꿔 주지 않는다 - 그래서 원인이 가려지기 전에 상태 코드부터 본다.',
         code: {
           lang: 'bash',
-          caption: "SyntaxError 의 '<' · 'I' 는 본문 첫 글자 — JSON 대신 HTML · 글자가 왔다는 뜻",
+          caption: "SyntaxError 의 '<' · 'I' 는 본문 첫 글자 - JSON 대신 HTML · 글자가 왔다는 뜻",
           source: `node -e 'JSON.parse("<html><body>502 Bad Gateway</body></html>")'
 # SyntaxError: Unexpected token '<', "<html><bod"... is not valid JSON
 
@@ -818,7 +818,7 @@ node -e 'JSON.parse("Internal Server Error")'
       {
         title: 'res.ok 를 먼저 확인하고 throw',
         body: '순서는 fetch → if (!res.ok) throw → res.json() → return 이다. 실패하면 throw 해서 Next.js 의 500 페이지를 보여 주고, 메시지에 res.status 를 넣어 FastAPI 의 진짜 상태 코드를 남긴다. 빈 목록을 돌려주면 고장이 숨고, notFound(404)는 "원래 없음"으로 오해하게 만든다.',
-        why: '사용자가 강의가 원래 없는 것과 서버가 고장 난 것을 구별할 수 있어야 한다 — 404 는 상세 페이지처럼 정말 없을 때만 쓴다.',
+        why: '사용자가 강의가 원래 없는 것과 서버가 고장 난 것을 구별할 수 있어야 한다 - 404 는 상세 페이지처럼 정말 없을 때만 쓴다.',
         code: {
           lang: 'typescript',
           caption: '미니 인프런 pages/courses.tsx 의 getServerSideProps',
@@ -838,7 +838,7 @@ node -e 'JSON.parse("Internal Server Error")'
         why: '숫자를 볼 때 "누가 누구에게 준 응답인가"부터 보면, 한 화면에 404 와 500 이 같이 보여도 헷갈리지 않는다.',
         code: {
           lang: 'bash',
-          caption: '고장 실험 — 목록 fetch 주소를 /coursesx 로 바꿨을 때',
+          caption: '고장 실험 - 목록 fetch 주소를 /coursesx 로 바꿨을 때',
           source: `curl -i http://localhost:8000/coursesx
 # HTTP/1.1 404 Not Found … {"detail":"Not Found"}   ← FastAPI → Next.js 구간
 
@@ -856,7 +856,7 @@ node -e 'JSON.parse("Internal Server Error")'
     pitfalls: [
       '확인을 res.json() 뒤에 두면 HTML · 글자 본문에서 SyntaxError 가 먼저 터져 if 까지 가지 못한다',
       'error.tsx 는 page.tsx 와 같은 폴더에 나란히 둔다(app/courses/error.tsx)',
-      '배포 모드에서는 사용자에게 에러 메시지가 보이지 않고 서버 로그에만 남는다 — 그래도 메시지에 비밀번호 같은 값은 넣지 않는다',
+      '배포 모드에서는 사용자에게 에러 메시지가 보이지 않고 서버 로그에만 남는다 - 그래도 메시지에 비밀번호 같은 값은 넣지 않는다',
     ],
     tags: ['Next.js', 'TypeScript', '에러 처리', 'SSR'],
     keywords:
@@ -868,13 +868,13 @@ node -e 'JSON.parse("Internal Server Error")'
     course: '미니 인프런',
     lesson: '13회차',
     date: '2026.11.04',
-    title: '목록 → 상세 이동 — Link · pageProps · 절대 경로',
+    title: '목록 → 상세 이동 - Link · pageProps · 절대 경로',
     summary:
       '<a> 와 Next.js Link 의 차이를 Network 탭으로 확인하고, 강의마다 바뀌는 상세 주소를 href 에 바르게 쓸 수 있다.',
     points: [
       '<a> 는 전체 새로고침, Link 는 새 페이지의 데이터(pageProps JSON)만 받는다',
       'href 는 Next.js 화면 주소, fetch 는 FastAPI 데이터 주소',
-      '바뀌는 주소는 href={`/courses/${course.id}`} — 중괄호 · 백틱 · 맨 앞 /',
+      '바뀌는 주소는 href={`/courses/${course.id}`} - 중괄호 · 백틱 · 맨 앞 /',
     ],
     learned: [],
     sections: [
@@ -889,7 +889,7 @@ node -e 'JSON.parse("Internal Server Error")'
         why: 'getServerSideProps 는 링크로 와도 서버에서 실행되므로, 브라우저 쪽 React 가 그 결과를 받을 통로가 필요하다.',
         code: {
           lang: 'json',
-          caption: 'Link 로 이동했을 때 Network 탭 Response — <a> 였다면 Type document 로 완성된 HTML 이 온다',
+          caption: 'Link 로 이동했을 때 Network 탭 Response - <a> 였다면 Type document 로 완성된 HTML 이 온다',
           source: `{
   "pageProps": {
     "course": { "id": 1, "title": "파이썬", "instructor": "클로드", "price": 33000 }
@@ -906,14 +906,14 @@ node -e 'JSON.parse("Internal Server Error")'
       {
         title: 'JSX 중괄호 · 템플릿 리터럴 · 절대 경로',
         body: 'JSX 속성 값은 고정 글자면 따옴표, JS 로 계산할 값이면 { } 안에 넣는다. 문자열에 값을 끼울 때는 백틱과 ${} 가 한 세트라, 큰따옴표 안의 ${} 는 글자 그대로다. 그리고 / 로 시작해야 루트 기준 절대 경로가 되어 링크가 어느 페이지에 있든 같은 곳으로 간다.',
-        why: '/courses/1 페이지에서 상대 경로 courses/2 를 누르면 /courses/courses/2 로 간다 — 목록 페이지에서는 우연히 맞아서 늦게 발견된다.',
+        why: '/courses/1 페이지에서 상대 경로 courses/2 를 누르면 /courses/courses/2 로 간다 - 목록 페이지에서는 우연히 맞아서 늦게 발견된다.',
         code: {
           lang: 'typescript',
           caption: '미니 인프런 pages/courses.tsx 와 고장 실험',
-          source: `// 맞는 쓰기 — 값이 바뀌니 { } 안에 백틱 + \${}, 맨 앞은 /
+          source: `// 맞는 쓰기 - 값이 바뀌니 { } 안에 백틱 + \${}, 맨 앞은 /
 <Link href={\`/courses/\${course.id}\`}>{course.title}</Link>
 
-// 고장 실험 — 따옴표 안의 {course.id} 는 글자 그대로
+// 고장 실험 - 따옴표 안의 {course.id} 는 글자 그대로
 <Link href="/courses/{course.id}">{course.title}</Link>
 // 주소 /courses/%7Bcourse.id%7D → FastAPI 422 → 상세 페이지 notFound → 404`,
         },
@@ -921,14 +921,14 @@ node -e 'JSON.parse("Internal Server Error")'
       {
         title: 'Pages Router 와 App Router 의 Link',
         body: 'import 는 같지만, Pages Router 는 클릭할 때 getServerSideProps 결과(pageProps JSON)를 받아 브라우저의 React 가 페이지를 그린다. App Router 에는 getServerSideProps 가 없어서 서버 컴포넌트가 그린 결과(페이로드)를 받고, 바뀐 구간만 받는다. 미리 받기(prefetch)는 배포 모드에서만 동작한다.',
-        why: 'Pages 는 데이터를 받아 브라우저가 그리고, App 은 서버가 그려 브라우저가 들고 있을 JS 를 줄인다 — 어느 쪽이 무조건 가볍다고 할 수 없다.',
+        why: 'Pages 는 데이터를 받아 브라우저가 그리고, App 은 서버가 그려 브라우저가 들고 있을 JS 를 줄인다 - 어느 쪽이 무조건 가볍다고 할 수 없다.',
       },
     ],
     pitfalls: [
-      '로그에 %7B · %7D 가 보이면 { } 가 퍼센트 인코딩된 것 — 원래 글자로 되돌려 읽으면 원인이 바로 보인다',
+      '로그에 %7B · %7D 가 보이면 { } 가 퍼센트 인코딩된 것 - 원래 글자로 되돌려 읽으면 원인이 바로 보인다',
       'href 에 백틱을 쓰면서 { } 를 빼면(href=`…`) JSX 문법이 아니라 빌드 에러가 난다',
-      'Link 도 화면에는 진짜 <a> 를 그린다 — Ctrl+클릭 새 탭 열기와 검색 엔진의 링크 수집이 그대로 된다',
-      'Link 로 다른 페이지에 가도 이전 페이지 안의 입력값은 사라진다 — 지켜지는 건 앱 전체가 들고 있는 상태와 캐시다',
+      'Link 도 화면에는 진짜 <a> 를 그린다 - Ctrl+클릭 새 탭 열기와 검색 엔진의 링크 수집이 그대로 된다',
+      'Link 로 다른 페이지에 가도 이전 페이지 안의 입력값은 사라진다 - 지켜지는 건 앱 전체가 들고 있는 상태와 캐시다',
     ],
     tags: ['Next.js', 'React', '라우팅', 'SSR'],
     keywords:
@@ -940,20 +940,20 @@ node -e 'JSON.parse("Internal Server Error")'
     course: '미니 인프런',
     lesson: '12회차',
     date: '2026.11.03',
-    title: '강의 상세 SSR — 동적 라우트 [id] · fetch 상태 코드 확인',
+    title: '강의 상세 SSR - 동적 라우트 [id] · fetch 상태 코드 확인',
     summary: 'pages/courses/[id].tsx 파일 하나가 /courses/1, /courses/2 … 를 모두 받고, 주소의 그 자리 값은 문자열로 context.params.id 에 담긴다. fetch 는 응답이 오기만 하면 404 든 500 이든 성공으로 보니, 상태 코드를 직접 확인해 나눠야 한다.',
     points: [
-      'fetch 는 연결조차 못 할 때(ECONNREFUSED)만 에러를 던지고, 404 · 500 처럼 응답이 오면 조용히 통과시킨다 — 확인 없이 두면 빈 화면이 200 OK 로 나간다',
-      '400번대(없는 강의 404 · 숫자 아닌 id 422)는 { notFound: true }, 그 밖의 실패는 throw(500) — "없음"과 "고장"을 같은 화면으로 섞지 않는다',
-      '파일 이름에는 타입을 적는 자리가 없다 — Next.js 는 /courses/abc 도 받으니 거르는 건 우리(또는 FastAPI 의 course_id: int) 몫',
+      'fetch 는 연결조차 못 할 때(ECONNREFUSED)만 에러를 던지고, 404 · 500 처럼 응답이 오면 조용히 통과시킨다 - 확인 없이 두면 빈 화면이 200 OK 로 나간다',
+      '400번대(없는 강의 404 · 숫자 아닌 id 422)는 { notFound: true }, 그 밖의 실패는 throw(500) - "없음"과 "고장"을 같은 화면으로 섞지 않는다',
+      '파일 이름에는 타입을 적는 자리가 없다 - Next.js 는 /courses/abc 도 받으니 거르는 건 우리(또는 FastAPI 의 course_id: int) 몫',
     ],
     learned: [
       {
         title: '동적 라우트',
         items: [
-          '강의마다 파일을 만들면 강의가 늘 때마다 코드를 고치고 다시 배포해야 한다 — 대괄호 파일 하나로 대신한다',
-          '괄호는 프레임워크마다 다르다 — Next.js 는 [id], FastAPI 는 {course_id}, App Router 의 (이름)은 주소에 안 나오는 라우트 그룹',
-          'context.params 의 열쇠 이름은 대괄호 안 글자다 — [courseId].tsx 로 바꾸면 params.id 는 undefined',
+          '강의마다 파일을 만들면 강의가 늘 때마다 코드를 고치고 다시 배포해야 한다 - 대괄호 파일 하나로 대신한다',
+          '괄호는 프레임워크마다 다르다 - Next.js 는 [id], FastAPI 는 {course_id}, App Router 의 (이름)은 주소에 안 나오는 라우트 그룹',
+          'context.params 의 열쇠 이름은 대괄호 안 글자다 - [courseId].tsx 로 바꾸면 params.id 는 undefined',
           'pages/courses.tsx(목록)와 pages/courses/[id].tsx(상세)는 함께 있어도 된다',
         ],
       },
@@ -961,15 +961,15 @@ node -e 'JSON.parse("Internal Server Error")'
         title: '주소 값과 템플릿 리터럴',
         items: [
           '주소는 브라우저가 보낸 요청에 담긴 글자라 /courses/1 의 id 는 숫자가 아니라 문자열 "1"',
-          '백틱 + ${id} 를 써야 값이 들어간다 — 큰따옴표나 $ 없는 백틱 안의 {id}는 그냥 글자라 FastAPI 가 422',
-          '순서는 id 꺼내기 → fetch → 상태 코드 확인 → res.json() → props — 주소 확인, 받기, 쪽지 확인, 뜯기, 건네기',
+          '백틱 + ${id} 를 써야 값이 들어간다 - 큰따옴표나 $ 없는 백틱 안의 {id}는 그냥 글자라 FastAPI 가 422',
+          '순서는 id 꺼내기 → fetch → 상태 코드 확인 → res.json() → props - 주소 확인, 받기, 쪽지 확인, 뜯기, 건네기',
         ],
       },
       {
         title: '서버에서 일어나는 일',
         items: [
           'getServerSideProps 안의 console.log 는 브라우저 콘솔이 아니라 npm run dev 터미널에 찍힌다',
-          'Pages Router 컴포넌트는 서버 컴포넌트가 아니다 — 서버에서 한 번 그리고 브라우저에서 다시 실행해 이벤트를 붙인다(하이드레이션)',
+          'Pages Router 컴포넌트는 서버 컴포넌트가 아니다 - 서버에서 한 번 그리고 브라우저에서 다시 실행해 이벤트를 붙인다(하이드레이션)',
           'Ctrl+U 의 <!-- --> 는 React 가 글자 조각 경계에 끼운 표시라 하이드레이션 때 서버 HTML 과 맞춰 본다',
           '이미 앱 안에서 이동할 때는 페이지 HTML 대신 /_next/data/…json 으로 props 만 받아 온다',
         ],
@@ -977,7 +977,7 @@ node -e 'JSON.parse("Internal Server Error")'
       {
         title: '앞으로',
         items: [
-          '로그인이 붙으면 401 은 로그인 페이지로 redirect, 403 은 "권한 없음" — 400번대를 모두 404 로 묶는 규칙은 공개 상세 페이지에서만 맞다',
+          '로그인이 붙으면 401 은 로그인 페이지로 redirect, 403 은 "권한 없음" - 400번대를 모두 404 로 묶는 규칙은 공개 상세 페이지에서만 맞다',
           '자주 안 바뀌는 상세는 getStaticPaths + revalidate(ISR)로 미리 만들어 DB 부담을 줄일 수 있다',
           'App Router 에서는 app/courses/[id]/page.tsx 에서 await params 로 꺼내고 notFound() 를 부른다',
         ],
@@ -992,20 +992,20 @@ node -e 'JSON.parse("Internal Server Error")'
     course: '미니 인프런',
     lesson: '11회차',
     date: '2026.11.02',
-    title: '강의 목록 SSR — getServerSideProps · Ctrl+U vs Elements',
+    title: '강의 목록 SSR - getServerSideProps · Ctrl+U vs Elements',
     summary: 'CSR 은 서버가 빈 틀을 보내고 브라우저가 useEffect 로 채워서, Ctrl+U(서버 원본)에는 강의 제목이 없다. SSR 은 Next.js 서버가 데이터를 먼저 받아 props 로 넘기고, 내용이 다 찬 HTML 을 보낸다.',
     points: [
-      'Elements 에 있다고 서버가 보낸 HTML 에 있었던 건 아니다 — 검색 로봇과 링크 미리보기는 Ctrl+U 와 같은 것만 본다',
-      'FastAPI 를 끄니 fetch 가 ECONNREFUSED 로 514ms 만에 실패하고 페이지 전체가 500 — 그 500 은 Next.js 가 보낸 것',
+      'Elements 에 있다고 서버가 보낸 HTML 에 있었던 건 아니다 - 검색 로봇과 링크 미리보기는 Ctrl+U 와 같은 것만 본다',
+      'FastAPI 를 끄니 fetch 가 ECONNREFUSED 로 514ms 만에 실패하고 페이지 전체가 500 - 그 500 은 Next.js 가 보낸 것',
       '검색에 나와야 하는 공개 페이지는 SSR, 로그인 후 개인 화면은 CSR 로도 충분하다',
     ],
     learned: [
       {
         title: 'SSR',
         items: [
-          '순서가 핵심 — 데이터 받기 → HTML 만들기 → 보내기. 바뀌면 빈 목록으로 HTML 이 나간다',
+          '순서가 핵심 - 데이터 받기 → HTML 만들기 → 보내기. 바뀌면 빈 목록으로 HTML 이 나간다',
           'return { props: { courses } } 를 Next.js 가 열어서 넘기고, Courses({ courses }) 가 같은 이름으로 꺼낸다',
-          'Pages Router 는 컴포넌트가 브라우저에서도 실행돼서 서버 전용 일을 getServerSideProps 로 떼어 둔다 — App Router 는 컴포넌트 안에서 바로 await',
+          'Pages Router 는 컴포넌트가 브라우저에서도 실행돼서 서버 전용 일을 getServerSideProps 로 떼어 둔다 - App Router 는 컴포넌트 안에서 바로 await',
           'SSR HTML 은 처음엔 그림일 뿐, 브라우저가 같은 컴포넌트를 한 번 더 실행해 동작을 연결한다(하이드레이션)',
         ],
       },
@@ -1013,8 +1013,8 @@ node -e 'JSON.parse("Internal Server Error")'
         title: '실패를 읽는 법',
         items: [
           'ECONNREFUSED 는 그 포트에 아무도 없어 바로 거절, 타임아웃은 대답이 없어 기다리다 포기',
-          '꺼진 서버는 상태 코드를 못 보낸다 — 상태 코드는 응답이 있어야 생긴다',
-          'fetch 는 연결 실패에만 에러를 던진다 — 404 · 500 응답은 res.ok 를 따로 봐야 한다',
+          '꺼진 서버는 상태 코드를 못 보낸다 - 상태 코드는 응답이 있어야 생긴다',
+          'fetch 는 연결 실패에만 에러를 던진다 - 404 · 500 응답은 res.ok 를 따로 봐야 한다',
         ],
       },
       {
@@ -1035,28 +1035,28 @@ node -e 'JSON.parse("Internal Server Error")'
     course: 'Nightly 풀스택',
     lesson: 'S0-8',
     date: '2026.10.20',
-    title: 'TanStack Query 회원 화면 — 캐시 무효화와 405 · 422',
+    title: 'TanStack Query 회원 화면 - 캐시 무효화와 405 · 422',
     summary: '서버 데이터는 useState 가 아니라 TanStack Query 에 맡긴다. useQuery 가 ["users"] 이름표로 캐시하고, 등록이 성공하면 invalidateQueries 로 낡음 표시를 해 새로고침 없이 목록을 다시 채운다.',
     points: [
       '클라이언트 상태(입력창 · 모달)는 useState, 서버 상태(회원 목록)는 TanStack Query',
-      '405 는 주소는 있는데 그 메서드가 없다는 뜻 — 백엔드에 목록 조회(GET /api/v1/users)가 없었다',
-      '422 는 필드 약속이 어긋난 것 — 프론트가 password 를 안 보냈고, 응답 detail 에 위치가 정확히 적혀 있었다',
+      '405 는 주소는 있는데 그 메서드가 없다는 뜻 - 백엔드에 목록 조회(GET /api/v1/users)가 없었다',
+      '422 는 필드 약속이 어긋난 것 - 프론트가 password 를 안 보냈고, 응답 detail 에 위치가 정확히 적혀 있었다',
     ],
     learned: [
       {
         title: '캐시',
         items: [
-          'invalidateQueries 의 키는 글자 하나까지 같아야 한다 — "user" 를 무효화해도 "users" 는 그대로',
+          'invalidateQueries 의 키는 글자 하나까지 같아야 한다 - "user" 를 무효화해도 "users" 는 그대로',
           '["users"] 를 무효화하면 ["users", 3] 도 같이 낡음 처리된다',
-          '무효화를 빼도 창 포커스 · 재마운트 때는 다시 불러온다 — "바로 안 바뀐다"가 정확한 표현',
+          '무효화를 빼도 창 포커스 · 재마운트 때는 다시 불러온다 - "바로 안 바뀐다"가 정확한 표현',
         ],
       },
       {
         title: '구조',
         items: [
           '프론트도 사용자 쪽부터: 1 화면 → 2 훅 → 3 API 통신 (lib/api/client.ts)',
-          '훅은 Service 와 위치만 비슷하다 — 본업은 비즈니스 로직이 아니라 서버 상태 관리',
-          'fetch 는 웹 표준, axios 는 편의 기능을 얹은 외부 라이브러리 — 상위호환이 아니다',
+          '훅은 Service 와 위치만 비슷하다 - 본업은 비즈니스 로직이 아니라 서버 상태 관리',
+          'fetch 는 웹 표준, axios 는 편의 기능을 얹은 외부 라이브러리 - 상위호환이 아니다',
         ],
       },
     ],
@@ -1069,11 +1069,11 @@ node -e 'JSON.parse("Internal Server Error")'
     course: '미니 인프런',
     lesson: '3회차',
     date: '2026.10.18',
-    title: 'CORS 와 화면에 데이터 띄우기 — fetch · useState',
+    title: 'CORS 와 화면에 데이터 띄우기 - fetch · useState',
     summary: 'fetch 는 브라우저가 보내고, 포트가 다른 서버의 응답은 Access-Control-Allow-Origin 허가증이 있어야 JS 에 넘어온다. 받은 데이터는 set 함수로 신호를 보내야 화면이 다시 그려진다.',
     points: [
-      '서버 로그는 200 인데 화면은 비어 있다 — 막은 건 서버가 아니라 브라우저의 동일 출처 정책',
-      'allow_origins 에 "http://localhost:3000/" 처럼 / 를 붙이면 안 된다 — origin 은 프로토콜 + 주소 + 포트까지',
+      '서버 로그는 200 인데 화면은 비어 있다 - 막은 건 서버가 아니라 브라우저의 동일 출처 정책',
+      'allow_origins 에 "http://localhost:3000/" 처럼 / 를 붙이면 안 된다 - origin 은 프로토콜 + 주소 + 포트까지',
       '일반 변수에 넣으면 화면이 안 바뀐다 → setCourses(data) 호출 자체가 다시 그리라는 신호',
     ],
     learned: [
@@ -1090,7 +1090,7 @@ node -e 'JSON.parse("Internal Server Error")'
         items: [
           'useState([]) 만 쓰면 never[] 로 추측된다 → useState<Course[]>([])',
           'useEffect 의 빈 배열을 빼면 set → 다시 그림 → fetch 가 무한 반복된다',
-          'App Router 는 app/courses/page.tsx — 폴더 이름이 주소, page.tsx 가 문패',
+          'App Router 는 app/courses/page.tsx - 폴더 이름이 주소, page.tsx 가 문패',
         ],
       },
     ],
@@ -1104,10 +1104,10 @@ node -e 'JSON.parse("Internal Server Error")'
     course: '프론트엔드',
     lesson: '16강',
     date: '2026.10.04',
-    title: '레이아웃 — Flexbox & Grid',
+    title: '레이아웃 - Flexbox & Grid',
     summary: 'flex 는 한 줄 정렬, grid 는 행 · 열이 있는 전체 구조. 페이지는 grid, 카드 안은 flex 로 섞어 쓴다.',
     points: [
-      'flex 는 주축과 교차축 — justify-content 는 주축, align-items 는 교차축',
+      'flex 는 주축과 교차축 - justify-content 는 주축, align-items 는 교차축',
       '카드 안 버튼을 항상 맨 아래로: 세로 flex + margin-top: auto',
       'grid 는 repeat(auto-fit, minmax(220px, 1fr)) 로 미디어 쿼리 없이도 반응형',
     ],
@@ -1172,14 +1172,14 @@ node -e 'JSON.parse("Internal Server Error")'
     points: [
       '상속되는 건 color · font · line-height 같은 글자 속성, 안 되는 건 width · margin · border 같은 박스 속성',
       'button · input 은 폰트를 상속받지 않아서 font: inherit 를 자주 쓴다',
-      '상속받은 값은 명시도가 가장 약하다 — 자식에 직접 쓴 규칙이 항상 이긴다',
+      '상속받은 값은 명시도가 가장 약하다 - 자식에 직접 쓴 규칙이 항상 이긴다',
     ],
     learned: [
       {
         title: '상속 제어',
         items: [
           'inherit(부모 값) · initial(기본값) · unset(상속 속성이면 inherit, 아니면 initial)',
-          'CSS 변수도 상속된다 — .dark 안에서만 --main-color 를 바꾸는 식으로 테마를 만든다',
+          'CSS 변수도 상속된다 - .dark 안에서만 --main-color 를 바꾸는 식으로 테마를 만든다',
         ],
       },
     ],
@@ -1197,7 +1197,7 @@ node -e 'JSON.parse("Internal Server Error")'
     points: [
       '자식이 모두 float 이면 부모 높이가 0 이 된다',
       '해결: clear: both · clearfix(::after) · display: flow-root',
-      'float 은 이미지 옆 텍스트 감싸기 원래 용도로만 — 하지만 오래된 코드에 많아 개념은 필요하다',
+      'float 은 이미지 옆 텍스트 감싸기 원래 용도로만 - 하지만 오래된 코드에 많아 개념은 필요하다',
     ],
     learned: [
       {
@@ -1226,7 +1226,7 @@ node -e 'JSON.parse("Internal Server Error")'
         title: '자주 쓰는 곳',
         items: [
           'hover 시 살짝 떠오르기 translateY(-4px), 아코디언 화살표 rotate(180deg)',
-          '정중앙 정렬 translate(-50%, -50%) — % 는 자기 크기 기준',
+          '정중앙 정렬 translate(-50%, -50%) - % 는 자기 크기 기준',
           '최신 CSS 는 translate · scale · rotate 개별 속성으로 덮어쓰기 문제를 피한다',
         ],
       },
@@ -1244,7 +1244,7 @@ node -e 'JSON.parse("Internal Server Error")'
     summary: '@keyframes 로 중간 단계까지 정의해 상태 변화 없이도 자동 · 반복 실행한다. 두 지점만 잇는 transition 과의 차이를 정리했다.',
     points: [
       'transition 은 변화가 있어야 실행되는 두 지점, animation 은 자동 실행 · 여러 단계 · 반복',
-      'forwards 가 없으면 끝난 뒤 처음 상태로 돌아간다 — both 는 딜레이 동안에도 시작 상태 유지',
+      'forwards 가 없으면 끝난 뒤 처음 상태로 돌아간다 - both 는 딜레이 동안에도 시작 상태 유지',
       '움직임에 민감한 사용자를 위해 prefers-reduced-motion 을 존중한다',
     ],
     learned: [
@@ -1270,14 +1270,14 @@ node -e 'JSON.parse("Internal Server Error")'
     summary: '속성 값이 바뀔 때 즉시가 아니라 부드럽게 변하게 한다. 들어갈 때와 나올 때 모두 부드럽게 하려면 변하기 전 상태에 써야 한다.',
     points: [
       'property · duration · timing-function · delay 4가지',
-      'cubic-bezier 로 속도 곡선을 직접 만든다 — 포토샵 Curves 와 비슷한 개념',
+      'cubic-bezier 로 속도 곡선을 직접 만든다 - 포토샵 Curves 와 비슷한 개념',
       'transform · opacity 는 가볍고, width · top 은 레이아웃을 다시 계산해 무겁다',
     ],
     learned: [
       {
         title: '주의할 것',
         items: [
-          'transition: all 은 의도치 않은 속성까지 움직일 수 있다 — 필요한 속성만',
+          'transition: all 은 의도치 않은 속성까지 움직일 수 있다 - 필요한 속성만',
           'display: none 은 전환이 안 된다 → opacity + visibility 조합',
         ],
       },
@@ -1294,7 +1294,7 @@ node -e 'JSON.parse("Internal Server Error")'
     title: 'position',
     summary: 'static · relative · absolute · fixed · sticky 다섯 가지와 z-index, 그리고 배지 · 고정 헤더 · 정중앙 같은 자주 쓰는 패턴을 정리했다.',
     points: [
-      '부모에 relative, 자식에 absolute — 카드 모서리 배지의 기본 조합',
+      '부모에 relative, 자식에 absolute - 카드 모서리 배지의 기본 조합',
       'fixed 는 화면 기준, sticky 는 스크롤이 닿으면 붙는다(부모 안에서만)',
       'z-index 는 static 이 아닌 요소에서만, 부모의 쌓임 맥락을 넘지 못한다',
     ],
@@ -1343,7 +1343,7 @@ node -e 'JSON.parse("Internal Server Error")'
     course: '프론트엔드',
     lesson: '7강',
     date: '2026.10.04',
-    title: 'display — block · inline · inline-block',
+    title: 'display - block · inline · inline-block',
     summary: 'block 은 한 줄을 다 차지하고, inline 은 내용만큼 옆으로 나란히, inline-block 은 나란히 서면서 크기와 여백이 적용된다.',
     points: [
       'inline 에는 width · height · 위아래 margin 이 적용되지 않는다',
@@ -1369,7 +1369,7 @@ node -e 'JSON.parse("Internal Server Error")'
     summary: '배경색 · 배경 이미지의 repeat · position · size · attachment, 단축 속성, 그라디언트와 여러 겹 배경을 정리했다.',
     points: [
       'cover 는 빈틈없이 채우고 잘릴 수 있음, contain 은 전체가 보이고 여백이 생길 수 있음',
-      '배경을 쉼표로 여러 개 쓰면 앞에 쓴 게 위에 쌓인다 — 어두운 그라디언트 막 + 사진',
+      '배경을 쉼표로 여러 개 쓰면 앞에 쓴 게 위에 쌓인다 - 어두운 그라디언트 막 + 사진',
       '내용인 이미지는 <img> + alt, 꾸미기용은 background-image',
     ],
     learned: [
@@ -1394,7 +1394,7 @@ node -e 'JSON.parse("Internal Server Error")'
     title: '박스 모델',
     summary: '모든 요소는 content → padding → border → margin 상자다. box-sizing, 세로 margin 상쇄, 가운데 정렬과 overflow 를 정리했다.',
     points: [
-      'box-sizing: border-box 면 width 에 padding 과 border 까지 포함 — 계산이 편하다',
+      'box-sizing: border-box 면 width 에 padding 과 border 까지 포함 - 계산이 편하다',
       '세로로 만나는 margin 은 더해지지 않고 큰 쪽 하나만 적용된다',
       '블록 가로 가운데는 max-width + margin: 0 auto',
     ],
@@ -1460,14 +1460,14 @@ node -e 'JSON.parse("Internal Server Error")'
     title: 'CSS 기본',
     summary: 'CSS 문법과 적용하는 세 가지 방법, 색 표현, 어떤 스타일이 이기는지 정하는 캐스케이딩, 브라우저 기본 스타일 리셋을 정리했다.',
     points: [
-      '외부 파일로 연결하는 게 기본 — 여러 페이지가 같은 CSS 를 공유한다',
+      '외부 파일로 연결하는 게 기본 - 여러 페이지가 같은 CSS 를 공유한다',
       '이기는 순서: !important → 명시도(인라인 > id > class > 태그) → 나중에 쓴 것',
       '스타일이 안 먹으면 개발자 도구에서 취소선 그어진 속성을 본다',
     ],
     learned: [
       {
         title: '색과 리셋',
-        items: ['HEX · RGB(A) · HSL — 포토샵 · 피그마의 HEX 를 그대로 쓴다', '* { margin: 0; padding: 0; box-sizing: border-box }'],
+        items: ['HEX · RGB(A) · HSL - 포토샵 · 피그마의 HEX 를 그대로 쓴다', '* { margin: 0; padding: 0; box-sizing: border-box }'],
       },
     ],
     tags: ['CSS', '캐스케이딩', '명시도'],

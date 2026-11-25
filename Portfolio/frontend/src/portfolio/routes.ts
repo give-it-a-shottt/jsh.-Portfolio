@@ -2,7 +2,7 @@ export type ResultTab = 'all' | 'design' | 'fullstack' | 'study'
 
 const TABS: ResultTab[] = ['all', 'design', 'fullstack', 'study']
 
-/** 예전 탭 주소(Front · Back 따로) — 공유된 옛 링크가 Fullstack 탭으로 열리게 한다(F-011) */
+/** 예전 탭 주소(Front · Back 따로) - 공유된 옛 링크가 Fullstack 탭으로 열리게 한다(F-011) */
 const LEGACY_TABS: Record<string, ResultTab> = { front: 'fullstack', back: 'fullstack' }
 
 /** `#/search?q=…&tab=…` 주소. 빈 검색어와 '전체' 탭은 주소에서 뺀다 */
@@ -25,7 +25,7 @@ export function projectHref(slug: string) {
 }
 
 export function readTab(value: string | null): ResultTab {
-  // in 대신 hasOwn — '?tab=constructor' 같은 프로토타입 키가 탭 값으로 새지 않게 한다
+  // in 대신 hasOwn - '?tab=constructor' 같은 프로토타입 키가 탭 값으로 새지 않게 한다
   if (value && Object.hasOwn(LEGACY_TABS, value)) return LEGACY_TABS[value]
   return TABS.includes(value as ResultTab) ? (value as ResultTab) : 'all'
 }
@@ -34,12 +34,12 @@ export function goTo(href: string) {
   window.location.hash = href.replace(/^#/, '')
 }
 
-/** 새 탭으로 여는 주소인지 — 바깥 사이트와 정적 빌드(/accio-v1/)는 새 탭, 사이트 안 해시 주소는 그대로 */
+/** 새 탭으로 여는 주소인지 - 바깥 사이트와 정적 빌드(/accio-v1/)는 새 탭, 사이트 안 해시 주소는 그대로 */
 export function isExternal(href: string) {
   return !href.startsWith('#')
 }
 
-/** 예전 techlearn 시안 주소인지 — '/techlearn', '/techlearn/…'. 이 주소는 미니 인프런 배포 사이트로 보낸다(D-006) */
+/** 예전 techlearn 시안 주소인지 - '/techlearn', '/techlearn/…'. 이 주소는 미니 인프런 배포 사이트로 보낸다(D-006) */
 export function isOldTechlearnPath(path: string) {
   return path === '/techlearn' || path.startsWith('/techlearn/')
 }

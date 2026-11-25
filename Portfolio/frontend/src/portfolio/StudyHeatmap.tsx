@@ -1,6 +1,6 @@
 import { NOTES } from './notes'
 
-// 공부 잔디 — 노트 날짜를 하루 한 칸으로 센다. 열은 한 주(월~일), 진하기는 그날 올린 노트 수.
+// 공부 잔디 - 노트 날짜를 하루 한 칸으로 센다. 열은 한 주(월~일), 진하기는 그날 올린 노트 수.
 // 칸이 많아 화면 낭독기에는 칸마다 읽히지 않게 묶음 전체를 요약 한 줄로 읽힌다.
 
 const MAX_WEEKS = 26
@@ -30,7 +30,7 @@ const COUNTS = NOTES.reduce<Record<string, number>>((acc, note) => {
 }, {})
 const DATES = Object.keys(COUNTS).sort()
 
-/** 첫 노트가 있는 주의 월요일부터 마지막 노트가 있는 주까지 — 길면 최근 26주만 */
+/** 첫 노트가 있는 주의 월요일부터 마지막 노트가 있는 주까지 - 길면 최근 26주만 */
 function weeks() {
   if (DATES.length === 0) return []
   const last = parse(DATES[DATES.length - 1])

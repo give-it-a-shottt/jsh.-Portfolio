@@ -1,6 +1,6 @@
 import type { StudyNote } from '../notes'
 
-// MySQL 강의 10개(1~10강)를 4개 노트로 합쳤다 — F-012 노트 틀
+// MySQL 강의 10개(1~10강)를 4개 노트로 합쳤다 - F-012 노트 틀
 // SQL 코드는 MySQL 8.0.42 에서 돌려 확인했고, 파이썬 코드는 문법 검사와 sqlite3 로 흐름을 확인했다.
 // 예전 노트 10개(sql-rdbms … sql-crawling-pipeline) 주소는 replaces 로 이 노트들에 이어진다.
 
@@ -12,7 +12,7 @@ export const MYSQL_NOTES: StudyNote[] = [
     course: 'MySQL',
     lesson: '1 · 2 · 4강',
     date: '2026.10.04',
-    title: 'DB 기초와 테이블 만들기 — RDBMS · DDL · DCL',
+    title: 'DB 기초와 테이블 만들기 - RDBMS · DDL · DCL',
     summary:
       '관계형 DB 의 구조를 이해하고, 데이터베이스와 테이블을 만들고 고치고, 계정에 필요한 권한만 줄 수 있다.',
     points: [
@@ -28,7 +28,7 @@ export const MYSQL_NOTES: StudyNote[] = [
         why: '데이터를 한 곳에 모아 키로 이어 두면 중복이 줄고, 여러 시스템이 같은 최신 데이터를 본다.',
         code: {
           lang: 'sql',
-          caption: '고객 한 명이 주문 여러 건 — 두 테이블을 키로 잇는다',
+          caption: '고객 한 명이 주문 여러 건 - 두 테이블을 키로 잇는다',
           source: `CREATE TABLE customer (
     id INT PRIMARY KEY,          -- 기본키: 행을 구분
     name VARCHAR(20) NOT NULL
@@ -58,7 +58,7 @@ GRANT SELECT ON shop.memo TO 'reader'@'localhost';    -- DCL: 권한 (reader 계
         why: 'USE 로 DB 를 고르지 않고 db.table 처럼 DB 이름도 붙이지 않으면, 어느 DB 에 만들지 몰라 에러(No database selected)가 난다.',
         code: {
           lang: 'sql',
-          caption: '고객 테이블을 만들고 구조 확인 — DESC 는 컬럼 · 타입 · NULL 여부 · 키를 보여 준다',
+          caption: '고객 테이블을 만들고 구조 확인 - DESC 는 컬럼 · 타입 · NULL 여부 · 키를 보여 준다',
           source: `CREATE DATABASE customer_db;
 USE customer_db;
 
@@ -105,7 +105,7 @@ ALTER TABLE customer DROP COLUMN tel;`,
         },
       },
       {
-        title: '계정과 권한 — DCL',
+        title: '계정과 권한 - DCL',
         body: "터미널에서는 mysql -u 아이디 -p 로 접속하고, CREATE USER 로 계정을 만든 뒤 GRANT 로 권한을 준다. 계정은 '아이디'@'호스트' 한 쌍이라 'localhost' 는 DB 서버와 같은 컴퓨터에서 접속할 때만, '%' 는 어느 호스트에서든 접속을 허용한다. 권한 대상은 db.table(테이블 하나), db.*(DB 하나), *.*(모든 DB)로 정한다.",
         why: '서비스용 계정에 ALL 대신 필요한 권한만 주면, 계정이 새어 나가도 할 수 있는 일이 그만큼 좁다.',
         code: {
@@ -120,8 +120,8 @@ DROP USER 'app'@'localhost';`,
       },
     ],
     pitfalls: [
-      'MODIFY · CHANGE 에서 NOT NULL · DEFAULT 를 빠뜨리면 그 속성이 사라진다 — 바꾸기 전에 DESC 로 지금 정의를 본다',
-      'MySQL 8.0 의 GRANT 는 계정을 만들어 주지 않는다 — CREATE USER 를 먼저 한다',
+      'MODIFY · CHANGE 에서 NOT NULL · DEFAULT 를 빠뜨리면 그 속성이 사라진다 - 바꾸기 전에 DESC 로 지금 정의를 본다',
+      'MySQL 8.0 의 GRANT 는 계정을 만들어 주지 않는다 - CREATE USER 를 먼저 한다',
       'GRANT · CREATE USER 같은 계정 관리 문은 서버가 권한 테이블을 바로 다시 읽어 FLUSH PRIVILEGES 가 필요 없다(이미 접속한 세션의 전역 권한은 다시 접속해야 반영). FLUSH 는 권한 테이블을 INSERT · UPDATE · DELETE 로 직접 고쳤을 때만 필요하다',
       "'app'@'localhost' 와 'app'@'%' 는 서로 다른 계정이라 권한도 따로 준다",
     ],
@@ -138,7 +138,7 @@ DROP USER 'app'@'localhost';`,
     course: 'MySQL',
     lesson: '3 · 5강',
     date: '2026.10.04',
-    title: '데이터 다루기 — CRUD와 SELECT',
+    title: '데이터 다루기 - CRUD와 SELECT',
     summary:
       'INSERT · SELECT · UPDATE · DELETE 로 데이터를 다루고, 조건 · 집계 · 그룹 · 정렬을 붙여 원하는 숫자를 뽑을 수 있다.',
     points: [
@@ -149,7 +149,7 @@ DROP USER 'app'@'localhost';`,
     learned: [],
     sections: [
       {
-        title: 'INSERT — 넣기',
+        title: 'INSERT - 넣기',
         body: '모든 컬럼에 넣을 때는 값만 순서대로 적고, 일부만 넣을 때는 컬럼 이름을 함께 적는다. 적지 않은 컬럼은 DEFAULT 값(없으면 NULL)이 들어가고, NOT NULL 인데 DEFAULT 가 없으면 strict 모드(8.0 기본)에서 에러가 난다. AUTO_INCREMENT 컬럼은 다음 번호가 자동으로 채워진다.',
         why: '컬럼 이름을 적어 두면 나중에 테이블에 컬럼이 늘어도(새 컬럼에 기본값이 있거나 NULL 을 허용하면) INSERT 문이 깨지지 않는다.',
         code: {
@@ -167,12 +167,12 @@ INSERT INTO students (name) VALUES ('박민수');   -- age · grade 는 NULL`,
         },
       },
       {
-        title: 'SELECT 와 WHERE — 골라 보기',
+        title: 'SELECT 와 WHERE - 골라 보기',
         body: 'SELECT 뒤에 볼 컬럼을, WHERE 뒤에 조건을 적는다. 비교는 = · != (<>) · < · > · <= · >= 를, 조건을 묶을 때는 AND(모두 만족)와 OR(하나라도 만족)를 쓴다. AND 가 OR 보다 먼저 묶이므로 둘을 섞을 땐 괄호로 의도를 적는다.',
         why: '괄호가 없으면 A OR B AND C 가 A OR (B AND C) 로 읽혀 생각과 다른 행이 나온다.',
         code: {
           lang: 'sql',
-          caption: 'Sakila film — 등급이 PG 나 G 이면서, 개봉 연도가 2006 이나 2007',
+          caption: 'Sakila film - 등급이 PG 나 G 이면서, 개봉 연도가 2006 이나 2007',
           source: `SELECT title, rating, release_year
 FROM film
 WHERE (rating = 'PG' OR rating = 'G')
@@ -180,7 +180,7 @@ WHERE (rating = 'PG' OR rating = 'G')
         },
       },
       {
-        title: 'LIKE — 부분 일치',
+        title: 'LIKE - 부분 일치',
         body: 'LIKE 는 문자열 일부로 찾는다. % 는 0글자 이상 아무 글자, _ 는 정확히 한 글자를 뜻하고, NOT LIKE 는 그 반대다.',
         why: "이름 일부만 알거나 '~로 시작하는' 값을 찾을 때는 = 로 찾을 수 없다.",
         code: {
@@ -193,7 +193,7 @@ SELECT name FROM students WHERE name NOT LIKE '%민%'; -- 민이 없는 사람`,
         },
       },
       {
-        title: 'UPDATE · DELETE — 고치고 지우기',
+        title: 'UPDATE · DELETE - 고치고 지우기',
         body: 'UPDATE 는 SET 으로 값을 바꾸고(여러 컬럼은 쉼표로 잇는다), DELETE 는 행을 지운다. 둘 다 WHERE 를 빼면 테이블의 모든 행이 대상이 된다.',
         why: '실행 전에 같은 WHERE 로 SELECT 해 보면 몇 행이 바뀔지 미리 안다.',
         code: {
@@ -205,12 +205,12 @@ DELETE FROM students WHERE name = '김철수';`,
         },
       },
       {
-        title: '처음 보는 데이터 살피기 — LIMIT · COUNT · DISTINCT · 집계',
+        title: '처음 보는 데이터 살피기 - LIMIT · COUNT · DISTINCT · 집계',
         body: 'LIMIT n 은 앞에서 n행만, COUNT(*) 는 행 개수, DISTINCT 는 중복을 뺀 값 종류를 보여 준다. SUM · AVG · MAX · MIN 은 합계 · 평균 · 최댓값 · 최솟값을 낸다. 실습은 MySQL 공식 샘플 DB 인 Sakila(DVD 대여점)로 했다.',
         why: '현업 DB 는 설명이 부족한 경우가 많아서, 데이터를 직접 보며 컬럼 뜻부터 파악한다.',
         code: {
           lang: 'sql',
-          caption: 'Sakila — 처음 보는 테이블을 살필 때 쓰는 네 줄',
+          caption: 'Sakila - 처음 보는 테이블을 살필 때 쓰는 네 줄',
           source: `SELECT * FROM film LIMIT 1;          -- 컬럼 구조와 값
 SELECT COUNT(*) FROM customer;       -- 고객 수
 SELECT DISTINCT rating FROM film;    -- 등급 종류
@@ -239,7 +239,7 @@ ORDER BY total_films DESC;`,
       'AND · OR 을 괄호 없이 섞으면 AND 가 먼저 묶인다',
       'GROUP BY 기준에 없는 컬럼을 집계 함수 없이 SELECT 하면, MySQL 8.0 기본 설정(ONLY_FULL_GROUP_BY)에서는 대개 에러가 난다',
       'INSERT 에서 컬럼 이름을 빼면 모든 컬럼의 값을 테이블 순서대로 빠짐없이 적어야 한다',
-      'Workbench 는 safe update 모드가 기본이라, 키 컬럼이 아닌 WHERE 로 UPDATE · DELETE 하면 1175 에러가 난다 — WHERE id = … 처럼 기본키로 고르거나 잠깐 모드를 끈다',
+      'Workbench 는 safe update 모드가 기본이라, 키 컬럼이 아닌 WHERE 로 UPDATE · DELETE 하면 1175 에러가 난다 - WHERE id = … 처럼 기본키로 고르거나 잠깐 모드를 끈다',
     ],
     replaces: ['sql-dml', 'sql-select-advanced'],
     tags: ['MySQL', 'SQL', 'CRUD'],
@@ -254,7 +254,7 @@ ORDER BY total_films DESC;`,
     course: 'MySQL',
     lesson: '6 · 7 · 8강',
     date: '2026.10.04',
-    title: '관계와 성능 — 외래키 · 집계 · JOIN · 인덱스',
+    title: '관계와 성능 - 외래키 · 집계 · JOIN · 인덱스',
     summary:
       '외래키로 테이블을 묶고, JOIN · 서브쿼리 · HAVING 으로 여러 테이블을 엮어 집계하고, 인덱스를 만들고 확인할 수 있다.',
     points: [
@@ -265,7 +265,7 @@ ORDER BY total_films DESC;`,
     learned: [],
     sections: [
       {
-        title: '외래키 — 데이터 무결성',
+        title: '외래키 - 데이터 무결성',
         body: '외래키는 자식 테이블의 컬럼이 부모 테이블의 키(보통 기본키)를 참조하게 거는 제약이다. ON DELETE 같은 옵션을 따로 주지 않으면, 부모에 없는 값으로 자식에 INSERT 하거나 자식이 참조 중인 부모 행을 DELETE 할 때 에러가 난다. 그래서 넣을 때는 부모 → 자식, 지울 때는 자식 → 부모 순서이고, 현업에서는 제약이 강해 꼭 필요한 곳에만 걸기도 한다.',
         why: '두 테이블의 데이터가 어긋나지 않는 것(무결성)을 애플리케이션이 아니라 DB 가 지켜 준다.',
         code: {
@@ -292,7 +292,7 @@ INSERT INTO buyTbl (userID, prodName) VALUES ('nobody', '운동화');  -- 에러
         why: '집계 값은 묶은 뒤에야 생기므로 WHERE 에 COUNT(*) 를 쓰면 에러가 난다.',
         code: {
           lang: 'sql',
-          caption: '베스트 상품 데이터(items) — 네 절을 한 번에',
+          caption: '베스트 상품 데이터(items) - 네 절을 한 번에',
           source: `SELECT provider, COUNT(*)
 FROM items
 WHERE provider != ''        -- 1. 판매자 정보가 있는 상품만
@@ -302,7 +302,7 @@ ORDER BY COUNT(*) DESC;     -- 4. 많은 순으로`,
         },
       },
       {
-        title: 'JOIN — 테이블 이어 붙이기',
+        title: 'JOIN - 테이블 이어 붙이기',
         body: 'JOIN 은 공통 컬럼으로 두 테이블을 이어 하나의 결과로 만든다. INNER JOIN(그냥 JOIN 과 같다)은 양쪽에 짝이 있는 행만 남기고, LEFT · RIGHT OUTER JOIN 은 한쪽 테이블의 행은 모두 남기고 짝이 없는 쪽 컬럼을 NULL 로 채운다. 테이블 이름 뒤에 짧은 별칭을 붙이면 쓰기 편하다.',
         why: '정보를 여러 테이블에 나눠 저장했으니, 함께 보려면 조회할 때 다시 이어 붙여야 한다.',
         code: {
@@ -318,12 +318,12 @@ ORDER BY best_count DESC;`,
         },
       },
       {
-        title: 'OUTER JOIN + IS NULL — 한쪽에만 있는 데이터',
+        title: 'OUTER JOIN + IS NULL - 한쪽에만 있는 데이터',
         body: 'OUTER JOIN 에서 짝이 없는 행은 상대 테이블 컬럼이 NULL 로 나온다. 그래서 WHERE 상대.키 IS NULL 을 붙이면 한쪽에만 있는 행만 남는다.',
         why: 'NULL 은 = NULL 로 비교하면 참이 되지 않아서 IS NULL 로 걸러야 한다.',
         code: {
           lang: 'sql',
-          caption: 'Sakila — 어떤 고객도 쓰지 않는 주소 수',
+          caption: 'Sakila - 어떤 고객도 쓰지 않는 주소 수',
           source: `SELECT COUNT(*)
 FROM customer c
 RIGHT OUTER JOIN address a ON a.address_id = c.address_id
@@ -331,7 +331,7 @@ WHERE c.customer_id IS NULL;`,
         },
       },
       {
-        title: '서브쿼리 — 범위를 먼저 좁히기',
+        title: '서브쿼리 - 범위를 먼저 좁히기',
         body: '서브쿼리는 SQL 안에 괄호로 넣은 또 다른 SELECT 다. WHERE ... IN (목록), WHERE 컬럼 > (값 하나), FROM (임시 테이블) 자리에 들어가고, FROM 에 쓸 때 MySQL 은 별칭을 꼭 붙여야 한다. 결과에 여러 테이블의 컬럼이 필요하면 JOIN, 한 테이블 컬럼만 보고 조건만 다른 테이블에 있으면 서브쿼리가 자연스럽다.',
         why: '조건에 쓸 목록을 안쪽에서 먼저 뽑아 두면, 바깥 쿼리는 한 테이블만 보면 된다.',
         code: {
@@ -351,12 +351,12 @@ FROM (SELECT provider, COUNT(*) AS cnt FROM items GROUP BY provider) AS t;`,
         },
       },
       {
-        title: '인덱스 — 클러스터형과 보조',
+        title: '인덱스 - 클러스터형과 보조',
         body: '인덱스는 검색을 빠르게 하는 자료구조(보통 B-tree)다. InnoDB 에서 클러스터형 인덱스는 기본키 순서로 행 데이터 자체를 저장해 테이블당 하나뿐이고, 보조 인덱스는 키 값과 그 행의 기본키 값을 저장하고, 필요한 컬럼이 보조 인덱스에 없으면 그 기본키로 클러스터형 인덱스를 한 번 더 찾는다(다 있으면 커버링 인덱스라 다시 찾지 않는다). 보조 인덱스는 여러 개 만들 수 있고, UNIQUE 제약이나 인덱스가 없는 외래키 컬럼에는 자동으로 생긴다.',
         why: '읽기는 빨라지지만 INSERT · UPDATE · DELETE 때 인덱스도 함께 고쳐야 해서, 무조건 많이 만들지 않는다.',
         code: {
           lang: 'sql',
-          caption: "만들기 · 확인 · 지우기 — 기본키가 있으면 Key_name 이 PRIMARY 인 인덱스가 클러스터형",
+          caption: "만들기 · 확인 · 지우기 - 기본키가 있으면 Key_name 이 PRIMARY 인 인덱스가 클러스터형",
           source: `CREATE INDEX idx_name ON userTbl (name);          -- 보조 인덱스 추가
 ALTER TABLE userTbl ADD INDEX idx_addr (addr);    -- 같은 일, 다른 문법
 ALTER TABLE userTbl ADD CONSTRAINT uq_mDate UNIQUE (mDate);  -- 인덱스 자동 생성
@@ -366,9 +366,9 @@ ALTER TABLE userTbl DROP INDEX idx_addr;`,
       },
     ],
     pitfalls: [
-      'JOIN 은 상대 테이블에 짝이 여러 개면 결과 행도 그만큼 늘어난다 — IN 서브쿼리는 바깥 테이블 행이 늘지 않는다',
+      'JOIN 은 상대 테이블에 짝이 여러 개면 결과 행도 그만큼 늘어난다 - IN 서브쿼리는 바깥 테이블 행이 늘지 않는다',
       'WHERE 컬럼 > (서브쿼리) 처럼 값 하나와 비교하는 서브쿼리가 두 행 이상을 내면 에러가 난다',
-      '외래키가 쓰는 인덱스는 대신 쓸 인덱스가 없으면 DROP 이 막힌다(1553) — 외래키를 먼저 지운다',
+      '외래키가 쓰는 인덱스는 대신 쓸 인덱스가 없으면 DROP 이 막힌다(1553) - 외래키를 먼저 지운다',
     ],
     replaces: ['sql-fk-having', 'sql-join-subquery', 'sql-index'],
     tags: ['MySQL', 'JOIN', '인덱스', '외래키'],
@@ -383,7 +383,7 @@ ALTER TABLE userTbl DROP INDEX idx_addr;`,
     course: 'MySQL',
     lesson: '9 · 10강',
     date: '2026.10.04',
-    title: '파이썬으로 MySQL 다루기 — pymysql · 크롤링 저장',
+    title: '파이썬으로 MySQL 다루기 - pymysql · 크롤링 저장',
     summary:
       'pymysql 로 파이썬에서 SQL 을 안전하게 실행하고, 크롤링한 데이터를 MySQL 에 저장해 바로 분석할 수 있다.',
     points: [
@@ -456,7 +456,7 @@ for row in rest:
         },
       },
       {
-        title: '%s 바인딩 — UPDATE · DELETE 와 SQL 인젝션',
+        title: '%s 바인딩 - UPDATE · DELETE 와 SQL 인젝션',
         body: '값을 문자열 더하기(+)로 SQL 에 바로 붙이면 사용자 입력이 SQL 명령의 일부로 해석될 수 있다(SQL 인젝션). 그래서 SQL 에는 %s 만 적고 값은 execute() 의 두 번째 인자로 넘긴다. 숫자도 %s 로 적고, 값이 하나면 쉼표를 붙여 튜플로 만든다.',
         why: 'pymysql 이 값을 이스케이프해 값으로만 넣어 주므로, 값 안의 따옴표나 SQL 조각이 명령으로 실행되지 않는다.',
         code: {
@@ -514,8 +514,8 @@ SELECT CATEGORY, COUNT(*) FROM teddyproducts GROUP BY CATEGORY;`,
     ],
     pitfalls: [
       'commit() 없이 close() 하면 INSERT · UPDATE · DELETE 가 저장되지 않는다(pymysql 기본 autocommit 꺼짐)',
-      "('값') 은 튜플이 아니라 그냥 값이다 — pymysql 은 값 하나를 그냥 넘기는 방식을 없앨 예정(deprecated)이라 ('값',) 처럼 튜플로 넘긴다",
-      '숫자 자리도 %s 로 적는다 — pymysql 은 값을 먼저 문자열로 이스케이프해 넣으므로 %d 는 TypeError(ProgrammingError)가 난다',
+      "('값') 은 튜플이 아니라 그냥 값이다 - pymysql 은 값 하나를 그냥 넘기는 방식을 없앨 예정(deprecated)이라 ('값',) 처럼 튜플로 넘긴다",
+      '숫자 자리도 %s 로 적는다 - pymysql 은 값을 먼저 문자열로 이스케이프해 넣으므로 %d 는 TypeError(ProgrammingError)가 난다',
       'select_one() 은 못 찾으면 None 을 돌려줘서, 바로 .get_text() 를 부르면 AttributeError 가 난다',
     ],
     replaces: ['sql-pymysql', 'sql-crawling-pipeline'],

@@ -4,12 +4,12 @@ import { type Crop, type Product, won } from './data'
 import { flaseekHref } from './routes'
 import { toggleWish, useToast, useWishes } from './store'
 
-/** 스프라이트(products.webp)의 가로 크기 — crop 좌표를 비율로 바꿀 때 쓴다 */
+/** 스프라이트(products.webp)의 가로 크기 - crop 좌표를 비율로 바꿀 때 쓴다 */
 const SPRITE_WIDTH = 1040
 
 /**
  * 스프라이트 한 장에서 crop 영역만 보여준다. 칸의 비율이 crop 과 달라도 object-fit: cover 처럼 가운데를 채운다.
- * 칸 크기(cqw·cqh)를 알아야 해서 container-type: size 를 쓴다 — className 으로 높이(또는 aspect)를 꼭 정한다.
+ * 칸 크기(cqw·cqh)를 알아야 해서 container-type: size 를 쓴다 - className 으로 높이(또는 aspect)를 꼭 정한다.
  */
 export function SpriteImage({ crop, className = '', alt = '' }: { crop: Crop; className?: string; alt?: string }) {
   const ratio = crop.w / crop.h
@@ -47,13 +47,13 @@ export function Tag({ label }: { label: string }) {
   )
 }
 
-/** 버튼 — L 48 · MO 주요 CTA 56. 주요는 진한 핑크 채움 + 흰 글자, 보조는 선 + 검정 글자 */
+/** 버튼 - L 48 · MO 주요 CTA 56. 주요는 진한 핑크 채움 + 흰 글자, 보조는 선 + 검정 글자 */
 export const BUTTON_PRIMARY =
   'flex items-center justify-center rounded-sm bg-flaseek px-6 text-16 font-semibold whitespace-nowrap text-white'
 export const BUTTON_SECONDARY =
   'flex items-center justify-center rounded-sm border border-regular bg-white px-6 text-16 font-semibold whitespace-nowrap text-main'
 
-/** 알약 탭 — 높이 40, 선택은 진한 핑크 채움 */
+/** 알약 탭 - 높이 40, 선택은 진한 핑크 채움 */
 export function PillTab({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
   return (
     <button
@@ -69,7 +69,7 @@ export function PillTab({ label, selected, onClick }: { label: string; selected:
   )
 }
 
-/** 필터 칩 — 높이 36, 선택은 옅은 핑크 + 핑크 글자·테두리 */
+/** 필터 칩 - 높이 36, 선택은 옅은 핑크 + 핑크 글자·테두리 */
 export function FilterChip({ label, selected, onClick, lang }: { label: string; selected: boolean; onClick: () => void; lang?: string }) {
   return (
     <button
@@ -86,13 +86,13 @@ export function FilterChip({ label, selected, onClick, lang }: { label: string; 
   )
 }
 
-/** 하트 아이콘(20·24) — 찜 상태에 따라 색·채움을 바꾸려고 인라인으로 그린다 */
+/** 하트 아이콘(20·24) - 찜 상태에 따라 색·채움을 바꾸려고 인라인으로 그린다 */
 const HEART_PATHS = {
   20: 'M17.3667 3.84167C16.941 3.41584 16.4357 3.07804 15.8795 2.84757C15.3232 2.6171 14.7271 2.49848 14.125 2.49848C13.5229 2.49848 12.9268 2.6171 12.3705 2.84757C11.8143 3.07804 11.309 3.41584 10.8833 3.84167L10 4.725L9.11667 3.84167C8.25692 2.98192 7.09086 2.49892 5.875 2.49892C4.65914 2.49892 3.49308 2.98192 2.63333 3.84167C1.77359 4.70141 1.29059 5.86747 1.29059 7.08333C1.29059 8.29919 1.77359 9.46526 2.63333 10.325L3.51667 11.2083L10 17.6917L16.4833 11.2083L17.3667 10.325C17.7925 9.89937 18.1303 9.39401 18.3608 8.8378C18.5912 8.28158 18.7099 7.68541 18.7099 7.08333C18.7099 6.48126 18.5912 5.88509 18.3608 5.32887C18.1303 4.77265 17.7925 4.2673 17.3667 3.84167Z',
   24: 'M20.84 4.61C20.3292 4.099 19.7228 3.69365 19.0554 3.41708C18.3879 3.14052 17.6725 2.99817 16.95 2.99817C16.2275 2.99817 15.5121 3.14052 14.8446 3.41708C14.1772 3.69365 13.5708 4.099 13.06 4.61L12 5.67L10.94 4.61C9.90831 3.57831 8.50903 2.99871 7.05 2.99871C5.59097 2.99871 4.19169 3.57831 3.16 4.61C2.12831 5.64169 1.54871 7.04097 1.54871 8.5C1.54871 9.95903 2.12831 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.351 11.8792 21.7564 11.2728 22.0329 10.6054C22.3095 9.9379 22.4518 9.22249 22.4518 8.5C22.4518 7.77751 22.3095 7.0621 22.0329 6.39464C21.7564 5.72719 21.351 5.12076 20.84 4.61Z',
 }
 
-/** 찜 버튼 — 찜한 상품은 브랜드 핑크 바탕에 흰 하트 */
+/** 찜 버튼 - 찜한 상품은 브랜드 핑크 바탕에 흰 하트 */
 export function WishButton({ id, className = '', iconSize = 20 }: { id: number; className?: string; iconSize?: 20 | 24 }) {
   const wished = useWishes().has(id)
   return (
@@ -112,7 +112,7 @@ export function WishButton({ id, className = '', iconSize = 20 }: { id: number; 
 }
 
 /**
- * 상품 카드 — 정보 순서 고정: 이미지 → 상품명 → 할인율+판매가(+정가) → 장당가(세트) → 별점 → 태그 최대 2개.
+ * 상품 카드 - 정보 순서 고정: 이미지 → 상품명 → 할인율+판매가(+정가) → 장당가(세트) → 별점 → 태그 최대 2개.
  * 모바일 2열은 상품명 13·가격 14, PC 4열은 상품명 14·가격 20.
  */
 export function ProductCard({ product }: { product: Product }) {
@@ -148,7 +148,7 @@ export function ProductCard({ product }: { product: Product }) {
   )
 }
 
-/** 상품 카드 격자 — 모바일 2열, 태블릿 3열, PC 4열 */
+/** 상품 카드 격자 - 모바일 2열, 태블릿 3열, PC 4열 */
 export function ProductGrid({ products }: { products: Product[] }) {
   return (
     <div className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-6 lg:gap-y-10">
@@ -159,7 +159,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
   )
 }
 
-/** 화면 아래 토스트 — 모바일은 하단 구매바 위로 띄운다 */
+/** 화면 아래 토스트 - 모바일은 하단 구매바 위로 띄운다 */
 export function ToastHost() {
   const toast = useToast()
   if (!toast) return null

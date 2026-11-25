@@ -1,4 +1,4 @@
-"""real 클라이언트 — 가짜 유미 서버(httpx.MockTransport)로 확인한다. 실제 네트워크는 쓰지 않는다."""
+"""real 클라이언트 - 가짜 유미 서버(httpx.MockTransport)로 확인한다. 실제 네트워크는 쓰지 않는다."""
 
 import asyncio
 from datetime import datetime, timedelta, timezone
@@ -100,7 +100,7 @@ def test_empty_key_is_refused():
 
 
 def test_owner_calls_never_reach_yumi():
-    """실시간 문의·예약은 실제 사장님께 보내지 않는다 — HTTP 요청이 0개여야 한다."""
+    """실시간 문의·예약은 실제 사장님께 보내지 않는다 - HTTP 요청이 0개여야 한다."""
     fake = FakeYumi()
     yumi = client(fake)
 
@@ -165,6 +165,6 @@ def test_daily_quota_is_not_waited_for():
     ],
 )
 def test_unexpected_body_is_a_yumi_error(response):
-    """봉투 모양이 달라도 500 이 아니라 YumiError — 결과 화면이 저장본으로 대신할 수 있게."""
+    """봉투 모양이 달라도 500 이 아니라 YumiError - 결과 화면이 저장본으로 대신할 수 있게."""
     with pytest.raises(YumiError):
         asyncio.run(client(FakeYumi([response])).search_nearby(nearby()))

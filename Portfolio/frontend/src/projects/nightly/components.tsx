@@ -19,9 +19,9 @@ import tabSparkles from './assets/tab-sparkles.svg'
 import tabUser from './assets/tab-user.svg'
 import { nightlyHref } from './routes'
 
-// Nightly 공통 조각 — 유리 클래스 · 빛 번짐 · 로고 · 상태 표시 · 배지 · 버튼 · 헤더 · 푸터 · 점수 링 · 모바일 탭 바
+// Nightly 공통 조각 - 유리 클래스 · 빛 번짐 · 로고 · 상태 표시 · 배지 · 버튼 · 헤더 · 푸터 · 점수 링 · 모바일 탭 바
 
-/** 유리 테두리 — 윗변이 가장 밝고 아랫변, 옆 순서로 옅어진다 */
+/** 유리 테두리 - 윗변이 가장 밝고 아랫변, 옆 순서로 옅어진다 */
 const EDGE = 'border border-nt-edge border-t-nt-edge-top border-b-nt-edge-bottom'
 
 /** 유리 카드 3단계 (시안 Glass/Default · Subtle · Elevated). 바탕은 위 12% → 아래 3% 흰빛 */
@@ -34,7 +34,7 @@ export const GLASS_CONTROL = `${EDGE} bg-linear-to-b from-white/10 to-white/3`
 export const GLASS_BAR =
   'border-b border-nt-edge-bottom bg-linear-to-b from-white/12 to-white/3 shadow-nt-glass inset-shadow-nt-specular backdrop-blur-[12px]'
 
-/** 카드 안 숫자 묶음 — 박스 대신 세로 구분선으로 나눈다(시안 수정안 '중첩 박스 정리') */
+/** 카드 안 숫자 묶음 - 박스 대신 세로 구분선으로 나눈다(시안 수정안 '중첩 박스 정리') */
 export const STAT = 'flex flex-1 flex-col gap-1 py-1 not-first:border-l not-first:border-nt-line-light not-first:pl-4'
 
 const GLOWS = { 860: glow860, 880: glow880, 940: glow940 }
@@ -63,7 +63,7 @@ export function Ambient({ glows }: { glows: { size: keyof typeof GLOWS; x: numbe
   )
 }
 
-/** 반짝이는 유리 상자 — 로고 · AI 아바타 · 보내기 버튼 */
+/** 반짝이는 유리 상자 - 로고 · AI 아바타 · 보내기 버튼 */
 export const MARK =
   'flex shrink-0 items-center justify-center border border-white/35 bg-linear-to-b from-white/16 to-white/4 shadow-nt-mark inset-shadow-nt-mark backdrop-blur-[6px]'
 
@@ -87,11 +87,11 @@ export function Logo() {
 }
 
 const PULSE_TONE = {
-  /** 헤더 — 바탕 없이 초록 점 + 초록 글자 */
+  /** 헤더 - 바탕 없이 초록 점 + 초록 글자 */
   plain: { box: '', dot: pulseDot, text: 'text-nt-success' },
-  /** 카드 · 머리말 — 옅은 초록 바탕 */
+  /** 카드 · 머리말 - 옅은 초록 바탕 */
   soft: { box: 'bg-nt-success-soft', dot: pulseDot, text: 'text-nt-success' },
-  /** 응답 코드처럼 덜 중요한 상태 — 회색 점 + 옅은 글자 */
+  /** 응답 코드처럼 덜 중요한 상태 - 회색 점 + 옅은 글자 */
   muted: { box: 'bg-nt-success-soft', dot: pulseMutedDot, text: 'text-nt-weak' },
 }
 
@@ -124,7 +124,7 @@ export function Badge({ tone = 'success', children }: { tone?: keyof typeof BADG
   )
 }
 
-/** 파란 주 버튼(인디고 빛) — 페이지 이동이라 <a> 로 둔다 */
+/** 파란 주 버튼(인디고 빛) - 페이지 이동이라 <a> 로 둔다 */
 export const PRIMARY_BUTTON =
   'flex h-12 items-center justify-center rounded-sm bg-nt-cta px-6 text-16 font-semibold text-nt-main shadow-nt-cta inset-shadow-nt-button transition-[filter] hover:brightness-110'
 export const GHOST_BUTTON =
@@ -272,7 +272,7 @@ const RING = {
   lg: { bg: ringBgLg, fg: ringFgLg, size: 200, box: 'size-50' },
 }
 
-/** 수면 점수 링 — 시안의 87점 원호 그림을 그대로 쓰고 가운데에 숫자를 얹는다 */
+/** 수면 점수 링 - 시안의 87점 원호 그림을 그대로 쓰고 가운데에 숫자를 얹는다 */
 export function ScoreRing({ size, children }: { size: keyof typeof RING; children: ReactNode }) {
   const ring = RING[size]
   return (

@@ -36,14 +36,14 @@ function SectionTitle({ id, title, description, action }: SectionTitleProps) {
   )
 }
 
-// 메인 — 대담함은 Before/After 히어로 하나. 나머지 섹션은 같은 간격(PC 60 · MO 40), 같은 카드, 같은 제목 크기로 차분하게.
+// 메인 - 대담함은 Before/After 히어로 하나. 나머지 섹션은 같은 간격(PC 60 · MO 40), 같은 카드, 같은 제목 크기로 차분하게.
 export default function MainPage() {
   const [bestTab, setBestTab] = useState<BestTab>('all')
   const best = PRODUCTS.filter((product) => bestTab === 'all' || product.categories.includes(bestTab)).slice(0, 4)
 
   return (
     <>
-      {/* 히어로 — PC 슬라이더 6칸 + 카피 6칸, 모바일은 슬라이더 위·카피 아래 */}
+      {/* 히어로 - PC 슬라이더 6칸 + 카피 6칸, 모바일은 슬라이더 위·카피 아래 */}
       <section aria-labelledby="hero-title" className="bg-flaseek-pink-soft pt-6 pb-8 lg:py-20">
         <Container className="flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-6">
           <BeforeAfterSlider className="h-65 w-full shrink-0 lg:h-100 lg:w-[calc(50%-12px)]" />
@@ -75,7 +75,7 @@ export default function MainPage() {
         </Container>
       </section>
 
-      {/* 카테고리 — PC 4칸, 모바일 가로 스크롤 */}
+      {/* 카테고리 - PC 4칸, 모바일 가로 스크롤 */}
       <nav aria-label="카테고리 바로가기" className="pt-10 lg:pt-15">
         <Container>
           <ul className="scrollbar-none -mr-5 flex gap-3 overflow-x-auto pr-5 lg:mr-0 lg:gap-6 lg:overflow-visible lg:pr-0">
@@ -91,7 +91,7 @@ export default function MainPage() {
         </Container>
       </nav>
 
-      {/* BEST — 탭으로 바로 걸러 보기 */}
+      {/* BEST - 탭으로 바로 걸러 보기 */}
       <section aria-labelledby="best-title" className="pt-10 lg:pt-15">
         <Container className="flex flex-col gap-4 lg:gap-6">
           <SectionTitle id="best-title" title="지금 많이 찾는 상품" action={{ label: '전체 보기', href: flaseekHref('/list') }} />
@@ -104,7 +104,7 @@ export default function MainPage() {
         </Container>
       </section>
 
-      {/* 두께로 고르기 — 업계 말(두께 이름)을 그대로 쓰고 한 줄로 풀어 준다 */}
+      {/* 두께로 고르기 - 업계 말(두께 이름)을 그대로 쓰고 한 줄로 풀어 준다 */}
       <section aria-labelledby="thickness-title" className="pt-10 pb-25 lg:pt-15">
         <Container className="flex flex-col gap-4 lg:gap-6">
           <SectionTitle

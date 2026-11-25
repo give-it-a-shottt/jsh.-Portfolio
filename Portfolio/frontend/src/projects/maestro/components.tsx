@@ -13,15 +13,15 @@ import timeEmptyIcon from './icons/time-empty.svg'
 import { useMaestro } from './store'
 import type { ConditionKey, Hours, Pick, Status } from './types'
 
-// 피그마 「마에스트로」 Design System — 리뉴얼 › M-1 Signature · M-2 UI Components 를 옮긴 것.
+// 피그마 「마에스트로」 Design System - 리뉴얼 › M-1 Signature · M-2 UI Components 를 옮긴 것.
 // 아이콘은 피그마에서 내려받은 Phosphor SVG(icons/)를 색까지 그대로 쓴다.
 
-/** 장식 아이콘 — 같은 뜻을 글자가 전달하므로 읽지 않는다 */
+/** 장식 아이콘 - 같은 뜻을 글자가 전달하므로 읽지 않는다 */
 export function Icon({ src, size }: { src: string; size: number }) {
   return <img src={src} alt="" aria-hidden="true" width={size} height={size} className="shrink-0" />
 }
 
-/** 'maestro' 로고 — 로고만 ExtraBold(800). 본문 굵기 3가지(400 · 500 · 600) 규칙의 예외 */
+/** 'maestro' 로고 - 로고만 ExtraBold(800). 본문 굵기 3가지(400 · 500 · 600) 규칙의 예외 */
 export function Logo({ href }: { href?: string }) {
   const text = (
     <span lang="en" className="text-24 leading-[1.3] font-[800] text-mr-primary">
@@ -52,7 +52,7 @@ export function ServerWakeNotice() {
   )
 }
 
-/** GNB Sub MO — 뒤로 + 페이지 타이틀 (56) */
+/** GNB Sub MO - 뒤로 + 페이지 타이틀 (56) */
 export function GnbSub({ title, backHref, className = '' }: { title: string; backHref: string; className?: string }) {
   return (
     <header className={`flex h-14 items-center border-b border-mr-line bg-white px-1.5 ${className}`}>
@@ -64,7 +64,7 @@ export function GnbSub({ title, backHref, className = '' }: { title: string; bac
   )
 }
 
-/** GNB PC — 로고 + 지금 보는 조건 (72, 안쪽 1200) */
+/** GNB PC - 로고 + 지금 보는 조건 (72, 안쪽 1200) */
 export function GnbPc({ context, homeHref }: { context: string; homeHref: string }) {
   return (
     <header className="flex h-[72px] items-center justify-center border-b border-mr-line bg-white">
@@ -76,7 +76,7 @@ export function GnbPc({ context, homeHref }: { context: string; homeHref: string
   )
 }
 
-/** Tag — 조건 칩 (S 32). 선택하면 primary 테두리 + soft 바탕 + check — 색 하나에만 기대지 않는다 */
+/** Tag - 조건 칩 (S 32). 선택하면 primary 테두리 + soft 바탕 + check - 색 하나에만 기대지 않는다 */
 export function Tag({
   label,
   selected = false,
@@ -119,7 +119,7 @@ const BADGE_TONE = {
   black: 'bg-mr-black-soft text-mr-black',
 }
 
-/** Badge — Soft. S 20(카드) / M 24(상세) */
+/** Badge - Soft. S 20(카드) / M 24(상세) */
 export function Badge({ tone, size = 'S', children }: { tone: keyof typeof BADGE_TONE; size?: 'S' | 'M'; children: ReactNode }) {
   const sizing = size === 'S' ? 'h-5 px-1.5 text-12' : 'h-6 px-2 text-13'
   return <span className={`flex shrink-0 items-center rounded-mr-chip font-medium whitespace-nowrap ${sizing} ${BADGE_TONE[tone]}`}>{children}</span>
@@ -134,7 +134,7 @@ export const StatusBadge = ({ status, size }: { status: Status; size?: 'S' | 'M'
 const TICKS = ['10', '14', '18', '22', '02']
 
 /**
- * Now Bar — 영업시간 막대. 축 10:00~02:00 고정이라 3곳을 같은 눈으로 비교한다.
+ * Now Bar - 영업시간 막대. 축 10:00~02:00 고정이라 3곳을 같은 눈으로 비교한다.
  * 영업 구간은 primary, 브레이크는 끊긴 빈 트랙, 라스트오더는 2×8 눈금, 지금은 앰버 + 검정 테두리 마커.
  * 같은 정보를 '15:00 브레이크 전까지 2시간' 글자로 주므로 막대는 읽지 않는다(aria-hidden).
  */
@@ -160,7 +160,7 @@ export function NowBar({ hours, at, animate = false }: { hours: Hours; at: strin
       {hours.lastOrder !== null && (
         <div className="absolute top-1 h-2 w-0.5 -translate-x-1/2 bg-mr-sub" style={{ left: `${axisPercent(hours.lastOrder)}%` }} />
       )}
-      {/* 마커 — 첫 카드만 진입할 때 0 → 지금 위치로 300ms 움직인다 (세 장이 같이 움직이면 산만해서) */}
+      {/* 마커 - 첫 카드만 진입할 때 0 → 지금 위치로 300ms 움직인다 (세 장이 같이 움직이면 산만해서) */}
       <motion.div
         className="absolute inset-x-0 top-0.5"
         initial={{ x: moving ? '0%' : `${now}%` }}
@@ -178,7 +178,7 @@ export function NowBar({ hours, at, animate = false }: { hours: Hours; at: strin
   )
 }
 
-/** '비 와 ✓  혼밥 ✓' — 안 맞은 조건은 흐리게 */
+/** '비 와 ✓  혼밥 ✓' - 안 맞은 조건은 흐리게 */
 function MatchedLine({ pick, labels }: { pick: Pick; labels: Map<ConditionKey, string> }) {
   if (!pick.matched.length && !pick.unmatched.length) return null
   return (
@@ -198,7 +198,7 @@ function MatchedLine({ pick, labels }: { pick: Pick; labels: Map<ConditionKey, s
   )
 }
 
-/** Result Card — 3장 모두 같은 구조 · 같은 막대 축. 마감 1시간 이내면 배지가 빨강 'N분 남음' */
+/** Result Card - 3장 모두 같은 구조 · 같은 막대 축. 마감 1시간 이내면 배지가 빨강 'N분 남음' */
 export function ResultCard({
   pick,
   at,
@@ -251,7 +251,7 @@ export function ResultCard({
   )
 }
 
-/** Segment — 두 칸 전환 (40). 선택된 칸만 흰 바탕 */
+/** Segment - 두 칸 전환 (40). 선택된 칸만 흰 바탕 */
 export function Segment<T extends string>({
   items,
   value,
@@ -286,7 +286,7 @@ export function Segment<T extends string>({
   )
 }
 
-/** Bottom Button Bar — MO 화면 아래 고정. 홈 표시줄 자리는 기기 안전 영역으로 둔다 */
+/** Bottom Button Bar - MO 화면 아래 고정. 홈 표시줄 자리는 기기 안전 영역으로 둔다 */
 export function BottomBar({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <div className={`fixed inset-x-0 bottom-0 z-20 border-t border-mr-line bg-white pb-[max(12px,env(safe-area-inset-bottom))] ${className}`}>
@@ -295,7 +295,7 @@ export function BottomBar({ children, className = '' }: { children: ReactNode; c
   )
 }
 
-/** Evidence Block — 별점 대신 날짜가 붙은 근거. surface 위 글자는 main · sub 만 */
+/** Evidence Block - 별점 대신 날짜가 붙은 근거. surface 위 글자는 main · sub 만 */
 export function EvidenceBlock({ pick }: { pick: Pick }) {
   const { evidence } = pick
   const verified =
@@ -324,7 +324,7 @@ export function EvidenceBlock({ pick }: { pick: Pick }) {
   )
 }
 
-/** (?) 툴팁 — 탭으로 열고 닫는다. 누르는 영역 44 */
+/** (?) 툴팁 - 탭으로 열고 닫는다. 누르는 영역 44 */
 export function HelpTip({ label, children, icon }: { label: string; children: ReactNode; icon: string }) {
   const id = useId()
   return (
@@ -340,7 +340,7 @@ export function HelpTip({ label, children, icon }: { label: string; children: Re
   )
 }
 
-/** Info Row — 라벨 88 + 값 */
+/** Info Row - 라벨 88 + 값 */
 export function InfoRow({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex gap-4 py-1.5 text-14">
@@ -350,7 +350,7 @@ export function InfoRow({ label, value }: { label: string; value: ReactNode }) {
   )
 }
 
-/** Empty State — 지금 열린 곳이 없을 때 */
+/** Empty State - 지금 열린 곳이 없을 때 */
 export function EmptyState({ title, body }: { title: string; body: string }) {
   return (
     <div className="flex flex-col items-center pt-2 pb-4 text-center">
@@ -363,7 +363,7 @@ export function EmptyState({ title, body }: { title: string; body: string }) {
   )
 }
 
-/** Error Inline — 불러오기 실패 + 다시 시도 */
+/** Error Inline - 불러오기 실패 + 다시 시도 */
 export function ErrorInline({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <div role="alert" className="flex flex-col items-center gap-3 rounded-card-sm bg-mr-fill px-5 py-10 text-center">
@@ -376,7 +376,7 @@ export function ErrorInline({ message, onRetry }: { message: string; onRetry: ()
   )
 }
 
-/** 로딩 — 카드 모양 스켈레톤 3장 */
+/** 로딩 - 카드 모양 스켈레톤 3장 */
 export function SkeletonCards() {
   return (
     <div aria-busy="true" aria-label="후보를 찾는 중이에요" className="flex flex-col gap-3">
@@ -392,7 +392,7 @@ export function SkeletonCards() {
   )
 }
 
-/** Toast — 화면 아래 한 줄. 3초 뒤 사라진다 */
+/** Toast - 화면 아래 한 줄. 3초 뒤 사라진다 */
 export function Toast({ className = '' }: { className?: string }) {
   const toast = useMaestro((state) => state.toast)
   return (

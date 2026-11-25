@@ -1,4 +1,4 @@
-// 검색 글자 맞추기(F-007 S1·S2) — 검색어와 데이터를 같은 모양으로 바꾼 뒤 비교한다.
+// 검색 글자 맞추기(F-007 S1·S2) - 검색어와 데이터를 같은 모양으로 바꾼 뒤 비교한다.
 // 띄어쓰기·대소문자·문장부호·전각 문자·자모가 풀린 글자(NFD)가 달라도 같은 글자로 본다.
 // 공백을 지운 글에서 찾으므로 "디자인시스템"이 "디자인 시스템"에 걸린다. 반대(띄어 쓴 검색어)는 낱말마다 찾으니 원래 걸린다.
 
@@ -7,43 +7,43 @@ function toHalfWidth(text: string) {
   return text.replace(/[！-～]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0))
 }
 
-/** 비교용 모양 — 한글을 NFC 로 합치고, 반각·소문자로 바꾸고, 공백·문장부호·기호를 모두 지운다 */
+/** 비교용 모양 - 한글을 NFC 로 합치고, 반각·소문자로 바꾸고, 공백·문장부호·기호를 모두 지운다 */
 export function normalize(text: string) {
   return toHalfWidth(text.normalize('NFC')).toLowerCase().replace(/[\s\p{P}\p{S}]+/gu, '')
 }
 
 /**
- * 글 속의 영어·숫자 낱말(S3) — 'Next.js 16' → next · js · 16.
+ * 글 속의 영어·숫자 낱말(S3) - 'Next.js 16' → next · js · 16.
  * 짧은 영어 검색어('ai', 'js')는 공백을 지운 글에서 찾으면 'detail' · 'json' 속에도 걸려서, 이 낱말 목록과 통째로 맞춰 본다.
  */
 export function latinWords(text: string) {
   return toHalfWidth(text.normalize('NFC')).toLowerCase().match(/[a-z0-9]+/g) ?? []
 }
 
-/** 글 속의 모든 낱말(한글·영문·숫자) — 오타를 고칠 때 비교할 '이 사이트에 있는 말' 목록을 만든다(S4) */
+/** 글 속의 모든 낱말(한글·영문·숫자) - 오타를 고칠 때 비교할 '이 사이트에 있는 말' 목록을 만든다(S4) */
 export function plainWords(text: string) {
   return toHalfWidth(text.normalize('NFC')).toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []
 }
 
-/** 낱말 목록과 통째로 맞춰 볼 짧은 영어·숫자 검색어 — 세 글자 이하. 'react' 처럼 긴 것은 'reactquery' 속에서 찾아도 괜찮다 */
+/** 낱말 목록과 통째로 맞춰 볼 짧은 영어·숫자 검색어 - 세 글자 이하. 'react' 처럼 긴 것은 'reactquery' 속에서 찾아도 괜찮다 */
 export function isShortLatin(word: string) {
   return /^[a-z0-9]{1,3}$/.test(word)
 }
 
 /**
- * 낱말 끝에 붙는 조사(S2). 긴 것부터 본다 — '으로'를 '로'보다 먼저 봐야 '노션으로'가 '노션'이 된다.
+ * 낱말 끝에 붙는 조사(S2). 긴 것부터 본다 - '으로'를 '로'보다 먼저 봐야 '노션으로'가 '노션'이 된다.
  * 형태소 분석기 대신 짧은 목록만 쓴다. 동사 어미('잠들어서', '느린')는 다루지 않는다.
  */
 const JOSA = ['에서는', '으로는', '에서', '으로', '에게', '까지', '부터', '처럼', '보다', '하고', '이랑', '랑', '의', '을', '를', '이', '가', '은', '는', '에', '로', '와', '과', '도', '만']
 
-/** 조사를 뗀 모양. 남는 부분이 두 글자보다 짧으면 떼지 않는다 — '회의'의 '의', '속도'의 '도'를 떼면 뜻이 사라진다 */
+/** 조사를 뗀 모양. 남는 부분이 두 글자보다 짧으면 떼지 않는다 - '회의'의 '의', '속도'의 '도'를 떼면 뜻이 사라진다 */
 export function stripJosa(word: string) {
   const josa = JOSA.find((ending) => word.endsWith(ending) && [...word].length - [...ending].length >= 2)
   return josa ? word.slice(0, -josa.length) : word
 }
 
 /**
- * 검색어에서 빼는 군더더기 말(S3) — 문장으로 물을 때 붙는 말이라 어느 사례를 찾는지와 상관없다.
+ * 검색어에서 빼는 군더더기 말(S3) - 문장으로 물을 때 붙는 말이라 어느 사례를 찾는지와 상관없다.
  * '외부 API 느릴 때 어떻게 했나'에서 '때 · 어떻게 · 했나'를 빼야 남은 낱말로 찾을 수 있다.
  */
 const STOPWORDS = new Set([
@@ -53,9 +53,9 @@ const STOPWORDS = new Set([
 ])
 
 export interface QueryWord {
-  /** 사람이 친 그대로 — 한영 자판 변환은 대소문자(Shift)까지 봐야 해서 남겨 둔다 */
+  /** 사람이 친 그대로 - 한영 자판 변환은 대소문자(Shift)까지 봐야 해서 남겨 둔다 */
   raw: string
-  /** 찾아볼 모양들 — [그대로, 조사 뗀 모양]. 하나만 글에 있어도 그 낱말은 찾은 것으로 본다 */
+  /** 찾아볼 모양들 - [그대로, 조사 뗀 모양]. 하나만 글에 있어도 그 낱말은 찾은 것으로 본다 */
   forms: string[]
 }
 

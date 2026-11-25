@@ -25,9 +25,9 @@ class ConditionOut(CamelModel):
 
 class StatusOut(CamelModel):
     kind: StatusKind  # open / closing(마감 임박) / opens(나중에 엶) / closed
-    label: str  # 상태 배지 — '영업 중', '40분 남음', '17:00에 열어요'
+    label: str  # 상태 배지 - '영업 중', '40분 남음', '17:00에 열어요'
     next_change: str  # '15:00 브레이크 전까지 2시간'
-    short: str  # 표로 비교의 '지금' 칸 — '21시까지', '15시 쉼'
+    short: str  # 표로 비교의 '지금' 칸 - '21시까지', '15시 쉼'
 
 
 class SegmentOut(CamelModel):
@@ -36,7 +36,7 @@ class SegmentOut(CamelModel):
 
 
 class HoursOut(CamelModel):
-    """영업시간 막대 — 3곳 모두 같은 축(10:00~02:00)에 그린다."""
+    """영업시간 막대 - 3곳 모두 같은 축(10:00~02:00)에 그린다."""
 
     segments: list[SegmentOut]
     last_order: int | None
@@ -45,8 +45,8 @@ class HoursOut(CamelModel):
 class EvidenceOut(CamelModel):
     """별점 대신 날짜가 붙은 근거."""
 
-    line: str  # 카드에 보이는 한 줄 — '지도 앱 3곳에 다 나와요'
-    checked_on: str | None  # 유미가 마지막으로 확인한 날 — '10/21'
+    line: str  # 카드에 보이는 한 줄 - '지도 앱 3곳에 다 나와요'
+    checked_on: str | None  # 유미가 마지막으로 확인한 날 - '10/21'
     source_count: int
     items: list[str]  # 상세의 '믿을 이유' 체크리스트
 
@@ -61,8 +61,8 @@ class PlaceCard(CamelModel):
     station: NearestStation | None
     price_avg: int | None
     ai_summary: str | None
-    waiting_expected: bool  # 줄 서는 곳으로 알려졌는지 — 표의 '웨이팅' 칸
-    atmosphere: list[str]  # 한글 분위기 — '아늑함', '노포'
+    waiting_expected: bool  # 줄 서는 곳으로 알려졌는지 - 표의 '웨이팅' 칸
+    atmosphere: list[str]  # 한글 분위기 - '아늑함', '노포'
 
 
 class Pick(CamelModel):
@@ -96,7 +96,7 @@ class PicksOut(CamelModel):
     open_count: int
     picks: list[Pick]
     relax: list[RelaxOut]
-    conditions: list[ConditionOut]  # 칩 6개 — 라벨 · 툴팁을 서버 한 곳에서 정한다
+    conditions: list[ConditionOut]  # 칩 6개 - 라벨 · 툴팁을 서버 한 곳에서 정한다
 
 
 class PlaceDetailOut(CamelModel):
@@ -107,7 +107,7 @@ class PlaceDetailOut(CamelModel):
     address: str | None
     phone: str | None
     menu: list[str]
-    hours_text: str  # '매일 11:00 – 21:00 · 쉬는 시간 없음'
+    hours_text: str  # '매일 11:00 - 21:00 · 쉬는 시간 없음'
     conditions: list[ConditionOut]
 
 

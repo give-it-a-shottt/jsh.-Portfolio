@@ -11,7 +11,7 @@ import { queryKey, useMaestro } from '../store'
 import type { PlaceDetail } from '../types'
 import SeatSheet from './SeatSheet'
 
-// PLC_01_001 — 식당 상세. MO 는 한 화면(layout='page'), PC 는 결과 지도 위 오른쪽 패널(layout='panel').
+// PLC_01_001 - 식당 상세. MO 는 한 화면(layout='page'), PC 는 결과 지도 위 오른쪽 패널(layout='panel').
 export default function PlaceDetailBody({ id, query, layout }: { id: string; query: Query; layout: 'page' | 'panel' }) {
   const { state, retry } = usePlace(id, query)
   const picksHref = maestroHref('/picks', query)
@@ -138,7 +138,7 @@ function Detail({ detail, query, page }: { detail: PlaceDetail; query: Query; pa
         {detail.phone && <InfoRow label="전화" value={<a href={`tel:${detail.phone}`}>{detail.phone}</a>} />}
       </dl>
 
-      {/* MO 만 작은 지도 — PC 는 뒤의 큰 지도에 이미 핀이 있다 */}
+      {/* MO 만 작은 지도 - PC 는 뒤의 큰 지도에 이미 핀이 있다 */}
       {page && <MapView places={[place]} center={place.location} className="h-40 rounded-card" />}
 
       {page ? (

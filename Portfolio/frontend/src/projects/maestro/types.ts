@@ -1,4 +1,4 @@
-// 마에스트로 백엔드(Portfolio/backend/maestro/app/picks) 응답 모양 — camelCase 로 온다
+// 마에스트로 백엔드(Portfolio/backend/maestro/app/picks) 응답 모양 - camelCase 로 온다
 
 export type DongKey = 'euljiro' | 'seongsu' | 'ikseon' | 'yeonnam'
 export type ConditionKey = 'rain' | 'solo' | 'quiet' | 'nowait' | 'light' | 'budget'
@@ -23,11 +23,11 @@ export interface Condition {
 
 export interface Status {
   kind: StatusKind
-  /** 상태 배지 — '영업 중', '40분 남음', '17:00 열어요' */
+  /** 상태 배지 - '영업 중', '40분 남음', '17:00 열어요' */
   label: string
   /** 카드의 '다음 변화 시점' 한 줄 */
   nextChange: string
-  /** 표로 비교의 '지금' 칸 — '21시까지' */
+  /** 표로 비교의 '지금' 칸 - '21시까지' */
   short: string
 }
 
@@ -92,7 +92,7 @@ export interface PlaceDetail {
   hoursText: string
 }
 
-/** 자리 물어보기 답 — pending 이면 다시 묻는다 */
+/** 자리 물어보기 답 - pending 이면 다시 묻는다 */
 export interface SeatAnswer {
   queryId: string
   status: 'pending' | 'available' | 'limited' | 'unavailable' | 'no_response'

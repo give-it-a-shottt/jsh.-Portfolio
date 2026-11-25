@@ -1,6 +1,6 @@
 import type { StudyNote } from '../notes'
 
-// MongoDB 강의 9개(1~9강)를 3개 노트로 합쳤다 — F-012 노트 틀. 예전 노트 9개 주소는 replaces 로 이어진다
+// MongoDB 강의 9개(1~9강)를 3개 노트로 합쳤다 - F-012 노트 틀. 예전 노트 9개 주소는 replaces 로 이어진다
 // mongosh 코드는 같은 조건 · 파이프라인을 PyMongo 4.13 으로 MongoDB 8.0.11 에 보내 결과를 확인했고(mongosh 자체는 없어 문법만 확인),
 // 파이썬 코드는 PyMongo 4.13 · MongoDB 8.0.11 에서 돌려 확인했다(크롤링 요청만 가짜 HTML 로 대신).
 // 예전 노트 9개(mongo-nosql … mongo-crawling) 주소는 replaces 로 이 노트들에 이어진다.
@@ -18,7 +18,7 @@ export const MONGODB_NOTES: StudyNote[] = [
       'NoSQL 이 왜 필요한지 이해하고, mongosh 로 문서를 넣고 · 연산자로 골라 보고 · 고치고 지울 수 있다.',
     points: [
       'MongoDB 는 스키마 없는 문서(BSON)를 Collection 에 담는다',
-      'find(조건, projection) — 조건은 WHERE, projection 은 고를 필드',
+      'find(조건, projection) - 조건은 WHERE, projection 은 고를 필드',
       'updateOne · updateMany 는 $set · $inc 같은 연산자로 바꿀 필드만 고친다',
     ],
     learned: [],
@@ -29,7 +29,7 @@ export const MONGODB_NOTES: StudyNote[] = [
         why: '쓰기가 많고 형식이 자주 바뀌는 데이터(SNS · 로그)를 스키마를 고치지 않고 바로 쌓을 수 있다.',
         code: {
           lang: 'javascript',
-          caption: '타입이 제각각인 문서 하나 — _id 를 넣지 않으면 ObjectId 가 자동으로 붙는다',
+          caption: '타입이 제각각인 문서 하나 - _id 를 넣지 않으면 ObjectId 가 자동으로 붙는다',
           source: `db.books.insertOne({
   title: "파이썬 첫걸음",                  // String
   rating: 4.5,                            // Double
@@ -59,12 +59,12 @@ db.dropDatabase()                 // 지금 고른 DB 삭제`,
         },
       },
       {
-        title: '삽입과 조회 — insertOne · find · projection',
+        title: '삽입과 조회 - insertOne · find · projection',
         body: 'insertOne 은 문서 하나, insertMany 는 배열로 여러 개를 넣고, _id 를 빼면 자동으로 만든다. 조회는 find(조건, projection) 구조라 조건은 SQL 의 WHERE, projection 은 SELECT 뒤 컬럼 목록에 해당하고, findOne 은 맞는 첫 문서 하나만 준다. projection 에서 1 은 포함, 0 은 제외이고, _id 는 기본으로 나오므로 빼려면 _id: 0 을 적는다.',
         why: '필요한 필드만 projection 으로 받으면 주고받는 데이터가 줄고 결과도 읽기 쉽다.',
         code: {
           lang: 'javascript',
-          caption: '도서관 회원 데이터 — SQL 과 나란히',
+          caption: '도서관 회원 데이터 - SQL 과 나란히',
           source: `db.members.insertMany([
   { name: "지훈", age: 28, city: "서울" },
   { name: "서연", age: 34, city: "부산", job: "디자이너" },
@@ -84,24 +84,24 @@ db.members.findOne({ city: "서울" })                // 맞는 첫 문서 하�
         why: '조건도 { 필드: { $연산자: 값 } } 모양의 문서라서, 프로그램에서 객체 · dict 로 조립해 그대로 넘길 수 있다.',
         code: {
           lang: 'javascript',
-          caption: '{ $not: { $eq: … } } 는 $ne 와 같은 결과 — 필드가 없는 문서도 함께 나온다',
+          caption: '{ $not: { $eq: … } } 는 $ne 와 같은 결과 - 필드가 없는 문서도 함께 나온다',
           source: `db.members.find({ age: { $gt: 30 } })                 // 30 초과
 db.members.find({ age: { $gte: 20, $lt: 40 } })       // 20 이상 40 미만
 db.members.find({ city: { $in: ["부산", "대구"] } })
 
-// AND — 두 줄은 같은 뜻
+// AND - 두 줄은 같은 뜻
 db.members.find({ city: "서울", age: { $lt: 30 } })
 db.members.find({ $and: [{ city: "서울" }, { age: { $lt: 30 } }] })
 
-// OR — 부산에 살거나 50세 이상
+// OR - 부산에 살거나 50세 이상
 db.members.find({ $or: [{ city: "부산" }, { age: { $gte: 50 } }] })
 
-// NOT — 서울이 아닌 사람 (city 가 없는 우진도 나온다)
+// NOT - 서울이 아닌 사람 (city 가 없는 우진도 나온다)
 db.members.find({ city: { $not: { $eq: "서울" } } })`,
         },
       },
       {
-        title: '검색 심화 — 정규식 · 정렬 · 개수 · 배열',
+        title: '검색 심화 - 정규식 · 정렬 · 개수 · 배열',
         body: '/진/ 같은 정규식은 SQL 의 LIKE 처럼 부분 일치로 찾고(^ 는 시작, $ 는 끝), sort 는 1 이 오름차순 · -1 이 내림차순이다. 개수는 countDocuments, 값 종류는 distinct, 필드가 있는지는 $exists 로 본다. 배열 필드는 값 하나로 찾으면 그 값을 품은 문서가 나오고, $all 은 모두 포함 · $in 은 하나라도 포함 · $nin 은 하나도 없을 때다.',
         why: '배열을 다른 테이블로 빼지 않고 문서 안에 둔 채로 조건을 걸 수 있다.',
         code: {
@@ -146,9 +146,9 @@ db.members.deleteMany({ age: { $lt: 20 } })`,
       },
     ],
     pitfalls: [
-      'insert() · update() · remove() · count() 는 mongosh 에서 deprecated 다 — insertOne/insertMany · updateOne/updateMany · deleteOne/deleteMany · countDocuments 를 쓴다(removeOne 이라는 메서드는 없다)',
-      '$ne · $nin · $not 은 그 필드가 아예 없는 문서도 결과에 넣는다 — 필드가 있는 문서만 원하면 $exists: true 를 함께 건다',
-      'updateOne · updateMany 의 두 번째 인자에 $연산자 없이 문서를 넣으면 에러가 난다 — 통째로 바꾸려면 replaceOne 을 쓰고, 이때 _id 말고 기존 필드는 모두 사라진다',
+      'insert() · update() · remove() · count() 는 mongosh 에서 deprecated 다 - insertOne/insertMany · updateOne/updateMany · deleteOne/deleteMany · countDocuments 를 쓴다(removeOne 이라는 메서드는 없다)',
+      '$ne · $nin · $not 은 그 필드가 아예 없는 문서도 결과에 넣는다 - 필드가 있는 문서만 원하면 $exists: true 를 함께 건다',
+      'updateOne · updateMany 의 두 번째 인자에 $연산자 없이 문서를 넣으면 에러가 난다 - 통째로 바꾸려면 replaceOne 을 쓰고, 이때 _id 말고 기존 필드는 모두 사라진다',
       '서버를 외부에 열 때(mongod.conf 의 bindIp 를 0.0.0.0 으로, 27017 포트 개방) 계정을 만들고 security.authorization: enabled 를 켜지 않으면 누구나 접속할 수 있다',
     ],
     replaces: ['mongo-nosql', 'mongo-crud-find', 'mongo-crud-update'],
@@ -164,23 +164,23 @@ db.members.deleteMany({ age: { $lt: 20 } })`,
     course: 'MongoDB',
     lesson: '4 · 5강',
     date: '2026.10.04',
-    title: 'Aggregation — 모아서 세고 묶기',
+    title: 'Aggregation - 모아서 세고 묶기',
     summary:
       'Aggregation 파이프라인으로 문서를 거르고 · 묶고 · 세고 · 가공하고, 다른 컬렉션을 붙이거나 여러 집계를 한 번에 낼 수 있다.',
     points: [
-      'aggregate([스테이지, …]) — 앞 스테이지의 결과가 다음 스테이지의 입력',
+      'aggregate([스테이지, …]) - 앞 스테이지의 결과가 다음 스테이지의 입력',
       '$group 의 _id 가 묶는 기준, 누산기($sum · $avg · $push …)로 집계한다',
-      '$lookup 결과는 항상 배열 — SQL 의 LEFT JOIN 과 비슷하다',
+      '$lookup 결과는 항상 배열 - SQL 의 LEFT JOIN 과 비슷하다',
     ],
     learned: [],
     sections: [
       {
-        title: '파이프라인 — $match · $count',
+        title: '파이프라인 - $match · $count',
         body: 'Aggregation 은 find 로는 어려운 그룹 · 집계 · 가공을 하는 문법으로, aggregate 에 스테이지 배열을 넘기면 앞 스테이지의 결과가 다음 스테이지의 입력이 된다(유닉스의 | 파이프와 같다). $match 는 find 조건과 같은 문법으로 문서를 거르고, $count 는 남은 문서 수를 필드 하나로 낸다.',
         why: '샤드 클러스터(여러 서버에 나눠 저장)에서는 파이프라인을 둘로 나눠, $match 같은 앞부분은 각 샤드가 자기 데이터로 먼저 처리하고 나머지는 한 곳에 모아 처리해서 데이터가 많을 때 유리하다.',
         code: {
           lang: 'javascript',
-          caption: '책 데이터 5권 — 이 노트의 예시는 모두 이 데이터로',
+          caption: '책 데이터 5권 - 이 노트의 예시는 모두 이 데이터로',
           source: `db.books.insertMany([
   { title: "파이썬 첫걸음", year: 2021, genres: ["IT", "입문"], pages: 320, rating: 4.5, author: "김민수" },
   { title: "백엔드 여행", year: 2023, genres: ["IT"], pages: 410, rating: 4.2, author: "김민수" },
@@ -243,12 +243,12 @@ db.books.aggregate([
         },
       },
       {
-        title: '$unwind — 배열을 풀어서 세기',
+        title: '$unwind - 배열을 풀어서 세기',
         body: '$unwind 는 배열 필드를 풀어 요소마다 문서를 하나씩 만든다. genres 가 ["소설", "역사"] 인 책은 genres 가 "소설" 인 문서와 "역사" 인 문서 두 개가 되고, 그 뒤 $group 으로 장르별로 센다.',
         why: '장르처럼 한 문서에 값이 여러 개인 필드도, 요소 하나하나를 기준으로 집계할 수 있다.',
         code: {
           lang: 'javascript',
-          caption: '장르별 집계 — 마지막 $project 로 _id 를 genre 라는 이름으로 바꾼다',
+          caption: '장르별 집계 - 마지막 $project 로 _id 를 genre 라는 이름으로 바꾼다',
           source: `// 장르별 책 수와 평균 평점
 db.books.aggregate([
   { $unwind: "$genres" },          // ["소설", "역사"] → 문서 2개
@@ -267,7 +267,7 @@ db.books.aggregate([
         },
       },
       {
-        title: '$project — 필드 고르고 만들기',
+        title: '$project - 필드 고르고 만들기',
         body: '$project 는 1 이면 남기고 0 이면 빼며, "$year" 처럼 다른 필드를 넣으면 이름을 바꾼 새 필드가 된다. $concat 으로 문자열을 잇거나 $strLenCP 로 글자 수를 세는 식으로, 계산한 필드도 만들 수 있다. $concat 은 문자열만 이어서 숫자는 $toString 으로 바꿔 넣는다.',
         why: '필요한 필드만 원하는 이름으로 남겨 두면, 결과를 그대로 화면이나 API 응답에 쓸 수 있다.',
         code: {
@@ -286,7 +286,7 @@ db.books.aggregate([
         },
       },
       {
-        title: '$lookup · $facet — 붙이고, 한 번에 여러 집계',
+        title: '$lookup · $facet - 붙이고, 한 번에 여러 집계',
         body: '$lookup 은 from(붙일 컬렉션) · localField(내 필드) · foreignField(상대 필드) · as(결과를 담을 필드)로 다른 컬렉션의 문서를 붙인다. 결과는 항상 배열이고 짝이 없으면 빈 배열로 남아서 SQL 의 LEFT JOIN 과 비슷하다. $facet 은 같은 입력으로 서로 다른 파이프라인 여러 개를 돌려 결과를 문서 하나에 모은다.',
         why: '$facet 하나로 대시보드에 필요한 여러 집계를 요청 한 번에 받는다.',
         code: {
@@ -311,10 +311,10 @@ db.books.aggregate([
       },
     ],
     pitfalls: [
-      '배열 필드를 그대로 $group 의 _id 에 넣으면 배열 통째가 기준이 된다 — 요소별로 세려면 먼저 $unwind 한다($addToSet: "$genres" 도 풀지 않으면 배열의 배열이 된다)',
-      '$concat 에 숫자 필드를 그대로 넣으면 에러가 난다 — { $toString: "$year" } 로 바꿔 넣는다',
-      '같은 필드에 숫자와 빈 문자열("")이 섞여 있으면 $avg 는 숫자가 아닌 값을 건너뛰고, $sort 는 BSON 타입 순서로 정렬한다(오름차순이면 숫자가 문자열보다 앞, 내림차순이면 뒤) — { $match: { rating: { $type: "number" } } } 로 숫자만 남기고 집계한다',
-      '조건으로 문서를 거를 땐 $match 가 간단하고 빠르다 — $redact($$KEEP · $$PRUNE)는 중첩 문서를 층마다 남기거나 지울 때 쓴다',
+      '배열 필드를 그대로 $group 의 _id 에 넣으면 배열 통째가 기준이 된다 - 요소별로 세려면 먼저 $unwind 한다($addToSet: "$genres" 도 풀지 않으면 배열의 배열이 된다)',
+      '$concat 에 숫자 필드를 그대로 넣으면 에러가 난다 - { $toString: "$year" } 로 바꿔 넣는다',
+      '같은 필드에 숫자와 빈 문자열("")이 섞여 있으면 $avg 는 숫자가 아닌 값을 건너뛰고, $sort 는 BSON 타입 순서로 정렬한다(오름차순이면 숫자가 문자열보다 앞, 내림차순이면 뒤) - { $match: { rating: { $type: "number" } } } 로 숫자만 남기고 집계한다',
+      '조건으로 문서를 거를 땐 $match 가 간단하고 빠르다 - $redact($$KEEP · $$PRUNE)는 중첩 문서를 층마다 남기거나 지울 때 쓴다',
     ],
     replaces: ['mongo-aggregation-1', 'mongo-aggregation-2'],
     tags: ['MongoDB', 'Aggregation', '집계'],
@@ -329,12 +329,12 @@ db.books.aggregate([
     course: 'MongoDB',
     lesson: '6 · 7 · 8 · 9강',
     date: '2026.10.04',
-    title: '파이썬으로 MongoDB 다루기 — pymongo · 인덱스 · 크롤링 저장',
+    title: '파이썬으로 MongoDB 다루기 - pymongo · 인덱스 · 크롤링 저장',
     summary:
       'pymongo 로 파이썬에서 CRUD 와 집계를 하고, 인덱스와 텍스트 검색을 걸고, 크롤링한 데이터를 스키마 없이 저장해 바로 분석할 수 있다.',
     points: [
-      '셸의 insertOne 이 파이썬에선 insert_one — 연산자는 문자열 키로 쓴다',
-      '인덱스는 읽기를 빠르게, 쓰기를 느리게 — $text 는 텍스트 인덱스가 있어야 한다',
+      '셸의 insertOne 이 파이썬에선 insert_one - 연산자는 문자열 키로 쓴다',
+      '인덱스는 읽기를 빠르게, 쓰기를 느리게 - $text 는 텍스트 인덱스가 있어야 한다',
       'MySQL 과 달리 테이블을 만들지 않고 dict 를 바로 넣는다',
     ],
     learned: [],
@@ -345,7 +345,7 @@ db.books.aggregate([
         why: '결과 객체의 inserted_id · modified_count · deleted_count 로 실제로 몇 건이 바뀌었는지 코드에서 확인한다.',
         code: {
           lang: 'python',
-          caption: '접속 주소(계정이 있으면 계정 포함)는 코드에 적지 않고 환경변수에서 읽는다 — 예: mongodb://localhost:27017',
+          caption: '접속 주소(계정이 있으면 계정 포함)는 코드에 적지 않고 환경변수에서 읽는다 - 예: mongodb://localhost:27017',
           source: `import os
 from pymongo import MongoClient
 
@@ -363,7 +363,7 @@ with MongoClient(os.environ['MONGO_URI']) as client:
         },
       },
       {
-        title: 'find 옵션 — projection · 정렬 · 개수',
+        title: 'find 옵션 - projection · 정렬 · 개수',
         body: "find(조건, projection) 뒤에 sort · skip · limit 을 이어 붙이고, 여러 기준 정렬은 (필드, 방향) 튜플 리스트로 넘긴다. 정규식은 re.compile 이나 {'$regex': …, '$options': 'i'} 로 쓰고, distinct 는 배열 안 값까지 펼쳐 중복을 뺀다. 개수는 count_documents(조건), 필드가 없는 문서는 {'$exists': False} 로 찾는다.",
         why: 'sort · skip · limit 은 서버가 처리해서, 필요한 문서만 파이썬으로 넘어온다.',
         code: {
@@ -385,7 +385,7 @@ books.find({'translator': {'$exists': False}})        # 번역자 필드가 없�
         },
       },
       {
-        title: 'aggregate — 파이프라인은 리스트로',
+        title: 'aggregate - 파이프라인은 리스트로',
         body: "셸과 같은 스테이지를 dict 로 적어 리스트로 넘기면, 결과는 for 로 도는 커서로 온다. 결과가 하나뿐이면 list(…)[0] 으로 꺼내고, $group 뒤에 $match 를 두면 SQL 의 HAVING 처럼 집계 결과로 거른다. 결과가 많을 수 있으면 테스트할 때 {'$limit': 5} 를 붙여 확인한다.",
         why: '$match 를 파이프라인 앞쪽에 두면 뒤 스테이지가 처리할 문서가 줄어 빨라진다(단, HAVING 처럼 $group 결과로 거르는 $match 는 앞으로 옮길 수 없다).',
         code: {
@@ -409,7 +409,7 @@ authors = books.aggregate([
         },
       },
       {
-        title: '인덱스 — 만들고 확인하고 지우기',
+        title: '인덱스 - 만들고 확인하고 지우기',
         body: '인덱스는 필드 값을 정렬된 상태로 따로 유지해, 데이터가 많아도 전체를 훑지 않고 찾게 해 준다. 필드 하나면 단일, 여러 개면 복합 인덱스이고, 배열 필드에 만들면 자동으로 다중키(multikey) 인덱스가 된다(그 밖에 위치용 지리 공간 · 문자열 검색용 텍스트 인덱스가 있다). create_index 는 만든 인덱스 이름을 돌려주고, _id_ 인덱스는 MongoDB 가 자동으로 만들며 지울 수 없다.',
         why: '읽기는 빨라지지만 저장 공간을 쓰고 쓰기마다 인덱스도 고쳐야 해서, 쓰기가 많은 컬렉션엔 꼭 필요한 것만 만든다.',
         code: {
@@ -448,7 +448,7 @@ for b in cursor:
         why: '형식이 자주 바뀌는 크롤링 데이터는 필드가 늘어도 스키마를 고치지 않고 그대로 쌓는다.',
         code: {
           lang: 'python',
-          caption: 'BASE_URL 은 실습 사이트 주소 — 수집 → 저장 → 분석',
+          caption: 'BASE_URL 은 실습 사이트 주소 - 수집 → 저장 → 분석',
           source: `products = client['shop']['products']
 
 for page in range(1, 4):
@@ -467,10 +467,10 @@ products.find({'name': {'$regex': '블랙'}})         # 이름에 '블랙'이 �
       },
     ],
     pitfalls: [
-      'PyMongo 4 에서 insert() · update() · remove() · count() 와 find().count() 가 없어졌다 — insert_one · update_one · delete_one · count_documents 를 쓴다',
-      'insert_many 에 빈 리스트를 넘기면 TypeError 가 난다 — 크롤링 결과가 0건인 페이지가 있을 수 있으니 넣기 전에 확인한다',
-      "텍스트 인덱스는 공백 · 구두점 기준으로 단어를 나누고 한국어는 어간 추출을 하지 않아서, '파이썬' 으로 찾으면 '파이썬을' 은 잡히지 않는다 — 부분 일치가 필요하면 $regex 를 쓰되, ^ 로 시작하지 않으면 인덱스를 제대로 못 써 느릴 수 있다",
-      "sort('score', -1) 로는 점수 순이 되지 않는다 — 점수는 저장된 필드가 아니라 검색할 때 계산되는 값이라 sort 에도 {'$meta': 'textScore'} 를 넣어야 하고, 이 정렬은 항상 높은 순이다",
+      'PyMongo 4 에서 insert() · update() · remove() · count() 와 find().count() 가 없어졌다 - insert_one · update_one · delete_one · count_documents 를 쓴다',
+      'insert_many 에 빈 리스트를 넘기면 TypeError 가 난다 - 크롤링 결과가 0건인 페이지가 있을 수 있으니 넣기 전에 확인한다',
+      "텍스트 인덱스는 공백 · 구두점 기준으로 단어를 나누고 한국어는 어간 추출을 하지 않아서, '파이썬' 으로 찾으면 '파이썬을' 은 잡히지 않는다 - 부분 일치가 필요하면 $regex 를 쓰되, ^ 로 시작하지 않으면 인덱스를 제대로 못 써 느릴 수 있다",
+      "sort('score', -1) 로는 점수 순이 되지 않는다 - 점수는 저장된 필드가 아니라 검색할 때 계산되는 값이라 sort 에도 {'$meta': 'textScore'} 를 넣어야 하고, 이 정렬은 항상 높은 순이다",
     ],
     replaces: ['mongo-pymongo-basic', 'mongo-pymongo-advanced', 'mongo-index-text', 'mongo-crawling'],
     tags: ['MongoDB', 'Python', '인덱스', '크롤링'],

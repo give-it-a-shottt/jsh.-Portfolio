@@ -14,8 +14,8 @@ export interface MapPlace {
 const PIN_BASE =
   'flex items-center justify-center rounded-full border-2 border-white bg-mr-pin font-semibold text-white shadow-mr-1'
 
-// Map Pin — 순위처럼 보이지 않게 숫자 대신 식당 이름 첫 글자. 터치 영역 44, 선택하면 40으로 키운다.
-// 핀은 읽지 않는다 — 같은 식당을 목록 카드가 이름으로 알려 준다.
+// Map Pin - 순위처럼 보이지 않게 숫자 대신 식당 이름 첫 글자. 터치 영역 44, 선택하면 40으로 키운다.
+// 핀은 읽지 않는다 - 같은 식당을 목록 카드가 이름으로 알려 준다.
 function pinIcon(initial: string, selected: boolean) {
   const size = selected ? 'size-10 text-16' : 'size-8 text-13'
   return L.divIcon({
@@ -26,12 +26,12 @@ function pinIcon(initial: string, selected: boolean) {
   })
 }
 
-// 무료 타일(OpenStreetMap). 색은 손대지 않는다 — 라벤더로 칠한 2안은 핀 대비가 떨어져 탈락했다.
+// 무료 타일(OpenStreetMap). 색은 손대지 않는다 - 라벤더로 칠한 2안은 핀 대비가 떨어져 탈락했다.
 const TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 
 /**
- * Leaflet 지도 — 후보 핀과 지도 이동. 핀을 누르면 onSelect 로 목록 카드를 강조한다.
+ * Leaflet 지도 - 후보 핀과 지도 이동. 핀을 누르면 onSelect 로 목록 카드를 강조한다.
  * 지도 이동은 setView(300ms 이하)만 쓰고 flyTo 는 쓰지 않는다. 움직임 줄이기를 켜면 바로 옮긴다.
  */
 export default function MapView({
@@ -69,7 +69,7 @@ export default function MapView({
     // 확대 버튼은 PC 에서만, 위 왼쪽 조건 칩과 겹치지 않게 오른쪽 아래에
     if (zoomControl) L.control.zoom({ position: 'bottomright' }).addTo(created)
     created.setView([center.lat, center.lng], 16)
-    // 타일 한두 장 실패는 흔하다 — 한 장도 못 받았을 때만 안내한다. 목록은 그대로 쓸 수 있다
+    // 타일 한두 장 실패는 흔하다 - 한 장도 못 받았을 때만 안내한다. 목록은 그대로 쓸 수 있다
     let loaded = false
     L.tileLayer(TILE_URL, { attribution: ATTRIBUTION, maxZoom: 19 })
       .on('tileload', () => {

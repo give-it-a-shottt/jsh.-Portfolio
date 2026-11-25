@@ -37,7 +37,7 @@ def get_live_yumi_client(
     settings: Annotated[Settings, Depends(get_settings)],
     yumi: Annotated[YumiClient, Depends(get_yumi_client)],
 ) -> YumiClient | None:
-    """저장본으로 대신할 수 있는 화면(picks)용 — 실제 유미를 부를 수 있을 때만 클라이언트를 준다.
+    """저장본으로 대신할 수 있는 화면(picks)용 - 실제 유미를 부를 수 있을 때만 클라이언트를 준다.
 
     mock 모드거나 키가 없으면 None 이고, 그때 picks 는 저장본(실제 데이터)을 쓴다.
     """

@@ -1,6 +1,6 @@
 import { normalize } from './searchText'
 
-// 동의어 사전(F-007 S4) — 한 줄이 같은 뜻의 말 묶음이다. 검색어에 이 중 하나가 있으면 나머지로도 찾는다.
+// 동의어 사전(F-007 S4) - 한 줄이 같은 뜻의 말 묶음이다. 검색어에 이 중 하나가 있으면 나머지로도 찾는다.
 // 이 사이트 글에서 실제로 섞여 쓰는 말만 둔다(한글 ↔ 영문 표기, 줄임말). 뜻이 넓어지는 말('서버' = 백엔드)은 넣지 않는다.
 // 띄어 쓴 말('레이트 리밋')도 공백 없이 맞춰 보므로 그대로 적어도 된다.
 
@@ -38,7 +38,7 @@ export function synonymsOf(word: string) {
   return SYNONYMS.get(word) ?? []
 }
 
-/** 사전에 있는 말인지 — 띄어 쓴 두 낱말을 하나로 붙여 볼 때('레이트' + '리밋') 쓴다 */
+/** 사전에 있는 말인지 - 띄어 쓴 두 낱말을 하나로 붙여 볼 때('레이트' + '리밋') 쓴다 */
 export function isSynonymTerm(word: string) {
   return SYNONYMS.has(word)
 }

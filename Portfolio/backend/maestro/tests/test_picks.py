@@ -1,4 +1,4 @@
-"""리뉴얼 결과 화면 — 영업시간 · 후보 고르기 · 저장본 대체 · 자리 묻기.
+"""리뉴얼 결과 화면 - 영업시간 · 후보 고르기 · 저장본 대체 · 자리 묻기.
 
 영업시간 · 고르기 규칙은 직접 만든 매장으로, 동네별 개수는 저장본(실제 유미 데이터)으로 확인한다.
 """
@@ -314,7 +314,7 @@ class SlowYumi(MockYumiClient):
 
 
 def test_real_mode_without_key_uses_the_snapshot(client):
-    """배포에서 키를 빠뜨려도 502 가 아니라 저장본 — 자리 묻기 흉내도 그대로 된다."""
+    """배포에서 키를 빠뜨려도 502 가 아니라 저장본 - 자리 묻기 흉내도 그대로 된다."""
     service.clear_cache()
     app.dependency_overrides.pop(get_yumi_client)
     # .env 의 키를 읽지 않게 빈 값으로 못 박는다 (실제 유미를 부르면 안 된다)

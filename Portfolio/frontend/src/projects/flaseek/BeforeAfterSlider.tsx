@@ -46,7 +46,7 @@ export default function BeforeAfterSlider({ className = '' }: { className?: stri
     event.preventDefault()
   }
 
-  // 반쪽 사진을 칸 너비에 맞춘다 — 사진 전체 너비를 200% 로 두고 왼쪽(0%)·오른쪽(100%) 끝을 맞춘다
+  // 반쪽 사진을 칸 너비에 맞춘다 - 사진 전체 너비를 200% 로 두고 왼쪽(0%)·오른쪽(100%) 끝을 맞춘다
   const half = (side: 'left' | 'right') => ({
     backgroundImage: `url(${beforeAfterImage})`,
     backgroundSize: '200% auto',

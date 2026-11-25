@@ -12,7 +12,7 @@ export interface ChatMessage {
 }
 
 const GREETING = `좋은 아침이에요! 어젯밤은 ${SCORE}점으로 숙면한 편이에요. 궁금한 점을 물어보세요.`
-/** 질문 하나의 최대 길이 — 주소(?q=)로 들어온 긴 글도 잘라 쓴다 */
+/** 질문 하나의 최대 길이 - 주소(?q=)로 들어온 긴 글도 잘라 쓴다 */
 export const QUESTION_MAX = 100
 const TICK_MS = 30
 const CHARS_PER_TICK = 2
@@ -23,7 +23,7 @@ const RATE_WINDOW_MS = 60_000
 const answerFor = (question: string) => (Object.hasOwn(COACH_ANSWERS, question) ? COACH_ANSWERS[question] : COACH_FALLBACK)
 
 /**
- * AI 코치 대화 흉내 — 서버 없이 미리 써 둔 답을 30ms 마다 두 글자씩 늘려 SSE 스트리밍처럼 보여 준다.
+ * AI 코치 대화 흉내 - 서버 없이 미리 써 둔 답을 30ms 마다 두 글자씩 늘려 SSE 스트리밍처럼 보여 준다.
  * 시작하면 시안처럼 인사 → 첫 질문 → 답(스트리밍) 순서로 놓인다. 첫 질문은 대시보드에서 고른 질문(?q=)이 있으면 그것.
  * 1분에 RATE_LIMIT 번까지만 물을 수 있고(Redis 요청 제한 흉내), 넘기면 1분 뒤에 다시 연다.
  */
@@ -77,7 +77,7 @@ export function useCoachChat(firstQuestion: string | null) {
     return true
   }
 
-  /** 다 쓴 마지막 AI 답 — 화면 읽기 프로그램에는 한 글자씩이 아니라 다 쓴 뒤 한 번만 읽힌다 */
+  /** 다 쓴 마지막 AI 답 - 화면 읽기 프로그램에는 한 글자씩이 아니라 다 쓴 뒤 한 번만 읽힌다 */
   const lastAnswer = streaming ? '' : [...messages].reverse().find((message) => message.role === 'ai')?.text ?? ''
 
   return { messages, streamingId, streaming, used, limited, ask, lastAnswer }

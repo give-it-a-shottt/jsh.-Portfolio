@@ -3,7 +3,7 @@ import type { ConditionKey, DongKey } from './types'
 /** 마에스트로는 포트폴리오 안에서 `#/maestro/…` 아래에 있다 */
 export const MAESTRO_BASE = '/maestro'
 
-/** 고른 조건 — 새로고침 · 뒤로 가기에도 남도록 주소(?t=1240&dong=euljiro&s=rain,solo)에 둔다 */
+/** 고른 조건 - 새로고침 · 뒤로 가기에도 남도록 주소(?t=1240&dong=euljiro&s=rain,solo)에 둔다 */
 export interface Query {
   /** 'now' 또는 '1240' 같은 시연 시각 */
   t: string
@@ -27,7 +27,7 @@ export const CONDITIONS: { key: ConditionKey; label: string }[] = [
   { key: 'budget', label: '1인 2만 원 이하' },
 ]
 
-/** 시연 시각 — 새벽 · 오후에 면접관이 빈 화면만 보지 않게 고를 수 있게 둔다 */
+/** 시연 시각 - 새벽 · 오후에 면접관이 빈 화면만 보지 않게 고를 수 있게 둔다 */
 export const DEMO_TIMES = ['1240', '1930', '2200']
 
 const isDong = (value: string | null): value is DongKey => DONGS.some((d) => d.key === value)

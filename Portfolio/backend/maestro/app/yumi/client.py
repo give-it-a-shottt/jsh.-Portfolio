@@ -28,7 +28,7 @@ class NearbyQuery(BaseModel):
 
 
 class NotFound(Exception):
-    """유미 404 — 매장·문의·예약이 없다."""
+    """유미 404 - 매장·문의·예약이 없다."""
 
 
 class PlaceNotFound(NotFound):
@@ -44,7 +44,7 @@ class YumiError(Exception):
 
 
 class NotAvailable(Exception):
-    """유미 422 — 파트너가 아닌 매장이라 실시간 문의·예약을 못 한다. 다시 시도하지 말고 전화로 안내한다."""
+    """유미 422 - 파트너가 아닌 매장이라 실시간 문의·예약을 못 한다. 다시 시도하지 말고 전화로 안내한다."""
 
     def __init__(self, code: str) -> None:
         super().__init__(code)
@@ -84,7 +84,7 @@ class YumiClient(Protocol):
         ...
 
     async def simulate_seat_ask(self, place_id: str, topic: str) -> LiveStatus:
-        """체험용 자리 묻기 — 실제 사장님께 보내지 않고 식당마다 고정된 답을 흉내 낸다. 결과는 get_live_status."""
+        """체험용 자리 묻기 - 실제 사장님께 보내지 않고 식당마다 고정된 답을 흉내 낸다. 결과는 get_live_status."""
         ...
 
     async def request_reservation(self, request: ReservationRequest) -> Reservation:

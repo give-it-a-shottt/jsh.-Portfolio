@@ -16,7 +16,7 @@ function createState<T>(initial: T) {
   return { get, set, subscribe }
 }
 
-// ── 장바구니 수 — 시안 헤더처럼 2개에서 시작한다 ──
+// ── 장바구니 수 - 시안 헤더처럼 2개에서 시작한다 ──
 const cart = createState(2)
 export const useCartCount = () => useSyncExternalStore(cart.subscribe, cart.get, cart.get)
 export function addToCart(count = 1) {
@@ -39,7 +39,7 @@ export function toggleWish(id: number) {
   wishes.set(next)
 }
 
-// ── 토스트 — 3초 뒤 닫힌다 ──
+// ── 토스트 - 3초 뒤 닫힌다 ──
 export interface ToastMessage {
   id: number
   message: string
@@ -54,5 +54,5 @@ export function showToast(message: string) {
   timer = window.setTimeout(() => toast.set(null), 3000)
 }
 
-/** 시안에서 연결하지 않은 기능을 눌렀을 때. subject 는 조사까지 — '결제는', '로그인은' */
+/** 시안에서 연결하지 않은 기능을 눌렀을 때. subject 는 조사까지 - '결제는', '로그인은' */
 export const showDemoNotice = (subject: string) => showToast(`시안이라 ${subject} 연결하지 않았어요`)

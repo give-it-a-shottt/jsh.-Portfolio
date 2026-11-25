@@ -8,7 +8,7 @@ import { Ambient, Badge, Footer, GHOST_BUTTON, GLASS, GLASS_ELEVATED, GLASS_SUBT
 import { duration, LAST_NIGHT, SCORE, STAGES, type Stage } from '../data'
 import { nightlyHref } from '../routes'
 
-// 01 랜딩 & 헬스체크 — 히어로(소개 + 어젯밤 점수 · 백엔드 연결 상태) → 기능 4개 → 가입 안내
+// 01 랜딩 & 헬스체크 - 히어로(소개 + 어젯밤 점수 · 백엔드 연결 상태) → 기능 4개 → 가입 안내
 
 const HEALTH = [
   { label: 'API', short: 'API', value: '32ms', shortValue: '32ms' },
@@ -56,7 +56,7 @@ const MOBILE_TONE: Partial<Record<Stage, string>> = { deep: 'max-lg:text-nt-prim
 /** 홈 미리보기의 깨어 있음 막대는 그래프와 달리 회색이다(시안) */
 const previewBar = (stage: Stage) => (stage === 'awake' ? 'bg-nt-weak' : STAGES[stage].bar)
 
-/** 단계 막대 길이 — 4시간(240분)을 꽉 찬 길이로 본다(시안 막대 비율) */
+/** 단계 막대 길이 - 4시간(240분)을 꽉 찬 길이로 본다(시안 막대 비율) */
 const BAR_FULL_MINUTES = 240
 const barWidth = (minutes: number) => `${Math.min(100, (minutes / BAR_FULL_MINUTES) * 100)}%`
 
@@ -127,7 +127,7 @@ function FeatureCard({ feature }: { feature: (typeof FEATURES)[number] }) {
   const { step, title, desc, short, icon, href } = feature
   const body = (
     <>
-      {/* PC — 세로 카드. 아이콘은 상자 없이 44 칸 가운데에 둔다 */}
+      {/* PC - 세로 카드. 아이콘은 상자 없이 44 칸 가운데에 둔다 */}
       <span className="hidden flex-col gap-2 lg:flex">
         <span aria-hidden="true" className="flex size-11 items-center justify-center">
           <img src={icon} alt="" width={22} height={22} />
@@ -136,7 +136,7 @@ function FeatureCard({ feature }: { feature: (typeof FEATURES)[number] }) {
         <span className="text-20 font-semibold text-nt-main">{title}</span>
         <span className="text-14 text-nt-sub">{desc}</span>
       </span>
-      {/* 모바일 — 가로 줄 + 꺾쇠 */}
+      {/* 모바일 - 가로 줄 + 꺾쇠 */}
       <span className="flex items-center gap-3 lg:hidden">
         <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center">
           <img src={icon} alt="" width={20} height={20} />

@@ -15,9 +15,9 @@ const WHEN = [
 const MIN_PEOPLE = 1
 const MAX_PEOPLE = 10
 
-// PLC_01_002 — 자리 물어보기. MO 바텀시트 / PC 가운데 모달.
+// PLC_01_002 - 자리 물어보기. MO 바텀시트 / PC 가운데 모달.
 // ① 인원 · 시간 → ② 사장님께 묻는 중 → ③ 가능 / 제한 / 응답 없음. 불가면 시트를 닫고 다음 후보로(onNext).
-// 실제 사장님께 보내지 않는다 — 백엔드가 식당마다 정해 둔 답을 흉내 낸다.
+// 실제 사장님께 보내지 않는다 - 백엔드가 식당마다 정해 둔 답을 흉내 낸다.
 export default function SeatSheet({
   pick,
   phone,
@@ -74,7 +74,7 @@ export default function SeatSheet({
     }
   }, [])
 
-  // 답을 받으면 상세 화면에 알린다 — 가능: [길 찾기]가 주 행동, 불가: 다음 후보로
+  // 답을 받으면 상세 화면에 알린다 - 가능: [길 찾기]가 주 행동, 불가: 다음 후보로
   const answer = state.step === 'answered' ? state.answer : null
   useEffect(() => {
     if (answer === 'available') onAvailable()
@@ -145,7 +145,7 @@ export default function SeatSheet({
       <>
         <p className="text-18 font-semibold text-mr-main">사장님께 물어보는 중이에요</p>
         <p className="text-14 text-mr-sub">
-          {people}명 · {when === 'now' ? '지금 바로' : '30분 뒤'} — 보통 몇 초 안에 답이 와요
+          {people}명 · {when === 'now' ? '지금 바로' : '30분 뒤'} - 보통 몇 초 안에 답이 와요
         </p>
         <div role="progressbar" aria-label="답을 기다리는 중" className="relative h-1 overflow-hidden rounded-full bg-mr-line">
           <div className="absolute inset-y-0 w-[120px] animate-[mr-indeterminate_1.4s_ease-in-out_infinite] rounded-full bg-mr-primary motion-reduce:left-[60px] motion-reduce:animate-none" />
@@ -203,7 +203,7 @@ export default function SeatSheet({
         </>
       )
     } else {
-      // 응답 없음 — 불가(unavailable)는 위 effect 가 다음 후보로 넘긴다
+      // 응답 없음 - 불가(unavailable)는 위 effect 가 다음 후보로 넘긴다
       body = (
         <>
           {badges}

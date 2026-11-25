@@ -49,7 +49,7 @@ async def ask_live_status(
     ask: LiveStatusAsk,
     yumi: Annotated[YumiClient, Depends(get_yumi_client)],
 ) -> LiveStatus:
-    """실시간 문의 — 파트너 매장 사장님께 지금 웨이팅·자리·메뉴를 묻는다. 답은 GET 으로 받는다."""
+    """실시간 문의 - 파트너 매장 사장님께 지금 웨이팅·자리·메뉴를 묻는다. 답은 GET 으로 받는다."""
     return await yumi.ask_live_status(place_id, ask.kind, ask.topic, ask.question)
 
 
@@ -69,7 +69,7 @@ async def request_reservation(
     ask: ReservationAsk,
     yumi: Annotated[YumiClient, Depends(get_yumi_client)],
 ) -> Reservation:
-    """예약 요청 — 사장님이 승인하면 확정. 결과는 GET 으로 받는다."""
+    """예약 요청 - 사장님이 승인하면 확정. 결과는 GET 으로 받는다."""
     request = ReservationRequest(place_id=place_id, **ask.model_dump())
     return await yumi.request_reservation(request)
 

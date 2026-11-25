@@ -21,5 +21,5 @@ async def create_score(
     request: ScoreRequest,
     yumi: Annotated[YumiClient, Depends(get_yumi_client)],
 ) -> Score:
-    """'지휘 시작' — 끼니별 메인 식당과 상황별 대안 3곳을 한 번에 만든다."""
+    """'지휘 시작' - 끼니별 메인 식당과 상황별 대안 3곳을 한 번에 만든다."""
     return await build_score(yumi, request)

@@ -21,7 +21,7 @@ from app.yumi.models import (
 
 FIXTURES = Path(__file__).parent / "fixtures"
 KST = timezone(timedelta(hours=9))
-# 로그인 없는 공개 API 라 문의 기록이 끝없이 쌓이지 않게 — 오래된 것부터 지운다
+# 로그인 없는 공개 API 라 문의 기록이 끝없이 쌓이지 않게 - 오래된 것부터 지운다
 QUERY_TTL_SECONDS = 10 * 60
 MAX_QUERIES = 1000
 
@@ -31,14 +31,14 @@ def _load(name: str) -> list[dict[str, Any]]:
     return json.loads((FIXTURES / name).read_text(encoding="utf-8"))
 
 
-# 사장님 답을 흉내 낸 값 — 문의 종류별
+# 사장님 답을 흉내 낸 값 - 문의 종류별
 MOCK_ANSWERS: dict[LiveStatusKind, tuple[str, str]] = {
     "wait": ("limited", "지금 대기 약 10분이에요"),
     "seats": ("available", "바로 앉으실 수 있어요"),
     "item": ("available", "오늘 준비돼 있어요"),
 }
 
-# 리뉴얼 '자리 물어보기' — 시연할 때마다 같은 결과가 나오게 식당마다 답 하나를 고정한다
+# 리뉴얼 '자리 물어보기' - 시연할 때마다 같은 결과가 나오게 식당마다 답 하나를 고정한다
 SEAT_ANSWERS: list[tuple[str, str | None]] = [
     ("available", "바로 앉으실 수 있어요"),
     ("limited", "바 자리만 있어요"),
@@ -48,7 +48,7 @@ SEAT_ANSWERS: list[tuple[str, str | None]] = [
 
 
 def seat_answer(place_id: str) -> tuple[str, str | None]:
-    """매장 id 로 정한 고정 답 — hash() 는 실행마다 달라서 글자 코드 합을 쓴다."""
+    """매장 id 로 정한 고정 답 - hash() 는 실행마다 달라서 글자 코드 합을 쓴다."""
     return SEAT_ANSWERS[sum(map(ord, place_id)) % len(SEAT_ANSWERS)]
 
 
@@ -57,7 +57,7 @@ class MockYumiClient:
 
     실시간 문의·예약은 answer_delay 초 뒤에 사장님이 답한 것처럼 바뀐다 (simulated=True).
     문의·예약 기록은 이 객체 안에 두므로, 앱에서는 하나만 만들어 같이 쓴다(deps.py).
-    real 모드에서도 실제 사장님께 보내지 않으려고 이 흉내를 쓴다 — 그때는 fixtures 에 없는
+    real 모드에서도 실제 사장님께 보내지 않으려고 이 흉내를 쓴다 - 그때는 fixtures 에 없는
     실제 매장 id 가 들어오므로 accept_any_place=True 로 만든다.
     """
 
@@ -110,7 +110,7 @@ class MockYumiClient:
             if raw["id"] == place_id:
                 return bool(raw.get("yumiReservable"))
         if self.accept_any_place:
-            # real 모드 — 파트너인지는 프론트가 실제 데이터(yumiReservable)로 이미 가렸다
+            # real 모드 - 파트너인지는 프론트가 실제 데이터(yumiReservable)로 이미 가렸다
             return True
         raise PlaceNotFound(place_id)
 
@@ -150,7 +150,7 @@ class MockYumiClient:
         return query
 
     async def simulate_seat_ask(self, place_id: str, topic: str) -> LiveStatus:
-        """체험용 자리 묻기 — 파트너인지 따지지 않고 어느 식당이든 흉내 낸 답을 준다 (simulated=True)."""
+        """체험용 자리 묻기 - 파트너인지 따지지 않고 어느 식당이든 흉내 낸 답을 준다 (simulated=True)."""
         query = LiveStatus(
             query_id=f"mock-q-{uuid.uuid4().hex[:8]}",
             place_id=place_id,

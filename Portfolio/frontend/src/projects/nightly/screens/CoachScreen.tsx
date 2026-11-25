@@ -13,7 +13,7 @@ import { COACH_QUICK, COACH_SUGGESTIONS, duration, RATE_LIMIT, SCORE, SLEEP_TOTA
 import { QUESTION_MAX, useCoachChat, type ChatMessage } from '../hooks'
 import { nightlyHref } from '../routes'
 
-// 05 AI 수면 코치 — PC 는 왼쪽 코칭 기준(어젯밤 데이터 · 추천 질문 · 요청 제한) + 오른쪽 대화,
+// 05 AI 수면 코치 - PC 는 왼쪽 코칭 기준(어젯밤 데이터 · 추천 질문 · 요청 제한) + 오른쪽 대화,
 // 모바일은 헤더 · 푸터 없이 화면 전체를 대화로 쓴다(시안 05-M).
 
 type Size = 'pc' | 'mobile'
@@ -25,7 +25,7 @@ const CONTEXT_ROWS = [
   { label: '총 수면', value: duration(SLEEP_TOTAL_MINUTES), tone: 'text-nt-main' },
 ]
 
-/** 유리 원 안의 반짝이 — 모바일 말풍선 옆은 한 단계 작게 */
+/** 유리 원 안의 반짝이 - 모바일 말풍선 옆은 한 단계 작게 */
 function AiAvatar({ size }: { size: Size | 'head' }) {
   const small = size === 'mobile'
   return (
@@ -35,7 +35,7 @@ function AiAvatar({ size }: { size: Size | 'head' }) {
   )
 }
 
-/** 추천 상품 카드 — 타임세일 화면은 다른 곳에서 완성하므로 '보러 가기'는 누르지 않는 표시로 둔다 */
+/** 추천 상품 카드 - 타임세일 화면은 다른 곳에서 완성하므로 '보러 가기'는 누르지 않는 표시로 둔다 */
 function ProductCard({ size }: { size: Size }) {
   const pc = size === 'pc'
   return (
@@ -173,7 +173,7 @@ export default function CoachScreen({ question }: { question: string | null }) {
           { size: 860, x: 760, y: -60 },
         ]}
       />
-      {/* 화면 읽기 프로그램용 — 다 쓴 답과 상태를 한 번씩만 읽는다 */}
+      {/* 화면 읽기 프로그램용 - 다 쓴 답과 상태를 한 번씩만 읽는다 */}
       <p aria-live="polite" className="sr-only">
         {lastAnswer}
       </p>

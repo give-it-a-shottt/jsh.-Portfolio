@@ -1,11 +1,11 @@
-// Front·Back 사례 상세의 글 — 문제 → 해결 포인트 → 결과. 목록 정보(제목·태그·레벨)는 data.ts, 코드는 caseDetails.ts 에 있다.
+// Front·Back 사례 상세의 글 - 문제 → 해결 포인트 → 결과. 목록 정보(제목·태그·레벨)는 data.ts, 코드는 caseDetails.ts 에 있다.
 // 코드 원문과 떼어 둔 건 검색(search.ts) 때문이다. 이 글은 첫 화면에서 받아 본문까지 검색하고(압축 약 8KB),
 // 코드 원문이 든 caseDetails.ts 는 지금처럼 상세 화면을 열 때만 받는다.
 
 export interface CaseStory {
   /** 무엇이 문제였나 */
   problem: string
-  /** 어떻게 풀었나 — 번호 붙은 카드로 보여준다 */
+  /** 어떻게 풀었나 - 번호 붙은 카드로 보여준다 */
   points: { title: string; body: string }[]
   /** 그래서 무엇이 달라졌나 */
   result?: string
@@ -195,7 +195,7 @@ export const CASE_STORIES: Record<string, CaseStory> = {
         body: '리뉴얼한 지금은 서버가 동네마다 검색 결과를 6시간 동안 다시 쓴다. 시각이나 상황 조건을 바꿔도 받은 데이터 안에서 다시 계산해서 요청이 늘지 않는다.',
       },
     ],
-    result: '유미 요청 수가 상황 수와 상관없이 고정됐다 — 일정 버전은 끼니마다 검색 1번, 리뉴얼한 지금은 동네마다 6시간에 검색 1번이다.',
+    result: '유미 요청 수가 상황 수와 상관없이 고정됐다 - 일정 버전은 끼니마다 검색 1번, 리뉴얼한 지금은 동네마다 6시간에 검색 1번이다.',
   },
   'maestro-mock-real': {
     problem:
@@ -379,7 +379,7 @@ export const CASE_STORIES: Record<string, CaseStory> = {
         body: '배포 직후 키 없는 /today 는 401, 일부러 열어 둔 /health 는 200 인지 직접 열어 확인했다.',
       },
     ],
-    result: '키 없는 요청은 “API 키가 올바르지 않아요”(401)로 막히고, 앱에서는 그대로 동작한다. 다만 코드는 아직 “변수가 없으면 통과”라서, 변수가 다시 빠지면 같은 일이 생긴다 — 다음에는 배포 환경에서 변수가 없으면 서버가 아예 뜨지 않게(fail-closed) 바꿀 차례다.',
+    result: '키 없는 요청은 “API 키가 올바르지 않아요”(401)로 막히고, 앱에서는 그대로 동작한다. 다만 코드는 아직 “변수가 없으면 통과”라서, 변수가 다시 빠지면 같은 일이 생긴다 - 다음에는 배포 환경에서 변수가 없으면 서버가 아예 뜨지 않게(fail-closed) 바꿀 차례다.',
   },
   'planforme-kst-today': {
     problem:

@@ -1,4 +1,4 @@
-// 한글 자모 다루기(F-007 S4) — 글자를 자모로 풀고(디 → ㄷ ㅣ), 자모를 다시 글자로 합친다.
+// 한글 자모 다루기(F-007 S4) - 글자를 자모로 풀고(디 → ㄷ ㅣ), 자모를 다시 글자로 합친다.
 // 쓰는 곳: 한영 자판 오타 고치기(vmffosvhal → 플랜포미, ㅁㅊㅊㅑㅐ → accio), 자모 편집거리(마에스트르 ≈ 마에스트로).
 // 겹모음·겹받침은 자판에서 두 번 누르는 대로 둘로 푼다(ㅘ → ㅗ ㅏ, ㄳ → ㄱ ㅅ). 그래야 자판 변환과 편집거리가 같은 단위로 센다.
 
@@ -15,7 +15,7 @@ const DOUBLE_FINAL: Record<string, string> = {
 }
 const SPLIT = Object.fromEntries([...Object.entries(DOUBLE_VOWEL), ...Object.entries(DOUBLE_FINAL)].map(([pair, joined]) => [joined, [...pair]]))
 
-/** 두벌식 자판 — 영문 키 → 자모. 대문자는 Shift(쌍자음·ㅒ·ㅖ) */
+/** 두벌식 자판 - 영문 키 → 자모. 대문자는 Shift(쌍자음·ㅒ·ㅖ) */
 const KEY_TO_JAMO: Record<string, string> = {
   q: 'ㅂ', w: 'ㅈ', e: 'ㄷ', r: 'ㄱ', t: 'ㅅ', y: 'ㅛ', u: 'ㅕ', i: 'ㅑ', o: 'ㅐ', p: 'ㅔ',
   a: 'ㅁ', s: 'ㄴ', d: 'ㅇ', f: 'ㄹ', g: 'ㅎ', h: 'ㅗ', j: 'ㅓ', k: 'ㅏ', l: 'ㅣ',
@@ -27,7 +27,7 @@ const JAMO_TO_KEY = Object.fromEntries(Object.entries(KEY_TO_JAMO).map(([key, ja
 const isVowel = (jamo: string) => JUNG.includes(jamo)
 const isConsonant = (jamo: string) => CHO.includes(jamo) || JONG.includes(jamo)
 
-/** 글자를 자판에서 누르는 순서대로 자모로 푼다. 한글이 아닌 글자는 그대로 둔다 — '디자인' → ㄷㅣㅈㅏㅇㅣㄴ */
+/** 글자를 자판에서 누르는 순서대로 자모로 푼다. 한글이 아닌 글자는 그대로 둔다 - '디자인' → ㄷㅣㅈㅏㅇㅣㄴ */
 export function toJamo(text: string) {
   const out: string[] = []
   for (const char of text) {
@@ -43,18 +43,18 @@ export function toJamo(text: string) {
   return out
 }
 
-/** 글자의 초성(S5 초성 검색) — '디' → 'ㄷ'. 한글 글자가 아니면 null */
+/** 글자의 초성(S5 초성 검색) - '디' → 'ㄷ'. 한글 글자가 아니면 null */
 export function initialOf(char: string) {
   const code = char.charCodeAt(0)
   return code >= SYLLABLE_START && code <= SYLLABLE_END ? CHO[Math.floor((code - SYLLABLE_START) / 588)] : null
 }
 
-/** 자음 낱자만으로 된 입력인지 — 'ㄷㅈㅇ' 처럼 초성으로 찾으려는 것 */
+/** 자음 낱자만으로 된 입력인지 - 'ㄷㅈㅇ' 처럼 초성으로 찾으려는 것 */
 export function isInitialsOnly(text: string) {
   return /^[ㄱ-ㅎ]+$/.test(text)
 }
 
-/** 자모를 자판 입력처럼 글자로 합친다 — ㅍㅡㄹㄹㅐㄴ → 플랜. 받침 뒤에 모음이 오면 받침이 다음 글자로 넘어간다(ㄱㅏㄴㅏ → 가나) */
+/** 자모를 자판 입력처럼 글자로 합친다 - ㅍㅡㄹㄹㅐㄴ → 플랜. 받침 뒤에 모음이 오면 받침이 다음 글자로 넘어간다(ㄱㅏㄴㅏ → 가나) */
 export function fromJamo(jamos: string[]) {
   let out = ''
   let cho = ''
@@ -101,13 +101,13 @@ export function fromJamo(jamos: string[]) {
   return out
 }
 
-/** 한글 자판인 줄 모르고 영문으로 친 것 → 한글. 영문자만 있을 때만 — 'vmffosvhal' → '플랜포미' */
+/** 한글 자판인 줄 모르고 영문으로 친 것 → 한글. 영문자만 있을 때만 - 'vmffosvhal' → '플랜포미' */
 export function keysToHangul(text: string) {
   if (!/^[a-zA-Z]+$/.test(text)) return null
   return fromJamo([...text].map((key) => KEY_TO_JAMO[key] ?? KEY_TO_JAMO[key.toLowerCase()]))
 }
 
-/** 영문 자판인 줄 모르고 한글로 친 것 → 영문. 한글만 있을 때만 — 'ㅁㅊㅊㅑㅐ' → 'accio' */
+/** 영문 자판인 줄 모르고 한글로 친 것 → 영문. 한글만 있을 때만 - 'ㅁㅊㅊㅑㅐ' → 'accio' */
 export function hangulToKeys(text: string) {
   if (!/^[ㄱ-ㆎ가-힣]+$/.test(text)) return null
   const keys = toJamo(text).map((jamo) => JAMO_TO_KEY[jamo])
@@ -115,7 +115,7 @@ export function hangulToKeys(text: string) {
 }
 
 /**
- * 편집거리(Damerau, 이웃 글자 맞바꿈 1번 허용) — 한 쪽을 다른 쪽으로 바꾸는 데 고칠 글자 수.
+ * 편집거리(Damerau, 이웃 글자 맞바꿈 1번 허용) - 한 쪽을 다른 쪽으로 바꾸는 데 고칠 글자 수.
  * 한글은 자모 단위로 센다: 시스탬 → 시스템은 ㅐ → ㅔ 하나라 1이다.
  */
 export function editDistance(a: string[], b: string[], limit: number) {

@@ -1,4 +1,4 @@
-// 검색 채점기(F-007 S0) — queries.json 의 검색어를 실제 사이트 검색 코드(search.ts)로 돌려 점수를 낸다.
+// 검색 채점기(F-007 S0) - queries.json 의 검색어를 실제 사이트 검색 코드(search.ts)로 돌려 점수를 낸다.
 // 사이트 코드는 이미지·?raw 를 import 하므로 Node 로 바로 못 연다. Vite 로 불러온다.
 //
 //   npm run search:eval                       점수 보기 (runs/ 에 S0 가 있으면 그것과 비교)
@@ -14,7 +14,7 @@ import { createServer } from 'vite'
 const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(HERE, '..')
 const RUNS = join(HERE, 'runs')
-/** 상위 몇 위까지를 '보인다'로 칠지 — 결과 첫 화면에서 눈이 먼저 가는 줄 수 */
+/** 상위 몇 위까지를 '보인다'로 칠지 - 결과 첫 화면에서 눈이 먼저 가는 줄 수 */
 const TOP_K = 3
 
 const args = process.argv.slice(2)
@@ -45,7 +45,7 @@ try {
   checkIds(testSet.queries, CASES, NOTES)
 
   /**
-   * '전체' 탭에서 보이는 순서 — 사례 NOTES_AFTER 개 → 노트 묶음 NOTES_IN_MODULE 개 → 나머지 사례.
+   * '전체' 탭에서 보이는 순서 - 사례 NOTES_AFTER 개 → 노트 묶음 NOTES_IN_MODULE 개 → 나머지 사례.
    * 나머지 노트는 Study 탭에 있어 맨 뒤로 둔다. 배치 값은 SearchResults 와 같은 것(search.ts)을 쓴다.
    */
   const visibleOrder = (query) => {
@@ -66,13 +66,13 @@ try {
   const rows = testSet.queries.map((item) => grade(item, visibleOrder(item.query), inHidden))
   const report = summarize(rows)
 
-  // 자동완성 시험지(S5) — 친 글자(치는 도중 포함)마다 기대한 제안이 목록에 나오는지
+  // 자동완성 시험지(S5) - 친 글자(치는 도중 포함)마다 기대한 제안이 목록에 나오는지
   const { getAllSuggestions } = await server.ssrLoadModule('/src/portfolio/suggest.ts')
   const suggestSet = JSON.parse(readFileSync(join(HERE, 'suggest.json'), 'utf8'))
   const suggestRows = suggestSet.inputs.map((item) => gradeSuggest(item, getAllSuggestions(item.input).map((s) => s.text)))
   report.suggest = summarizeSuggest(suggestRows)
 
-  // 추천 검색어(S6) — 예전 방식(고정 키워드 5개)과 새 방식(결과 태그)을 같은 검색어로 나란히 잰다
+  // 추천 검색어(S6) - 예전 방식(고정 키워드 5개)과 새 방식(결과 태그)을 같은 검색어로 나란히 잰다
   const { KEYWORDS } = await server.ssrLoadModule('/src/portfolio/data.ts')
   const { relatedSearches, didYouMean } = await server.ssrLoadModule('/src/portfolio/related.ts')
   const idsOf = (found) => new Set([...found.cases.map((c) => `case:${c.slug}`), ...found.notes.map((n) => `note:${n.slug}`)])
@@ -120,7 +120,7 @@ function grade(item, results, inHidden) {
 }
 
 function summarize(rows) {
-  // 처음 보는 검색어(heldOut)는 전체 점수에서 뺀다 — 단계끼리 같은 시험지로 비교하고, 규칙이 시험지에만 맞춰졌는지는 따로 본다
+  // 처음 보는 검색어(heldOut)는 전체 점수에서 뺀다 - 단계끼리 같은 시험지로 비교하고, 규칙이 시험지에만 맞춰졌는지는 따로 본다
   const positive = rows.filter((row) => !row.negative && !row.heldOut)
   const heldOut = rows.filter((row) => !row.negative && row.heldOut)
   const negative = rows.filter((row) => row.negative)
@@ -139,7 +139,7 @@ function summarize(rows) {
   return {
     overall: metrics(positive),
     heldOut: heldOut.length ? metrics(heldOut) : undefined,
-    // 정답이 없어야 하는 검색어에서 뭔가 나온 비율 — 낮을수록 좋다
+    // 정답이 없어야 하는 검색어에서 뭔가 나온 비율 - 낮을수록 좋다
     falsePositiveRate: avg(negative, (row) => (row.total > 0 ? 1 : 0)),
     negativeCount: negative.length,
     categories,
@@ -148,14 +148,14 @@ function summarize(rows) {
 
 // ── 자동완성 ────────────────────────────────────────────────────────────
 
-/** 친 글자 하나의 점수 — 기대한 문구가 제안 목록 몇 번째에 있는지 */
+/** 친 글자 하나의 점수 - 기대한 문구가 제안 목록 몇 번째에 있는지 */
 function gradeSuggest(item, shown) {
   const rank = shown.indexOf(item.expect) + 1
   return { ...item, shown, rank, hit: rank > 0, reciprocal: rank ? 1 / rank : 0 }
 }
 
 function summarizeSuggest(allRows) {
-  // 처음 보는 입력(heldOut)은 전체 점수에서 빼고 따로 — 검색 채점과 같은 이유
+  // 처음 보는 입력(heldOut)은 전체 점수에서 빼고 따로 - 검색 채점과 같은 이유
   const rows = allRows.filter((row) => !row.heldOut)
   const heldOut = allRows.filter((row) => row.heldOut)
   const avg = (list, pick) => (list.length ? list.reduce((sum, row) => sum + pick(row), 0) / list.length : 0)
@@ -171,14 +171,14 @@ function summarizeSuggest(allRows) {
 }
 
 function printSuggest(summary, rows, base) {
-  console.log(`\n자동완성 채점 — 친 글자 ${summary.count}개 (제안은 최대 6개)`)
+  console.log(`\n자동완성 채점 - 친 글자 ${summary.count}개 (제안은 최대 6개)`)
   console.log('─'.repeat(64))
   console.log(`제안 없음       ${pct(summary.zeroRate)}${delta(summary.zeroRate, base?.zeroRate, true, true)}`)
   console.log(`목록에 나옴     ${pct(summary.hitRate)}${delta(summary.hitRate, base?.hitRate, true)}   기대한 문구가 6개 안에 있는 비율`)
   console.log(`MRR            ${num(summary.mrr)}${delta(summary.mrr, base?.mrr, false)}`)
   if (summary.heldOut) {
     const h = summary.heldOut
-    console.log(`\n처음 보는 입력 ${h.count}개(전체 점수에서 뺌) — 목록에 나옴 ${pct(h.hitRate).trim()}${delta(h.hitRate, base?.heldOut?.hitRate, true)} · MRR ${num(h.mrr)}`)
+    console.log(`\n처음 보는 입력 ${h.count}개(전체 점수에서 뺌) - 목록에 나옴 ${pct(h.hitRate).trim()}${delta(h.hitRate, base?.heldOut?.hitRate, true)} · MRR ${num(h.mrr)}`)
   }
   console.log(`\n${padWide('유형별', 12)} 개수  목록에 나옴   MRR`)
   for (const [name, m] of Object.entries(summary.categories)) {
@@ -187,7 +187,7 @@ function printSuggest(summary, rows, base) {
   const missed = rows.filter((row) => !row.hit || (verbose && row.hit))
   if (missed.length) console.log(verbose ? '\n친 글자별' : '\n못 맞힌 자동완성')
   for (const row of missed) {
-    console.log(`${row.hit ? 'O' : 'X'} ${row.id} [${row.category}] "${row.input}" → 기대 "${row.expect}" — ${row.hit ? `${row.rank}번째` : `없음 (제안 ${row.shown.length}개)`}`)
+    console.log(`${row.hit ? 'O' : 'X'} ${row.id} [${row.category}] "${row.input}" → 기대 "${row.expect}" - ${row.hit ? `${row.rank}번째` : `없음 (제안 ${row.shown.length}개)`}`)
   }
 }
 
@@ -230,13 +230,13 @@ function gradeDidYouMean(queries, search, didYouMean, idsOf) {
 }
 
 function printRelated(related, dym) {
-  console.log('\n추천 검색어 채점 — 결과가 있는 검색어마다 추천을 다시 검색해 봄')
+  console.log('\n추천 검색어 채점 - 결과가 있는 검색어마다 추천을 다시 검색해 봄')
   console.log('─'.repeat(64))
   console.log(`${padWide('방식', 12)} 검색어  추천 수   유효   관련  새로움`)
   for (const [name, m] of Object.entries(related)) {
     console.log(`${padWide(name, 12)} ${String(m.queries).padStart(6)}  ${m.count.toFixed(1).padStart(6)}  ${pct(m.valid)}  ${pct(m.related)}  ${pct(m.novel)}`)
   }
-  console.log(`\n'혹시 이걸 찾으셨나요?' — 0건 검색어 ${dym.zero}개 중 제안 ${dym.suggested}개, 그중 정답을 찾아 준 것 ${dym.helps}개`)
+  console.log(`\n'혹시 이걸 찾으셨나요?' - 0건 검색어 ${dym.zero}개 중 제안 ${dym.suggested}개, 그중 정답을 찾아 준 것 ${dym.helps}개`)
   for (const row of dym.rows) {
     console.log(`  ${row.id.padEnd(4)} "${row.query}"${row.negative ? ' (없어야 함)' : ''} → ${row.suggestion ? `"${row.suggestion}"${row.helps ? ' · 정답 찾음' : ''}` : '제안 없음'}`)
   }
@@ -244,7 +244,7 @@ function printRelated(related, dym) {
 
 // ── 숨은 글 ─────────────────────────────────────────────────────────────
 
-/** 사이트 검색(search.ts)이 아직 보지 않는 글 — 사례의 사용 기술·코드 설명·팀 소개, 노트의 '써먹은 곳' */
+/** 사이트 검색(search.ts)이 아직 보지 않는 글 - 사례의 사용 기술·코드 설명·팀 소개, 노트의 '써먹은 곳' */
 function buildHidden(details, notes, normalize) {
   const hidden = new Map()
   for (const [slug, detail] of Object.entries(details)) {
@@ -287,7 +287,7 @@ function pct(value) {
   return `${(value * 100).toFixed(0)}%`.padStart(4)
 }
 
-/** 터미널에서 한글은 영문 두 칸을 차지한다 — padEnd 는 글자 수로 세서 표가 어긋나므로 폭으로 센다 */
+/** 터미널에서 한글은 영문 두 칸을 차지한다 - padEnd 는 글자 수로 세서 표가 어긋나므로 폭으로 센다 */
 function padWide(text, width) {
   const used = [...text].reduce((sum, char) => sum + (/[ᄀ-ᇿ㄰-㆏가-힣]/.test(char) ? 2 : 1), 0)
   return text + ' '.repeat(Math.max(0, width - used))
@@ -309,7 +309,7 @@ function delta(now, before, asPct, lowerIsBetter = false) {
 function printReport(report, rows, base) {
   const { overall } = report
   const b = base?.overall
-  console.log(`\n검색 채점 — 정답 있는 검색어 ${overall.count}개 · 정답 없어야 하는 검색어 ${report.negativeCount}개${base ? ` · 비교 기준 ${base.name}(${base.savedAt})` : ''}`)
+  console.log(`\n검색 채점 - 정답 있는 검색어 ${overall.count}개 · 정답 없어야 하는 검색어 ${report.negativeCount}개${base ? ` · 비교 기준 ${base.name}(${base.savedAt})` : ''}`)
   console.log('─'.repeat(64))
   console.log(`0건 비율        ${pct(overall.zeroRate)}${delta(overall.zeroRate, b?.zeroRate, true, true)}   낮을수록 좋아요`)
   console.log(`상위 ${TOP_K} 적중률   ${pct(overall.hitAtK)}${delta(overall.hitAtK, b?.hitAtK, true)}`)
@@ -319,7 +319,7 @@ function printReport(report, rows, base) {
   if (report.heldOut) {
     const h = report.heldOut
     const hb = base?.heldOut
-    console.log(`\n처음 보는 검색어 ${h.count}개(전체 점수에서 뺌) — 상위 ${TOP_K} 적중률 ${pct(h.hitAtK).trim()}${delta(h.hitAtK, hb?.hitAtK, true)} · 0건 비율 ${pct(h.zeroRate).trim()}${delta(h.zeroRate, hb?.zeroRate, true, true)} · MRR ${num(h.mrr)}`)
+    console.log(`\n처음 보는 검색어 ${h.count}개(전체 점수에서 뺌) - 상위 ${TOP_K} 적중률 ${pct(h.hitAtK).trim()}${delta(h.hitAtK, hb?.hitAtK, true)} · 0건 비율 ${pct(h.zeroRate).trim()}${delta(h.zeroRate, hb?.zeroRate, true, true)} · MRR ${num(h.mrr)}`)
   }
 
   console.log(`\n${padWide('유형별', 12)} 개수   0건 상위${TOP_K}   MRR 찾은 비율`)
@@ -335,7 +335,7 @@ function printReport(report, rows, base) {
     const where = row.negative
       ? `${row.total}건 (0건이어야 함)`
       : `${row.total}건 · 첫 정답 ${row.firstRank ? `${row.firstRank}위` : '없음'} · 찾은 비율 ${pct(row.recall).trim()}`
-    console.log(`${mark} ${row.id.padEnd(4)} [${row.category}] "${row.query}" — ${where}`)
+    console.log(`${mark} ${row.id.padEnd(4)} [${row.category}] "${row.query}" - ${where}`)
     if (row.missedInHidden.length) console.log(`       검색이 안 보는 글(코드 설명 등)에만 있어서 놓침: ${row.missedInHidden.join(', ')}`)
     const elsewhere = row.missed.filter((id) => !row.missedInHidden.includes(id))
     if (elsewhere.length) console.log(`       못 찾음: ${elsewhere.join(', ')}`)

@@ -10,7 +10,7 @@ import { CONDITIONS, DEMO_TIMES, DONGS, goTo, maestroHref, readQuery } from '../
 import { useMaestro } from '../store'
 import type { ConditionKey, DongKey, Picks } from '../types'
 
-// HOM_01_001 — 동네 · 상황 고르기. 기본 경로는 [3곳 찾기] 한 번(상황은 골라도 되고 안 골라도 된다)
+// HOM_01_001 - 동네 · 상황 고르기. 기본 경로는 [3곳 찾기] 한 번(상황은 골라도 되고 안 골라도 된다)
 export default function HomeScreen({ params }: { params: URLSearchParams }) {
   const lastDong = useMaestro((state) => state.lastDong)
   const setLastDong = useMaestro((state) => state.setLastDong)
@@ -22,7 +22,7 @@ export default function HomeScreen({ params }: { params: URLSearchParams }) {
   const [now] = useState(nowClock)
   const [count, setCount] = useState<{ key: string; data: Picks | null } | null>(null)
 
-  // '지금 12:40, 을지로에 14곳이 열려 있어요' — 조건 없이 같은 API 로 센다. 잠든 서버도 이때 깨운다
+  // '지금 12:40, 을지로에 14곳이 열려 있어요' - 조건 없이 같은 API 로 센다. 잠든 서버도 이때 깨운다
   const countKey = `${t}|${dong}`
   useEffect(() => {
     let alive = true

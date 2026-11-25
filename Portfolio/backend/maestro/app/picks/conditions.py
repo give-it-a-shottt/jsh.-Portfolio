@@ -6,7 +6,7 @@
   serviceAttributes.waiting_expected / venue_subtype
   price.avg        1인 평균 가격(원)
   nearestStation   가장 가까운 역과 도보 분
-기준은 tests/test_picks.py — 조건을 바꾸면 테스트도 같이 바꾼다.
+기준은 tests/test_picks.py - 조건을 바꾸면 테스트도 같이 바꾼다.
 """
 
 from collections.abc import Callable
@@ -70,7 +70,7 @@ def _budget(place: Place) -> bool:
 class Condition:
     key: ConditionKey
     label: str
-    hint: str  # (?) 툴팁 — 무엇을 보고 맞다고 했는지
+    hint: str  # (?) 툴팁 - 무엇을 보고 맞다고 했는지
     test: Callable[[Place], bool]
 
 

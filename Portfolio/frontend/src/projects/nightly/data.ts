@@ -1,4 +1,4 @@
-// Nightly 시안의 가짜 데이터 — 서버 없이 화면만 보여 준다. 숫자는 피그마 「AI 수면」 Liquid Glass 수정안 그대로.
+// Nightly 시안의 가짜 데이터 - 서버 없이 화면만 보여 준다. 숫자는 피그마 「AI 수면」 Liquid Glass 수정안 그대로.
 
 export type Stage = 'deep' | 'rem' | 'light' | 'awake'
 
@@ -23,7 +23,7 @@ export const LAST_NIGHT: { stage: Stage; minutes: number; percent: number }[] = 
 
 export const SCORE = 87
 
-/** 단계 비율(%) — 코치 화면 칩 · 사이드바가 같은 숫자를 쓰게 여기서 꺼낸다 */
+/** 단계 비율(%) - 코치 화면 칩 · 사이드바가 같은 숫자를 쓰게 여기서 꺼낸다 */
 export function stagePercent(stage: Stage) {
   return LAST_NIGHT.find((row) => row.stage === stage)?.percent ?? 0
 }
@@ -35,7 +35,7 @@ export function duration(minutes: number) {
   return h ? `${h}h ${m}m` : `${m}m`
 }
 
-/** 수면 단계 그래프 — 잠든 시각(23:48)부터 지난 분(start)과 길이(min). 시안 막대 위치를 분으로 옮긴 값 */
+/** 수면 단계 그래프 - 잠든 시각(23:48)부터 지난 분(start)과 길이(min). 시안 막대 위치를 분으로 옮긴 값 */
 export const SLEEP_START = '23:48'
 export const SLEEP_TOTAL_MINUTES = 432
 export const HYPNOGRAM: { stage: Stage; start: number; min: number }[] = [
@@ -59,7 +59,7 @@ export const HYPNOGRAM: { stage: Stage; start: number; min: number }[] = [
   { stage: 'light', start: 413, min: 19 },
 ]
 
-/** 시간 눈금 — start 는 23:48 부터 지난 분. mobile 이 true 인 것만 좁은 화면에 남긴다 */
+/** 시간 눈금 - start 는 23:48 부터 지난 분. mobile 이 true 인 것만 좁은 화면에 남긴다 */
 export const HYPNOGRAM_TICKS: { label: string; start: number; mobile: boolean }[] = [
   { label: '23:48', start: 0, mobile: true },
   { label: '01:00', start: 72, mobile: false },
@@ -71,7 +71,7 @@ export const HYPNOGRAM_TICKS: { label: string; start: number; mobile: boolean }[
   { label: '07:00', start: 432, mobile: true },
 ]
 
-/** 최근 7일 수면 점수 — 마지막이 어젯밤(화) */
+/** 최근 7일 수면 점수 - 마지막이 어젯밤(화) */
 export const WEEKLY: { day: string; score: number }[] = [
   { day: '수', score: 76 },
   { day: '목', score: 82 },
@@ -82,7 +82,7 @@ export const WEEKLY: { day: string; score: number }[] = [
   { day: '화', score: 87 },
 ]
 
-/** 웹훅 동기화 기록 — 200 · 중복(200, 1번만 저장) · 401(서명 불일치) */
+/** 웹훅 동기화 기록 - 200 · 중복(200, 1번만 저장) · 401(서명 불일치) */
 export const SYNC_LOGS: { status: number; tone: 'ok' | 'muted' | 'danger'; label: string; time: string }[] = [
   { status: 200, tone: 'ok', label: '수면 데이터 저장', time: '07:02:14' },
   { status: 200, tone: 'muted', label: '중복 요청 · 1번만 저장', time: '07:02:15' },
@@ -90,7 +90,7 @@ export const SYNC_LOGS: { status: number; tone: 'ok' | 'muted' | 'danger'; label
   { status: 200, tone: 'ok', label: '수면 데이터 저장', time: '어제 07:10' },
 ]
 
-/** AI 코치 — 추천 질문과 미리 써 둔 답. 실제 서비스에서는 Gemini 가 SSE 로 한 글자씩 보낸다 */
+/** AI 코치 - 추천 질문과 미리 써 둔 답. 실제 서비스에서는 Gemini 가 SSE 로 한 글자씩 보낸다 */
 export const COACH_ANSWERS: Record<string, string> = {
   '오늘 왜 이렇게 피곤할까?':
     '점수는 높지만 새벽 4시 10분에 두 번 깨면서 그 뒤 깊은 잠이 거의 없었어요. 아침 피로감은 수면 후반부의 REM 단계가 끊겼을 때 자주 나타나요. 오늘은 잠들기 1시간 전부터 화면 밝기를 낮추고, 카페인은 오후 2시 이전에만 마셔 보세요.',
@@ -115,13 +115,13 @@ export const COACH_SUGGESTIONS = [
   '자기 전 루틴 추천해 줘',
 ]
 
-/** 모바일 아래 빠른 질문 — 짧은 글자로 보여 주고 누르면 원래 질문을 보낸다 */
+/** 모바일 아래 빠른 질문 - 짧은 글자로 보여 주고 누르면 원래 질문을 보낸다 */
 export const COACH_QUICK: { label: string; question: string }[] = [
   { label: '새벽에 깨는 이유?', question: '새벽에 깨는 이유가 뭘까?' },
   { label: 'REM 늘리려면?', question: 'REM 수면을 늘리려면?' },
 ]
 
-/** 대시보드 AI 코치 칸의 질문 칩 — 누르면 코치 화면에서 그 질문을 바로 보낸다 */
+/** 대시보드 AI 코치 칸의 질문 칩 - 누르면 코치 화면에서 그 질문을 바로 보낸다 */
 export const DASHBOARD_CHIPS: { label: string; question: string }[] = [
   { label: '왜 새벽에 깼을까?', question: '새벽에 깨는 이유가 뭘까?' },
   { label: '카페인 끊어야 할까?', question: '카페인 끊어야 할까?' },

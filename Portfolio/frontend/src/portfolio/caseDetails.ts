@@ -1,8 +1,8 @@
-// Front·Back 사례 상세 — 사용 기술과 실제 코드, 팀 프로젝트 소개. 목록 정보(제목·태그·레벨)는 data.ts,
+// Front·Back 사례 상세 - 사용 기술과 실제 코드, 팀 프로젝트 소개. 목록 정보(제목·태그·레벨)는 data.ts,
 // 문제 → 해결 포인트 → 결과 글은 caseStories.ts 에 있다(검색이 본문까지 찾도록 첫 화면에서 받는다).
 // 코드는 따로 복사해 두지 않고 저장소 파일을 원문(?raw)으로 불러와 줄 범위만 잘라 보여준다.
 // 원본 파일을 고쳐 줄이 밀리면 여기 lines 도 같이 고친다.
-// 이 파일은 상세 화면을 열 때만 받는다(PortfolioApp 의 lazy) — 코드 원문이 첫 화면 용량에 들어가지 않는다.
+// 이 파일은 상세 화면을 열 때만 받는다(PortfolioApp 의 lazy) - 코드 원문이 첫 화면 용량에 들어가지 않는다.
 
 import accioArchitecture from './assets/accio/architecture.png'
 import accioDemoIntentPoster from './assets/accio/demo-intent.jpg'
@@ -49,7 +49,7 @@ import pfmUseToday from '../../../external/planforme/web/src/lib/useToday.ts?raw
 const PLANFORME_REPO = 'https://github.com/give-it-a-shottt/PlanForMe'
 
 export interface CodeSample {
-  /** 탭 이름 — 보통 파일 이름 */
+  /** 탭 이름 - 보통 파일 이름 */
   label: string
   /** 저장소 루트 기준 경로. 코드 위 경로 표시와 GitHub 링크에 쓴다 */
   path: string
@@ -59,11 +59,11 @@ export interface CodeSample {
   source: string
   /** 보여줄 줄 범위(1부터, 양 끝 포함). 없으면 파일 전체 */
   lines?: [number, number]
-  /** 이 코드에서 볼 점 — 코드 아래 '설계 의도' 칸 */
+  /** 이 코드에서 볼 점 - 코드 아래 '설계 의도' 칸 */
   note: string
 }
 
-/** 팀 프로젝트 원본 소개 — 팀 저장소 README(팀원·시연 영상·아키텍처·포스터)를 사례 아래에 옮겨 둔다 */
+/** 팀 프로젝트 원본 소개 - 팀 저장소 README(팀원·시연 영상·아키텍처·포스터)를 사례 아래에 옮겨 둔다 */
 export interface TeamProject {
   name: string
   tagline: string
@@ -101,7 +101,7 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
         path: 'Portfolio/frontend/src/projects/maestro/components.tsx',
         source: maestroComponents,
         lines: [134, 177],
-        note: '영업시간 막대 — 축을 10:00~02:00 으로 고정해 3곳을 같은 눈으로 비교한다. 마커는 첫 카드만 움직이고, 같은 정보를 글자로 주므로 막대는 읽지 않는다(aria-hidden).',
+        note: '영업시간 막대 - 축을 10:00~02:00 으로 고정해 3곳을 같은 눈으로 비교한다. 마커는 첫 카드만 움직이고, 같은 정보를 글자로 주므로 막대는 읽지 않는다(aria-hidden).',
       },
     ],
   },
@@ -116,11 +116,11 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
         note: '--font-weight-*: initial, --text-*: initial 로 Tailwind 기본값을 지우고 디자인 문서의 값만 남겼다. 토큰에 없는 크기는 쓰려 해도 클래스가 없다.',
       },
     ],
-    // 팀 저장소 README(mall-haebwa_) — 시연 GIF 는 용량이 커서(13MB) mp4 로 바꿔 두었다
+    // 팀 저장소 README(mall-haebwa_) - 시연 GIF 는 용량이 커서(13MB) mp4 로 바꿔 두었다
     team: {
       name: 'Accio',
       tagline: '생각을 담는 장바구니',
-      period: '2025.10.29 – 2025.11.29',
+      period: '2025.10.29 - 2025.11.29',
       repo: 'https://github.com/give-it-a-shottt/mall-haebwa_',
       team: { image: accioTeam, members: ['신정호(팀장)', '백준렬', '정성훈', '진충열', '서찬진'] },
       highlights: [
@@ -178,7 +178,7 @@ export const CASE_DETAILS: Record<string, CaseDetail> = {
         path: 'Portfolio/frontend/src/App.tsx',
         source: appRoutes,
         lines: [11, 14],
-        note: '프로젝트마다 lazy 한 줄 — 들어갈 때 그 프로젝트 코드만 받는다.',
+        note: '프로젝트마다 lazy 한 줄 - 들어갈 때 그 프로젝트 코드만 받는다.',
       },
     ],
   },

@@ -62,7 +62,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json() as Promise<T>
 }
 
-/** 서버를 미리 깨운다 — 사용자가 동네 · 상황을 고르는 동안 깨어나도록 마에스트로에 들어오자마자 부른다 */
+/** 서버를 미리 깨운다 - 사용자가 동네 · 상황을 고르는 동안 깨어나도록 마에스트로에 들어오자마자 부른다 */
 let waking: Promise<unknown> | null = null
 export function wakeServer() {
   if (serverState === 'awake' || waking) return
@@ -80,17 +80,17 @@ function search(query: Query) {
   return params.toString()
 }
 
-/** [3곳 찾기] — 후보 3곳과 결과 화면 상태. 홈의 '지금 N곳이 열려 있어요'도 조건 없이 이걸로 센다 */
+/** [3곳 찾기] - 후보 3곳과 결과 화면 상태. 홈의 '지금 N곳이 열려 있어요'도 조건 없이 이걸로 센다 */
 export function getPicks(query: Query) {
   return request<Picks>(`/api/picks?dong=${query.dong}&${search(query)}`)
 }
 
-/** 식당 상세 — 결과를 찾을 때 받아 둔 데이터에서 꺼내서 유미를 다시 부르지 않는다 */
+/** 식당 상세 - 결과를 찾을 때 받아 둔 데이터에서 꺼내서 유미를 다시 부르지 않는다 */
 export function getPlace(id: string, query: Query) {
   return request<PlaceDetail>(`/api/picks/${query.dong}/places/${encodeURIComponent(id)}?${search(query)}`)
 }
 
-/** 자리 물어보기 — 실제 사장님께 보내지 않고 식당마다 정해 둔 답을 흉내 낸다(simulated) */
+/** 자리 물어보기 - 실제 사장님께 보내지 않고 식당마다 정해 둔 답을 흉내 낸다(simulated) */
 export function askSeat(placeId: string, people: number, when: 'now' | '30min') {
   return request<SeatAnswer>(`/api/picks/places/${encodeURIComponent(placeId)}/seat-ask`, {
     method: 'POST',

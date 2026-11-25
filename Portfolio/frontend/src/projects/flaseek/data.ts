@@ -1,4 +1,4 @@
-// FLASEEK 리뉴얼 시안 데이터 — 상품명·가격은 피그마 시안(현재 몰 상품) 그대로, 별점·리뷰 수는 예시 값이다.
+// FLASEEK 리뉴얼 시안 데이터 - 상품명·가격은 피그마 시안(현재 몰 상품) 그대로, 별점·리뷰 수는 예시 값이다.
 // 상품 사진은 현재 몰 캡처에서 쓰는 칸 15개만 모은 한 장(assets/products.webp)에서 잘라 쓴다. crop 은 그 이미지의 픽셀 좌표.
 // 캡처 원본(1920×3745)을 통째로 받으면 쓰는 화소가 14% 뿐이라, 260px 칸 4×4 격자로 다시 모았다(425KB → 132KB).
 
@@ -10,13 +10,13 @@ export interface Crop {
   h: number
 }
 
-/** 스프라이트 한 칸의 크기 — 칸은 4열 × 4행 */
+/** 스프라이트 한 칸의 크기 - 칸은 4열 × 4행 */
 const TILE = 260
 
-/** 상품 사진 한 칸 — col 열 row 행의 정사각형 */
+/** 상품 사진 한 칸 - col 열 row 행의 정사각형 */
 const tile = (col: number, row: number): Crop => ({ x: col * TILE, y: row * TILE, w: TILE, h: TILE })
 
-/** 두께 카드용 가로로 긴 띠(384×240 비율) — 칸 위에서 top 만큼 내려온 곳 */
+/** 두께 카드용 가로로 긴 띠(384×240 비율) - 칸 위에서 top 만큼 내려온 곳 */
 const band = (col: number, row: number, top = 0): Crop => ({ x: col * TILE, y: row * TILE + top, w: TILE, h: 162 })
 
 export type Category = 'legwear' | 'shapewear' | 'set' | 'laundry'
@@ -35,7 +35,7 @@ export interface Product {
   perPiece?: number
   rating: number
   reviews: number
-  /** 카드에 붙는 태그 — 최대 2개 */
+  /** 카드에 붙는 태그 - 최대 2개 */
   tags: string[]
   crop: Crop
   categories: Category[]
@@ -68,10 +68,10 @@ export const PRODUCTS: Product[] = [
 
 export const findProduct = (id: number) => PRODUCTS.find((product) => product.id === id)
 
-/** 상세 갤러리 뒤쪽 사진 — 시안의 썸네일 2~4 */
+/** 상세 갤러리 뒤쪽 사진 - 시안의 썸네일 2~4 */
 export const GALLERY_EXTRAS: Crop[] = [tile(2, 2), tile(0, 1), tile(0, 3)]
 
-/** 포토 리뷰 칸 — 시안과 같은 다섯 장 */
+/** 포토 리뷰 칸 - 시안과 같은 다섯 장 */
 export const PHOTO_REVIEWS: Crop[] = [tile(0, 0), tile(0, 1), tile(2, 2), tile(1, 3), tile(2, 1)]
 
 export interface CategoryInfo {
@@ -105,7 +105,7 @@ export interface ThicknessInfo {
   ko: string
   /** 메인 '두께로 골라보세요' 카드 문구 */
   note: string
-  /** 카드 사진 — 384×240 비율 */
+  /** 카드 사진 - 384×240 비율 */
   crop: Crop
 }
 
@@ -119,10 +119,10 @@ export const SKINS: Skin[] = ['밝은', '보통', '어두운']
 export const PRESSURES: Pressure[] = ['약', '중', '강']
 export const SEASONS: Season[] = ['사계절', '겨울용']
 
-/** 레그웨어 세트 칩 — 매수가 늘수록 장당 가격이 내려간다 */
+/** 레그웨어 세트 칩 - 매수가 늘수록 장당 가격이 내려간다 */
 export interface SetOption {
   count: number
-  /** 이 매수의 상품 — 이름·가격·사진을 여기서 가져온다 */
+  /** 이 매수의 상품 - 이름·가격·사진을 여기서 가져온다 */
   productId: number
   /** 칩 아랫줄 */
   note: string
@@ -152,7 +152,7 @@ export const REVIEWS: Review[] = [
   { stars: 4, author: 'su*****', date: '2026.10.03', option: '3매 SET · 사이즈감 작아요 · 압박감 강해요', body: '시스루 스킨2 색이 피부에 자연스럽게 붙어요. 키가 큰 편이라 조금 타이트했어요. 사이즈 표를 꼭 확인하세요.' },
 ]
 
-/** 리뷰 요약 막대 — 가장 많이 고른 값만 브랜드 색으로 채운다 */
+/** 리뷰 요약 막대 - 가장 많이 고른 값만 브랜드 색으로 채운다 */
 export const REVIEW_SUMMARY = [
   { title: '사이즈감', bars: [{ label: '작아요', value: 8 }, { label: '딱 맞아요', value: 81 }, { label: '커요', value: 11 }] },
   { title: '압박감', bars: [{ label: '약해요', value: 12 }, { label: '적당해요', value: 70 }, { label: '강해요', value: 18 }] },

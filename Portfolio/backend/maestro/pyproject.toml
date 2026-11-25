@@ -1,7 +1,7 @@
 [project]
 name = "maestro"
 version = "0.1.0"
-description = "마에스트로 — 짜둔 일정에 상황별 대안 식당(변주)을 미리 붙여두는 서비스의 API"
+description = "마에스트로 - 짜둔 일정에 상황별 대안 식당(변주)을 미리 붙여두는 서비스의 API"
 authors = [
     { name = "give-it-a-shottt", email = "jeongseonghoon4537@gmail.com" }
 ]

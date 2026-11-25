@@ -3,7 +3,7 @@ import { hangulToKeys, initialOf, isInitialsOnly, keysToHangul, toJamo } from '.
 import { NOTES } from './notes'
 import { normalize } from './searchText'
 
-// 검색창 자동완성(F-007 S5) — 추천 키워드 · 사례 제목 · 노트 제목 중에서 친 글자와 맞는 것을 제안한다.
+// 검색창 자동완성(F-007 S5) - 추천 키워드 · 사례 제목 · 노트 제목 중에서 친 글자와 맞는 것을 제안한다.
 //   띄어쓰기·대소문자 무시(S1) · 치는 도중의 글자('디장' → 디자인) · 초성('ㄷㅈㅇ') · 한영 자판('gozj' → 해커)
 // 맞은 부분은 굵게 보여주도록 segments 로 나눠 돌려준다.
 
@@ -41,7 +41,7 @@ function toUnits(chars: string[]): Unit[] {
   })
 }
 
-/** 제안 후보 — 추천 키워드가 먼저, 그다음 사례 제목, 노트 제목. 같은 문구는 한 번만 */
+/** 제안 후보 - 추천 키워드가 먼저, 그다음 사례 제목, 노트 제목. 같은 문구는 한 번만 */
 const CANDIDATES: Candidate[] = [
   ...KEYWORDS.map(({ label, type }) => ({ text: label, type })),
   ...CASES.map(({ title, type }) => ({ text: title, type })),
@@ -54,8 +54,8 @@ const CANDIDATES: Candidate[] = [
   })
 
 /**
- * 초성이 이어서 맞는 곳 — 'ㄷㅈㅇ' 은 '디자인' 의 ㄷ·ㅈ·ㅇ. [시작 칸, 끝 칸]
- * 낱말 첫 글자에서 시작할 때만 맞춘다 — 안 그러면 '모든 작업'의 '든 작업'(ㄷㅈㅇ)처럼 낱말 중간에 걸린다.
+ * 초성이 이어서 맞는 곳 - 'ㄷㅈㅇ' 은 '디자인' 의 ㄷ·ㅈ·ㅇ. [시작 칸, 끝 칸]
+ * 낱말 첫 글자에서 시작할 때만 맞춘다 - 안 그러면 '모든 작업'의 '든 작업'(ㄷㅈㅇ)처럼 낱말 중간에 걸린다.
  */
 function matchInitials(units: Unit[], initials: string[]) {
   for (let start = 0; start + initials.length <= units.length; start++) {
@@ -66,7 +66,7 @@ function matchInitials(units: Unit[], initials: string[]) {
 }
 
 /**
- * 자모 단위로 이어서 맞는 곳 — 칸(글자) 시작에서만 맞춰 본다.
+ * 자모 단위로 이어서 맞는 곳 - 칸(글자) 시작에서만 맞춰 본다.
  * '디장'(ㄷㅣㅈㅏㅇ)은 '디자인'(ㄷㅣㅈㅏㅇㅣㄴ)의 앞부분이라 맞는다. 치는 도중에 받침처럼 보이는 자음이 다음 글자의 첫소리여도 된다.
  */
 function matchJamo(units: Unit[], jamo: string[]) {
@@ -109,7 +109,7 @@ function suggestFor(input: string, limit: number) {
     const range = findMatch(candidate, input)
     return range ? [{ candidate, range }] : []
   })
-  // 문구 맨 앞에서 맞은 것을 먼저 — '시스템' 은 '디자인 시스템' 보다 '시스템…' 으로 시작하는 문구가 위
+  // 문구 맨 앞에서 맞은 것을 먼저 - '시스템' 은 '디자인 시스템' 보다 '시스템…' 으로 시작하는 문구가 위
   found.sort((a, b) => Number(a.range[0] !== 0) - Number(b.range[0] !== 0))
   return found.slice(0, limit).map(({ candidate, range }) => ({ text: candidate.text, type: candidate.type, segments: toSegments(candidate, range) }))
 }

@@ -22,7 +22,7 @@ GAP_SECONDS = 12
 
 
 def _trim(raw: list[dict]) -> list[dict]:
-    """모델에 있는 필드만 남긴다 — 파일이 작아지고, 화면에 안 쓰는 값을 저장소에 두지 않는다."""
+    """모델에 있는 필드만 남긴다 - 파일이 작아지고, 화면에 안 쓰는 값을 저장소에 두지 않는다."""
     return [
         Place.model_validate(p).model_dump(
             by_alias=True, mode="json", exclude_none=True

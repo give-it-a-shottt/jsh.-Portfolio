@@ -1,6 +1,6 @@
 import type { ReactNode, SVGProps } from 'react'
 
-// 직접 그린 라인 아이콘 — 20 그리드, 1.5 선, 각진 끝(square cap)으로 통일한다. 색은 currentColor 를 따른다.
+// 직접 그린 라인 아이콘 - 20 그리드, 1.5 선, 각진 끝(square cap)으로 통일한다. 색은 currentColor 를 따른다.
 // 반짝이·로봇·마법봉처럼 AI 서비스에서 흔히 쓰는 아이콘은 의도적으로 두지 않는다.
 type IconProps = Omit<SVGProps<SVGSVGElement>, 'children'> & { size?: number }
 
@@ -72,7 +72,7 @@ export function CheckIcon(props: IconProps) {
   )
 }
 
-/** 배송 문의 — 위가 열린 상자 */
+/** 배송 문의 - 위가 열린 상자 */
 export function ParcelIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -83,7 +83,7 @@ export function ParcelIcon(props: IconProps) {
   )
 }
 
-/** 교환·반품 — 엇갈린 두 화살표 */
+/** 교환·반품 - 엇갈린 두 화살표 */
 export function SwapIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -93,7 +93,7 @@ export function SwapIcon(props: IconProps) {
   )
 }
 
-/** 결제·환불 — 끝이 톱니인 영수증 */
+/** 결제·환불 - 끝이 톱니인 영수증 */
 export function ReceiptIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -121,7 +121,7 @@ export function ArrowRightIcon(props: IconProps) {
   )
 }
 
-/** 펼친 책 — Study 공부 노트 페이지 아이콘 */
+/** 펼친 책 - Study 공부 노트 페이지 아이콘 */
 export function BookIcon(props: IconProps) {
   return (
     <Icon {...props}>
@@ -130,7 +130,7 @@ export function BookIcon(props: IconProps) {
   )
 }
 
-/** 전구 — 노트의 한 줄 요약 콜아웃 */
+/** 전구 - 노트의 한 줄 요약 콜아웃 */
 export function LightbulbIcon(props: IconProps) {
   return (
     <Icon {...props}>

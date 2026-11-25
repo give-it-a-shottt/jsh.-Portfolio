@@ -1,6 +1,6 @@
 import { noteHref, notesForCase } from './notes'
 
-// 사례 상세 아래 '이 작업에 쓴 공부' — 이 사례를 '써먹은 곳'으로 가리키는 노트가 있을 때만 보인다.
+// 사례 상세 아래 '이 작업에 쓴 공부' - 이 사례를 '써먹은 곳'으로 가리키는 노트가 있을 때만 보인다.
 export default function CaseNotes({ slug }: { slug: string }) {
   const notes = notesForCase(slug)
   if (notes.length === 0) return null

@@ -5,7 +5,7 @@ import type { PlaceDetail, SeatAnswer } from './types'
 
 const DESKTOP = '(min-width: 1024px)'
 
-/** PC(1024 이상)인지 — PC 는 상세를 지도 위 오른쪽 패널로, MO 는 한 화면으로 연다 */
+/** PC(1024 이상)인지 - PC 는 상세를 지도 위 오른쪽 패널로, MO 는 한 화면으로 연다 */
 export function useIsDesktop() {
   return useSyncExternalStore(
     (onChange) => {
@@ -19,13 +19,13 @@ export function useIsDesktop() {
 
 type Load<T> = { status: 'loading' } | { status: 'ready'; data: T } | { status: 'error'; message: string }
 
-/** 식당 상세 — 조건(시각)이 바뀌면 상태 배지 · 막대가 달라지므로 다시 받는다 */
+/** 식당 상세 - 조건(시각)이 바뀌면 상태 배지 · 막대가 달라지므로 다시 받는다 */
 export function usePlace(id: string, query: Query) {
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState<{ key: string; load: Load<PlaceDetail> } | null>(null)
   const { t, dong } = query
   const s = query.s.join(',')
-  // 응답을 받은 조건(key)과 지금 조건이 다르면 아직 받는 중이다 — 이전 식당이 잠깐 보이지 않게
+  // 응답을 받은 조건(key)과 지금 조건이 다르면 아직 받는 중이다 - 이전 식당이 잠깐 보이지 않게
   const key = `${id}|${t}|${dong}|${s}|${attempt}`
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export type SeatStep =
   | { step: 'answered'; answer: SeatAnswer['status']; note: string | null }
   | { step: 'error'; message: string }
 
-/** 자리 물어보기 — 묻기 → 답이 올 때까지 롱폴링(10초씩) → 답. 시트를 닫으면 기다리기를 멈춘다 */
+/** 자리 물어보기 - 묻기 → 답이 올 때까지 롱폴링(10초씩) → 답. 시트를 닫으면 기다리기를 멈춘다 */
 export function useSeatAsk(placeId: string) {
   const [state, setState] = useState<SeatStep>({ step: 'input' })
   const run = useRef(0)
