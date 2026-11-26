@@ -1,3 +1,8 @@
+import scPcHome from './assets/design/snapchef/pc-01-home.webp'
+import scHome from './assets/design/snapchef/screen-01-home.webp'
+import scIngredients from './assets/design/snapchef/screen-02-ingredients.webp'
+import scRecommend from './assets/design/snapchef/screen-03-recommend.webp'
+import scCook from './assets/design/snapchef/screen-04-cook.webp'
 import ggHome from './assets/design/geogi/screen-01-home.webp'
 import ggDetail from './assets/design/geogi/screen-02-detail.webp'
 import ggNearby from './assets/design/geogi/screen-03-nearby.webp'
@@ -42,7 +47,7 @@ import flPcMain from './assets/design/flaseek/pc-01-main.webp'
 import flPcList from './assets/design/flaseek/pc-02-list.webp'
 import flPcDetail from './assets/design/flaseek/pc-03-detail.webp'
 import flPcLogin from './assets/design/flaseek/pc-04-login.webp'
-import { ACCIO_LIVE, AGORA_GITHUB, AGORA_LIVE, CASES, DIDIM_GITHUB, DIDIM_LIVE, GEOGI_GITHUB, GEOGI_LIVE, MINI_INFLEARN_LIVE, PLANFORME_LIVE, REMIND_LIVE, type DesignVariant, type Role } from './data'
+import { ACCIO_LIVE, AGORA_GITHUB, AGORA_LIVE, CASES, DIDIM_GITHUB, DIDIM_LIVE, GEOGI_GITHUB, GEOGI_LIVE, MINI_INFLEARN_LIVE, PLANFORME_LIVE, REMIND_LIVE, SNAPCHEF_GITHUB, SNAPCHEF_LIVE, type DesignVariant, type Role } from './data'
 
 // 프로젝트 페이지(#/project/{slug}) 데이터 - F-011. 홈의 메인 섹션 · 목차 · '그 밖의 작업'도 이 목록 순서대로 만든다(F-018) -
 // 프로젝트를 추가할 때는 PROJECT_LIST 에 하나 넣으면 홈 · 프로젝트 페이지 · '다음 프로젝트'에 같이 생긴다.
@@ -188,12 +193,115 @@ export function showcaseStats(project: ShowcaseProject): { value: string; label:
   return project.showcase.stats.flatMap((label) => project.numbers.filter((n) => n.label === label))
 }
 
+/** 홈 첫 화면 목차의 칸 수(F-019) - 메인 수만큼 한 줄에 놓는다. 메인이 없으면 목차를 그리지 않으므로 undefined.
+ * Tailwind 클래스(grid-cols-N)는 동적으로 만들 수 없어서 style 의 gridTemplateColumns 값으로 돌려준다 */
+export function mainIndexColumns(count: number): string | undefined {
+  return count > 0 ? `repeat(${count}, minmax(0, 1fr))` : undefined
+}
+
 /** 서비스로 가는 버튼 - links 의 마지막이 주 버튼이다 */
 export function serviceLink(project: Pick<Project, 'links'>): { label: string; href: string } | undefined {
   return project.links[project.links.length - 1]
 }
 
 export const PROJECT_LIST: Project[] = [
+  {
+    // 글은 ClickChef 레포의 README · docs/ARCHITECTURE.md와 운영 실측(2026-11-26)에서 옮겼다(사용자 승인 2026-11-26, F-019).
+    // 피그마 링크는 넣지 않는다(사용자 결정). 화면은 운영 사이트 캡처.
+    slug: 'snapchef',
+    tier: 'main',
+    name: '찰칵셰프',
+    title: '찰칵셰프 - 냉장고 사진 한 장으로 지금 만들 수 있는 한식',
+    summary:
+      '냉장고 재료를 찍으면 AI(Gemini)가 재료를 찾고, 식약처 레시피 1,151개 중 내 재료와 많이 겹치는 한식을 부족한 재료와 함께 추천하는 웹 서비스. 단계별 타이머와 화면 꺼짐 방지가 있는 조리 모드로 끝까지 따라 만들 수 있다.',
+    roles: ['Design', 'Front', 'Back', 'DB'],
+    info: [
+      { label: '역할', value: '개인 작업 · 기여도 100%' },
+      { label: '팀', value: '1명' },
+      { label: '스택', value: 'React · Vite · FastAPI · PostgreSQL · Gemini · EXAONE' },
+    ],
+    links: [
+      { label: 'GitHub', href: SNAPCHEF_GITHUB },
+      { label: '서비스 보기', href: SNAPCHEF_LIVE },
+    ],
+    cover: { images: [scPcHome], device: 'desktop' },
+    showcase: {
+      tagline: '냉장고 사진 한 장으로 오늘의 한식',
+      stats: ['레시피', '사진 용량'],
+      shots: { kind: 'screens', main: scPcHome, overlay: scIngredients, overlayDevice: 'mobile' },
+    },
+    structure: {
+      title: '화면에서 구조까지',
+      steps: [
+        { key: 'WEB', name: 'React 19 · Vite', desc: '정적 파일로 CDN에 올린다. 레시피는 TanStack Query, 촬영 흐름 · 설정은 Zustand, 필터는 URL에 둔다' },
+        { key: 'API', name: 'FastAPI · Vercel(싱가포르)', desc: '사진은 Gemini로 재료 목록을 받고, 추천은 SQL로 후보를 추린 뒤 순수 함수로 점수를 매긴다' },
+        { key: 'AI', name: 'Gemini · EXAONE', desc: '실행 중에는 사진 인식(Gemini)만 부른다. 조리 시간 · 단계별 재료 같은 값은 EXAONE으로 데이터를 만들 때 한 번만 채웠다' },
+        { key: 'DB', name: 'PostgreSQL (Neon 싱가포르)', desc: '레시피 1,151개. 재료 배열에 GIN 인덱스를 걸고, 하루 인식 횟수를 센다' },
+      ],
+      note: '로그인 없이 찜 · 설정 · 기록은 브라우저에 저장한다.',
+    },
+    numbers: [
+      { value: '1,151개', label: '레시피', note: '식약처 조리식품 레시피 DB 전체를 정리하고 LLM으로 시간 · 인분 · 단계별 재료를 채웠다' },
+      { value: '1,869MB → 18MB', label: '사진 용량', note: '한 장에 14 ~ 31MB인 원본 1,150장을 카드 크기 WebP로 줄여 함께 배포했다' },
+      { value: '27개', label: '백엔드 테스트', note: '일치도 규칙, API 응답 형식, 동의어, 인식 후처리(가짜 Gemini 응답)' },
+      { value: '0.15 ~ 0.25초', label: '추천 · 검색 응답', note: '운영 주소에서 잰 값. 함수와 DB를 모두 싱가포르에 두었다' },
+    ],
+    why: '냉장고에 남은 재료로 뭘 만들지 고민할 때, 레시피 앱은 요리 이름부터 고르게 하고 재료는 하나씩 입력해야 한다. 그래서 사진 한 장으로 재료를 알아내고, 가진 재료와 많이 겹치는 요리부터 보여 주는 서비스를 만들었다. 집에 늘 있는 양념은 가진 것으로 치고 없는 재료만 따로 보여 줘서, “지금 만들 수 있는가”를 먼저 답한다.',
+    decisions: [
+      {
+        code: 'D-1',
+        title: 'LLM은 실행 중이 아니라 데이터를 만들 때',
+        body: '식약처 데이터에는 조리 시간 · 인분 · 단계별 재료가 없다. 이 값을 한 번만 만들어 DB에 넣어서, 실행 중 LLM 호출은 사진 인식 하나뿐이다. 비용과 응답 시간이 줄고, 키가 만료돼도 추천은 멈추지 않는다.',
+      },
+      {
+        code: 'D-2',
+        title: '추천은 SQL로 추리고 점수는 순수 함수로',
+        body: '재료 배열 GIN 인덱스로 겹치는 레시피만 가져오고, 점수 규칙은 DB와 분리된 함수라 규칙마다 테스트로 확인한다.',
+      },
+      {
+        code: 'D-3',
+        title: '재료 이름은 한곳에서 맞춘다',
+        body: '인식 결과의 “계란”과 DB의 “달걀”이 같은 재료가 되도록, 서버와 데이터 정리 스크립트가 같은 이름 사전을 쓴다.',
+      },
+      {
+        code: 'D-4',
+        title: 'Vercel + Neon, 둘 다 싱가포르',
+        body: '카드 등록 없이 운영하는 게 조건이었다. 프론트와 API가 한 도메인이라 CORS가 없고, 서울 리전이 없는 Neon에 맞춰 함수도 싱가포르에 두었다.',
+      },
+    ],
+    // 막힌 것: 펼쳐 보는 대표 1건을 먼저, 나머지는 한 줄 요약 - 거기붐벼? · Agora와 같은 방식
+    troubles: [
+      {
+        code: 'T-1',
+        title: '“지금 만들 수 있는 요리”가 늘 400개였다',
+        problem: '재료가 하나만 겹쳐도 후보에 넣고 400개에서 잘라서, 무엇을 넣어도 개수가 400이었다. 점수도 가진 수 ÷ 필요한 수라서 재료 1개짜리 요리(1/1)가 5개를 다 가진 요리(5/5)와 같은 점수로 앞에 왔다.',
+        solution: '부족한 주재료가 2개 이하이거나 절반 이상 가진 요리만 넣고, 같은 기준을 SQL에도 걸었다. 점수는 분모에 0.5를 더해 1/1은 0.67, 5/5는 0.91이 되게 했다. 흔한 재료 6개 기준으로 400개가 77개가 됐다.',
+        lesson: '결과 개수가 늘 같은 값이면 어딘가의 제한에 걸린 것이다. 실제 데이터로 재 봐야 보인다.',
+      },
+      { code: 'T-2', title: '식약처 원본 사진이 한 장에 최대 31MB였다', summary: '홈만 열어도 100MB가 넘었고 해외 이미지 프록시는 시간 초과로 막혔다. 미리 카드 크기로 줄여 앱과 함께 배포했다.' },
+      { code: 'T-3', title: 'React가 두 벌 불러와져 “Invalid hook call”이 났다', summary: '개발 서버가 의존성을 따로따로 미리 묶어서 생긴 일이었다. 미리 묶을 목록을 고정해 한 벌만 쓰게 했다.' },
+      { code: 'T-4', title: 'CI에서만 npm ci가 실패했다', summary: 'Windows에서 만든 잠금 파일에 Linux용 선택 의존성이 빠져 있었다. Linux 컨테이너에서 잠금 파일을 다시 만들었다.' },
+      { code: 'T-5', title: '쓰려던 Gemini 모델이 새 사용자에게 막혔다', summary: '기본 모델을 바꾸고, 404 · 429 · 503이면 다음 모델로 한 번 더 시도하게 했다.' },
+    ],
+    screens: {
+      device: 'mobile',
+      items: [
+        { image: scHome, label: '홈' },
+        { image: scIngredients, label: '재료 확인' },
+        { image: scRecommend, label: '추천 목록' },
+        { image: scCook, label: '조리 모드 · 타이머' },
+      ],
+    },
+    next: [
+      { title: '카카오 로그인', body: '카카오 로그인과 찜 동기화' },
+      { title: 'PC → 폰 사진 넘기기', body: 'PC에서 띄운 QR로 폰 사진 넘기기' },
+      { title: '레시피 DB 공유', body: '술 → 안주 추천 서비스와 레시피 DB 공유' },
+    ],
+    card: {
+      title: '찰칵셰프 - 사진 한 장으로 오늘의 한식',
+      desc: '냉장고 사진에서 AI가 재료를 찾고, 식약처 레시피 1,151개 중 지금 만들 수 있는 요리를 부족한 재료와 함께 보여 준다.',
+    },
+  },
   {
     // 글은 geogi-boombyeo 레포의 디자인 md(§0 브리프) · 결정(D-001 · D-002 · D-004 · D-009 · D-011) · 트러블슈팅(T-001 · T-004 ~ T-006 · T-008) · 실측(2026-11-23)에서 옮겼다(사용자 승인 2026-11-23, F-017).
     slug: 'geogi',

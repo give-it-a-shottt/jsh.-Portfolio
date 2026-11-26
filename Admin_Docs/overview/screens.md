@@ -2,7 +2,7 @@
 
 ## 한눈에 보기 (코드 몰라도 OK)
 상태: [주의] 전체 지도는 사용자 확인 완료(2026-10-25). 화면별 흐름은 FLASEEK만 정리했어요.
-무엇을: **검색하듯 둘러보는 포트폴리오**예요. 첫 화면은 스크롤 한 번으로 나를 다 보는 긴 페이지예요 — 첫 문장 + 이메일 · GitHub + 대표 프로젝트 목차 → 메인 5개 스크롤 섹션(D-009) → 그 밖의 작업 6개(D-008) → 스킬 → GitHub → 공부 기록(F-018). 프로젝트마다 한 페이지(`#/project/{slug}`)에서 디자인 · 프론트 · 백엔드를 함께 보여 줘요. 검색은 모든 화면 헤더에 작게 있고, 헤더 탭은 Main / Study 두 개예요.
+무엇을: **검색하듯 둘러보는 포트폴리오**예요. 첫 화면은 스크롤 한 번으로 나를 다 보는 긴 페이지예요 — 첫 문장 + 이메일 · GitHub + 대표 프로젝트 목차 → 메인 6개 스크롤 섹션(D-009) → 그 밖의 작업 6개(D-008) → 스킬 → GitHub → 공부 기록(F-018). 프로젝트마다 한 페이지(`#/project/{slug}`)에서 디자인 · 프론트 · 백엔드를 함께 보여 줘요. 검색은 모든 화면 헤더에 작게 있고, 헤더 탭은 Main / Study 두 개예요.
 비유: 백화점 안내 데스크(검색창)에 물으면 매장(사례)을 알려 주고, 몇몇 매장은 들어가서 직접 체험(실행 화면)할 수 있는 구조예요.
 왜: 이력서 링크 하나로 "무엇을 했고 어떻게 생각했는지"를 바로 찾아보고 직접 눌러 보게 하려고요.
 
@@ -42,7 +42,7 @@
 ### 서비스별 주소
 | 서비스 | 주소 | 무엇 | 서버 | 코드 |
 |---|---|---|---|---|
-| 포트폴리오 | `#/`, `#/project/{slug}`(geogi · agora · didim · accio · maestro · planforme · mini-inflearn · remind · nightly · gameprobe · flaseek), `#/search?q=&tab=`(all · design · fullstack · study, 예전 front · back은 fullstack으로), `#/case/{slug}`, `#/study`(Study 홈), `#/study?area=&course=`(강의 노트 모음), `#/study/{slug}` | 검색형 포트폴리오. 사례·프로젝트·노트 데이터는 코드 안의 정적 데이터 | 없음 | `Portfolio/frontend/src/portfolio/` |
+| 포트폴리오 | `#/`, `#/project/{slug}`(snapchef · geogi · agora · didim · accio · maestro · planforme · mini-inflearn · remind · nightly · gameprobe · flaseek), `#/search?q=&tab=`(all · design · fullstack · study, 예전 front · back은 fullstack으로), `#/case/{slug}`, `#/study`(Study 홈), `#/study?area=&course=`(강의 노트 모음), `#/study/{slug}` | 검색형 포트폴리오. 사례·프로젝트·노트 데이터는 코드 안의 정적 데이터 | 없음 | `Portfolio/frontend/src/portfolio/` |
 | 마에스트로 | `#/maestro/…` | 낯선 서울 동네에서 지금 열린 식당 3곳을 근거와 함께 골라 주는 서비스 (F-010 리뉴얼) | 마에스트로 API(헤이유미 API 중계, mock/real) | `src/projects/maestro/`, `backend/maestro/` |
 | Accio | `#/accio/…` → `#/project/accio` | 따로 배포한 서비스(accio-two.vercel.app)로 옮겼어요. 사이트 안 앱은 지우고, 예전 주소는 프로젝트 페이지로 보내요(F-011) | 바깥 서비스 | `backend/accio/`(뼈대만) |
 | FLASEEK | `#/flaseek/…` | 보정속옷·압박스타킹 자사몰 리뉴얼 시안. 메인·리스트·상세·로그인 | 없음(정적 데이터, 이번 방문 동안만 상태 유지) | `src/projects/flaseek/` |

@@ -11,9 +11,9 @@
 
 **지금 상태**
 
-- 공개 중: 검색형 포트폴리오(프로젝트 페이지 11개 포함), 마에스트로(리뉴얼), Accio(따로 배포 · 링크만), FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn(미니 인프런으로 따로 배포 · 링크만), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
+- 공개 중: 검색형 포트폴리오(프로젝트 페이지 12개 포함), 마에스트로(리뉴얼), Accio(따로 배포 · 링크만), FLASEEK 시안, Accio v1 원본, 개인 디자인 시스템 사례, techlearn(미니 인프런으로 따로 배포 · 링크만), Nightly 수면 코칭 시안(홈 · 대시보드 · AI 코치)
 - 리뷰: F-001·F-006·F-009·F-010 판정 완료([주의]). F-004 8차 · F-008 · F-011 · F-012는 판정 일부 대기, F-007은 리뷰 전, F-002·F-003·F-005는 백로그예요.
-- 진행: 됨 13 · 일부 4 · 다음 0, 열린 질문 0개 ([STATUS.md](STATUS.md), 사용자 확인 완료)
+- 진행: 됨 14 · 일부 4 · 다음 0, 열린 질문 0개 ([STATUS.md](STATUS.md), 사용자 확인 완료)
 
 **읽는 순서** (면접 전에는 이것만 읽어도 돼요)
 
@@ -21,7 +21,7 @@
 2. [STATUS.md](STATUS.md) — 지금 어디까지 왔고, 어떻게 확인했나
 3. [overview/architecture.md](overview/architecture.md) — 화면 → 서버 → DB 흐름
 4. [overview/screens.md](overview/screens.md) — 무엇이 어디 있고, 화면이 어떻게 이어지는지
-5. [features](features/) 최신 3개 - F-018, F-017, F-016
+5. [features](features/) 최신 3개 - F-019, F-018, F-017
 6. [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) — 아직 결정 못 한 것
 
 **폴더 역할**
@@ -87,8 +87,8 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [D-005](decisions/D-005-accio-separate-service.md) | Accio를 포트폴리오 밖 서비스로 분리하고 링크만 | 확인 완료 |
 | [D-006](decisions/D-006-techlearn-mini-inflearn-link.md) | techlearn 시안을 지우고 미니 인프런 배포 사이트로 링크만 | 확인 완료 |
 | [D-007](decisions/D-007-main-study-landing.md) | 첫 화면 긴 페이지 · 헤더 Main / Study · 피그마 공개 링크 | 확인 완료 |
-| [D-008](decisions/D-008-main-sub-projects.md) | 홈 프로젝트를 메인(거기붐벼? · Agora AI 토론장 · 디딤 · Accio · 마에스트로) · 서브로 나눔 (메인 모양은 D-009) | 확인 완료 |
-| [D-009](decisions/D-009-home-showcase.md) | 홈은 랜딩 없이 메인 5개를 스크롤 섹션으로(글 고정 + 화면 교체) · 흰 바탕 + 빨강 포인트 | 확인 완료 |
+| [D-008](decisions/D-008-main-sub-projects.md) | 홈 프로젝트를 메인(찰칵셰프 · 거기붐벼? · Agora AI 토론장 · 디딤 · Accio · 마에스트로) · 서브로 나눔 (메인 모양은 D-009) | 확인 완료 |
+| [D-009](decisions/D-009-home-showcase.md) | 홈은 랜딩 없이 메인(지금 6개)을 스크롤 섹션으로(글 고정 + 화면 교체) · 흰 바탕 + 빨강 포인트 | 확인 완료 |
 
 ### 기능
 
@@ -111,5 +111,6 @@ CLAUDE.md            Claude Code가 매번 읽는 Admin_Docs 핵심 규칙·리�
 | [F-016](features/F-016-agora-project/feature.md) | Agora AI 토론장 프로젝트 페이지 · 메인 4개(2×2) | [통과] 1차 · 판정 대기 |
 | [F-017](features/F-017-geogi-project/feature.md) | 거기붐벼? 프로젝트 페이지 · 메인 5개(위 3 · 아래 2) | [통과] 1차 · 판정 대기 |
 | [F-018](features/F-018-home-showcase/feature.md) | 홈 개편(랜딩 제거 · 메인 5개 스크롤 섹션 · 호버와 애니메이션 · 하이픈) | [통과] 1차 · 판정 대기 |
+| [F-019](features/F-019-clickchef-project/feature.md) | 찰칵셰프 프로젝트 페이지 · 메인 6개 + 프로젝트 기간 전체 삭제 | [통과] 1차 · 판정 대기 |
 
-최종 수정: 2026-11-25 · 관련: D-001~D-009, F-001~F-018, Q-001~Q-009
+최종 수정: 2026-11-26 · 관련: D-001~D-009, F-001~F-019, Q-001~Q-009

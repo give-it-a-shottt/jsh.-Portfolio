@@ -1,7 +1,7 @@
 # 디자인 연결
 
 ## 한눈에 보기 (코드 몰라도 OK)
-상태: [통과] 원본 위치와 FLASEEK 컴포넌트 매칭을 정리했어요. 프로젝트별 피그마 공개 링크는 [F-013](../features/F-013-landing-main/feature.md)의 표와 코드 `projects.ts`의 `figma`에 있어요(사용자 확인, 2026-11-08, Q-004). 거기붐벼?는 피그마 링크를 넣지 않았어요(사용자 결정, 2026-11-23, [F-017](../features/F-017-geogi-project/feature.md)) — 프로젝트 페이지에 '디자인' 섹션과 피그마 버튼이 없어요.
+상태: [통과] 원본 위치와 FLASEEK 컴포넌트 매칭을 정리했어요. 프로젝트별 피그마 공개 링크는 [F-013](../features/F-013-landing-main/feature.md)의 표와 코드 `projects.ts`의 `figma`에 있어요(사용자 확인, 2026-11-08, Q-004). 거기붐벼?는 피그마 링크를 넣지 않았어요(사용자 결정, 2026-11-23, [F-017](../features/F-017-geogi-project/feature.md)) — 프로젝트 페이지에 '디자인' 섹션과 피그마 버튼이 없어요. 찰칵셰프도 같아요(사용자 결정, 2026-11-26, [F-019](../features/F-019-clickchef-project/feature.md)).
 무엇을: 디자인 원본은 **피그마와 레포 루트의 디자인 md 두 개**예요. 이 문서는 그 원본이 어디 있는지와, 피그마 블록이 어느 코드 파일에 있는지만 알려 줘요. 색 값·무드 같은 디자인 내용은 원본에서 봐요.
 왜: 디자인 내용을 여기 복사하면 원본과 어긋나요. 리뷰(R7)는 여기서 원본을 찾아가 직접 비교해요.
 
@@ -75,4 +75,4 @@
 | Empty · Error · Skeleton · Toast | `components.tsx` `EmptyState` · `ErrorInline` · `SkeletonCards` · `Toast` | – |
 | Data Table (표로 비교) | `screens/ResultScreen.tsx` `CompareTable` | – |
 
-최종 수정: 2026-11-25 · 관련: F-001, F-006, F-010
+최종 수정: 2026-11-26 · 관련: F-001, F-006, F-010, F-017, F-019

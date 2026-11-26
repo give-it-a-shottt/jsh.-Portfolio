@@ -5,12 +5,12 @@ import { scrollToShowcase } from './home/scrollToShowcase'
 import { EASE_OUT } from './motion'
 import { NOTES, studyHref } from './notes'
 import { ACTIVE_DAYS, CONTACT_EMAIL, CONTRIBUTIONS, GITHUB_URL, REPOS, SKILLS, repoUrl } from './profile'
-import { PROJECT_LIST, showcaseProjects, type Project, type ShowcaseProject } from './projects'
+import { PROJECT_LIST, mainIndexColumns, showcaseProjects, type Project, type ShowcaseProject } from './projects'
 import { CoverPlate } from './ProjectParts'
 import { projectHref } from './routes'
 import useReveal from './useReveal'
 
-// 홈(F-018 · D-009) - 첫 문장 + 대표 프로젝트 목차 → 메인 5개 스크롤 섹션 → 그 밖의 작업 → 스킬 → GitHub → 공부 기록.
+// 홈(F-018 · D-009) - 첫 문장 + 대표 프로젝트 목차 → 메인 스크롤 섹션(지금 6개) → 그 밖의 작업 → 스킬 → GitHub → 공부 기록.
 // 연락처는 첫 화면 한 곳에만 둔다 - 아래에 다시 두면 겹친다(사용자 결정).
 // 프로젝트를 추가할 때는 projects.ts 의 PROJECT_LIST 에 하나 넣으면 된다. 메인이면 showcase 칸도 채운다.
 
@@ -138,7 +138,9 @@ export default function HomePage() {
 
           {MAIN_PROJECTS.length > 0 && (
             <nav aria-label="대표 프로젝트 목차" className="hidden lg:block">
-              <ol className="grid grid-cols-5 gap-4">
+              {/* 칸 수 = 메인 수(F-019) - 메인이 늘어도 한 줄에 놓여 마지막 하나만 다음 줄에 남지 않는다.
+                  Tailwind 클래스는 동적으로 만들 수 없어 style 로 둔다(mainIndexColumns) */}
+              <ol className="grid gap-4" style={{ gridTemplateColumns: mainIndexColumns(MAIN_PROJECTS.length) }}>
                 {MAIN_PROJECTS.map((project, i) => (
                   <motion.li key={project.slug} {...rise(3 + i)}>
                     <IndexCard project={project} index={i} />

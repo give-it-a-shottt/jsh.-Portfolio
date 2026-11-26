@@ -57,21 +57,21 @@ try {
   check('사례 roles 는 Design · Front · Back · DB 만', CASES.flatMap((c) => c.roles ?? []).filter((r) => !['Design', 'Front', 'Back', 'DB'].includes(r)), [])
 
   // ── 프로젝트 데이터
-  const { PROJECT_LIST, findProject, nextProject, designPreview, hasDesign, projectSections, showcaseProjects, showcaseStats, serviceLink } = projects
+  const { PROJECT_LIST, findProject, nextProject, designPreview, hasDesign, projectSections, showcaseProjects, showcaseStats, serviceLink, mainIndexColumns } = projects
   check('프로젝트 slug 는 겹치지 않는다', new Set(PROJECT_LIST.map((p) => p.slug)).size, PROJECT_LIST.length)
   check('없는 slug', findProject('없는-프로젝트'), undefined)
   check('빈 slug', findProject(''), undefined)
   const order = PROJECT_LIST.map((p) => p.slug)
   check('다음 프로젝트는 홈 카드 순서로 돈다', order.map((slug) => nextProject(slug)?.slug), [...order.slice(1), order[0]])
-  // 메인 · 서브(D-008, F-015 ~ F-017): 메인 5개를 목록 앞에, 첫 번째는 거기붐벼?
+  // 메인 · 서브(D-008, F-015 ~ F-019): 메인 6개를 목록 앞에, 첫 번째는 찰칵셰프
   const tiers = PROJECT_LIST.map((p) => p.tier)
   check('모든 프로젝트에 tier 가 main · sub 중 하나', tiers.filter((t) => t !== 'main' && t !== 'sub').length, 0)
-  check('메인은 거기붐벼? · Agora · 디딤 · Accio · 마에스트로 순', PROJECT_LIST.filter((p) => p.tier === 'main').map((p) => p.slug), ['geogi', 'agora', 'didim', 'accio', 'maestro'])
-  // 메인 기댓값(위 slug 5개)은 사용자가 정한 순서라 고정한다 - 메인을 바꾸면 여기도 같이 바꾼다(D-008)
+  check('메인은 찰칵셰프 · 거기붐벼? · Agora · 디딤 · Accio · 마에스트로 순', PROJECT_LIST.filter((p) => p.tier === 'main').map((p) => p.slug), ['snapchef', 'geogi', 'agora', 'didim', 'accio', 'maestro'])
+  // 메인 기댓값(위 slug 6개)은 사용자가 정한 순서라 고정한다 - 메인을 바꾸면 여기도 같이 바꾼다(D-008)
   const mainCount = tiers.filter((t) => t === 'main').length
   check('메인이 목록 앞에 모여 있고 서브는 그 뒤에만', tiers.every((t, i) => (i < mainCount ? t === 'main' : t === 'sub')), true)
   check('서브가 1개 이상', tiers.length - mainCount > 0, true)
-  check('메인은 5개(F-017)', mainCount, 5)
+  check('메인은 6개(F-019)', mainCount, 6)
   // 메인 스크롤 섹션(F-018 · D-009): showcase 가 없으면 홈 메인에서 조용히 빠지므로, 메인 전부에 있는지 · 숫자 이름이 맞는지 본다
   const showcase = showcaseProjects(PROJECT_LIST)
   check('메인 모두 홈 스크롤 섹션에 나온다', showcase.map((p) => p.slug), PROJECT_LIST.filter((p) => p.tier === 'main').map((p) => p.slug))
@@ -99,26 +99,40 @@ try {
   check('글 · 다 보일 때는 제자리', Math.abs(textOffset(0)), 0)
   check('글 · 떠날 때는 위로, 들어올 때는 아래에서', [textOffset(0.4) < 0, textOffset(-0.4) > 0], [true, true])
   check('현재 위치 · 반을 넘으면 다음, 스프링이 넘쳐도 범위 안', [-0.2, 0.49, 0.51, 3.6, 4.3].map((x) => activeIndex(x, 5)), [0, 0, 1, 4, 4])
+  check('찰칵셰프 링크는 GitHub · 서비스 보기(마지막 = 주 버튼)', findProject('snapchef')?.links, [
+    { label: 'GitHub', href: 'https://github.com/give-it-a-shottt/ClickChef' },
+    { label: '서비스 보기', href: 'https://snapchef-sigma.vercel.app' },
+  ])
   check('거기붐벼? 링크는 GitHub · 서비스 보기(마지막 = 주 버튼)', findProject('geogi')?.links, [
     { label: 'GitHub', href: 'https://github.com/give-it-a-shottt/geogi-boombyeo' },
     { label: '서비스 보기', href: 'https://geogi-boombyeo.shop' },
   ])
-  // 피그마 링크(F-017): 공개하지 않기로 한 프로젝트만 비운다 - 실수로 빠뜨린 것을 잡으려고 목록을 고정한다
-  check('피그마 링크가 없는 프로젝트는 거기붐벼?뿐', PROJECT_LIST.filter((p) => !p.figma).map((p) => p.slug), ['geogi'])
+  // 피그마 링크(F-017 · F-019): 공개하지 않기로 한 프로젝트만 비운다 - 실수로 빠뜨린 것을 잡으려고 목록을 고정한다
+  check('피그마 링크가 없는 프로젝트는 찰칵셰프 · 거기붐벼?뿐', PROJECT_LIST.filter((p) => !p.figma).map((p) => p.slug), ['snapchef', 'geogi'])
   check('디자인 섹션 - 피그마 링크만 있음', hasDesign({ figma: 'https://www.figma.com/design/x' }), true)
   check('디자인 섹션 - Design 사례만 있음', hasDesign({ designCase: 'remind' }), true)
   check('디자인 섹션 - 둘 다 없으면 그리지 않는다', hasDesign({}), false)
   check('디자인 섹션 - 빈 문자열도 없는 것으로 본다', hasDesign({ figma: '' }), false)
   check('거기붐벼?는 디자인 섹션이 없다', hasDesign(findProject('geogi')), false)
+  check('찰칵셰프는 디자인 섹션이 없다', hasDesign(findProject('snapchef')), false)
   // 목차(F-017): 섹션 번호는 목차 순서에서 나온다 - id 가 겹치거나 '디자인' 줄과 섹션이 어긋나면 번호가 틀어진다
   const sectionIds = (p) => projectSections(p).map((s) => s.id)
   check('목차 섹션 id 는 프로젝트 안에서 겹치지 않는다', PROJECT_LIST.filter((p) => new Set(sectionIds(p)).size !== sectionIds(p).length).map((p) => p.slug), [])
   check("목차의 '디자인' 줄은 디자인 섹션이 있을 때만", PROJECT_LIST.filter((p) => sectionIds(p).includes('design') !== hasDesign(p)).map((p) => p.slug), [])
   check('거기붐벼? 목차는 왜 · 결정 · 막힌 것 · 화면 · 다음', sectionIds(findProject('geogi')), ['why', 'decisions', 'troubles', 'screens', 'next'])
-  // 거기붐벼? 글은 승인받은 초안 그대로다(F-017) - 줄을 빠뜨리거나 더하면 여기서 잡힌다
-  const geogi = findProject('geogi')
-  check('거기붐벼? 숫자 4 · 결정 4 · 막힌 것 5 · 화면 4 · 다음 3', [geogi.numbers.length, geogi.decisions.length, geogi.troubles.length, geogi.screens.items.length, geogi.next.length], [4, 4, 5, 4, 3])
-  check('거기붐벼? 결정 · 막힌 것 번호', [geogi.decisions.map((d) => d.code), geogi.troubles.map((t) => t.code)], [['D-1', 'D-2', 'D-3', 'D-4'], ['T-1', 'T-2', 'T-3', 'T-4', 'T-5']])
+  check('찰칵셰프 목차는 왜 · 결정 · 막힌 것 · 화면 · 다음', sectionIds(findProject('snapchef')), ['why', 'decisions', 'troubles', 'screens', 'next'])
+  // 승인받은 글의 줄 수(F-017 거기붐벼? · F-019 찰칵셰프) - 줄을 빠뜨리거나 더하면 여기서 잡힌다.
+  // [숫자, 결정, 막힌 것, 화면, 다음] - 사용자가 승인한 초안의 줄 수라 고정한다
+  const APPROVED_COUNTS = { geogi: [4, 4, 5, 4, 3], snapchef: [4, 4, 5, 4, 3] }
+  const codes = (prefix, n) => Array.from({ length: n }, (_, i) => `${prefix}-${i + 1}`)
+  for (const [slug, counts] of Object.entries(APPROVED_COUNTS)) {
+    const p = findProject(slug)
+    check(`${slug} · 숫자 · 결정 · 막힌 것 · 화면 · 다음 줄 수`, [p?.numbers.length, p?.decisions?.length, p?.troubles?.length, p?.screens.items.length, p?.next?.length], counts)
+    check(`${slug} · 결정 · 막힌 것 번호`, [p?.decisions?.map((d) => d.code), p?.troubles?.map((t) => t.code)], [codes('D', counts[1]), codes('T', counts[2])])
+  }
+  // 홈 목차 칸 수(F-019) - 메인 수만큼 한 줄, 메인이 없으면 목차를 그리지 않으므로 값도 없다
+  check('홈 목차 칸 수 = 메인 수', mainIndexColumns(showcase.length), `repeat(${showcase.length}, minmax(0, 1fr))`)
+  check('홈 목차 칸 수 - 6개 · 1개 · 0개', [6, 1, 0].map(mainIndexColumns), ['repeat(6, minmax(0, 1fr))', 'repeat(1, minmax(0, 1fr))', undefined])
   check('Agora 링크는 GitHub · 서비스 보기(마지막 = 주 버튼)', findProject('agora')?.links, [
     { label: 'GitHub', href: 'https://github.com/give-it-a-shottt/AgoraAI' },
     { label: '서비스 보기', href: 'https://agora-ai-seven.vercel.app' },
@@ -129,11 +143,19 @@ try {
     { label: '샘플 체험', href: 'https://didim-gamma.vercel.app/demo' },
   ])
   // 프로젝트 기간은 보여 주지 않는다(F-019, 사용자 요청 2026-11-26) - 정보 띠 · 사례 숫자에 다시 들어오면 여기서 잡힌다
-  check("프로젝트 정보 띠에 '기간'이 없다", PROJECT_LIST.filter((p) => p.info.some((i) => i.label === '기간')).map((p) => p.slug), [])
+  // 정보 띠 라벨은 역할 · 팀 · 스택뿐이라 '기간'이 들어간 라벨('개발 기간' 등)까지 막는다. 프로젝트 numbers 는
+  // '토큰 유효기간' 같은 결과 숫자가 있어 보지 않는다
+  check("프로젝트 정보 띠에 '기간'이 없다", PROJECT_LIST.filter((p) => p.info.some((i) => /기간/.test(i.label))).map((p) => p.slug), [])
   check("사례 숫자에 '기간'이 없다", CASES.filter((c) => (c.metrics ?? []).some((m) => m.label === '기간')).map((c) => c.slug), [])
+  // 정보 띠는 넓은 화면에서 3칸(ProjectPage lg:grid-cols-3) - 줄이 늘면 다음 줄로 흐르므로 여기서 먼저 알린다
+  check('정보 띠는 3칸 이하', PROJECT_LIST.filter((p) => p.info.length > 3).map((p) => p.slug), [])
   const caseHrefs = new Set(CASES.map((c) => c.href).filter(Boolean))
   for (const p of PROJECT_LIST) {
-    check(`${p.slug} · 왜 만들었나 있음`, p.why.length > 0, true)
+    check(`${p.slug} · 왜 만들었나 있음`, p.why.trim().length > 0, true)
+    // 글 칸이 비면 화면에 제목만 남는다(F-019 R3) - 결정 · 막힌 것 · 다음은 제목과 본문이 모두 있어야 한다
+    check(`${p.slug} · 결정 제목 · 본문 있음`, (p.decisions ?? []).filter((d) => !d.title.trim() || !d.body.trim()).map((d) => d.code), [])
+    check(`${p.slug} · 막힌 것 제목 · 내용 있음`, (p.troubles ?? []).filter((t) => !t.title.trim() || !(t.summary?.trim() || (t.problem?.trim() && t.solution?.trim()))).map((t) => t.code), [])
+    check(`${p.slug} · 다음 단계 제목 · 본문 있음`, (p.next ?? []).filter((n) => !n.title.trim() || !n.body.trim()).map((n) => n.title), [])
     check(`${p.slug} · 버튼 1개 이상`, p.links.length > 0, true)
     check(`${p.slug} · 대표 화면 있음`, p.cover.images.length > 0 && p.cover.images.every(Boolean), true)
     check(`${p.slug} · 홈 카드 제목 · 설명 있음`, Boolean(p.card.title && p.card.desc), true)

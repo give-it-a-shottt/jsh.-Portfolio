@@ -207,6 +207,9 @@ export const AGORA_GITHUB = 'https://github.com/give-it-a-shottt/AgoraAI'
 /** 거기붐벼? 배포 주소(F-017) - 로그인 없음. 서울 주요 121곳의 혼잡도를 5분마다 수집한다 */
 export const GEOGI_LIVE = 'https://geogi-boombyeo.shop'
 export const GEOGI_GITHUB = 'https://github.com/give-it-a-shottt/geogi-boombyeo'
+/** 찰칵셰프 배포 주소(F-019) - 로그인 없음. 도메인을 사면 이 상수와 checks/run.mjs 의 링크 기댓값(고정)을 같이 바꾼다 */
+export const SNAPCHEF_LIVE = 'https://snapchef-sigma.vercel.app'
+export const SNAPCHEF_GITHUB = 'https://github.com/give-it-a-shottt/ClickChef'
 
 /** 분류 점 색 - Back 은 검정, Front 는 회색, Design 은 주황, 공부 노트(Study)는 인디고 */
 export const TYPE_DOT_CLASS: Record<CaseType | 'Study', string> = {
