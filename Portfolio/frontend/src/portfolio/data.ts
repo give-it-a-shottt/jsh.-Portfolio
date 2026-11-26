@@ -341,7 +341,6 @@ export const CASES: PortfolioCase[] = [
     description:
       '“USB 여러 개 꽂는 거”처럼 모호한 말도 알아듣는 쇼핑몰. 디자인 시스템을 정의하고 대화형 검색부터 장바구니·주문까지 구현.',
     metrics: [
-      { label: '기간', value: '2025.10 - 11' },
       { label: '팀', value: '5명' },
     ],
     // 2025 팀 프로젝트(5명)에서 맡은 부분. 혼자 다시 만든 쪽(Design · Front · Back · DB)은 projects.ts 의 accio

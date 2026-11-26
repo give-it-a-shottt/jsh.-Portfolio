@@ -128,6 +128,9 @@ try {
     { label: '평가 리포트', href: 'https://didim-gamma.vercel.app/report' },
     { label: '샘플 체험', href: 'https://didim-gamma.vercel.app/demo' },
   ])
+  // 프로젝트 기간은 보여 주지 않는다(F-019, 사용자 요청 2026-11-26) - 정보 띠 · 사례 숫자에 다시 들어오면 여기서 잡힌다
+  check("프로젝트 정보 띠에 '기간'이 없다", PROJECT_LIST.filter((p) => p.info.some((i) => i.label === '기간')).map((p) => p.slug), [])
+  check("사례 숫자에 '기간'이 없다", CASES.filter((c) => (c.metrics ?? []).some((m) => m.label === '기간')).map((c) => c.slug), [])
   const caseHrefs = new Set(CASES.map((c) => c.href).filter(Boolean))
   for (const p of PROJECT_LIST) {
     check(`${p.slug} · 왜 만들었나 있음`, p.why.length > 0, true)

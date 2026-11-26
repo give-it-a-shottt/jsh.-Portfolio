@@ -93,7 +93,7 @@ export interface Project {
   title: string
   summary: string
   roles: Role[]
-  /** 정보 띠 - 역할 · 기간 · 팀 · 스택 */
+  /** 정보 띠 - 역할 · 팀 · 스택 */
   info: { label: string; value: string }[]
   /** 버튼 - 마지막 하나가 주 버튼(Primary, 오른쪽) */
   links: { label: string; href: string }[]
@@ -205,7 +205,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design', 'Front', 'Back', 'DB'],
     info: [
       { label: '역할', value: '개인 작업 · 기여도 100%' },
-      { label: '기간', value: '2026.11.23' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'Next.js 16 · FastAPI · PostgreSQL · Docker · GitHub Actions' },
     ],
@@ -302,7 +301,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design', 'Front', 'Back', 'DB'],
     info: [
       { label: '역할', value: '개인 작업 · 기여도 100%' },
-      { label: '기간', value: '2026.11.20 - 11.22' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'React · Vite · FastAPI · PostgreSQL · EXAONE · Gemini · Groq' },
     ],
@@ -399,7 +397,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design', 'Front', 'Back', 'DB'],
     info: [
       { label: '역할', value: '개인 작업 · 기여도 100%' },
-      { label: '기간', value: '2026.11.08 - 11.19' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'Next.js 16 · FastAPI · PostgreSQL · NVIDIA Nemotron' },
     ],
@@ -497,7 +494,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design', 'Front', 'Back', 'DB'],
     info: [
       { label: '역할', value: '다시 만들기 1인 - 디자인 · 프론트 · 백엔드 · DB' },
-      { label: '기간', value: '2026.10 - 11 (팀 원본 2025.10 - 11)' },
       { label: '팀', value: '원본 5명 → 다시 만들기 1명' },
       { label: '스택', value: 'React · FastAPI · Supabase · Gemini' },
     ],
@@ -591,7 +587,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design', 'Front', 'Back'],
     info: [
       { label: '역할', value: '개인 작업 · 기여도 100%' },
-      { label: '기간', value: '2026.10 - 11' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'React · Zustand · Leaflet · FastAPI' },
     ],
@@ -656,7 +651,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design', 'Front', 'Back'],
     info: [
       { label: '역할', value: '개인 프로젝트 - 설계 · 디자인 · 구현 · 배포' },
-      { label: '기간', value: '2026.10' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'Next.js 16 · FastAPI · SQLAlchemy · pytest' },
     ],
@@ -715,7 +709,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design', 'Front', 'Back', 'DB'],
     info: [
       { label: '역할', value: '개인 학습 프로젝트 - 디자인 · 프론트 · 백엔드 · DB' },
-      { label: '기간', value: '2026.10 - 11' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'Next.js · TanStack Query · FastAPI · PostgreSQL' },
     ],
@@ -783,7 +776,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design', 'Front'],
     info: [
       { label: '역할', value: '개인 프로젝트' },
-      { label: '기간', value: '2026.10' },
       { label: '팀', value: '1명' },
       { label: '시안', value: '모바일 18 · PC/태블릿 5' },
     ],
@@ -834,7 +826,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design', 'Front'],
     info: [
       { label: '역할', value: '개인 프로젝트 - 디자인 · 프론트(시안)' },
-      { label: '기간', value: '2026.10' },
       { label: '팀', value: '1명' },
       { label: '스택', value: 'React · TypeScript · Tailwind CSS' },
     ],
@@ -881,7 +872,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design'],
     info: [
       { label: '역할', value: '화면 설계 · 디자인 시스템' },
-      { label: '기간', value: '2026.10' },
       { label: '도구', value: 'Figma' },
       { label: '시안', value: '10개 영역 · 디자인 시스템 7장' },
     ],
@@ -920,7 +910,6 @@ export const PROJECT_LIST: Project[] = [
     roles: ['Design', 'Front'],
     info: [
       { label: '역할', value: '개인 작업 · 기여도 100%' },
-      { label: '기간', value: '2026.10 · 2일' },
       { label: '도구', value: 'Figma · React' },
       { label: '시안', value: 'PC 4 · 모바일 6' },
     ],

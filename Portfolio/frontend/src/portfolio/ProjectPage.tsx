@@ -239,7 +239,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
         </div>
 
         {/* 정보 띠 */}
-        <dl className="grid grid-cols-1 gap-6 border-y border-regular py-6 sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="grid grid-cols-1 gap-6 border-y border-regular py-6 sm:grid-cols-2 lg:grid-cols-3">
           {project.info.map(({ label, value }) => (
             <div key={label} className="flex flex-col gap-1">
               <dt className="text-13 text-sub-weak">{label}</dt>
